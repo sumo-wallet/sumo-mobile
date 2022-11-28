@@ -3,6 +3,8 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { icons } from '../../../../assets';
 import { useTheme } from '../../../..//util/theme';
 import FastImage from 'react-native-fast-image';
+import { useNavigation } from '@react-navigation/native';
+import Routes from '../../../../constants/navigation/Routes';
 
 export interface DataNewsInterface {
   description: string;
@@ -71,11 +73,15 @@ const createStyles = (colors: any) =>
 export const News = function News({ news, onSelect }: RawNewsInterface) {
   const { colors } = useTheme();
   const styles = createStyles(colors);
+  const navigation = useNavigation();
+
   return (
     <View style={styles.screenWrapper}>
       <View style={styles.containerHeader}>
         <Text style={styles.title}>{'News'}</Text>
-        <TouchableOpacity style={styles.containerViewAll}>
+        <TouchableOpacity style={styles.containerViewAll} onPress={() => {
+          navigation.navigate(Routes.NEWS)
+        }}>
           <Text style={styles.titleViewAll}>{'View all'}</Text>
           <Image source={icons.iconArrowRight} style={styles.icon} />
         </TouchableOpacity>

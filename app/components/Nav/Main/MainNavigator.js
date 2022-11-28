@@ -79,6 +79,7 @@ import { NftScreen } from './../../screens/Nft';
 import { NotificationsScreen } from './../../screens/Notifications';
 import { AddWalletScreen } from './../../screens/AddWallet';
 import { WalletDetailScreen } from './../../screens/WalletDetail';
+import { NewsScreen } from './../../screens/News';
 
 // import { WalletScreen } from './../../screens/Wallet';
 import { Style } from './../../../styles';
@@ -850,6 +851,7 @@ const MainNavigator = () => (
       headerStyle={{ borderBottomWidth: 0 }}
     />
     <Stack.Screen name="NotificationsView" component={NotificationsScreen} />
+    <Stack.Screen name="NewsView" component={NewsScreen} />
   </Stack.Navigator>
 );
 

@@ -38,6 +38,7 @@ const Routes = {
   NOTIFICATIONS: {
     NOTIFICATIONS: 'NotificationsView',
   },
+  NEWS: 'NewsView',
 };
 
 export default Routes;
