@@ -1,3 +1,6 @@
+import { PaymentType } from '@consensys/on-ramp-sdk';
+import { Icon } from '../components/PaymentIcon';
+
 const isOverAnHour = (minutes: number) => minutes > 59;
 
 const isOverADay = (minutes: number) => minutes > 1439;
@@ -92,11 +95,22 @@ export const formatId = (id: string) => {
   return id.startsWith('/') ? id : '/' + id;
 };
 
-export function formatAmount(amount: number) {
-  try {
-    if (Intl?.NumberFormat) return new Intl.NumberFormat().format(amount);
-    return String(amount);
-  } catch (e) {
-    return String(amount);
+export function getPaymentMethodIcon(paymentType?: PaymentType) {
+  switch (paymentType) {
+    case PaymentType.ApplePay: {
+      return Icon.Apple;
+    }
+    case PaymentType.GooglePay: {
+      return Icon.GooglePay;
+    }
+    case PaymentType.BankTransfer: {
+      return Icon.Bank;
+    }
+    case PaymentType.DebitCreditCard:
+      return Icon.Card;
+    case PaymentType.Wallet:
+    default: {
+      return Icon.Wallet;
+    }
   }
 }

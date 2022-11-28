@@ -29,7 +29,6 @@ export const createStyles = (colors: any) =>
       color: colors.text.default,
     } as any,
     cancelButton: {
-      marginTop: -6,
       marginLeft: 10,
       justifyContent: 'center',
     },
@@ -40,9 +39,84 @@ export const createStyles = (colors: any) =>
     } as any,
     searchWrapper: {
       flexDirection: 'row',
+      borderRadius: 5,
+      backgroundColor: colors.background.alternative,
+      height: Device.isAndroid() ? 50 : 40,
+      flex: 1,
+    },
+    searchSuggestion: {
+      flexDirection: 'column',
+      flex: 1,
+      height: 500,
+    },
+    popularSearchArea: {
+      flexDirection: 'column',
+      alignItems: 'flex-start',
+      justifyContent: 'flex-start',
+      flex: 1,
+    },
+    popularSearch: {
+      height: 80,
+      flexDirection: 'row',
+      justifyContent: 'center',
+      flex: 1,
+    },
+    popularSearchItem: {
+      flexDirection: 'row',
       borderRadius: 30,
       backgroundColor: colors.background.alternative,
       height: Device.isAndroid() ? 40 : 30,
+      width: 100,
+      justifyContent: 'center',
+      alignContent: 'center',
+      alignItems: 'center',
+    },
+    searchHistoryText: {
+      marginVertical: 10,
+      marginHorizontal: 10,
+      fontSize: 18,
+      color: colors.primary.default,
+      ...fontStyles.normal,
+
+    } as any,
+    searchHistoryTitle: {
+      width: '100%',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    searchHistory: {
+      flexDirection: 'column',
+      alignItems: 'flex-start',
+      justifyContent: 'flex-start',
+      flex: 2,
+    },
+    clearHistoryButton: { paddingHorizontal: 10, justifyContent: 'center' },
+    history: {
       flex: 1,
+      width: '100%',
+    },
+    historyItem: {
+      width: '100%',
+      height: 54,
+      paddingLeft: 10,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    historyItemBody: {
+      flexDirection: 'column',
+      alignItems: 'flex-start',
+      justifyContent: 'flex-start',
+    },
+    historyItemTitle: {
+      fontSize: 18,
+      color: colors.primary.default,
+      ...fontStyles.normal,
+    },
+    historyItemUrl: {
+      fontSize: 13,
+      color: colors.primary.default,
+      ...fontStyles.normal,
     },
   });

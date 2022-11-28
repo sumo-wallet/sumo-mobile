@@ -20,6 +20,7 @@ const createStyles = (colors) =>
       paddingVertical: 4,
       paddingHorizontal: 8,
       textAlign: 'center',
+      backgroundColor: colors.background.alternative,
     },
     summary: {
       backgroundColor: colors.background.default,
@@ -95,9 +96,8 @@ class TransactionReviewSummary extends PureComponent {
   };
 
   renderWarning = () => (
-    <Text>{`${strings('transaction.approve_warning')} ${
-      this.props.assetAmount
-    }`}</Text>
+    <Text>{`${strings('transaction.approve_warning')} ${this.props.assetAmount
+      }`}</Text>
   );
 
   render = () => {

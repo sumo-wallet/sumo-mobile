@@ -30,7 +30,6 @@ import {
 import { Region } from '../types';
 
 import I18n, { I18nEvents } from '../../../../../locales/i18n';
-import Device from '../../../../util/device';
 interface IFiatOnRampSDKConfig {
   POLLING_INTERVAL: number;
   POLLING_INTERVAL_HIGHLIGHT: number;
@@ -69,21 +68,14 @@ interface IProviderProps<T> {
 }
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
-const CONTEXT = Device.isAndroid()
-  ? Context.MobileAndroid
-  : Device.isIos()
-  ? Context.MobileIOS
-  : Context.Mobile;
 const VERBOSE_SDK = isDevelopment;
-const ACTIVATION_KEYS = process.env.ONRAMP_ACTIVATION_KEYS?.split(',') || [];
 
 export const SDK = OnRampSdk.create(
   isDevelopment ? Environment.Staging : Environment.Production,
-  CONTEXT,
+  Context.Mobile,
   {
     verbose: VERBOSE_SDK,
     locale: I18n.locale,
-    activationKeys: ACTIVATION_KEYS,
   },
 );
 
@@ -94,8 +86,6 @@ I18nEvents.addListener('localeChanged', (locale) => {
 export const callbackBaseUrl = isDevelopment
   ? 'https://on-ramp.metaswap-dev.codefi.network/regions/fake-callback'
   : 'https://on-ramp-content.metaswap.codefi.network/regions/fake-callback';
-
-export const callbackBaseDeeplink = 'metamask://';
 
 const appConfig = {
   POLLING_INTERVAL: 20000,

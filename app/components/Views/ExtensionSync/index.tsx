@@ -46,7 +46,6 @@ import { setLockTime as lockTimeSet } from '../../../actions/settings';
 import { BIOMETRY_TYPE } from 'react-native-keychain';
 import scaling from '../../../util/scaling';
 import { useTheme } from '../../../util/theme';
-import { WALLET_SETUP_CREATE_NEW_WALLET_BUTTON_ID } from '../../../../wdio/features/testIDs/Screens/WalletSetupScreen.testIds';
 
 const createStyles = (colors: any) =>
   StyleSheet.create({
@@ -453,7 +452,7 @@ const ExtensionSync = ({ navigation, route }: any) => {
       <StyledButton
         type={'blue'}
         onPress={triggerScan}
-        testID={WALLET_SETUP_CREATE_NEW_WALLET_BUTTON_ID}
+        testID={'create-wallet-button'}
       >
         {strings('onboarding.scan')}
       </StyledButton>

@@ -16,6 +16,7 @@ import { colors as importedColors, fontStyles } from '../../../styles/common';
 import Device from '../../../util/device';
 import AnalyticsV2 from '../../../util/analyticsV2';
 import { ThemeContext, mockTheme } from '../../../util/theme';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const THUMB_VERTICAL_MARGIN = 15;
 const NAVBAR_SIZE = Device.isIphoneX() ? 88 : 64;
@@ -24,7 +25,7 @@ const THUMB_HEIGHT =
   THUMB_VERTICAL_MARGIN;
 const ROWS_VISIBLE = Math.floor(
   (Dimensions.get('window').height - NAVBAR_SIZE - THUMB_VERTICAL_MARGIN) /
-    THUMB_HEIGHT,
+  THUMB_HEIGHT,
 );
 const TABS_VISIBLE = ROWS_VISIBLE;
 
@@ -233,23 +234,25 @@ export default class Tabs extends PureComponent {
     const styles = this.getStyles();
 
     return (
-      <ScrollView
-        style={styles.tabs}
-        contentContainerStyle={styles.tabsContent}
-        ref={this.scrollview}
-      >
-        {tabs.map((tab) => (
-          // eslint-disable-next-line react/jsx-key
-          <TabThumbnail
-            ref={this.thumbnails[tab.id]}
-            key={tab.id}
-            tab={tab}
-            isActiveTab={activeTab === tab.id}
-            onClose={this.props.closeTab}
-            onSwitch={this.onSwitch}
-          />
-        ))}
-      </ScrollView>
+      <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }} edges={['top']} >
+        <ScrollView
+          style={styles.tabs}
+          contentContainerStyle={styles.tabsContent}
+          ref={this.scrollview}
+        >
+          {tabs.map((tab) => (
+            // eslint-disable-next-line react/jsx-key
+            <TabThumbnail
+              ref={this.thumbnails[tab.id]}
+              key={tab.id}
+              tab={tab}
+              isActiveTab={activeTab === tab.id}
+              onClose={this.props.closeTab}
+              onSwitch={this.onSwitch}
+            />
+          ))}
+        </ScrollView>
+      </SafeAreaView>
     );
   }
 

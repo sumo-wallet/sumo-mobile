@@ -4,7 +4,6 @@ import Engine from '../../../core/Engine';
 import PropTypes from 'prop-types';
 import {
   Alert,
-  ActivityIndicator,
   InteractionManager,
   FlatList,
   TouchableOpacity,
@@ -12,6 +11,7 @@ import {
   Text,
   View,
   SafeAreaView,
+  Image,
 } from 'react-native';
 import { fontStyles } from '../../../styles/common';
 import Device from '../../../util/device';
@@ -25,33 +25,38 @@ import { doENSReverseLookup } from '../../../util/ENSUtils';
 import AccountElement from './AccountElement';
 import { connect } from 'react-redux';
 import { ThemeContext, mockTheme } from '../../../util/theme';
-import { safeToChecksumAddress } from '../../../util/address';
+import { Colors } from '../../../styles';
+import { SButton } from '../../common/SButton';
+import { BaseModal } from '../../Base/BaseModal';
+import { icons } from '../../../assets';
+import ClipboardManager from '../../../core/ClipboardManager';
+import { showAlert } from '../../../actions/alert';
+import { toggleAccountsModal } from '../../../actions/modals';
+import { protectWalletModalVisible } from '../../../actions/user';
 
-const createStyles = (colors) =>
+const createStyles = () =>
   StyleSheet.create({
     wrapper: {
-      backgroundColor: colors.background.default,
+      backgroundColor: Colors.divider[1],
       borderTopLeftRadius: 10,
       borderTopRightRadius: 10,
-      minHeight: 450,
+      minHeight: 600,
     },
     titleWrapper: {
       width: '100%',
       height: 33,
       alignItems: 'center',
       justifyContent: 'center',
-      borderBottomWidth: StyleSheet.hairlineWidth,
-      borderColor: colors.border.muted,
     },
     dragger: {
       width: 48,
       height: 5,
       borderRadius: 4,
-      backgroundColor: colors.border.default,
-      opacity: Device.isAndroid() ? 0.6 : 0.5,
+      backgroundColor: Colors.white[1],
     },
     accountsWrapper: {
       flex: 1,
+      marginTop: 8,
     },
     footer: {
       height: Device.isIphoneX() ? 200 : 170,
@@ -62,7 +67,7 @@ const createStyles = (colors) =>
     },
     btnText: {
       fontSize: 14,
-      color: colors.primary.default,
+      color: Colors.white[3],
       ...fontStyles.normal,
     },
     footerButton: {
@@ -71,7 +76,59 @@ const createStyles = (colors) =>
       alignItems: 'center',
       justifyContent: 'center',
       borderTopWidth: StyleSheet.hairlineWidth,
-      borderColor: colors.border.muted,
+      borderColor: Colors.gray[5],
+    },
+    titleWallet: {
+      fontSize: 18,
+      fontWeight: '500',
+      color: Colors.white[3],
+      alignSelf: 'center',
+      marginVertical: 12,
+    },
+    titleMain: {
+      fontSize: 14,
+      fontWeight: '500',
+      color: Colors.white[3],
+      paddingHorizontal: 16,
+      marginBottom: 8,
+    },
+    subTitleMain: {
+      fontSize: 12,
+      fontWeight: '400',
+      color: Colors.gray[5],
+    },
+    containerMain: {},
+    containerBtn: {
+      backgroundColor: Colors.white[3],
+      marginTop: 20,
+      marginHorizontal: 16,
+    },
+    containerOrder: {
+      marginTop: 24,
+    },
+    containerModal: {
+      backgroundColor: Colors.divider[1],
+      borderTopLeftRadius: 10,
+      borderTopRightRadius: 10,
+      minHeight: 200,
+      width: '100%',
+      paddingBottom: 32,
+    },
+    containerIconModal: {
+      flexDirection: 'row',
+      margin: 16,
+      alignItems: 'center',
+    },
+    iconModal: {
+      width: 24,
+      height: 24,
+      marginRight: 16,
+      tintColor: Colors.white[3],
+    },
+    titleIconModal: {
+      fontSize: 14,
+      fontWeight: '500',
+      color: Colors.white[3],
     },
   });
 
@@ -128,12 +185,18 @@ class AccountList extends PureComponent {
      * ID of the current network
      */
     network: PropTypes.string,
+    showAlert: PropTypes.func,
+    protectWalletModalVisible: PropTypes.func,
+    navigation: PropTypes.object,
+    toggleAccountsModal: PropTypes.func,
   };
 
   state = {
     loading: false,
-    orderedAccounts: {},
+    orderedAccounts: [],
     accountsENS: {},
+    isVisible: false,
+    newAddress: '',
   };
 
   flatList = React.createRef();
@@ -209,6 +272,10 @@ class AccountList extends PureComponent {
     });
   };
 
+  onSelected = (newAddress) => {
+    this.setState({ isVisible: !this.state.isVisible, newAddress });
+  };
+
   importAccount = () => {
     this.props.onImportAccount();
     InteractionManager.runAfterInteractions(() => {
@@ -224,31 +291,33 @@ class AccountList extends PureComponent {
   };
 
   addAccount = async () => {
+    this.props.navigation.navigate('AddWalletView');
+    this.props.toggleAccountsModal();
     if (this.state.loading) return;
-    this.mounted && this.setState({ loading: true });
-    const { KeyringController, PreferencesController } = Engine.context;
-    requestAnimationFrame(async () => {
-      try {
-        const { addedAccountAddress } = await KeyringController.addNewAccount();
-        const checksummedAddress = safeToChecksumAddress(addedAccountAddress);
-        PreferencesController.setSelectedAddress(checksummedAddress);
-        setTimeout(() => {
-          this.flatList &&
-            this.flatList.current &&
-            this.flatList.current.scrollToEnd();
-          this.mounted && this.setState({ loading: false });
-        }, 500);
-        // Use setTimeout to ensure latest accounts are reflected in the next frame
-        setTimeout(() => {
-          const orderedAccounts = this.getAccounts();
-          this.mounted && this.setState({ orderedAccounts });
-        }, 0);
-      } catch (e) {
-        // Restore to the previous index in case anything goes wrong
-        Logger.error(e, 'error while trying to add a new account'); // eslint-disable-line
-        this.mounted && this.setState({ loading: false });
-      }
-    });
+    // this.mounted && this.setState({ loading: true });
+    // const { KeyringController } = Engine.context;
+    // requestAnimationFrame(async () => {
+    //   try {
+    //     await KeyringController.addNewAccount();
+    //     const { PreferencesController } = Engine.context;
+    //     const newIndex = Object.keys(this.props.identities).length - 1;
+    //     PreferencesController.setSelectedAddress(
+    //       Object.keys(this.props.identities)[newIndex],
+    //     );
+    //     setTimeout(() => {
+    //       this.flatList &&
+    //         this.flatList.current &&
+    //         this.flatList.current.scrollToEnd();
+    //       this.mounted && this.setState({ loading: false });
+    //     }, 500);
+    //     const orderedAccounts = this.getAccounts();
+    //     this.mounted && this.setState({ orderedAccounts });
+    //   } catch (e) {
+    //     // Restore to the previous index in case anything goes wrong
+    //     Logger.error(e, 'error while trying to add a new account'); // eslint-disable-line
+    //     this.mounted && this.setState({ loading: false });
+    //   }
+    // });
     InteractionManager.runAfterInteractions(() => {
       Analytics.trackEvent(ANALYTICS_EVENT_OPTS.ACCOUNTS_ADDED_NEW_ACCOUNT);
     });
@@ -322,7 +391,7 @@ class AccountList extends PureComponent {
     const { accountsENS } = this.state;
     return (
       <AccountElement
-        onPress={this.onAccountChange}
+        onPress={this.onSelected}
         onLongPress={this.onLongPress}
         item={{ ...item, ens: accountsENS[item.address] }}
         ticker={ticker}
@@ -398,19 +467,51 @@ class AccountList extends PureComponent {
 
   keyExtractor = (item) => item.address;
 
+  copyClipboard = async () => {
+    await ClipboardManager.setString(this.props.selectedAddress);
+    this.mounted;
+    this.setState({ isVisible: false });
+    this.props.showAlert({
+      isVisible: true,
+      autodismiss: 1500,
+      content: 'clipboard-alert',
+      data: { msg: strings('account_details.account_copied_to_clipboard') },
+    });
+    setTimeout(() => this.props.protectWalletModalVisible(), 2000);
+  };
+
   render() {
-    const { orderedAccounts } = this.state;
-    const { enableAccountsAddition } = this.props;
-    const colors = this.context.colors || mockTheme.colors;
-    const styles = createStyles(colors);
+    const { orderedAccounts, accountsENS } = this.state;
+    const { ticker } = this.props;
+    const styles = createStyles();
+    const selectedAccount = orderedAccounts.find((item) => item.isSelected);
 
     return (
       <SafeAreaView style={styles.wrapper} testID={'account-list'}>
         <View style={styles.titleWrapper}>
           <View style={styles.dragger} testID={'account-list-dragger'} />
         </View>
+        <Text style={styles.titleWallet}>{'My Wallet'}</Text>
+        <View style={styles.containerMain}>
+          <Text style={styles.titleMain}>
+            {'Main '}
+            <Text style={styles.subTitleMain}>{'(show at home screen)'}</Text>
+          </Text>
+          <AccountElement
+            item={{
+              ...selectedAccount,
+              ens: accountsENS[selectedAccount?.address || ''],
+            }}
+            ticker={ticker}
+            onLongPress={this.onLongPress}
+            disabled
+          />
+        </View>
+        <View style={styles.containerOrder}>
+          <Text style={styles.titleMain}>{'Order'}</Text>
+        </View>
         <FlatList
-          data={orderedAccounts}
+          data={orderedAccounts || []}
           keyExtractor={this.keyExtractor}
           renderItem={this.renderItem}
           ref={this.flatList}
@@ -422,44 +523,54 @@ class AccountList extends PureComponent {
             index,
           })} // eslint-disable-line
         />
-        {enableAccountsAddition && (
-          <View style={styles.footer}>
+        <BaseModal
+          isVisible={this.state.isVisible}
+          onClose={() => this.setState({ isVisible: false })}
+        >
+          <View style={styles.containerModal}>
+            <View style={styles.titleWrapper}>
+              <View style={styles.dragger} testID={'account-list-dragger'} />
+            </View>
             <TouchableOpacity
-              style={styles.footerButton}
-              testID={'create-account-button'}
-              onPress={this.addAccount}
+              style={styles.containerIconModal}
+              onPress={() => {
+                this.setState({ isVisible: false });
+                this.onAccountChange(this.state.newAddress);
+              }}
             >
-              {this.state.loading ? (
-                <ActivityIndicator
-                  size="small"
-                  color={colors.primary.default}
-                />
-              ) : (
-                <Text style={styles.btnText}>
-                  {strings('accounts.create_new_account')}
-                </Text>
-              )}
+              <Image source={icons.iconWallet} style={styles.iconModal} />
+              <Text style={styles.titleIconModal}>{'Set as Main Wallet'}</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={this.importAccount}
-              style={styles.footerButton}
-              testID={'import-account-button'}
+              style={styles.containerIconModal}
+              onPress={this.copyClipboard}
             >
-              <Text style={styles.btnText}>
-                {strings('accounts.import_account')}
-              </Text>
+              <Image source={icons.iconClipBoard} style={styles.iconModal} />
+              <Text style={styles.titleIconModal}>{'Copy address'}</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={this.connectHardware}
-              style={styles.footerButton}
-              testID={'connect-hardware'}
+              style={styles.containerIconModal}
+              onPress={() => {
+                this.setState({ isVisible: false });
+                this.props.toggleAccountsModal();
+                this.props.navigation.navigate('WalletDetailView', {
+                  address: this.state.newAddress,
+                  selectedAddress: this.props.selectedAddress,
+                  orderedAccounts,
+                });
+              }}
             >
-              <Text style={styles.btnText}>
-                {strings('accounts.connect_hardware')}
-              </Text>
+              <Image source={icons.iconViewDetail} style={styles.iconModal} />
+              <Text style={styles.titleIconModal}>{'View Details'}</Text>
             </TouchableOpacity>
           </View>
-        )}
+        </BaseModal>
+        <SButton
+          style={styles.containerBtn}
+          type={'primary'}
+          title={'Add wallet'}
+          onPress={this.addAccount}
+        />
       </SafeAreaView>
     );
   }
@@ -472,6 +583,13 @@ const mapStateToProps = (state) => ({
   thirdPartyApiMode: state.privacy.thirdPartyApiMode,
   keyrings: state.engine.backgroundState.KeyringController.keyrings,
   network: state.engine.backgroundState.NetworkController.network,
+  address: state.engine.backgroundState.PreferencesController.selectedAddress,
 });
 
-export default connect(mapStateToProps)(AccountList);
+const mapDispatchToProps = (dispatch) => ({
+  showAlert: (config) => dispatch(showAlert(config)),
+  protectWalletModalVisible: () => dispatch(protectWalletModalVisible()),
+  toggleAccountsModal: () => dispatch(toggleAccountsModal()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(AccountList);

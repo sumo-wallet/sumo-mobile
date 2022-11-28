@@ -227,14 +227,14 @@ class ManualBackupStep3 extends PureComponent {
     return (
       <View style={styles.mainWrapper}>
         <Confetti />
-        {this.steps ? (
-          <View style={styles.onBoardingWrapper}>
-            <OnboardingProgress
-              currentStep={this.state.currentStep}
-              steps={this.steps}
-            />
-          </View>
-        ) : null}
+        {/*{this.steps ? (*/}
+        {/*  <View style={styles.onBoardingWrapper}>*/}
+        {/*    <OnboardingProgress*/}
+        {/*      currentStep={this.state.currentStep}*/}
+        {/*      steps={this.steps}*/}
+        {/*    />*/}
+        {/*  </View>*/}
+        {/*) : null}*/}
         <ActionView
           confirmTestID={'manual-backup-step-3-done-button'}
           confirmText={strings('manual_backup_step_3.done')}

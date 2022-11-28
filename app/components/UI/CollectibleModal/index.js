@@ -9,6 +9,7 @@ import CollectibleMedia from '../CollectibleMedia';
 import { baseStyles, colors as importedColors } from '../../../styles/common';
 import Device from '../../../util/device';
 import ReusableModal from '../ReusableModal';
+import { ROUTES } from './../../../navigation/routes';
 
 const styles = StyleSheet.create({
   bottomModal: {
@@ -42,7 +43,7 @@ const CollectibleModal = (props) => {
 
   const onSend = useCallback(async () => {
     newAssetTransaction({ contractName, ...collectible });
-    navigation.replace('SendFlowView');
+    navigation.replace(ROUTES.SendFlowView);
   }, [contractName, collectible, newAssetTransaction, navigation]);
 
   const isTradable = useCallback(() => {

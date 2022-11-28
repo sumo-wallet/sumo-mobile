@@ -42,6 +42,8 @@ const RemoteImage = (props) => {
 
   const uri = resolvedIpfsUrl || source.uri;
 
+  // console.log('uri: ' + uri);
+
   const onError = ({ nativeEvent: { error } }) => setError(error);
 
   if (error && props.address) {

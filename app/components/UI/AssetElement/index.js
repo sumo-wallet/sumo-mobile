@@ -1,18 +1,16 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { TouchableOpacity, StyleSheet, View } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
-import { ThemeContext, mockTheme } from '../../../util/theme';
+import { StyleSheet, TouchableOpacity } from 'react-native';
+import { mockTheme, ThemeContext } from '../../../util/theme';
 
 const createStyles = (colors) =>
   StyleSheet.create({
     itemWrapper: {
       flex: 1,
       flexDirection: 'row',
-      paddingHorizontal: 15,
-      paddingVertical: 10,
-      borderBottomWidth: StyleSheet.hairlineWidth,
-      borderBottomColor: colors.border.muted,
+      paddingHorizontal: 16,
+      paddingVertical: 16,
+      backgroundColor: colors.box.default,
     },
     arrow: {
       flex: 1,
@@ -68,14 +66,6 @@ export default class AssetElement extends PureComponent {
         style={styles.itemWrapper}
       >
         {children}
-        <View styles={styles.arrow}>
-          <Icon
-            name="ios-arrow-forward"
-            size={24}
-            color={colors.icon.alternative}
-            style={styles.arrowIcon}
-          />
-        </View>
       </TouchableOpacity>
     );
   };

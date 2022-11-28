@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Platform, TouchableOpacity, StyleSheet } from 'react-native';
+import { Platform, TouchableOpacity, StyleSheet, Text, View } from 'react-native';
 import PropTypes from 'prop-types';
 import ElevatedView from 'react-native-elevated-view';
 import TabCountIcon from '../Tabs/TabCountIcon';
@@ -10,6 +10,7 @@ import FeatherIcons from 'react-native-vector-icons/Feather';
 import AnalyticsV2 from '../../../util/analyticsV2';
 import Device from '../../../util/device';
 import { ThemeContext, mockTheme } from '../../../util/theme';
+import { Style, Colors, Fonts } from './../../../styles';
 
 const HOME_INDICATOR_HEIGHT = 18;
 const defaultBottomBarPadding = 0;
@@ -17,8 +18,10 @@ const defaultBottomBarPadding = 0;
 const createStyles = (colors) =>
   StyleSheet.create({
     bottomBar: {
+      flex: 1,
       backgroundColor: colors.background.default,
       flexDirection: 'row',
+      alignItems: 'center',
       paddingBottom:
         Device.isIphoneX() && Device.isIos()
           ? defaultBottomBarPadding + HOME_INDICATOR_HEIGHT
@@ -27,6 +30,8 @@ const createStyles = (colors) =>
       borderTopWidth: Device.isAndroid() ? 0 : StyleSheet.hairlineWidth,
       borderColor: colors.border.muted,
       justifyContent: 'space-between',
+      paddingHorizontal: 16,
+      paddingTop: 12,
     },
     iconButton: {
       height: 24,
@@ -34,9 +39,9 @@ const createStyles = (colors) =>
       justifyContent: 'space-around',
       alignItems: 'center',
       textAlign: 'center',
-      flex: 1,
-      paddingTop: 30,
-      paddingBottom: 30,
+      // flex: 1,
+      // paddingTop: 30,
+      // paddingBottom: 30,
     },
     tabIcon: {
       marginTop: 0,
@@ -92,6 +97,8 @@ export default class BrowserBottomBar extends PureComponent {
      * Function that toggles the options menu
      */
     toggleOptions: PropTypes.func,
+    url: PropTypes.string,
+    dapp: PropTypes.any,
   };
 
   trackSearchEvent = () => {
@@ -118,6 +125,8 @@ export default class BrowserBottomBar extends PureComponent {
       goHome,
       showUrlModal,
       toggleOptions,
+      url,
+      dapp,
     } = this.props;
     const colors = this.context.colors || mockTheme.colors;
     const styles = createStyles(colors);
@@ -142,9 +151,16 @@ export default class BrowserBottomBar extends PureComponent {
       this.trackNavigationEvent('Go Home');
     };
 
+    console.log('dapp: ', dapp);
+
     return (
-      <ElevatedView elevation={11} style={styles.bottomBar}>
-        <TouchableOpacity
+      <ElevatedView elevation={11} style={[styles.bottomBar, Style.s({px: 24, pb: 34})]}>
+        <View style={Style.s({ flex: 1 })} >
+          <Text style={Fonts.t({ s: 16, w: '500', c: Colors.grayscale[100] })} >
+            {dapp?.name ?? url}
+          </Text>
+        </View>
+        {/* <TouchableOpacity
           onPress={onBackPress}
           style={styles.iconButton}
           testID={'go-back-button'}
@@ -174,30 +190,31 @@ export default class BrowserBottomBar extends PureComponent {
           testID={'search-button'}
         >
           <FeatherIcons name="search" size={24} style={styles.icon} />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
-        <TouchableOpacity
-          onPress={showTabs}
-          style={styles.iconButton}
-          testID={'show-tabs-button'}
-        >
-          <TabCountIcon style={styles.tabIcon} />
-        </TouchableOpacity>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           onPress={onHomePress}
           style={styles.iconButton}
           testID={'home-button'}
         >
           <SimpleLineIcons name="home" size={22} style={styles.icon} />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={toggleOptions}
-          style={styles.iconButton}
-          testID={'options-button'}
-        >
-          <MaterialIcon name="more-horiz" size={22} style={styles.icon} />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
+        <View style={Style.s({ direc: 'row', items: 'center', pr: 16 })} >
+          <TouchableOpacity
+            onPress={showTabs}
+            style={styles.iconButton}
+            testID={'show-tabs-button'}
+          >
+            <TabCountIcon style={styles.tabIcon} />
+          </TouchableOpacity>
+          {/* <TouchableOpacity
+            onPress={toggleOptions}
+            style={styles.iconButton}
+            testID={'options-button'}
+          >
+            <MaterialIcon name="more-horiz" size={22} style={styles.icon} />
+          </TouchableOpacity> */}
+        </View>
       </ElevatedView>
     );
   }

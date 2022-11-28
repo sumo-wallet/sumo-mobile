@@ -1,10 +1,9 @@
 import TestHelpers from '../../helpers';
-import {
-  WELCOME_SCREEN_CAROUSEL_TITLE_ID,
-  WELCOME_SCREEN_GET_STARTED_BUTTON_ID,
-} from '../../../wdio/features/testIDs/Screens/WelcomeScreen.testIds';
 
-const ONBOARDING_CAROUSEL_ID = 'welcome-screen-carousel-container-id';
+const ONBOARDING_CAROUSEL_ID = 'onboarding-carousel-screen';
+const GET_STARTED_BUTTON_ID = 'onboarding-get-started-button';
+const CAROUSEL_SCREEN_TWO_ID = 'carousel-screen-two';
+const CAROUSEL_SCREEN_THREE_ID = 'carousel-screen-three';
 
 const CAROUSEL_SCREEN_ONE_IMAGE_ID = 'carousel-one-image';
 const CAROUSEL_SCREEN_TWO_IMAGE_ID = 'carousel-two-image';
@@ -15,7 +14,7 @@ export default class OnboardingCarouselView {
     await TestHelpers.swipe(ONBOARDING_CAROUSEL_ID, 'left');
   }
   static async tapOnGetStartedButton() {
-    await TestHelpers.waitAndTap(WELCOME_SCREEN_GET_STARTED_BUTTON_ID);
+    await TestHelpers.waitAndTap(GET_STARTED_BUTTON_ID);
   }
 
   static async isMetaMaskWelcomeTextVisible() {
@@ -30,7 +29,7 @@ export default class OnboardingCarouselView {
 
   static async isManageYourDigitalTextVisible() {
     await TestHelpers.checkIfElementHasString(
-      WELCOME_SCREEN_CAROUSEL_TITLE_ID(2),
+      CAROUSEL_SCREEN_TWO_ID,
       'Manage your digital assets',
     );
   }
@@ -41,7 +40,7 @@ export default class OnboardingCarouselView {
 
   static async isYourGatewayToWeb3TextVisible() {
     await TestHelpers.checkIfElementHasString(
-      WELCOME_SCREEN_CAROUSEL_TITLE_ID(3),
+      CAROUSEL_SCREEN_THREE_ID,
       'Your gateway to web3',
     );
   }

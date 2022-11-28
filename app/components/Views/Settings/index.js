@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
-import { StyleSheet, ScrollView, InteractionManager } from 'react-native';
+import { StyleSheet, ScrollView, InteractionManager, Alert } from 'react-native';
 import SettingsDrawer from '../../UI/SettingsDrawer';
 import { getClosableNavigationOptions } from '../../UI/Navbar';
 import { strings } from '../../../../locales/i18n';
@@ -8,13 +8,15 @@ import Analytics from '../../../core/Analytics/Analytics';
 import { ANALYTICS_EVENT_OPTS } from '../../../util/analytics';
 import { connect } from 'react-redux';
 import { ThemeContext, mockTheme } from '../../../util/theme';
+import Routes from '../../../constants/navigation/Routes';
+import { logOut } from '../../../actions/user';
 
 const createStyles = (colors) =>
   StyleSheet.create({
     wrapper: {
       backgroundColor: colors.background.default,
       flex: 1,
-      paddingLeft: 18,
+      paddingHorizontal: 18,
       zIndex: 99999999999999,
     },
   });
@@ -87,6 +89,28 @@ class Settings extends PureComponent {
     );
     this.props.navigation.navigate('ExperimentalSettings');
   };
+  logout = () => {
+    Alert.alert(
+      strings('drawer.lock_title'),
+      '',
+      [
+        {
+          text: strings('drawer.lock_cancel'),
+          onPress: () => null,
+          style: 'cancel',
+        },
+        {
+          text: strings('drawer.lock_ok'),
+          onPress: () => this.onPressLogout(),
+        },
+      ],
+      { cancelable: false },
+    );
+  };
+  onPressLogout = () => {
+    this.props.navigation.navigate(Routes.ONBOARDING.LOGIN);
+    this.props.logOut();
+  };
 
   onPressInfo = () => {
     InteractionManager.runAfterInteractions(() =>
@@ -110,36 +134,47 @@ class Settings extends PureComponent {
           description={strings('app_settings.general_desc')}
           onPress={this.onPressGeneral}
           title={strings('app_settings.general_title')}
+          icon={"gears"}
         />
         <SettingsDrawer
           description={strings('app_settings.security_desc')}
           onPress={this.onPressSecurity}
           title={strings('app_settings.security_title')}
           warning={!seedphraseBackedUp}
+          icon={"user-secret"}
         />
         <SettingsDrawer
           description={strings('app_settings.advanced_desc')}
           onPress={this.onPressAdvanced}
           title={strings('app_settings.advanced_title')}
+          icon={"magic"}
         />
         <SettingsDrawer
           description={strings('app_settings.contacts_desc')}
           onPress={this.onPressContacts}
           title={strings('app_settings.contacts_title')}
+          icon={"address-book-o"}
         />
         <SettingsDrawer
           title={strings('app_settings.networks_title')}
           description={strings('app_settings.networks_desc')}
           onPress={this.onPressNetworks}
+          icon={"wifi"}
         />
         <SettingsDrawer
           title={strings('app_settings.experimental_title')}
           description={strings('app_settings.experimental_desc')}
           onPress={this.onPressExperimental}
+          icon={"plug"}
         />
-        <SettingsDrawer
+        {/* <SettingsDrawer
           title={strings('app_settings.info_title')}
           onPress={this.onPressInfo}
+        /> */}
+        <SettingsDrawer
+          title={strings('app_settings.logout')}
+          onPress={this.logout}
+          icon={"logout"}
         />
       </ScrollView>
     );
@@ -152,4 +187,7 @@ const mapStateToProps = (state) => ({
   seedphraseBackedUp: state.user.seedphraseBackedUp,
 });
 
-export default connect(mapStateToProps)(Settings);
+const mapDispatchToProps = (dispatch) => ({
+  logOut: () => dispatch(logOut()),
+});
+export default connect(mapStateToProps, mapDispatchToProps)(Settings);

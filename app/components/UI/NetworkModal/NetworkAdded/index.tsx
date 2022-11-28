@@ -5,9 +5,10 @@ import { strings } from '../../../../../locales/i18n';
 import Text from '../../../Base/Text';
 import { useTheme } from '../../../../util/theme';
 import {
-  NEW_NETWORK_ADDED_SWITCH_TO_NETWORK_BUTTON,
-  NEW_NETWORK_ADDED_CLOSE_BUTTON,
-} from '../../../../../wdio/features/testIDs/Screens/NetworksScreen.testids';
+  NEW_NETWORK_ADDED_CLOSE_BUTTON_ID,
+  NEW_NETWORK_ADDED_SWITCH_TO_NETWORK_BUTTON_ID,
+} from '../../../../constants/test-ids';
+
 const createStyles = (colors: any) =>
   StyleSheet.create({
     buttonView: {
@@ -54,7 +55,7 @@ const NetworkAdded = (props: NetworkAddedProps) => {
       <View style={styles.buttonView}>
         <StyledButton
           type={'cancel'}
-          testID={NEW_NETWORK_ADDED_CLOSE_BUTTON}
+          testID={NEW_NETWORK_ADDED_CLOSE_BUTTON_ID}
           onPress={closeModal}
           containerStyle={[styles.button, styles.cancel]}
         >
@@ -63,7 +64,7 @@ const NetworkAdded = (props: NetworkAddedProps) => {
         <StyledButton
           type={'confirm'}
           onPress={switchNetwork}
-          testID={NEW_NETWORK_ADDED_SWITCH_TO_NETWORK_BUTTON}
+          testID={NEW_NETWORK_ADDED_SWITCH_TO_NETWORK_BUTTON_ID}
           containerStyle={[styles.button, styles.confirm]}
         >
           {strings('networks.switch_network')}

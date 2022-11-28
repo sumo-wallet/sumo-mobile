@@ -15,7 +15,6 @@ import URL from 'url-parse';
 import { getAddressAccountType } from '../../../util/address';
 import { KEYSTONE_TX_CANCELED } from '../../../constants/error';
 import { ThemeContext, mockTheme } from '../../../util/theme';
-import { MM_SDK_REMOTE_ORIGIN } from '../../../core/SDKConnect';
 
 const createStyles = (colors) =>
   StyleSheet.create({
@@ -100,7 +99,6 @@ class TypedSign extends PureComponent {
         chain_id: chainId,
         sign_type: 'typed',
         version: messageParams?.version,
-        ...currentPageInformation?.analytics,
       };
     } catch (error) {
       return {};
@@ -114,26 +112,19 @@ class TypedSign extends PureComponent {
     );
   };
 
-  walletConnectNotificationTitle = (confirmation, isError) => {
-    if (isError) return strings('notifications.wc_signed_failed_title');
-    return confirmation
-      ? strings('notifications.wc_signed_title')
-      : strings('notifications.wc_signed_rejected_title');
-  };
-
   showWalletConnectNotification = (
     messageParams = {},
     confirmation = false,
-    isError = false,
   ) => {
     InteractionManager.runAfterInteractions(() => {
       messageParams.origin &&
-        (messageParams.origin.startsWith(WALLET_CONNECT_ORIGIN) ||
-          messageParams.origin.startsWith(MM_SDK_REMOTE_ORIGIN)) &&
+        messageParams.origin.includes(WALLET_CONNECT_ORIGIN) &&
         NotificationManager.showSimpleNotification({
           status: `simple_notification${!confirmation ? '_rejected' : ''}`,
           duration: 5000,
-          title: this.walletConnectNotificationTitle(confirmation, isError),
+          title: confirmation
+            ? strings('notifications.wc_signed_title')
+            : strings('notifications.wc_signed_rejected_title'),
           description: strings('notifications.wc_description'),
         });
     });
@@ -144,22 +135,15 @@ class TypedSign extends PureComponent {
     const { KeyringController, TypedMessageManager } = Engine.context;
     const messageId = messageParams.metamaskId;
     const version = messageParams.version;
-    let rawSig;
-    let cleanMessageParams;
-    try {
-      cleanMessageParams = await TypedMessageManager.approveMessage(
-        messageParams,
-      );
-      rawSig = await KeyringController.signTypedMessage(
-        cleanMessageParams,
-        version,
-      );
-      TypedMessageManager.setMessageStatusSigned(messageId, rawSig);
-      this.showWalletConnectNotification(messageParams, true);
-    } catch (error) {
-      TypedMessageManager.setMessageStatusSigned(messageId, error.message);
-      this.showWalletConnectNotification(messageParams, false, true);
-    }
+    const cleanMessageParams = await TypedMessageManager.approveMessage(
+      messageParams,
+    );
+    const rawSig = await KeyringController.signTypedMessage(
+      cleanMessageParams,
+      version,
+    );
+    TypedMessageManager.setMessageStatusSigned(messageId, rawSig);
+    this.showWalletConnectNotification(messageParams, true);
   };
 
   rejectMessage = () => {

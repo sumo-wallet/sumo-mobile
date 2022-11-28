@@ -674,7 +674,7 @@ class Settings extends PureComponent {
           </Text>
         </Text>
 
-        <SeedPhraseVideo onClose={this.onBack} />
+        {/* <SeedPhraseVideo onClose={this.onBack} /> */}
 
         <Text style={styles.desc}>
           {strings(
@@ -1152,7 +1152,7 @@ class Settings extends PureComponent {
           {this.renderApprovalModal()}
           {this.renderHistoryModal()}
           {this.isMainnet() && this.renderOpenSeaSettings()}
-          <AutomaticSecurityChecks />
+          {__DEV__ ? <AutomaticSecurityChecks /> : null}
           {this.renderHint()}
         </View>
       </ScrollView>

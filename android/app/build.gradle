@@ -156,11 +156,11 @@ android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
 	defaultConfig {
-		applicationId "io.metamask"
+		applicationId "com.vappsmart.sumo"
 		minSdkVersion rootProject.ext.minSdkVersion
 		targetSdkVersion rootProject.ext.targetSdkVersion
-		versionCode 1018
-		versionName "5.11.0"
+		versionCode 6
+		versionName "1.0.0"
 		multiDexEnabled true
 		testBuildType System.getProperty('testBuildType', 'debug')
 		missingDimensionStrategy "minReactNative", "minReactNative46"
@@ -238,12 +238,12 @@ android {
         qa {
           dimension "version"
           applicationIdSuffix ".qa"
-          applicationId "io.metamask"
+          applicationId "com.vappsmart.sumo"
           signingConfig signingConfigs.qa
         }
         prod {
           dimension "version"
-          applicationId "io.metamask"
+          applicationId "com.vappsmart.sumo"
           signingConfig signingConfigs.release
         }
     	}

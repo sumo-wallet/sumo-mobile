@@ -209,7 +209,6 @@ export interface LegacyProps {
   currentCurrency: string;
   transactionState: any;
   ticker: string;
-  suggestedGasPrice: any;
-  suggestedGasLimit: string;
   onlyGas?: boolean;
+  gas: any;
 }

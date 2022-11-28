@@ -160,25 +160,31 @@ buildAndroidRunQA(){
 	react-native run-android --variant=qaDebug
 }
 
+buildAndroidRunE2E(){
+	prebuild_android
+	if [ -e $ANDROID_ENV_FILE ]
+	then
+		source $ANDROID_ENV_FILE
+	fi
+	cd android && ./gradlew assembleAndroidTest -PminSdkVersion=26 -DtestBuildType=debug && cd ..
+	react-native run-android
+}
+
 buildIosSimulator(){
 	prebuild_ios
-	SIM="${IOS_SIMULATOR:-"iPhone 11 Pro"}"
+	SIM="${IOS_SIMULATOR:-"iPhone 13 Pro"}"
 	react-native run-ios --simulator "$SIM"
 }
 
 buildIosSimulatorQA(){
 	prebuild_ios
-	SIM="${IOS_SIMULATOR:-"iPhone 11 Pro"}"
-	cd ios && xcodebuild -workspace MetaMask.xcworkspace -scheme MetaMask-QA -configuration Debug  -sdk iphonesimulator -derivedDataPath build
+	SIM="${IOS_SIMULATOR:-"iPhone 13 Pro"}"
+	react-native run-ios --simulator "$SIM" --scheme "MetaMask-QA"
 }
 
 buildIosSimulatorE2E(){
 	prebuild_ios
-	cd ios && xcodebuild -workspace MetaMask.xcworkspace -scheme MetaMask -configuration Debug  -sdk iphonesimulator -derivedDataPath build
-}
-
-runIosE2E(){
-  cd e2e && yarn ios:debug
+	cd ios && xcodebuild -workspace MetaMask.xcworkspace -scheme MetaMask -configuration Debug -sdk iphonesimulator -derivedDataPath build
 }
 
 buildIosDevice(){
@@ -278,7 +284,7 @@ buildIosQA(){
 
 buildAndroidQA(){
 	if [ "$PRE_RELEASE" = false ] ; then
-		adb uninstall io.metamask.qa
+		adb uninstall com.vappsmart.sumo.qa
 	fi
 
 	prebuild_android
@@ -304,7 +310,7 @@ buildAndroidQA(){
 
 buildAndroidRelease(){
 	if [ "$PRE_RELEASE" = false ] ; then
-		adb uninstall io.metamask || true
+		adb uninstall com.vappsmart.sumo || true
 	fi
 	prebuild_android
 
@@ -347,7 +353,7 @@ buildAndroid() {
 		buildAndroidReleaseE2E
 	elif [ "$MODE" == "QAE2E" ] ; then
 		buildAndroidQAE2E
-  elif [ "$MODE" == "debugE2E" ] ; then
+	elif [ "$MODE" == "debugE2E" ] ; then
 		buildAndroidRunE2E
 	elif [ "$MODE" == "qaDebug" ] ; then
 		buildAndroidRunQA
@@ -356,23 +362,13 @@ buildAndroid() {
 	fi
 }
 
-buildAndroidRunE2E(){
-	prebuild_android
-	if [ -e $ANDROID_ENV_FILE ]
-	then
-		source $ANDROID_ENV_FILE
-	fi
-	cd android && ./gradlew assembleAndroidTest -PminSdkVersion=26 -DtestBuildType=debug && cd ..
-	react-native run-android
-}
-
 buildIos() {
 	echo "Build iOS $MODE started..."
 	if [ "$MODE" == "release" ] ; then
 		buildIosRelease
 	elif [ "$MODE" == "releaseE2E" ] ; then
 		buildIosReleaseE2E
-  elif [ "$MODE" == "debugE2E" ] ; then
+	elif [ "$MODE" == "debugE2E" ] ; then
 		buildIosSimulatorE2E
 	elif [ "$MODE" == "QA" ] ; then
 		buildIosQA

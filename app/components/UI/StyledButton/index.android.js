@@ -127,9 +127,8 @@ export default class StyledButton extends PureComponent {
     return (
       <TouchableNativeFeedback
         {...touchableProps}
+        testID={this.props.testID}
         disabled={this.props.disabled}
-        accessible
-        accessibilityLabel={this.props.testID}
       >
         <View style={containerStyles}>
           {this.renderGroupedChildren(fontStyle, containerStyles)}

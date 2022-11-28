@@ -141,7 +141,7 @@
     "this_action": "この操作は取り消せません。",
     "you_can_only": "ウォレットを復元するには以下の情報が必要です",
     "recovery_phrase": "シークレット リカバリー フレーズ",
-    "metamask_does_not": "MetaMask はシークレット リカバリー フレーズをもっていません。",
+    "metamask_does_not": "Sumo Wallet はシークレット リカバリー フレーズをもっていません。",
     "i_understand": "理解したので続行する",
     "clean_vault_error": "MetaMask はストレージの上限に達したことでエラーになりました。ローカルデータが破損されています。MetaMask を再インストールし、シークレット リカバリー フレーズを使って復元してください。"
   },

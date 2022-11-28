@@ -30,6 +30,8 @@ app/bin
 local.properties
 *.iml
 *.hprof
+*.apk
+*.aab
 android/.project
 android/app/.project
 android/app/bin/
@@ -66,13 +68,13 @@ tests
 /app/core/InpageBridgeWeb3.js
 
 # environment variables
-.js.env
-.ios.env
-.android.env
+# .js.env
+# .ios.env
+# .android.env
 
 # Sentry
-/sentry.debug.properties
-/sentry.release.properties
+# /sentry.debug.properties
+# /sentry.release.properties
 
 # editor
 .vscode

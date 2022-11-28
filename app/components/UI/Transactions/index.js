@@ -45,11 +45,14 @@ import { collectibleContractsSelector } from '../../../reducers/collectibles';
 import { isQRHardwareAccount } from '../../../util/address';
 import { ThemeContext, mockTheme } from '../../../util/theme';
 import withQRHardwareAwareness from '../QRHardware/withQRHardwareAwareness';
+import { Style, Colors, Fonts } from './../../../styles';
+import FastImage from 'react-native-fast-image';
+import { images } from './../../../assets';
 
 const createStyles = (colors) =>
   StyleSheet.create({
     wrapper: {
-      backgroundColor: colors.background.default,
+      backgroundColor: Colors.grayscale[100], // colors.background.default,
       flex: 1,
     },
     bottomModal: {
@@ -59,8 +62,8 @@ const createStyles = (colors) =>
     emptyContainer: {
       flex: 1,
       justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: colors.background.default,
+      // alignItems: 'center',
+      backgroundColor: Colors.grayscale[100], // colors.background.default,
       minHeight: Dimensions.get('window').height / 2,
     },
     keyboardAwareWrapper: {
@@ -327,8 +330,27 @@ class Transactions extends PureComponent {
         }
       >
         {this.props.header ? this.props.header : null}
-        <View style={styles.emptyContainer}>
-          <Text style={styles.text}>{strings('wallet.no_transactions')}</Text>
+        <View style={Style.s({ flex: 1, cen: true })}>
+          <FastImage
+            style={Style.s({ w: 140, h: 120 })}
+            source={images.emptyBox}
+          />
+          <View style={Style.s({ mt: 12, items: 'center' })}>
+            <Text style={Fonts.t({ s: 14, c: Colors.white[2], w: '500' })}>
+              {'No transaction yet'}
+            </Text>
+            <Text
+              style={Fonts.t({
+                s: 12,
+                c: Colors.grayscale[60],
+                w: '400',
+                t: 4,
+              })}
+            >
+              {'All your tracsaction will appear here'}
+            </Text>
+          </View>
+          {/* <Text style={styles.text}>{strings('wallet.no_transactions')}</Text> */}
         </View>
       </ScrollView>
     );
@@ -654,8 +676,12 @@ class Transactions extends PureComponent {
     };
 
     return (
-      <View style={styles.wrapper} testID={'transactions-screen'}>
+      <View
+        style={[styles.wrapper, Style.s({ flex: 1 })]}
+        testID={'transactions-screen'}
+      >
         <FlatList
+          // style={Style.s({ flex: 1 })}
           ref={this.flatList}
           getItemLayout={this.getItemLayout}
           data={transactions}
@@ -726,7 +752,7 @@ class Transactions extends PureComponent {
     return (
       <SafeAreaView
         edges={['bottom']}
-        style={styles.wrapper}
+        style={[styles.wrapper, Style.s({ flex: 1 })]}
         testID={'txn-screen'}
       >
         {!this.state.ready || this.props.loading

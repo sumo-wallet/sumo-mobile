@@ -40,7 +40,6 @@ import { ThemeContext, mockTheme } from '../../../util/theme';
 import withQRHardwareAwareness from '../QRHardware/withQRHardwareAwareness';
 import QRSigningDetails from '../QRHardware/QRSigningDetails';
 import { withNavigation } from '@react-navigation/compat';
-import { MM_SDK_REMOTE_ORIGIN } from '../../../core/SDKConnect';
 
 const createStyles = (colors) =>
   StyleSheet.create({
@@ -81,6 +80,18 @@ const createStyles = (colors) =>
     hidden: {
       opacity: 0,
       height: 0,
+    },
+    titleWrapper: {
+      width: '100%',
+      height: 33,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    dragger: {
+      width: 48,
+      height: 5,
+      borderRadius: 4,
+      backgroundColor: colors.text.default,
     },
   });
 
@@ -353,16 +364,10 @@ class TransactionReview extends PureComponent {
     let url;
     if (
       transaction.origin &&
-      transaction.origin.startsWith(WALLET_CONNECT_ORIGIN)
+      transaction.origin.includes(WALLET_CONNECT_ORIGIN)
     ) {
       return transaction.origin.split(WALLET_CONNECT_ORIGIN)[1];
-    } else if (
-      transaction.origin &&
-      transaction.origin.startsWith(MM_SDK_REMOTE_ORIGIN)
-    ) {
-      return transaction.origin.split(MM_SDK_REMOTE_ORIGIN)[1];
     }
-
     browser.tabs.forEach((tab) => {
       if (tab.id === browser.activeTab) {
         url = tab.url;
@@ -412,6 +417,9 @@ class TransactionReview extends PureComponent {
             -Device.getDeviceWidth(),
           ])}
         >
+          <View style={styles.titleWrapper}>
+            <View style={styles.dragger} testID={'account-list-dragger'} />
+          </View>
           <TransactionHeader currentPageInformation={currentPageInformation} />
           <TransactionReviewSummary
             actionKey={actionKey}

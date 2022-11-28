@@ -19,9 +19,9 @@ import {
   PREFIXES,
 } from '../constants/deeplinks';
 import { showAlert } from '../actions/alert';
-import SDKConnect from '../core/SDKConnect';
 import Routes from '../constants/navigation/Routes';
-import Minimizer from 'react-native-minimizer';
+import { ROUTES } from './../navigation/routes';
+
 class DeeplinkManager {
   constructor({ navigation, frequentRpcList, dispatch }) {
     this.navigation = navigation;
@@ -133,7 +133,7 @@ class DeeplinkManager {
               params: { txMeta: { ...txMeta, action: 'send-eth' } },
             });
           } else {
-            this.navigation.navigate('SendFlowView', {
+            this.navigation.navigate(ROUTES.SendFlowView, {
               screen: 'SendTo',
               params: { txMeta },
             });
@@ -210,16 +210,7 @@ class DeeplinkManager {
           const action = urlObj.pathname.split('/')[1];
 
           if (action === ACTIONS.CONNECT) {
-            if (params.redirect) {
-              Minimizer.goBack();
-            } else {
-              SDKConnect.connectToChannel({
-                id: params.channelId,
-                commLayer: params.comm,
-                origin,
-                otherPublicKey: params.pubkey,
-              });
-            }
+            Alert.alert(strings('dapp_connect.warning'));
           } else if (action === ACTIONS.WC && params?.uri) {
             WalletConnect.newSession(
               params.uri,
@@ -304,16 +295,7 @@ class DeeplinkManager {
       case PROTOCOLS.METAMASK:
         handled();
         if (url.startsWith(`${PREFIXES.METAMASK}${ACTIONS.CONNECT}`)) {
-          if (params.redirect) {
-            Minimizer.goBack();
-          } else {
-            SDKConnect.connectToChannel({
-              id: params.channelId,
-              commLayer: params.comm,
-              origin,
-              otherPublicKey: params.pubkey,
-            });
-          }
+          Alert.alert(strings('dapp_connect.warning'));
         } else if (url.startsWith(`${PREFIXES.METAMASK}${ACTIONS.WC}`)) {
           const cleanUrlObj = new URL(urlObj.query.replace('?uri=', ''));
           const href = cleanUrlObj.href;

@@ -8,7 +8,7 @@ interface ImageIconPropTypes {
 }
 
 const ImageIcon = (props: ImageIconPropTypes) => {
-  const { image, style } = props;
+  const { image, style, ...rest } = props;
 
   if (!image) return null;
   const source = images[image];
@@ -16,7 +16,7 @@ const ImageIcon = (props: ImageIconPropTypes) => {
     return null;
   }
 
-  return <Image source={source} style={style} />;
+  return <Image source={source} style={style} {...rest} />;
 };
 
 export default ImageIcon;

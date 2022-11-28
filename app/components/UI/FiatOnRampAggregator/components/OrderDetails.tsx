@@ -7,7 +7,12 @@ import {
   Linking,
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
-import { Order, OrderStatusEnum } from '@consensys/on-ramp-sdk';
+import {
+  Order,
+  OrderStatusEnum,
+  Payment,
+  PaymentType,
+} from '@consensys/on-ramp-sdk';
 import Box from './Box';
 import CustomText from '../../../Base/Text';
 import BaseListItem from '../../../Base/ListItem';
@@ -26,7 +31,6 @@ import useAnalytics from '../hooks/useAnalytics';
 import { FiatOrder } from '../../FiatOrders';
 import { PROVIDER_LINKS } from '../types';
 import Account from './Account';
-import { FIAT_ORDER_STATES } from '../../../../constants/on-ramp';
 
 /* eslint-disable-next-line import/no-commonjs, @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports */
 const failedIcon = require('./images/TransactionIcon_Failed.png');
@@ -67,8 +71,8 @@ const createStyles = (colors: any) =>
   });
 
 interface PropsStage {
-  stage: FiatOrder['state'];
-  pendingDescription?: string;
+  stage: string;
+  paymentMethod?: Payment;
   cryptocurrency?: string;
   providerName?: string;
 }
@@ -86,14 +90,14 @@ const Group: React.FC = (props) => {
 
 const Stage: React.FC<PropsStage> = ({
   stage,
-  pendingDescription,
+  paymentMethod,
   cryptocurrency,
   providerName,
 }: PropsStage) => {
   const { colors } = useTheme();
   const styles = createStyles(colors);
   switch (stage) {
-    case FIAT_ORDER_STATES.COMPLETED: {
+    case OrderStatusEnum.Completed: {
       return (
         <View style={styles.stage}>
           <Feather
@@ -117,8 +121,8 @@ const Stage: React.FC<PropsStage> = ({
         </View>
       );
     }
-    case FIAT_ORDER_STATES.CANCELLED:
-    case FIAT_ORDER_STATES.FAILED: {
+    case OrderStatusEnum.Cancelled:
+    case OrderStatusEnum.Failed: {
       return (
         <View style={styles.stage}>
           <Image source={failedIcon} />
@@ -144,22 +148,31 @@ const Stage: React.FC<PropsStage> = ({
         </View>
       );
     }
-    case FIAT_ORDER_STATES.PENDING:
+    case OrderStatusEnum.Pending:
+    case OrderStatusEnum.Unknown:
     default: {
       return (
         <View style={styles.stage}>
           <Spinner />
           <Group>
             <Text bold big primary centered>
-              {stage === FIAT_ORDER_STATES.PENDING
+              {stage === 'PENDING'
                 ? strings('fiat_on_ramp_aggregator.order_details.processing')
                 : strings('transaction.submitted')}
             </Text>
-            {pendingDescription ? (
+            {paymentMethod?.paymentType === PaymentType.BankTransfer ? (
               <Text small centered grey>
-                {pendingDescription}
+                {strings(
+                  'fiat_on_ramp_aggregator.order_details.processing_bank_description',
+                )}
               </Text>
-            ) : null}
+            ) : (
+              <Text small centered grey>
+                {strings(
+                  'fiat_on_ramp_aggregator.order_details.processing_card_description',
+                )}
+              </Text>
+            )}
           </Group>
         </View>
       );
@@ -244,7 +257,7 @@ const OrderDetails: React.FC<Props> = ({
       <Group>
         <Stage
           stage={state}
-          pendingDescription={orderData?.timeDescriptionPending}
+          paymentMethod={orderData?.paymentMethod}
           cryptocurrency={cryptocurrency}
           providerName={providerName}
         />
@@ -265,16 +278,14 @@ const OrderDetails: React.FC<Props> = ({
             )}{' '}
             {cryptocurrency}
           </Text>
-          {state !== FIAT_ORDER_STATES.PENDING &&
-          orderData?.fiatCurrency?.decimals !== undefined &&
-          currencySymbol ? (
+          {orderData?.fiatCurrency?.decimals !== undefined && currencySymbol ? (
             <Text centered small grey>
               {currencySymbol}
               {renderFiat(amountOut, currency, orderData.fiatCurrency.decimals)}
             </Text>
           ) : (
-            <Text centered small grey>
-              ... {currency}
+            <Text centered small>
+              ...
             </Text>
           )}
         </Group>

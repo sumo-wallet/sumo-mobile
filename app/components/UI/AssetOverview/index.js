@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { swapsUtils } from '@metamask/swaps-controller';
-import AssetActionButton from '../AssetActionButton';
+// import AssetActionButton from '../AssetActionButton';
 import AppConstants from '../../../core/AppConstants';
 import TokenImage from '../../UI/TokenImage';
 import { fontStyles } from '../../../styles/common';
@@ -25,7 +25,7 @@ import {
 import { safeToChecksumAddress } from '../../../util/address';
 import { getEther } from '../../../util/transactions';
 import { newAssetTransaction } from '../../../actions/transaction';
-import { isSwapsAllowed } from '../Swaps/utils';
+// import { isSwapsAllowed } from '../Swaps/utils';
 import {
   swapsLivenessSelector,
   swapsTokensObjectSelector,
@@ -35,44 +35,48 @@ import Engine from '../../../core/Engine';
 import Logger from '../../../util/Logger';
 import Analytics from '../../../core/Analytics/Analytics';
 import AnalyticsV2 from '../../../util/analyticsV2';
-import { allowedToBuy } from '../FiatOrders';
-import AssetSwapButton from '../Swaps/components/AssetSwapButton';
+// import { allowedToBuy } from '../FiatOrders';
+// import AssetSwapButton from '../Swaps/components/AssetSwapButton';
 import NetworkMainAssetLogo from '../NetworkMainAssetLogo';
 import { ThemeContext, mockTheme } from '../../../util/theme';
 import Routes from '../../../constants/navigation/Routes';
 import { isTestNet } from '../../../util/networks';
+import { Colors, Style } from './../../../styles';
+import { SButton } from './../../common/SButton';
+import { ROUTES } from './../../../navigation/routes';
 
 const createStyles = (colors) =>
   StyleSheet.create({
     wrapper: {
       flex: 1,
       padding: 20,
-      borderBottomWidth: StyleSheet.hairlineWidth,
-      borderBottomColor: colors.border.muted,
+      // borderBottomWidth: StyleSheet.hairlineWidth,
+      // borderBottomColor: colors.border.muted,
       alignContent: 'center',
-      alignItems: 'center',
-      paddingBottom: 30,
+      // alignItems: 'center',
+      // paddingBottom: 30,
     },
     assetLogo: {
-      marginTop: 15,
+      marginTop: 12,
       alignItems: 'center',
       justifyContent: 'center',
       borderRadius: 10,
       marginBottom: 10,
     },
     ethLogo: {
-      width: 70,
-      height: 70,
+      width: 56,
+      height: 56,
     },
     balance: {
       alignItems: 'center',
       marginTop: 10,
-      marginBottom: 20,
+      // marginBottom: 20,
     },
     amount: {
       fontSize: 30,
-      color: colors.text.default,
-      ...fontStyles.normal,
+      // color: colors.text.default,
+      color: Colors.white[1],
+      // ...fontStyles.normal,
       textTransform: 'uppercase',
     },
     testNetAmount: {
@@ -182,8 +186,9 @@ class AssetOverview extends PureComponent {
   };
 
   onReceive = () => {
-    const { asset } = this.props;
-    this.props.toggleReceiveModal(asset);
+    const { navigation } = this.props;
+    // this.props.toggleReceiveModal(this.props.asset);
+    navigation.navigate('Receive');
   };
 
   onBuy = () => {
@@ -204,10 +209,10 @@ class AssetOverview extends PureComponent {
     const { asset, ticker } = this.props;
     if (asset.isETH) {
       this.props.newAssetTransaction(getEther(ticker));
-      this.props.navigation.navigate('SendFlowView');
+      this.props.navigation.navigate(ROUTES.SendFlowView);
     } else {
       this.props.newAssetTransaction(asset);
-      this.props.navigation.navigate('SendFlowView');
+      this.props.navigation.navigate(ROUTES.SendFlowView);
     }
   };
 
@@ -296,13 +301,14 @@ class AssetOverview extends PureComponent {
       conversionRate,
       currentCurrency,
       chainId,
-      swapsIsLive,
-      swapsTokens,
+      // swapsIsLive,
+      // swapsTokens,
     } = this.props;
     const colors = this.context.colors || mockTheme.colors;
     const styles = createStyles(colors);
 
-    let mainBalance, secondaryBalance;
+    let mainBalance;
+    // let secondaryBalance; // balance in fiat
     const itemAddress = safeToChecksumAddress(address);
     let balance, balanceFiat;
     if (isETH) {
@@ -333,14 +339,14 @@ class AssetOverview extends PureComponent {
     // choose balances depending on 'primaryCurrency'
     if (primaryCurrency === 'ETH') {
       mainBalance = `${balance} ${symbol}`;
-      secondaryBalance = balanceFiat;
+      // secondaryBalance = balanceFiat;
     } else {
       mainBalance = !balanceFiat ? `${balance} ${symbol}` : balanceFiat;
-      secondaryBalance = !balanceFiat ? balanceFiat : `${balance} ${symbol}`;
+      // secondaryBalance = !balanceFiat ? balanceFiat : `${balance} ${symbol}`;
     }
     return (
       <View style={styles.wrapper} testID={'token-asset-overview'}>
-        <View style={styles.assetLogo}>{this.renderLogo()}</View>
+        <View style={[styles.assetLogo]}>{this.renderLogo()}</View>
         <View style={styles.balance}>
           {balanceError ? (
             this.renderWarning()
@@ -354,14 +360,34 @@ class AssetOverview extends PureComponent {
               >
                 {mainBalance}
               </Text>
-              {secondaryBalance && (
+              {/* {secondaryBalance && (
                 <Text style={styles.amountFiat}>{secondaryBalance}</Text>
-              )}
+              )} */}
             </>
           )}
         </View>
 
-        {!balanceError && (
+        <View style={Style.s({ direc: 'row', items: 'center', mt: 24 })}>
+          {/* <TouchableOpacity>
+            <Text style={[Font]} >
+              {'Receive'}
+            </Text>
+          </TouchableOpacity> */}
+          <SButton
+            title="Receive"
+            onPress={this.onReceive}
+            type="border"
+            style={Style.s({ flex: 1 })}
+          />
+          <SButton
+            title="Send"
+            onPress={this.onSend}
+            type="border"
+            style={Style.s({ flex: 1, ml: 16 })}
+          />
+        </View>
+
+        {/* {!balanceError && (
           <View style={styles.actions}>
             <AssetActionButton
               icon="receive"
@@ -390,7 +416,7 @@ class AssetOverview extends PureComponent {
               />
             )}
           </View>
-        )}
+        )} */}
       </View>
     );
   }

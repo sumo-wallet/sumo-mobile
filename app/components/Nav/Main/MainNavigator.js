@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable react/display-name */
 import React, { useRef } from 'react';
 import { Image, StyleSheet } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -59,7 +61,7 @@ import OptinMetrics from '../../UI/OptinMetrics';
 import Drawer from '../../UI/Drawer';
 import { FiatOnRampSDKProvider } from '../../UI/FiatOnRampAggregator/sdk';
 import GetStarted from '../../../components/UI/FiatOnRampAggregator/Views/GetStarted';
-import PaymentMethods from '../../UI/FiatOnRampAggregator/Views/PaymentMethods';
+import PaymentMethod from '../../../components/UI/FiatOnRampAggregator/Views/PaymentMethod';
 import AmountToBuy from '../../../components/UI/FiatOnRampAggregator/Views/AmountToBuy';
 import GetQuotes from '../../../components/UI/FiatOnRampAggregator/Views/GetQuotes';
 import CheckoutWebView from '../../UI/FiatOnRampAggregator/Views/Checkout';
@@ -69,9 +71,32 @@ import { colors as importedColors } from '../../../styles/common';
 import OrderDetails from '../../UI/FiatOnRampAggregator/Views/OrderDetails';
 import BrowserUrlModal from '../../Views/BrowserUrlModal';
 import Routes from '../../../constants/navigation/Routes';
+// import Login from './../../Views/Login';
+// import { HomeScreen } from './../../screens/Home';
+import { DappsScreen } from './../../screens/Dapps';
+// import { SwapScreen } from './../../screens/Swap';
+import { NftScreen } from './../../screens/Nft';
+import { NotificationsScreen } from './../../screens/Notifications';
+import { AddWalletScreen } from './../../screens/AddWallet';
+import { WalletDetailScreen } from './../../screens/WalletDetail';
+
+// import { WalletScreen } from './../../screens/Wallet';
+import { Style } from './../../../styles';
+import ManualBackupPhrase from '../../Views/ManualBackupPhrase';
+import { icons } from './../../../assets';
+import { HomeScreen } from '../../screens/Home';
+import { ROUTES } from './../../../navigation/routes';
+import { ReceiveScreen } from '../../screens/Receive';
+import { ChangeNetwork } from './../../screens/ChangeNetwork';
+import { DappDetails } from './../../screens/DappDetails';
+import { DappSearch } from './../../screens/DappSearch';
+import { useTheme } from '../../../util/theme';
+
+// import ManagerCoinModal from '../../screens/Wallet/modal/ManagerCoinModal';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+const BottomTab = createBottomTabNavigator();
 
 const styles = StyleSheet.create({
   headerLogo: {
@@ -115,13 +140,12 @@ const WalletModalFlow = () => (
     <Stack.Screen
       name={'Wallet'}
       component={Wallet}
-      options={{ headerShown: true, animationEnabled: false }}
+      options={{ headerShown: false, animationEnabled: false }}
     />
     <Stack.Screen name={'DetectedTokens'} component={DetectedTokensFlow} />
   </Stack.Navigator>
 );
 
-/* eslint-disable react/prop-types */
 const AssetStackFlow = (props) => (
   <Stack.Navigator>
     <Stack.Screen
@@ -155,7 +179,6 @@ const AssetModalFlow = (props) => (
     />
   </Stack.Navigator>
 );
-/* eslint-enable react/prop-types */
 
 const WalletTabStackFlow = () => (
   <Stack.Navigator initialRouteName={'WalletView'}>
@@ -184,10 +207,20 @@ const WalletTabStackFlow = () => (
       component={RevealPrivateCredential}
       options={RevealPrivateCredential.navigationOptions}
     />
+    <Stack.Screen
+      name="AddWalletView"
+      component={AddWalletScreen}
+      options={{ headerShown: false }}
+    />
+    <Stack.Screen
+      name="WalletDetailView"
+      component={WalletDetailScreen}
+      options={{ headerShown: false }}
+    />
   </Stack.Navigator>
 );
 
-const WalletTabModalFlow = () => (
+export const WalletTabModalFlow = () => (
   <Stack.Navigator mode={'modal'} screenOptions={clearStackNavigatorOptions}>
     <Stack.Screen name={'WalletTabStackFlow'} component={WalletTabStackFlow} />
     <Stack.Screen
@@ -205,7 +238,11 @@ const BrowserFlow = () => (
       cardStyle: { backgroundColor: importedColors.transparent },
     }}
   >
-    <Stack.Screen name={Routes.BROWSER_VIEW} component={Browser} />
+    <Stack.Screen
+      name={Routes.BROWSER_VIEW}
+      component={Browser}
+      options={{ animationEnabled: true, headerShown: false }}
+    />
     <Stack.Screen
       name={Routes.BROWSER_URL_MODAL}
       component={BrowserUrlModal}
@@ -224,31 +261,197 @@ const TransactionsHome = () => (
   </Stack.Navigator>
 );
 
+export const SwapTabModalFlow = () => (
+  <Stack.Navigator mode={'modal'} screenOptions={clearStackNavigatorOptions}>
+    <Stack.Screen
+      name="SwapsAmountView"
+      component={SwapsAmountView}
+      options={SwapsAmountView.navigationOptions}
+    />
+    <Stack.Screen
+      name="SwapsQuotesView"
+      component={SwapsQuotesView}
+      options={SwapsQuotesView.navigationOptions}
+    />
+    <Stack.Screen name={'WalletTabStackFlow'} component={WalletTabStackFlow} />
+    <Stack.Screen
+      name={'AssetHideConfirmation'}
+      component={AssetHideConfirmation}
+    />
+  </Stack.Navigator>
+);
+
 export const DrawerContext = React.createContext({ drawerRef: null });
+
+export const BottomTabContainer = () => {
+  const { colors } = useTheme();
+  return (
+    <BottomTab.Navigator
+      initialRouteName={ROUTES.HomeScreen}
+      // tabBarOptions={{ style: styles.hidden }}
+      tabBarOptions={{
+        showIcon: true,
+        showLabel: true,
+        activeTintColor: colors.primary.default,
+        inactiveTintColor: '#64748B',
+        inactiveBackgroundColor: colors.background.default,
+        activeBackgroundColor: colors.background.default,
+        style: {
+          backgroundColor: colors.background.default,
+        },
+      }}
+      sceneContainerStyle={{
+        backgroundColor: colors.background.default,
+      }}
+      screenOptions={{ tabBarVisible: true }}
+    >
+      <Tab.Screen
+        name={ROUTES.HomeScreen}
+        component={HomeScreen}
+        options={{
+          title: 'Home',
+          tabBarIcon: ({ color }) => {
+            return (
+              <Image
+                style={Style.s({ size: 20, tin: color })}
+                source={icons.iconHome}
+              />
+            );
+          },
+        }}
+      />
+      <Tab.Screen
+        name={ROUTES.DappsScreen}
+        component={DappsScreen}
+        options={{
+          title: 'Dapps',
+          tabBarIcon: ({ color }) => {
+            return (
+              <Image
+                style={Style.s({ size: 20, tin: color })}
+                source={icons.iconDapps}
+              />
+            );
+          },
+        }}
+      />
+      {/* <Tab.Screen
+        name={ROUTES.SwapScreen}
+        component={SwapTabModalFlow}
+        options={{
+          title: 'Swap',
+          tabBarIcon: ({ color }) => {
+            return (
+              <Image
+                style={Style.s({ size: 20, tin: color })}
+                source={icons.iconSwap}
+              />
+            );
+          },
+        }}
+      /> */}
+      <Tab.Screen
+        name={ROUTES.NftScreen}
+        component={NftScreen}
+        options={{
+          title: 'Nft',
+          tabBarIcon: ({ color }) => {
+            return (
+              <Image
+                style={Style.s({ size: 20, tin: color })}
+                source={icons.iconNft}
+              />
+            );
+          },
+        }}
+      />
+      <Tab.Screen
+        name={ROUTES.WalletScreen}
+        component={WalletTabModalFlow}
+        options={{
+          title: 'Wallet',
+          tabBarIcon: ({ color }) => {
+            return (
+              <Image
+                style={Style.s({ size: 20, tin: color })}
+                source={icons.iconWallet}
+              />
+            );
+          },
+        }}
+      />
+    </BottomTab.Navigator>
+  );
+};
+
+const SendFlowViewContainer = () => (
+  <Stack.Navigator>
+    <Stack.Screen
+      name={ROUTES.SendTo}
+      component={SendTo}
+      // options={SendTo.navigationOptions}
+      options={{
+        headerShown: false,
+      }}
+    />
+    <Stack.Screen
+      name="Amount"
+      component={Amount}
+      options={Amount.navigationOptions}
+    />
+    <Stack.Screen
+      name="Confirm"
+      component={Confirm}
+      options={Confirm.navigationOptions}
+    />
+  </Stack.Navigator>
+);
+
+// const AppStack = createStackNavigator();
+
+const AppStackContainer = () => {
+  return (
+    <Stack.Navigator mode="card" screenOptions={{ headerShown: false }}>
+      <Tab.Screen
+        name={ROUTES.BottomTabContainer}
+        component={BottomTabContainer} // WalletTabModalFlow
+        options={{ tabBarVisible: false }}
+      />
+      <Stack.Screen
+        name={ROUTES.Receive}
+        component={ReceiveScreen}
+        initialParams={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name={ROUTES.SendFlowView}
+        component={SendFlowViewContainer}
+      />
+    </Stack.Navigator>
+  );
+};
 
 const HomeTabs = () => {
   const drawerRef = useRef(null);
-
   return (
     <DrawerContext.Provider value={{ drawerRef }}>
       <Drawer ref={drawerRef}>
         <Tab.Navigator
-          initialRouteName={'WalletTabHome'}
+          initialRouteName={ROUTES.AppStackContainer}
           tabBarOptions={{ style: styles.hidden }}
-          screenOptions={{ tabBarVisible: false }}
+          screenOptions={{ tabBarVisible: true }}
         >
           <Tab.Screen
-            name="WalletTabHome"
-            component={WalletTabModalFlow}
+            name={ROUTES.AppStackContainer}
+            component={AppStackContainer} // WalletTabModalFlow
             options={{ tabBarVisible: false }}
           />
-          <Tab.Screen
-            name={Routes.BROWSER_TAB_HOME}
+          {/* <Tab.Screen
+            name={ROUTES.BrowserTabHome}
             component={BrowserFlow}
             options={{ tabBarVisible: false }}
-          />
+          /> */}
           <Tab.Screen
-            name="TransactionsHome"
+            name={ROUTES.TransactionsHome}
             component={TransactionsHome}
             options={{ tabBarVisible: false }}
           />
@@ -343,6 +546,11 @@ const SettingsFlow = () => (
       options={ManualBackupStep1.navigationOptions}
     />
     <Stack.Screen
+      name={'ManualBackupPhrase'}
+      component={ManualBackupPhrase}
+      options={ManualBackupPhrase.navigationOptions}
+    />
+    <Stack.Screen
       name="ManualBackupStep2"
       component={ManualBackupStep2}
       options={ManualBackupStep2.navigationOptions}
@@ -398,26 +606,6 @@ const SendView = () => (
       name="Send"
       component={Send}
       options={Send.navigationOptions}
-    />
-  </Stack.Navigator>
-);
-
-const SendFlowView = () => (
-  <Stack.Navigator>
-    <Stack.Screen
-      name="SendTo"
-      component={SendTo}
-      options={SendTo.navigationOptions}
-    />
-    <Stack.Screen
-      name="Amount"
-      component={Amount}
-      options={Amount.navigationOptions}
-    />
-    <Stack.Screen
-      name="Confirm"
-      component={Confirm}
-      options={Confirm.navigationOptions}
     />
   </Stack.Navigator>
 );
@@ -498,11 +686,11 @@ const FiatOnRampAggregator = () => (
       />
       <Stack.Screen
         name={Routes.FIAT_ON_RAMP_AGGREGATOR.PAYMENT_METHOD}
-        component={PaymentMethods}
+        component={PaymentMethod}
       />
       <Stack.Screen
         name={Routes.FIAT_ON_RAMP_AGGREGATOR.PAYMENT_METHOD_HAS_STARTED}
-        component={PaymentMethods}
+        component={PaymentMethod}
         options={{ animationEnabled: false }}
       />
       <Stack.Screen
@@ -600,7 +788,7 @@ const MainNavigator = () => (
     screenOptions={{
       headerShown: false,
     }}
-    mode={'modal'}
+    mode={'card'}
     initialRouteName={'Home'}
   >
     <Stack.Screen
@@ -617,6 +805,14 @@ const MainNavigator = () => (
       }}
     />
     <Stack.Screen name="Home" tabBarVisible={false} component={HomeTabs} />
+    <Tab.Screen
+      name={ROUTES.BrowserTabHome}
+      component={BrowserFlow}
+      options={{ headerShown: false }}
+    />
+    <Stack.Screen name={ROUTES.ChangeNetwork} component={ChangeNetwork} />
+    <Stack.Screen name={ROUTES.DappDetails} component={DappDetails} />
+    <Stack.Screen name={ROUTES.DappSearch} component={DappSearch} />
     <Stack.Screen name="Webview" component={Webview} />
     <Stack.Screen name="SettingsView" component={SettingsModalStack} />
     <Stack.Screen
@@ -628,7 +824,7 @@ const MainNavigator = () => (
       component={ConnectQRHardwareFlow}
     />
     <Stack.Screen name="SendView" component={SendView} />
-    <Stack.Screen name="SendFlowView" component={SendFlowView} />
+    {/* <Stack.Screen name="SendFlowView" component={SendFlowView} /> */}
     <Stack.Screen name="AddBookmarkView" component={AddBookmarkView} />
     <Stack.Screen name="OfflineModeView" component={OfflineModeView} />
     <Stack.Screen name={Routes.QR_SCANNER} component={QrScanner} />
@@ -653,6 +849,7 @@ const MainNavigator = () => (
       // eslint-disable-next-line react-native/no-inline-styles
       headerStyle={{ borderBottomWidth: 0 }}
     />
+    <Stack.Screen name="NotificationsView" component={NotificationsScreen} />
   </Stack.Navigator>
 );
 

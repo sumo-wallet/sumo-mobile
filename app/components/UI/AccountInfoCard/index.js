@@ -23,9 +23,10 @@ const createStyles = (colors) =>
       borderRadius: 10,
       padding: Device.isMediumDevice() ? 8 : 16,
       alignItems: 'center',
+      backgroundColor: colors.background.alternative,
     },
     identicon: {
-      marginRight: 8,
+      marginRight: 16,
     },
     accountInfoRow: {
       flexGrow: 1,
@@ -60,9 +61,10 @@ const createStyles = (colors) =>
     },
     balanceText: {
       ...fontStyles.thin,
-      fontSize: 14,
+      fontSize: 12,
       alignSelf: 'flex-start',
       color: colors.text.default,
+      fontWeight: 400,
     },
     balanceTextSmall: {
       fontSize: 12,

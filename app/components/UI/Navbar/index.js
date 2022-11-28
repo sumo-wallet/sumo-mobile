@@ -13,7 +13,6 @@ import {
   Image,
   Keyboard,
   InteractionManager,
-  Platform,
 } from 'react-native';
 import { fontStyles, colors as importedColors } from '../../../styles/common';
 import IonicIcon from 'react-native-vector-icons/Ionicons';
@@ -30,12 +29,9 @@ import { importAccountFromPrivateKey } from '../../../util/address';
 import Device from '../../../util/device';
 import { isGatewayUrl } from '../../../lib/ens-ipfs/resolver';
 import { getHost } from '../../../util/browser';
-import generateTestId from '../../../../wdio/utils/generateTestId';
-import { WALLET_VIEW_BURGER_ICON_ID } from '../../../../wdio/features/testIDs/Screens/WalletView.testIds';
-import {
-  NAV_ANDROID_BACK_BUTTON,
-  NETWORK_BACK_ARROW_BUTTON_ID,
-} from '../../../../wdio/features/testIDs/Screens/NetworksScreen.testids';
+import { BACK_ARROW_BUTTON_ID } from '../../../constants/test-ids';
+import { Colors } from './../../../styles';
+
 const { HOMEPAGE_URL } = AppConstants;
 
 const trackEvent = (event) => {
@@ -140,7 +136,7 @@ export default function getNavbarOptions(
 
   function onPress() {
     Keyboard.dismiss();
-    drawerRef.current?.showDrawer?.();
+    drawerRef?.current?.showDrawer?.();
     trackEvent(ANALYTICS_EVENT_OPTS.COMMON_TAPS_HAMBURGER_MENU);
   }
 
@@ -215,7 +211,7 @@ export function getNavigationOptionsTitle(
         <TouchableOpacity
           onPress={navigationPop}
           style={styles.backButton}
-          {...generateTestId(Platform, NETWORK_BACK_ARROW_BUTTON_ID)}
+          testID={BACK_ARROW_BUTTON_ID}
         >
           <IonicIcon
             name={Device.isAndroid() ? 'md-arrow-back' : 'ios-arrow-back'}
@@ -611,7 +607,7 @@ export function getBrowserViewNavbarOptions(
 
   function onPress() {
     Keyboard.dismiss();
-    drawerRef.current?.showDrawer?.();
+    drawerRef?.current?.showDrawer?.();
     trackEvent(ANALYTICS_EVENT_OPTS.COMMON_TAPS_HAMBURGER_MENU);
   }
 
@@ -872,7 +868,7 @@ export function getClosableNavigationOptions(
         <TouchableOpacity
           onPress={navigationPop}
           style={styles.backButton}
-          {...generateTestId(Platform, NAV_ANDROID_BACK_BUTTON)}
+          testID={'nav-android-back'}
         >
           <IonicIcon
             name={'md-arrow-back'}
@@ -966,7 +962,7 @@ export function getWalletNavbarOptions(
   };
 
   function openDrawer() {
-    drawerRef.current?.showDrawer?.();
+    drawerRef?.current?.showDrawer?.();
     trackEvent(ANALYTICS_EVENT_OPTS.COMMON_TAPS_HAMBURGER_MENU);
   }
 
@@ -986,7 +982,6 @@ export function getWalletNavbarOptions(
         testID={'hamburger-menu-button-wallet'}
       >
         <IonicIcon
-          {...generateTestId(Platform, WALLET_VIEW_BURGER_ICON_ID)}
           name={Device.isAndroid() ? 'md-menu' : 'ios-menu'}
           size={Device.isAndroid() ? 24 : 28}
           style={innerStyles.headerIcon}
@@ -1028,7 +1023,8 @@ export function getNetworkNavbarOptions(
 ) {
   const innerStyles = StyleSheet.create({
     headerStyle: {
-      backgroundColor: themeColors.background.default,
+      // backgroundColor: themeColors.background.default,
+      backgroundColor: Colors.grayscale[100],
       shadowColor: importedColors.transparent,
       elevation: 0,
     },

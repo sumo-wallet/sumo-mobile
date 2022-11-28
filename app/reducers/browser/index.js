@@ -5,9 +5,15 @@ const initialState = {
   whitelist: [],
   tabs: [],
   activeTab: null,
+  dapp: null,
 };
 const browserReducer = (state = initialState, action) => {
   switch (action.type) {
+    case 'OPEN_DAPP':
+      return {
+        ...state,
+        dapp: action?.dapp,
+      };
     case 'ADD_TO_BROWSER_HISTORY':
       return {
         ...state,

@@ -1,13 +1,14 @@
-import React, { PureComponent } from 'react';
+import React, { PureComponent, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import {
   TouchableOpacity,
   StyleSheet,
   View,
   InteractionManager,
+  Image,
 } from 'react-native';
 import TokenImage from '../TokenImage';
-import { fontStyles } from '../../../styles/common';
+import { colors, fontStyles } from '../../../styles/common';
 import { strings } from '../../../../locales/i18n';
 import ActionSheet from 'react-native-actionsheet';
 import {
@@ -28,19 +29,42 @@ import { ThemeContext, mockTheme } from '../../../util/theme';
 import Text from '../../Base/Text';
 import NotificationManager from '../../../core/NotificationManager';
 import { getDecimalChainId, isTestNet } from '../../../util/networks';
+import BalanceFrame from '../../screens/Wallet/components/BalanceFrame';
+import { SearchBar } from '../../screens/Dapps/SearchBar';
+import { icons } from '../../../assets';
 
-const createStyles = (colors) =>
+const createStyles = (colors: any) =>
   StyleSheet.create({
     wrapper: {
-      backgroundColor: colors.background.default,
       flex: 1,
-      minHeight: 500,
+      minHeight: 600,
+    },
+    wrapperTokens: {
+      flex: 1,
+      backgroundColor: colors.box.default,
     },
     emptyView: {
-      backgroundColor: colors.background.default,
       justifyContent: 'center',
       alignItems: 'center',
       marginTop: 50,
+    },
+    containerSearchBar: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      backgroundColor: colors.box.default,
+    },
+    containerSetting: {
+      justifyContent: 'center',
+      marginRight: 16,
+    },
+    containerIcon: {
+      padding: 12,
+      backgroundColor: colors.background.alternativeHover,
+      borderRadius: 40,
+    },
+    icon: {
+      width: 20,
+      height: 20,
     },
     text: {
       fontSize: 20,
@@ -54,7 +78,7 @@ const createStyles = (colors) =>
     },
     addText: {
       fontSize: 14,
-      color: colors.primary.default,
+      color: colors.text.default,
       ...fontStyles.normal,
     },
     tokensDetectedButton: {
@@ -65,8 +89,8 @@ const createStyles = (colors) =>
     },
     tokensDetectedText: {
       fontSize: 14,
-      color: colors.primary.default,
       ...fontStyles.normal,
+      color: colors.text.default,
     },
     footer: {
       flex: 1,
@@ -76,39 +100,52 @@ const createStyles = (colors) =>
     },
     balances: {
       flex: 1,
-      justifyContent: 'center',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border.default,
+    },
+    balanceSymbol: {
+      fontWeight: '500',
     },
     balance: {
       fontSize: 16,
-      color: colors.text.default,
       ...fontStyles.normal,
       textTransform: 'uppercase',
+      color: colors.text.default,
     },
     testNetBalance: {
       fontSize: 16,
-      color: colors.text.default,
       ...fontStyles.normal,
+      color: colors.text.default,
     },
     balanceFiat: {
-      fontSize: 12,
-      color: colors.text.alternative,
+      fontSize: 14,
       ...fontStyles.normal,
       textTransform: 'uppercase',
+      color: colors.text.default,
     },
     balanceFiatTokenError: {
       textTransform: 'capitalize',
     },
     ethLogo: {
-      width: 50,
-      height: 50,
+      width: 40,
+      height: 40,
       borderRadius: 25,
       overflow: 'hidden',
-      marginRight: 20,
+      marginRight: 16,
     },
     emptyText: {
-      color: colors.text.alternative,
       marginBottom: 8,
       fontSize: 14,
+      color: colors.text.alternative,
+    },
+    iconManageToken: {
+      width: 16,
+      height: 16,
+      marginRight: 4,
+      tintColor: colors.text.alternative,
     },
   });
 
@@ -170,6 +207,9 @@ class Tokens extends PureComponent {
      * Boolean that indicates if token detection is enabled
      */
     isTokenDetectionEnabled: PropTypes.bool,
+    selectedAddress: PropTypes.number,
+    identities: PropTypes.object,
+    accounts: PropTypes.object,
   };
 
   actionSheet = null;
@@ -217,6 +257,7 @@ class Tokens extends PureComponent {
           disabled={!this.state.isAddTokenEnabled}
           testID={'add-token-button'}
         >
+          <Image source={icons.iconSetting} style={styles.iconManageToken} />
           <Text style={styles.addText}>{strings('wallet.add_tokens')}</Text>
         </TouchableOpacity>
       </View>
@@ -249,7 +290,7 @@ class Tokens extends PureComponent {
     const balanceFiat =
       asset.balanceFiat ||
       balanceToFiat(balance, conversionRate, exchangeRate, currentCurrency);
-    const balanceValue = `${balance} ${asset.symbol}`;
+    const balanceValue = `${balance}`;
 
     // render balances according to primary currency
     let mainBalance, secondaryBalance;
@@ -286,11 +327,24 @@ class Tokens extends PureComponent {
         )}
 
         <View style={styles.balances} testID={'balance'}>
-          <Text
-            style={isTestNet(chainId) ? styles.testNetBalance : styles.balance}
-          >
-            {mainBalance}
-          </Text>
+          <View>
+            <Text
+              style={[
+                isTestNet(chainId) ? styles.testNetBalance : styles.balance,
+                styles.balanceSymbol,
+              ]}
+            >
+              {asset.symbol}
+            </Text>
+            <Text
+              style={
+                isTestNet(chainId) ? styles.testNetBalance : styles.balance
+              }
+            >
+              {mainBalance}
+            </Text>
+          </View>
+
           {secondaryBalance ? (
             <Text
               style={[
@@ -348,6 +402,7 @@ class Tokens extends PureComponent {
     if (!isTokenDetectionEnabled || !detectedTokens?.length) {
       return null;
     }
+    // return <TokenItem token={}/>
 
     return (
       <TouchableOpacity
@@ -364,21 +419,56 @@ class Tokens extends PureComponent {
     );
   };
 
+  renderWallet() {
+    const { selectedAddress, identities, accounts } = this.props;
+    const account = {
+      address: selectedAddress,
+      ...identities[selectedAddress],
+      ...accounts[selectedAddress],
+    };
+    const styles = this.getStyles();
+
+    return (
+      <View>
+        <BalanceFrame
+          account={selectedAddress}
+          selectedAddress={selectedAddress}
+          orderedAccounts={accounts}
+        />
+        <View style={styles.containerSearchBar}>
+          <SearchBar
+            style={{ width: 220 }}
+            placeholder={'Search...'}
+            onInputSubmit={(text) => { }}
+          />
+          <View style={styles.containerSetting}>
+            <TouchableOpacity style={styles.containerIcon}>
+              <Image source={icons.iconSetting} style={styles.icon} />
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    );
+  }
+
   renderList() {
     const { tokens, hideZeroBalanceTokens, tokenBalances } = this.props;
     const tokensToDisplay = hideZeroBalanceTokens
       ? tokens.filter((token) => {
-          const { address, isETH } = token;
-          return !isZero(tokenBalances[address]) || isETH;
-          // eslint-disable-next-line no-mixed-spaces-and-tabs
-        })
+        const { address, isETH } = token;
+        return !isZero(tokenBalances[address]) || isETH;
+        // eslint-disable-next-line no-mixed-spaces-and-tabs
+      })
       : tokens;
-
+    const styles = this.getStyles();
     return (
       <View>
-        {tokensToDisplay.map((item) => this.renderItem(item))}
-        {this.renderTokensDetectedSection()}
-        {this.renderFooter()}
+        {this.renderWallet()}
+        <View style={styles.wrapperTokens}>
+          {tokensToDisplay.map((item) => this.renderItem(item))}
+          {this.renderTokensDetectedSection()}
+          {this.renderFooter()}
+        </View>
       </View>
     );
   }
@@ -477,9 +567,13 @@ const mapStateToProps = (state) => ({
     state.engine.backgroundState.TokenRatesController.contractExchangeRates,
   hideZeroBalanceTokens: state.settings.hideZeroBalanceTokens,
   tokenList: getTokenList(state),
+  selectedAddress:
+    state.engine.backgroundState.PreferencesController.selectedAddress,
   detectedTokens: state.engine.backgroundState.TokensController.detectedTokens,
   isTokenDetectionEnabled:
     state.engine.backgroundState.PreferencesController.useTokenDetection,
+  identities: state.engine.backgroundState.PreferencesController.identities,
+  accounts: state.engine.backgroundState.AccountTrackerController.accounts,
 });
 
 Tokens.contextType = ThemeContext;

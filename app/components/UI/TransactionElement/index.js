@@ -20,20 +20,23 @@ import Modal from 'react-native-modal';
 import decodeTransaction from './utils';
 import { TRANSACTION_TYPES } from '../../../util/transactions';
 import ListItem from '../../Base/ListItem';
-import StatusText from '../../Base/StatusText';
+// import StatusText from '../../Base/StatusText';
 import DetailsModal from '../../Base/DetailsModal';
-import { isMainNet } from '../../../util/networks';
+// import { isMainNet } from '../../../util/networks';
 import { WalletDevice, util } from '@metamask/controllers/';
 import { ThemeContext, mockTheme } from '../../../util/theme';
+import { Colors, Style, Fonts } from './../../../styles';
+import FastImage from 'react-native-fast-image';
+import { icons } from './../../../assets';
 const { weiHexToGweiDec, isEIP1559Transaction } = util;
 
 const createStyles = (colors) =>
   StyleSheet.create({
     row: {
-      backgroundColor: colors.background.default,
+      // backgroundColor: Colors.gray[4], // colors.background.default,
       flex: 1,
-      borderBottomWidth: StyleSheet.hairlineWidth,
-      borderColor: colors.border.muted,
+      // borderBottomWidth: StyleSheet.hairlineWidth,
+      // borderColor: colors.border.muted,
     },
     actionContainerStyle: {
       height: 25,
@@ -182,22 +185,24 @@ class TransactionElement extends PureComponent {
 
   renderTxTime = () => {
     const { tx, selectedAddress } = this.props;
-    const incoming =
-      safeToChecksumAddress(tx.transaction.to) === selectedAddress;
-    const selfSent =
-      incoming &&
-      safeToChecksumAddress(tx.transaction.from) === selectedAddress;
-    return `${
-      (!incoming || selfSent) && tx.deviceConfirmedOn === WalletDevice.MM_MOBILE
-        ? `#${parseInt(tx.transaction.nonce, 16)} - ${toDateFormat(
-            tx.time,
-          )} ${strings(
-            'transactions.from_device_label',
-            // eslint-disable-next-line no-mixed-spaces-and-tabs
-          )}`
-        : `${toDateFormat(tx.time)}
-      `
-    }`;
+    // const incoming =
+    //   safeToChecksumAddress(tx.transaction.to) === selectedAddress;
+    // const selfSent =
+    //   incoming &&
+    //   safeToChecksumAddress(tx.transaction.from) === selectedAddress;
+    return `${toDateFormat(tx.time)}`;
+
+    // return `${
+    //   (!incoming || selfSent) && tx.deviceConfirmedOn === WalletDevice.MM_MOBILE
+    //     ? `#${parseInt(tx.transaction.nonce, 16)} - ${toDateFormat(
+    //         tx.time,
+    //       )} ${strings(
+    //         'transactions.from_device_label',
+    //         // eslint-disable-next-line no-mixed-spaces-and-tabs
+    //       )}`
+    //     : `${toDateFormat(tx.time)}
+    //   `
+    // }`;
   };
 
   /**
@@ -287,7 +292,58 @@ class TransactionElement extends PureComponent {
     return (
       <>
         {accountImportTime > time && this.renderImportTime()}
-        <ListItem>
+        <TouchableOpacity style={Style.s({ px: 16, py: 6 })}>
+          <View
+            style={Style.s({
+              bg: Colors.gray[4],
+              direc: 'row',
+              items: 'center',
+              px: 16,
+              py: 12,
+            })}
+          >
+            <View
+              style={[
+                Style.s({ size: 40, cen: true }),
+                Style.b({ color: Colors.divider[1], width: 1, bor: 40 }),
+              ]}
+            >
+              <FastImage
+                style={Style.s({ size: 20 })}
+                source={icons.iconReceive}
+              />
+              {/* {this.renderTxElementIcon(transactionElement, status)} */}
+            </View>
+            <View style={Style.s({ ml: 16, flex: 1 })}>
+              <View style={Style.s({ direc: 'row', items: 'center' })}>
+                <Text style={Fonts.t({ s: 14, w: '500', c: Colors.white[3] })}>
+                  {'Receive'}
+                </Text>
+                <Text
+                  style={Fonts.t({
+                    s: 14,
+                    w: '500',
+                    c: Colors.grayscale[40],
+                    l: 4,
+                  })}
+                >
+                  {this.renderTxTime()}
+                </Text>
+              </View>
+              <Text
+                style={Fonts.t({
+                  s: 10,
+                  h: 15,
+                  w: '500',
+                  c: Colors.grayscale[60],
+                })}
+              >
+                {'Lorem ipsum dolor sit amet consectetur. Morbi accums'}
+              </Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+        {/* <ListItem>
           <ListItem.Date>{this.renderTxTime()}</ListItem.Date>
           <ListItem.Content>
             <ListItem.Icon>
@@ -318,8 +374,8 @@ class TransactionElement extends PureComponent {
               {this.renderCancelUnsignedButton()}
             </ListItem.Actions>
           )}
-        </ListItem>
-        {accountImportTime <= time && this.renderImportTime()}
+        </ListItem> */}
+        {/* {accountImportTime <= time && this.renderImportTime()} */}
       </>
     );
   };

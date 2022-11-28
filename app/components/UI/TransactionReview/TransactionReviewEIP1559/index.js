@@ -22,6 +22,7 @@ const createStyles = (colors) =>
       marginHorizontal: noMargin ? 0 : 24,
       paddingTop: 10,
       paddingBottom: 10,
+      backgroundColor: colors.background.alternative,
     }),
     valuesContainer: {
       flex: 1,
@@ -172,8 +173,8 @@ const TransactionReviewEIP1559 = ({
               {!origin
                 ? strings('transaction_review_eip1559.estimated_gas_fee')
                 : strings('transaction_review_eip1559.suggested_gas_fee', {
-                    origin,
-                  })}
+                  origin,
+                })}
               <TouchableOpacity
                 style={styles.gasInfoContainer}
                 onPress={() =>
@@ -263,18 +264,18 @@ const TransactionReviewEIP1559 = ({
                   </Text>
                   {(timeEstimateId === AppConstants.GAS_TIMES.MAYBE ||
                     timeEstimateId === AppConstants.GAS_TIMES.UNKNOWN) && (
-                    <TouchableOpacity
-                      style={styles.gasInfoContainer}
-                      onPress={showTimeEstimateInfoModal}
-                      hitSlop={styles.hitSlop}
-                    >
-                      <MaterialCommunityIcons
-                        name="information"
-                        size={13}
-                        style={styles.redInfo}
-                      />
-                    </TouchableOpacity>
-                  )}
+                      <TouchableOpacity
+                        style={styles.gasInfoContainer}
+                        onPress={showTimeEstimateInfoModal}
+                        hitSlop={styles.hitSlop}
+                      >
+                        <MaterialCommunityIcons
+                          name="information"
+                          size={13}
+                          style={styles.redInfo}
+                        />
+                      </TouchableOpacity>
+                    )}
                 </View>
               </FadeAnimationView>
             ) : (

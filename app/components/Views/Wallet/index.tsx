@@ -12,11 +12,14 @@ import {
   ActivityIndicator,
   StyleSheet,
   View,
+  TouchableOpacity,
+  Text,
+  Image,
 } from 'react-native';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import ScrollableTabView from 'react-native-scrollable-tab-view';
 import DefaultTabBar from 'react-native-scrollable-tab-view/DefaultTabBar';
-import { fontStyles, baseStyles } from '../../../styles/common';
+import { fontStyles, baseStyles, colors } from '../../../styles/common';
 import AccountOverview from '../../UI/AccountOverview';
 import Tokens from '../../UI/Tokens';
 import { getWalletNavbarOptions } from '../../UI/Navbar';
@@ -34,7 +37,10 @@ import { useTheme } from '../../../util/theme';
 import { shouldShowWhatsNewModal } from '../../../util/onboarding';
 import Logger from '../../../util/Logger';
 import Routes from '../../../constants/navigation/Routes';
-import generateTestId from '../../../../wdio/utils/generateTestId';
+import { DynamicHeader } from '../../Base/DynamicHeader';
+import { icons } from '../../../assets';
+import { toggleAccountsModal } from '../../../actions/modals';
+import { isDefaultAccountName } from '../../../util/ENSUtils';
 
 const createStyles = (colors: any) =>
   StyleSheet.create({
@@ -53,15 +59,44 @@ const createStyles = (colors: any) =>
       borderColor: colors.border.muted,
     },
     textStyle: {
-      fontSize: 12,
-      letterSpacing: 0.5,
-      ...(fontStyles.bold as any),
+      fontSize: 16,
+      ...(fontStyles.normal as any),
     },
     loader: {
       backgroundColor: colors.background.default,
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
+    },
+    containerHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    containerRight: {
+      flexDirection: 'row',
+    },
+    icon: {
+      width: 24,
+      height: 24,
+      tintColor: colors.text.default,
+    },
+    iconQR: {
+      width: 24,
+      height: 24,
+      tintColor: colors.text.default,
+      marginLeft: 12,
+    },
+    title: {
+      fontSize: 16,
+      fontWeight: '500',
+      color: colors.text.default,
+    },
+    iconArrow: {
+      width: 16,
+      height: 16,
+      marginLeft: 8,
+      tintColor: colors.text.default,
     },
   });
 
@@ -72,6 +107,7 @@ const Wallet = ({ navigation }: any) => {
   const { drawerRef } = useContext(DrawerContext);
   const [refreshing, setRefreshing] = useState(false);
   const accountOverviewRef = useRef(null);
+  const dispatch = useDispatch();
   const { colors } = useTheme();
   const styles = createStyles(colors);
   /**
@@ -207,15 +243,15 @@ const Wallet = ({ navigation }: any) => {
     () => (
       <DefaultTabBar
         underlineStyle={styles.tabUnderlineStyle}
-        activeTextColor={colors.primary.default}
-        inactiveTextColor={colors.text.alternative}
+        activeTextColor={colors.text.default}
+        inactiveTextColor={colors.text.muted}
         backgroundColor={colors.background.default}
         tabStyle={styles.tabStyle}
         textStyle={styles.textStyle}
         style={styles.tabBar}
       />
     ),
-    [styles, colors],
+    [styles],
   );
 
   const onChangeTab = useCallback((obj) => {
@@ -233,6 +269,11 @@ const Wallet = ({ navigation }: any) => {
   }, []);
 
   const renderContent = useCallback(() => {
+    const account = {
+      address: selectedAddress,
+      ...identities[selectedAddress],
+      ...accounts[selectedAddress],
+    };
     let balance: any = 0;
     let assets = tokens;
     if (accounts[selectedAddress]) {
@@ -255,26 +296,16 @@ const Wallet = ({ navigation }: any) => {
     } else {
       assets = tokens;
     }
-    const account = {
-      address: selectedAddress,
-      ...identities[selectedAddress],
-      ...accounts[selectedAddress],
-    };
 
     return (
       <View style={styles.wrapper}>
-        <AccountOverview
-          account={account}
-          navigation={navigation}
-          onRef={onRef}
-        />
         <ScrollableTabView
           renderTabBar={renderTabBar}
           // eslint-disable-next-line react/jsx-no-bind
           onChangeTab={onChangeTab}
         >
           <Tokens
-            tabLabel={strings('wallet.tokens')}
+            tabLabel={'Token'}
             key={'tokens-tab'}
             navigation={navigation}
             tokens={assets}
@@ -285,6 +316,11 @@ const Wallet = ({ navigation }: any) => {
             navigation={navigation}
           />
         </ScrollableTabView>
+        {/*<AccountOverview*/}
+        {/*  account={account}*/}
+        {/*  navigation={navigation}*/}
+        {/*  onRef={onRef}*/}
+        {/*/>*/}
       </View>
     );
   }, [
@@ -325,15 +361,47 @@ const Wallet = ({ navigation }: any) => {
     [navigation, wizardStep],
   );
 
+  const account = {
+    address: selectedAddress,
+    ...identities[selectedAddress],
+    ...accounts[selectedAddress],
+  };
+
+  const onAccountsModal = useCallback(() => {
+    dispatch(toggleAccountsModal());
+  }, [dispatch]);
   return (
     <ErrorBoundary view="Wallet">
-      <View style={baseStyles.flexGrow} {...generateTestId('wallet-screen')}>
+      <DynamicHeader
+        title={''}
+        isHiddenTitle
+        hideGoBack
+        centerComponent={
+          <TouchableOpacity
+            style={styles.containerHeader}
+            onPress={onAccountsModal}
+          >
+            <Text style={styles.title}>{account.name}</Text>
+            <Image source={icons.iconChevronDown} style={styles.iconArrow} />
+          </TouchableOpacity>
+        }
+      >
+        <View style={styles.containerRight}>
+          <TouchableOpacity onPress={() => { navigation.navigate(Routes.NOTIFICATIONS.NOTIFICATIONS) }}>
+            <Image source={icons.iconBell} style={styles.icon} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => { navigation.navigate(Routes.QR_SCANNER); }}>
+            <Image source={icons.iconScanQR} style={styles.iconQR} />
+          </TouchableOpacity>
+        </View>
+      </DynamicHeader>
+      <View style={baseStyles.flexGrow} testID={'wallet-screen'}>
         <ScrollView
           style={styles.wrapper}
           refreshControl={
             <RefreshControl
-              colors={[colors.primary.default]}
-              tintColor={colors.icon.default}
+              colors={[colors.gray5]}
+              tintColor={colors.gray5}
               refreshing={refreshing}
               onRefresh={onRefresh}
             />

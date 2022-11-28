@@ -1,24 +1,23 @@
 import React, { PureComponent } from 'react';
 import {
-  Text,
-  View,
+  ActivityIndicator,
+  Appearance,
+  Image,
+  InteractionManager,
+  KeyboardAvoidingView,
   SafeAreaView,
   StyleSheet,
-  ActivityIndicator,
-  InteractionManager,
+  Text,
   TextInput,
-  KeyboardAvoidingView,
-  Appearance,
+  View,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { fontStyles, baseStyles } from '../../../styles/common';
+import { baseStyles, fontStyles } from '../../../styles/common';
 import StyledButton from '../../UI/StyledButton';
-import OnboardingProgress from '../../UI/OnboardingProgress';
 import { strings } from '../../../../locales/i18n';
 import FeatherIcons from 'react-native-vector-icons/Feather';
 import { BlurView } from '@react-native-community/blur';
-import ActionView from '../../UI/ActionView';
 import Device from '../../../util/device';
 import Engine from '../../../core/Engine';
 import PreventScreenshot from '../../../core/PreventScreenshot';
@@ -28,14 +27,15 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import {
   MANUAL_BACKUP_STEPS,
   SEED_PHRASE,
-  CONFIRM_PASSWORD,
   WRONG_PASSWORD_ERROR,
 } from '../../../constants/onboarding';
 
 import { CONFIRM_CHANGE_PASSWORD_INPUT_BOX_ID } from '../../../constants/test-ids';
 
 import AnalyticsV2 from '../../../util/analyticsV2';
-import { ThemeContext, mockTheme } from '../../../util/theme';
+import { mockTheme, ThemeContext } from '../../../util/theme';
+import { IC_ARROW_ROTATE, IC_CROSS_CIRCLE } from 'images/index';
+import { DynamicHeader } from '../../Base/DynamicHeader';
 
 const createStyles = (colors) =>
   StyleSheet.create({
@@ -45,7 +45,7 @@ const createStyles = (colors) =>
     },
     wrapper: {
       flex: 1,
-      paddingHorizontal: 32,
+      paddingHorizontal: 16,
     },
     onBoardingWrapper: {
       paddingHorizontal: 20,
@@ -58,9 +58,9 @@ const createStyles = (colors) =>
       alignItems: 'center',
     },
     action: {
-      fontSize: 18,
-      marginVertical: 16,
-      color: colors.text.default,
+      fontSize: 24,
+      color: '#060A1D',
+      marginBottom: 16,
       justifyContent: 'center',
       textAlign: 'center',
       ...fontStyles.bold,
@@ -71,10 +71,8 @@ const createStyles = (colors) =>
     },
     info: {
       fontSize: 14,
-      color: colors.text.default,
-      textAlign: 'center',
+      color: '#1B2537',
       ...fontStyles.normal,
-      paddingHorizontal: 6,
     },
     seedPhraseConcealerContainer: {
       flex: 1,
@@ -156,7 +154,7 @@ const createStyles = (colors) =>
     },
     confirmPasswordWrapper: {
       flex: 1,
-      padding: 30,
+      padding: 16,
       paddingTop: 0,
     },
     passwordRequiredContent: {
@@ -166,17 +164,15 @@ const createStyles = (colors) =>
       alignItems: 'flex-start',
     },
     title: {
-      fontSize: 32,
-      marginTop: 20,
-      marginBottom: 10,
+      fontSize: 24,
+      marginBottom: 12,
       color: colors.text.default,
       justifyContent: 'center',
-      textAlign: 'left',
-      ...fontStyles.normal,
+      width: '100%',
+      ...fontStyles.bold,
     },
     text: {
-      marginBottom: 10,
-      marginTop: 20,
+      marginBottom: 32,
       justifyContent: 'center',
     },
     label: {
@@ -192,12 +188,12 @@ const createStyles = (colors) =>
       justifyContent: 'flex-end',
     },
     input: {
-      borderWidth: 2,
-      borderRadius: 5,
+      borderWidth: 1,
+      borderRadius: 8,
       width: '100%',
       borderColor: colors.border.default,
-      padding: 10,
-      height: 40,
+      padding: 16,
+      height: 48,
       color: colors.text.default,
     },
     warningMessageText: {
@@ -209,6 +205,31 @@ const createStyles = (colors) =>
       flex: 1,
       flexDirection: 'row',
       alignSelf: 'center',
+    },
+    button: {
+      backgroundColor: '#060A1D',
+    },
+    titlePrivacy: {
+      fontSize: 12,
+      fontWeight: '400',
+      color: '#64748B',
+      marginBottom: 16,
+    },
+    subTitlePrivacy: {
+      fontSize: 12,
+      fontWeight: '500',
+      color: '#060A1D',
+      textDecorationLine: 'underline',
+    },
+    wrapperContent: {
+      marginVertical: 6,
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    iconContent: {
+      width: 20,
+      height: 20,
+      marginRight: 16,
     },
   });
 
@@ -252,18 +273,17 @@ class ManualBackupStep1 extends PureComponent {
   async componentDidMount() {
     this.updateNavBar();
     this.words = this.props.route.params?.words ?? [];
-
     if (!this.words.length) {
       try {
         const credentials = await SecureKeychain.getGenericPassword();
         if (credentials) {
           this.words = await this.tryExportSeedPhrase(credentials.password);
         } else {
-          this.setState({ view: CONFIRM_PASSWORD });
+          this.words = this.tryUnlockWithPassword(
+            this.props.route.params?.password,
+          );
         }
-      } catch (e) {
-        this.setState({ view: CONFIRM_PASSWORD });
-      }
+      } catch (e) {}
     }
     this.setState({ ready: true });
     InteractionManager.runAfterInteractions(() => PreventScreenshot.forbid());
@@ -278,9 +298,8 @@ class ManualBackupStep1 extends PureComponent {
   };
 
   goNext = () => {
-    this.props.navigation.navigate('ManualBackupStep2', {
+    this.props.navigation.navigate('ManualBackupPhrase', {
       words: this.words,
-      steps: this.steps,
     });
   };
 
@@ -396,20 +415,25 @@ class ManualBackupStep1 extends PureComponent {
         style={styles.keyboardAvoidingView}
         behavior={'padding'}
       >
-        <KeyboardAwareScrollView style={baseStyles.flexGrow} enableOnAndroid>
-          <View style={styles.confirmPasswordWrapper}>
-            <View style={[styles.content, styles.passwordRequiredContent]}>
+        <KeyboardAwareScrollView
+          enableOnAndroid
+          contentContainerStyle={baseStyles.flexGrow}
+        >
+          <View style={[styles.confirmPasswordWrapper]}>
+            <View style={(styles.content, styles.passwordRequiredContent)}>
               <Text style={styles.title}>
-                {strings('manual_backup_step_1.confirm_password')}
+                {'First, let set your Security Password'}
               </Text>
               <View style={styles.text}>
                 <Text style={styles.label}>
-                  {strings('manual_backup_step_1.before_continiuing')}
+                  {
+                    'It is used to unlock wallet, aprrove transactions and access Secret Recovery Phrase'
+                  }
                 </Text>
               </View>
               <TextInput
                 style={styles.input}
-                placeholder={'Password'}
+                placeholder={'Enter security password'}
                 placeholderTextColor={colors.text.muted}
                 onChangeText={this.onPasswordChange}
                 secureTextEntry
@@ -424,13 +448,19 @@ class ManualBackupStep1 extends PureComponent {
               )}
             </View>
             <View style={styles.buttonWrapper}>
+              <Text style={styles.titlePrivacy}>
+                {'By continuing, you agree to the'}
+                <Text style={styles.subTitlePrivacy}>
+                  {' iCrosschain User  Account Agreement  and Privacy Policy'}
+                </Text>
+              </Text>
               <StyledButton
                 containerStyle={styles.button}
                 type={'confirm'}
                 onPress={this.tryUnlock}
                 testID={'submit-button'}
               >
-                {strings('manual_backup_step_1.confirm')}
+                {'Continue'}
               </StyledButton>
             </View>
           </View>
@@ -447,66 +477,84 @@ class ManualBackupStep1 extends PureComponent {
     const styles = createStyles(colors);
 
     return (
-      <ActionView
-        confirmTestID={'manual-backup-step-1-continue-button'}
-        confirmText={strings('manual_backup_step_1.continue')}
-        onConfirmPress={this.goNext}
-        confirmDisabled={this.state.seedPhraseHidden}
-        showCancelButton={false}
-        confirmButtonMode={'confirm'}
-      >
-        <View style={styles.wrapper} testID={'manual_backup_step_1-screen'}>
-          <Text style={styles.action}>
-            {strings('manual_backup_step_1.action')}
-          </Text>
+      <View style={styles.wrapper}>
+        <DynamicHeader title={'Security Password'} isHiddenBackground />
+        <View style={styles.mainWrapper} testID={'manual_backup_step_1-screen'}>
+          <Text style={styles.action}>{'Generate Secret Recovery Phrase'}</Text>
           <View style={styles.infoWrapper}>
             <Text style={styles.info}>
-              {strings('manual_backup_step_1.info')}
+              {'It is the master key to your wallet:'}
             </Text>
-          </View>
-          <View style={styles.seedPhraseWrapper}>
-            {this.state.seedPhraseHidden ? (
-              this.renderSeedPhraseConcealer()
-            ) : (
-              <React.Fragment>
-                <View style={styles.wordColumn}>
-                  {this.words.slice(0, half).map((word, i) => (
-                    <View key={`word_${i}`} style={styles.wordWrapper}>
-                      <Text style={styles.word}>{`${i + 1}. ${word}`}</Text>
-                    </View>
-                  ))}
-                </View>
-                <View style={styles.wordColumn}>
-                  {this.words.slice(-half).map((word, i) => (
-                    <View key={`word_${i}`} style={styles.wordWrapper}>
-                      <Text style={styles.word}>{`${
-                        i + (half + 1)
-                      }. ${word}`}</Text>
-                    </View>
-                  ))}
-                </View>
-              </React.Fragment>
-            )}
+            <View style={styles.wrapperContent}>
+              <Image style={styles.iconContent} source={IC_ARROW_ROTATE} />
+              <Text
+                style={[styles.info, baseStyles.flexGrow]}
+                numberOfLines={3}
+              >
+                {
+                  'It can be used to recover your wallet on any compatible device. Those who hold it can take full control of the wallet. '
+                }
+              </Text>
+            </View>
+            <View style={styles.wrapperContent}>
+              <Image style={styles.iconContent} source={IC_CROSS_CIRCLE} />
+              <Text
+                style={[styles.info, baseStyles.flexGrow]}
+                numberOfLines={3}
+              >
+                {
+                  'iCrosschain will never access, store or ask for your Secret Recovery Phrase, hence we cannot retrieve it once it is lost. '
+                }
+              </Text>
+            </View>
+            <Text style={styles.info}>{'So:'}</Text>
+            <View style={styles.wrapperContent}>
+              <Image style={styles.iconContent} source={IC_CROSS_CIRCLE} />
+              <Text
+                style={[styles.info, baseStyles.flexGrow]}
+                numberOfLines={3}
+              >
+                {
+                  'Please keep it secure and offline. Do not screenshot or copy it to the clipboard.'
+                }
+              </Text>
+            </View>
+            <View style={styles.wrapperContent}>
+              <Image style={styles.iconContent} source={IC_CROSS_CIRCLE} />
+              <Text
+                style={[styles.info, baseStyles.flexGrow]}
+                numberOfLines={3}
+              >
+                {'Do not give it to anyone.'}
+              </Text>
+            </View>
           </View>
         </View>
-      </ActionView>
+        <StyledButton
+          containerStyle={styles.button}
+          type={'confirm'}
+          onPress={this.goNext}
+          testID={'submit-button'}
+        >
+          {'Continue'}
+        </StyledButton>
+      </View>
     );
   };
 
   render() {
-    const { ready, currentStep, view } = this.state;
+    const { ready, view } = this.state;
     const colors = this.context.colors || mockTheme.colors;
     const styles = createStyles(colors);
 
     if (!ready) return this.renderLoader();
     return (
       <SafeAreaView style={styles.mainWrapper}>
-        <View style={styles.onBoardingWrapper}>
-          <OnboardingProgress currentStep={currentStep} steps={this.steps} />
-        </View>
-        {view === SEED_PHRASE
-          ? this.renderSeedphraseView()
-          : this.renderConfirmPassword()}
+        <View style={styles.onBoardingWrapper} />
+        {/*{view === SEED_PHRASE*/}
+        {/*  ? this.renderSeedphraseView()*/}
+        {/*  : this.renderConfirmPassword()}*/}
+        {this.renderSeedphraseView()}
       </SafeAreaView>
     );
   }

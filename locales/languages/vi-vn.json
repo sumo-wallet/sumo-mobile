@@ -62,12 +62,12 @@
     "delete_current": "Xóa ví hiện tại"
   },
   "onboarding_carousel": {
-    "title1": "Chào mừng bạn đến với MetaMask",
-    "title2": "Quản lý tài sản kỹ thuật số của bạn",
-    "title3": "Cánh cửa đưa bạn đến với web3",
-    "subtitle1": "Được hàng triệu người dùng tin tưởng, MetaMask là một ví an toàn giúp đưa web3 đến với tất cả mọi người.",
-    "subtitle2": "Lưu trữ, chi tiêu và gửi tài sản kỹ thuật số như token, ethereum, vật phẩm sưu tập độc nhất.",
-    "subtitle3": "Đăng nhập bằng MetaMask và thực hiện các giao dịch để đầu tư, kiếm tiền, chơi trò chơi, bán hàng và nhiều hoạt động khác!",
+    "title1": "All-in-one place",
+    "title2": "Level up asset security",
+    "title3": "Always got your back",
+    "subtitle1": "Decentralized financial services, integrating applications in the ecosystem such as Swap, Lottery, Pottery, Prediction, Staking, Farming...",
+    "subtitle2": "Integrated security, lock assets, multi-layer security, alert or automatically lock temporarily when problems are detected",
+    "subtitle3": "Bot support via telegram and discord, twitter",
     "get_started": "Bắt đầu"
   },
   "onboarding_wizard": {
@@ -141,7 +141,7 @@
     "this_action": "Bạn không thể hoàn tác hành động này.",
     "you_can_only": "Bạn CHỈ có thể khôi phục ví này bằng ",
     "recovery_phrase": "Cụm mật khẩu khôi phục bí mật ",
-    "metamask_does_not": "MetaMask không biết Cụm mật khẩu khôi phục bí mật của bạn.",
+    "metamask_does_not": "Sumo Wallet không biết Cụm mật khẩu khôi phục bí mật của bạn.",
     "i_understand": "Tôi đã hiểu, hãy tiếp tục",
     "clean_vault_error": "MetaMask đã gặp lỗi do đạt đến giới hạn lưu trữ. Dữ liệu cục bộ đã bị hỏng. Vui lòng cài đặt lại MetaMask và khôi phục bằng Cụm mật khẩu khôi phục bí mật của bạn."
   },

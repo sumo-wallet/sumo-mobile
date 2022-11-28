@@ -23,7 +23,6 @@ import { MAINNET, RPC } from '../../../../constants/network';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { ThemeContext, mockTheme } from '../../../../util/theme';
 import ImageIcons from '../../../UI/ImageIcon';
-import { ADD_NETWORK_BUTTON } from '../../../../../wdio/features/testIDs/Screens/NetworksScreen.testids';
 
 const createStyles = (colors) =>
   StyleSheet.create({
@@ -388,7 +387,7 @@ class NetworksSettings extends PureComponent {
           type="confirm"
           onPress={this.onAddNetwork}
           containerStyle={styles.syncConfirm}
-          testID={ADD_NETWORK_BUTTON}
+          testID={'add-network-button'}
         >
           {strings('app_settings.network_add_network')}
         </StyledButton>

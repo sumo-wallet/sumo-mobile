@@ -230,15 +230,8 @@ function SwapsAmountView({
           chainId,
           AppConstants.SWAPS.CLIENT_ID,
         );
-        const isIphone = Device.isIos();
-        const isAndroid = Device.isAndroid();
-        const featureFlagKey = isIphone
-          ? 'mobileActiveIOS'
-          : isAndroid
-          ? 'mobileActiveAndroid'
-          : 'mobileActive';
         const liveness =
-          typeof data === 'boolean' ? data : data?.[featureFlagKey] ?? false;
+          typeof data === 'boolean' ? data : data?.mobileActive ?? false;
         setLiveness(liveness, chainId);
         if (liveness) {
           // Triggered when a user enters the MetaMask Swap feature

@@ -4,7 +4,6 @@ import {
   isHexString,
   addHexPrefix,
   isValidChecksumAddress,
-  isHexPrefixed,
 } from 'ethereumjs-util';
 import URL from 'url-parse';
 import punycode from 'punycode/punycode';
@@ -119,8 +118,7 @@ export async function importAccountFromPrivateKey(private_key) {
   }
   const { importedAccountAddress } =
     await KeyringController.importAccountWithStrategy('privateKey', [pkey]);
-  const checksummedAddress = safeToChecksumAddress(importedAccountAddress);
-  return PreferencesController.setSelectedAddress(checksummedAddress);
+  return PreferencesController.setSelectedAddress(importedAccountAddress);
 }
 
 /**
@@ -425,15 +423,3 @@ export function isValidAddressInputViaQRCode(input) {
   }
   return isValidHexAddress(input);
 }
-
-/** Removes hex prefix from a string if it's there.
- *
- * @param {string} str
- * @returns {string}
- */
-export const stripHexPrefix = (str) => {
-  if (typeof str !== 'string') {
-    return str;
-  }
-  return isHexPrefixed(str) ? str.slice(2) : str;
-};

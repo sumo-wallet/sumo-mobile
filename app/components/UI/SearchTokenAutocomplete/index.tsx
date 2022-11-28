@@ -40,8 +40,8 @@ const createStyles = (colors: any) =>
 
 interface Props {
   /**
-	/* navigation object required to push new views
-	*/
+  /* navigation object required to push new views
+  */
   navigation: any;
 }
 
@@ -208,6 +208,7 @@ const SearchTokenAutocomplete = ({ navigation }: Props) => {
         onCancelPress={cancelAddToken}
         onConfirmPress={addToken}
         confirmDisabled={!(address && symbol && decimals)}
+        showCancelButton={false}
       >
         <View>
           {renderTokenDetectionBanner()}

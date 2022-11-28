@@ -1,3 +1,4 @@
+/* eslint-disable arrow-body-style */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -11,6 +12,8 @@ import {
   StyleSheet,
   InteractionManager,
   Platform,
+  Image,
+  Switch,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -27,7 +30,7 @@ import AppConstants from '../../../core/AppConstants';
 import setOnboardingWizardStep from '../../../actions/wizard';
 import TermsAndConditions from '../TermsAndConditions';
 import zxcvbn from 'zxcvbn';
-import Icon from 'react-native-vector-icons/FontAwesome';
+// import Icon from 'react-native-vector-icons/FontAwesome';
 import Device from '../../../util/device';
 import {
   failedSeedPhraseRequirements,
@@ -48,25 +51,43 @@ import Logger from '../../../util/Logger';
 import {
   getPasswordStrengthWord,
   passwordRequirementsMet,
-  MIN_PASSWORD_LENGTH,
+  // MIN_PASSWORD_LENGTH,
 } from '../../../util/password';
 import importAdditionalAccounts from '../../../util/importAdditionalAccounts';
 import AnalyticsV2 from '../../../util/analyticsV2';
 import DefaultPreference from 'react-native-default-preference';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { ThemeContext, mockTheme } from '../../../util/theme';
-import { LoginOptionsSwitch } from '../../UI/LoginOptionsSwitch';
-import generateTestId from '../../../../wdio/utils/generateTestId';
 import {
-  IMPORT_FROM_SEED_SCREEN_CONFIRM_PASSWORD_INPUT_ID,
-  IMPORT_FROM_SEED_SCREEN_SEED_PHRASE_INPUT_ID,
-  IMPORT_FROM_SEED_SCREEN_SUBMIT_BUTTON_ID,
-  IMPORT_FROM_SEED_SCREEN_TITLE_ID,
-  IMPORT_FROM_SEED_SCREEN_NEW_PASSWORD_INPUT_ID,
-  IMPORT_FROM_SEED_SCREEN_PASSWORD_STRENGTH_ID,
-  IMPORT_FROM_SEED_SCREEN_CONFIRM_PASSWORD_CHECK_ICON_ID,
-} from '../../../../wdio/features/testIDs/Screens/ImportFromSeedScreen.testIds';
-import { IMPORT_PASSWORD_CONTAINER_ID } from '../../../constants/test-ids';
+  CREATE_PASSWORD_INPUT_BOX_ID,
+  // CONFIRM_PASSWORD_INPUT_BOX_ID,
+  IMPORT_PASSWORD_CONTAINER_ID,
+  SECRET_RECOVERY_PHRASE_INPUT_BOX_ID,
+} from '../../../constants/test-ids';
+import { LoginOptionsSwitch } from '../../UI/LoginOptionsSwitch';
+import { Fonts, Style } from './../../../styles';
+import { icons } from './../../../assets';
+import Colors from './../../../styles/colors';
+import { color } from '@storybook/addon-knobs';
+
+function hasNumber(myString) {
+  return /\d/.test(myString);
+}
+
+function containsSpecialChars(str) {
+  const specialChars = `\`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~`;
+
+  const result = specialChars.split('').some((specialChar) => {
+    if (str.includes(specialChar)) {
+      return true;
+    }
+
+    return false;
+  });
+
+  return result;
+}
+
 
 const MINIMUM_SUPPORTED_CLIPBOARD_VERSION = 9;
 
@@ -111,7 +132,7 @@ const createStyles = (colors) =>
       ...fontStyles.normal,
     },
     ctaWrapper: {
-      marginTop: 20,
+      marginTop: 16,
     },
     errorMsg: {
       color: colors.error.default,
@@ -152,6 +173,7 @@ const createStyles = (colors) =>
     },
     termsAndConditions: {
       paddingVertical: 10,
+      paddingHorizontal: 16,
     },
     passwordStrengthLabel: {
       height: 20,
@@ -179,11 +201,11 @@ const createStyles = (colors) =>
     },
     qrCode: {
       marginRight: 10,
-      borderWidth: 1,
-      borderRadius: 6,
-      borderColor: colors.text.muted,
+      // borderWidth: 1,
+      // borderRadius: 6,
+      // borderColor: colors.text.muted,
       paddingVertical: 4,
-      paddingHorizontal: 6,
+      paddingHorizontal: 4,
       marginTop: -50,
       marginBottom: 30,
       alignSelf: 'flex-end',
@@ -195,7 +217,7 @@ const createStyles = (colors) =>
     input: {
       ...fontStyles.normal,
       fontSize: 16,
-      paddingTop: 2,
+      paddingTop: 0,
       color: colors.text.default,
     },
   });
@@ -248,6 +270,7 @@ class ImportFromSeed extends PureComponent {
     seedphraseInputFocused: false,
     inputWidth: { width: '99%' },
     hideSeedPhraseInput: true,
+    unlockWithFaceId: false,
   };
 
   passwordInput = React.createRef();
@@ -286,7 +309,7 @@ class ImportFromSeed extends PureComponent {
   };
 
   onPressImport = async () => {
-    const { loading, seed, password, confirmPassword } = this.state;
+    const { loading, seed, password } = this.state;
 
     const vaultSeed = await parseVaultValue(password, seed);
     const parsedSeed = parseSeedPhrase(vaultSeed || seed);
@@ -302,9 +325,10 @@ class ImportFromSeed extends PureComponent {
     let error = null;
     if (!passwordRequirementsMet(password)) {
       error = strings('import_from_seed.password_length_error');
-    } else if (password !== confirmPassword) {
-      error = strings('import_from_seed.password_dont_match');
     }
+    // if (password !== confirmPassword) {
+    //   error = strings('import_from_seed.password_dont_match');
+    // }
 
     if (failedSeedPhraseRequirements(parsedSeed)) {
       error = strings('import_from_seed.seed_phrase_requirements');
@@ -469,6 +493,32 @@ class ImportFromSeed extends PureComponent {
     );
   };
 
+  toogleUnlockWithFace = (value) => {
+    this.setState({ unlockWithFaceId: value });
+  };
+
+  renderUnlockWithFaceId = () => {
+    const { unlockWithFaceId } = this.state;
+    return (
+      <View
+        style={Style.s({
+          direc: 'row',
+          items: 'center',
+          justify: 'space-between',
+          mt: 0,
+        })}
+      >
+        <Text style={Fonts.t({ s: 14, c: '#060A1D' })}>
+          {'Unlock with Face ID?'}
+        </Text>
+        <Switch
+          value={unlockWithFaceId}
+          onValueChange={this.toogleUnlockWithFace}
+        />
+      </View>
+    );
+  };
+
   toggleShowHide = () => {
     this.setState({ secureTextEntry: !this.state.secureTextEntry });
   };
@@ -504,11 +554,16 @@ class ImportFromSeed extends PureComponent {
       seedphraseInputFocused: !this.state.seedphraseInputFocused,
     });
 
+  onGoBack = () => {
+    const { navigation } = this.props;
+    navigation?.goBack();
+  };
+
   render() {
     const {
       password,
       passwordStrength,
-      confirmPassword,
+      // confirmPassword,
       seed,
       seedphraseInputFocused,
       inputWidth,
@@ -523,20 +578,40 @@ class ImportFromSeed extends PureComponent {
 
     const passwordStrengthWord = getPasswordStrengthWord(passwordStrength);
 
+    const passThan8Char = password.length >= 8;
+    const atLeast1number = hasNumber(password);
+    const atLeast1SpecialChar = containsSpecialChars(password);
+
     return (
       <SafeAreaView style={styles.mainWrapper}>
+        <View
+          style={Style.s({
+            direc: 'row',
+            px: 4,
+            minH: 48,
+          })}
+        >
+          <TouchableOpacity onPress={this.onGoBack} style={Style.s({ p: 12 })}>
+            <Image style={Style.s({ size: 24 })} source={icons.iconArrowLeft} />
+          </TouchableOpacity>
+          <View style={Style.s({ flex: 1, cen: true })}>
+            <Text style={Fonts.t({ s: 14, w: '500', c: colors.text.default })}>
+              {''}
+            </Text>
+          </View>
+          <View style={Style.s({ p: 12 })}>
+            <View />
+          </View>
+        </View>
         <KeyboardAwareScrollView
           style={styles.wrapper}
           resetScrollToCoords={{ x: 0, y: 0 }}
         >
           <View testID={IMPORT_PASSWORD_CONTAINER_ID}>
-            <Text
-              style={styles.title}
-              {...generateTestId(Platform, IMPORT_FROM_SEED_SCREEN_TITLE_ID)}
-            >
+            <Text style={styles.title}>
               {strings('import_from_seed.title')}
             </Text>
-            <View style={styles.fieldRow}>
+            <View style={[styles.fieldRow]}>
               <View style={styles.fieldCol}>
                 <Text style={styles.label}>
                   {strings('choose_password.seed_phrase')}
@@ -546,8 +621,7 @@ class ImportFromSeed extends PureComponent {
                 <TouchableOpacity onPress={this.toggleHideSeedPhraseInput}>
                   <Text style={styles.label}>
                     {strings(
-                      `choose_password.${
-                        hideSeedPhraseInput ? 'show' : 'hide'
+                      `choose_password.${hideSeedPhraseInput ? 'show' : 'hide'
                       }`,
                     )}
                   </Text>
@@ -562,11 +636,8 @@ class ImportFromSeed extends PureComponent {
                 placeholder={strings(
                   'import_from_seed.seed_phrase_placeholder',
                 )}
-                {...generateTestId(
-                  Platform,
-                  IMPORT_FROM_SEED_SCREEN_SEED_PHRASE_INPUT_ID,
-                )}
                 placeholderTextColor={colors.text.muted}
+                testID={SECRET_RECOVERY_PHRASE_INPUT_BOX_ID}
                 returnKeyType="next"
                 autoCapitalize="none"
                 secureTextEntry={hideSeedPhraseInput}
@@ -593,6 +664,7 @@ class ImportFromSeed extends PureComponent {
                 )}
                 placeholderTextColor={colors.text.muted}
                 onChangeText={this.onSeedWordsChange}
+                testID={SECRET_RECOVERY_PHRASE_INPUT_BOX_ID}
                 blurOnSubmit
                 onSubmitEditing={this.jumpToPassword}
                 returnKeyType="next"
@@ -617,7 +689,8 @@ class ImportFromSeed extends PureComponent {
               style={styles.qrCode}
               onPress={this.onQrCodePress}
             >
-              <Icon name="qrcode" size={20} color={colors.icon.default} />
+              {/* <Icon name="qrcode" size={20} color={colors.icon.default} /> */}
+              <Image style={Style.s({ size: 20 })} source={icons.iconScanQR} />
             </TouchableOpacity>
             <View style={styles.field}>
               <View style={styles.fieldRow}>
@@ -626,7 +699,7 @@ class ImportFromSeed extends PureComponent {
                     {strings('import_from_seed.new_password')}
                   </Text>
                 </View>
-                <View style={[styles.fieldCol, styles.fieldColRight]}>
+                {/* <View style={[styles.fieldCol, styles.fieldColRight]}>
                   <TouchableOpacity onPress={this.toggleShowHide}>
                     <Text style={styles.label}>
                       {strings(
@@ -634,18 +707,15 @@ class ImportFromSeed extends PureComponent {
                       )}
                     </Text>
                   </TouchableOpacity>
-                </View>
+                </View> */}
               </View>
               <OutlinedTextField
                 style={styles.input}
                 containerStyle={inputWidth}
-                {...generateTestId(
-                  Platform,
-                  IMPORT_FROM_SEED_SCREEN_NEW_PASSWORD_INPUT_ID,
-                )}
-                testID={'create-password-first-input-field'}
+                // ref={this.passwordInput}
                 placeholder={strings('import_from_seed.new_password')}
                 placeholderTextColor={colors.text.muted}
+                testID={CREATE_PASSWORD_INPUT_BOX_ID}
                 returnKeyType={'next'}
                 autoCapitalize="none"
                 secureTextEntry={secureTextEntry}
@@ -656,15 +726,20 @@ class ImportFromSeed extends PureComponent {
                 onSubmitEditing={this.jumpToConfirmPassword}
                 keyboardAppearance={themeAppearance}
               />
-
-              {(password !== '' && (
-                <Text
-                  style={styles.passwordStrengthLabel}
-                  {...generateTestId(
-                    Platform,
-                    IMPORT_FROM_SEED_SCREEN_PASSWORD_STRENGTH_ID,
-                  )}
-                >
+              <TouchableOpacity
+                style={styles.qrCode}
+                onPress={this.toggleShowHide}
+              >
+                {/* <Icon name="qrcode" size={20} color={colors.icon.default} /> */}
+                <Image
+                  style={Style.s({ size: 20 })}
+                  source={
+                    secureTextEntry ? icons.iconEyeOpen : icons.iconEyeClose
+                  }
+                />
+              </TouchableOpacity>
+              {/* {(password !== '' && (
+                <Text style={styles.passwordStrengthLabel}>
                   {strings('choose_password.password_strength')}
                   <Text style={styles[`strength_${passwordStrengthWord}`]}>
                     {' '}
@@ -673,21 +748,49 @@ class ImportFromSeed extends PureComponent {
                     )}
                   </Text>
                 </Text>
-              )) || <Text style={styles.passwordStrengthLabel} />}
+              )) || <Text style={styles.passwordStrengthLabel} />} */}
+              <View>
+                <View style={Style.s({ direc: 'row', items: 'center' })}>
+                  <Image
+                    style={Style.s({ size: 16 })}
+                    source={passThan8Char ? icons.iconValid : icons.iconWrong}
+                  />
+                  <Text style={Fonts.t({ s: 12, c: colors.text.muted, l: 8 })}>
+                    {'Minimum 8 characters'}
+                  </Text>
+                </View>
+                <View style={Style.s({ direc: 'row', items: 'center', mt: 4 })}>
+                  <Image
+                    style={Style.s({ size: 16 })}
+                    source={atLeast1number ? icons.iconValid : icons.iconWrong}
+                  />
+                  <Text style={Fonts.t({ s: 12, c: colors.text.muted, l: 8 })}>
+                    {'At least 1 number'}
+                  </Text>
+                </View>
+                <View style={Style.s({ direc: 'row', items: 'center', mt: 4 })}>
+                  <Image
+                    style={Style.s({ size: 16 })}
+                    source={
+                      atLeast1SpecialChar ? icons.iconValid : icons.iconWrong
+                    }
+                  />
+                  <Text style={Fonts.t({ s: 12, c: colors.text.muted, l: 8 })}>
+                    {'At least 1 special characters'}
+                  </Text>
+                </View>
+              </View>
             </View>
 
-            <View style={styles.field}>
+            {/* <View style={styles.field}>
               <Text style={styles.label}>
                 {strings('import_from_seed.confirm_password')}
               </Text>
               <OutlinedTextField
                 style={styles.input}
                 containerStyle={inputWidth}
-                {...generateTestId(
-                  Platform,
-                  IMPORT_FROM_SEED_SCREEN_CONFIRM_PASSWORD_INPUT_ID,
-                )}
-                testID={'create-password-second-input-field'}
+                // ref={this.confirmPasswordInput}
+                testID={CONFIRM_PASSWORD_INPUT_BOX_ID}
                 onChangeText={this.onPasswordConfirmChange}
                 returnKeyType={'next'}
                 autoCapitalize="none"
@@ -703,15 +806,7 @@ class ImportFromSeed extends PureComponent {
 
               <View style={styles.showMatchingPasswords}>
                 {password !== '' && password === confirmPassword ? (
-                  <Icon
-                    name="check"
-                    size={12}
-                    color={colors.success.default}
-                    {...generateTestId(
-                      Platform,
-                      IMPORT_FROM_SEED_SCREEN_CONFIRM_PASSWORD_CHECK_ICON_ID,
-                    )}
-                  />
+                  <Icon name="check" size={12} color={colors.success.default} />
                 ) : null}
               </View>
               <Text style={styles.passwordStrengthLabel}>
@@ -719,8 +814,9 @@ class ImportFromSeed extends PureComponent {
                   number: MIN_PASSWORD_LENGTH,
                 })}
               </Text>
-            </View>
+            </View> */}
 
+            {/* {this.renderUnlockWithFaceId()} */}
             {this.renderSwitch()}
 
             {!!error && (
@@ -728,24 +824,6 @@ class ImportFromSeed extends PureComponent {
                 {error}
               </Text>
             )}
-
-            <View style={styles.ctaWrapper}>
-              <StyledButton
-                type={'blue'}
-                onPress={this.onPressImport}
-                testID={IMPORT_FROM_SEED_SCREEN_SUBMIT_BUTTON_ID}
-                disabled={!(password !== '' && password === confirmPassword)}
-              >
-                {loading ? (
-                  <ActivityIndicator
-                    size="small"
-                    color={colors.primary.inverse}
-                  />
-                ) : (
-                  strings('import_from_seed.import_button')
-                )}
-              </StyledButton>
-            </View>
           </View>
         </KeyboardAwareScrollView>
         <View style={styles.termsAndConditions}>
@@ -753,6 +831,24 @@ class ImportFromSeed extends PureComponent {
             navigation={this.props.navigation}
             action={strings('import_from_seed.import_button')}
           />
+          <View style={styles.ctaWrapper}>
+            <StyledButton
+              type={'confirm'}
+              onPress={this.onPressImport}
+              testID={'submit'}
+              // disabled={!(password !== '' && password === confirmPassword)}
+              disabled={!(password !== '')}
+            >
+              {loading ? (
+                <ActivityIndicator
+                  size="small"
+                  color={colors.primary.inverse}
+                />
+              ) : (
+                strings('import_from_seed.import_button')
+              )}
+            </StyledButton>
+          </View>
         </View>
       </SafeAreaView>
     );

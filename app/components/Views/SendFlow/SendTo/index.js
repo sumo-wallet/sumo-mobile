@@ -6,6 +6,7 @@ import {
   InteractionManager,
   ScrollView,
   Alert,
+  StatusBar,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -28,7 +29,7 @@ import StyledButton from '../../../UI/StyledButton';
 import { allowedToBuy } from '../../../UI/FiatOrders';
 import AnalyticsV2 from '../../../../util/analyticsV2';
 import { ANALYTICS_EVENT_OPTS } from '../../../../util/analytics';
-import { doENSReverseLookup } from '../../../../util/ENSUtils';
+import { doENSLookup, doENSReverseLookup } from '../../../../util/ENSUtils';
 import { handleNetworkSwitch } from '../../../../util/networks';
 import { renderFromWei } from '../../../../util/number';
 import {
@@ -64,6 +65,7 @@ import {
 } from '../../../../constants/error';
 import { baseStyles } from '../../../../styles/common';
 import createStyles from './styles';
+import { SHeader } from './../../../common/SHeader';
 
 const { hexToBN } = util;
 
@@ -354,11 +356,13 @@ class SendFlow extends PureComponent {
     }
   };
 
-  validateToAddress = () => {
-    const { toAccount, toEnsAddressResolved } = this.state;
+  validateToAddress = async () => {
+    const { toAccount } = this.state;
+    const { network } = this.props;
     let addressError;
     if (isENS(toAccount)) {
-      if (!toEnsAddressResolved) {
+      const resolvedAddress = await doENSLookup(toAccount, network);
+      if (!resolvedAddress) {
         addressError = strings('transaction.could_not_resolve_ens');
       }
     } else if (!isValidHexAddress(toAccount, { mixedCaseUseChecksum: true })) {
@@ -452,7 +456,7 @@ class SendFlow extends PureComponent {
       toEnsAddressResolved,
     } = this.state;
     if (!this.isAddressSaved()) {
-      const addressError = this.validateToAddress();
+      const addressError = await this.validateToAddress();
       if (addressError) return;
     }
     const toAddress = toEnsAddressResolved || toAccount;
@@ -631,6 +635,7 @@ class SendFlow extends PureComponent {
       isFromAddressBook,
       toEnsAddressResolved,
     } = this.state;
+
     const colors = this.context.colors || mockTheme.colors;
     const styles = createStyles(colors);
 
@@ -651,10 +656,12 @@ class SendFlow extends PureComponent {
 
     return (
       <SafeAreaView
-        edges={['bottom']}
+        // edges={['bottom']}
         style={styles.wrapper}
         testID={'send-screen'}
       >
+        <StatusBar barStyle="light-content" />
+        <SHeader title="Send to" subTitle="0x36...0B7b" />
         <View style={styles.imputWrapper}>
           <AddressFrom
             onPressIcon={this.toggleFromAccountModal}
@@ -777,27 +784,17 @@ class SendFlow extends PureComponent {
 
         {!errorContinue && (
           <View style={styles.footerContainer} testID={'no-eth-message'}>
-            {!errorContinue && (
-              <View style={styles.buttonNextWrapper}>
-                <StyledButton
-                  type={'confirm'}
-                  containerStyle={styles.buttonNext}
-                  onPress={this.onTransactionDirectionSet}
-                  testID={ADDRESS_BOOK_NEXT_BUTTON}
-                  //To selectedAddressReady needs to be calculated on this component, needing a bigger refactor
-                  //Will be here just to ensure that we don't break existing conditions
-                  disabled={
-                    !(
-                      (isValidHexAddress(toEnsAddressResolved) ||
-                        isValidHexAddress(toAccount)) &&
-                      toSelectedAddressReady
-                    )
-                  }
-                >
-                  {strings('address_book.next')}
-                </StyledButton>
-              </View>
-            )}
+            <View style={styles.buttonNextWrapper}>
+              <StyledButton
+                type={'confirm'}
+                containerStyle={styles.buttonNext}
+                onPress={this.onTransactionDirectionSet}
+                testID={ADDRESS_BOOK_NEXT_BUTTON}
+                disabled={!toSelectedAddressReady}
+              >
+                {strings('address_book.next')}
+              </StyledButton>
+            </View>
           </View>
         )}
 

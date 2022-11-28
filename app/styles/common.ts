@@ -15,6 +15,13 @@ export const colors = {
   yellow: '#FFD33D',
   transparent: 'transparent',
   shadow: '#6a737d',
+  black1: '#060A1D',
+  green1: '#22C36B',
+  green2: '#91FE39',
+  gray5: '#F6F6F6',
+  gray3: '#10192D',
+  gray4: '#8E9BAE',
+  red0: '#F65556',
 };
 
 /**
@@ -26,6 +33,10 @@ export const baseStyles: Record<string, ViewStyle> = {
   },
   flexStatic: {
     flex: 0,
+  },
+  flexDirection: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 };
 

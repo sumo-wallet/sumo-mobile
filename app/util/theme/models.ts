@@ -1,4 +1,4 @@
-import { Theme as DesignTokenTheme } from '@metamask/design-tokens';
+import { Theme as DesignTokenTheme } from '@thanhpn1990/design-tokens';
 
 export enum AppThemeKey {
   os = 'os',

@@ -7,10 +7,10 @@ import {
   InteractionManager,
   UIManager,
   LayoutAnimation,
-  Platform,
+  Image,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+// import Icon from 'react-native-vector-icons/FontAwesome';
 import { OutlinedTextField } from 'react-native-material-textfield';
 import { createStyles } from './styles';
 import ReusableModal, { ReusableModalRef } from '../ReusableModal';
@@ -25,11 +25,8 @@ import { tlc } from '../../../util/general';
 import { useTheme } from '../../../util/theme';
 import Device from '../../../util/device';
 import Routes from '../../../constants/navigation/Routes';
-import {
-  DELETE_MODAL_UNDERSTAND_CONTINUE_ID,
-  DELETE_MODAL_CANCEL_BUTTON,
-} from '../../../../wdio/features/testIDs/Components/DeleteWalletModal.testIds';
-import generateTestId from '../../../../wdio/utils/generateTestId';
+import { icons } from './../../../assets';
+import { Style } from './../../../styles';
 
 const DELETE_KEYWORD = 'delete';
 
@@ -102,9 +99,8 @@ const DeleteWalletModal = () => {
       {showConfirm ? (
         <WarningExistingUserModal
           warningModalVisible
-          cancelText={strings('login.delete_my')}
-          cancelTestID={'delete-my-wallet-button-on-permanetly-delete-modal'}
-          confirmTestID={'cancel-button-on-permanetly-delete-modal'}
+          // cancelText={strings('login.delete_my')}
+          cancelText={'Erase Wallet'}
           cancelButtonDisabled={disableButton}
           onCancelPress={deleteWallet}
           onRequestClose={triggerClose}
@@ -120,7 +116,6 @@ const DeleteWalletModal = () => {
               <OutlinedTextField
                 style={styles.input}
                 testID={DELETE_WALLET_INPUT_BOX_ID}
-                {...generateTestId(Platform, DELETE_WALLET_INPUT_BOX_ID)}
                 autoFocus
                 returnKeyType={'done'}
                 onChangeText={checkDelete}
@@ -137,21 +132,24 @@ const DeleteWalletModal = () => {
       ) : (
         <WarningExistingUserModal
           warningModalVisible
-          cancelText={strings('login.i_understand')}
+          // cancelText={strings('login.i_understand')}
+          cancelText={'Erase Wallet'}
           onCancelPress={showConfirmModal}
           onRequestClose={triggerClose}
           onConfirmPress={triggerClose}
-          cancelTestID={DELETE_MODAL_UNDERSTAND_CONTINUE_ID}
-          confirmTestID={DELETE_MODAL_CANCEL_BUTTON}
         >
           <View style={styles.areYouSure} testID={DELETE_WALLET_CONTAINER_ID}>
-            <Icon
+            {/* <Icon
               style={styles.warningIcon}
               size={46}
               color={colors.error.default}
               name="exclamation-triangle"
+            /> */}
+            <Image
+              source={icons.iconWarningRed}
+              style={Style.s({ size: 80, self: 'center' })}
             />
-            <Text style={[styles.heading, styles.red]}>
+            <Text style={[styles.heading]}>
               {strings('login.are_you_sure')}
             </Text>
             <Text style={styles.warningText}>

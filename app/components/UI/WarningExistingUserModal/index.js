@@ -67,14 +67,10 @@ export default function WarningExistingUserModal({
   children,
   cancelText,
   confirmText,
-  confirmTestID,
-  cancelTestID,
 }) {
   return (
     <ActionModal
       modalVisible={warningModalVisible}
-      cancelTestID={cancelTestID}
-      confirmTestID={confirmTestID}
       cancelText={cancelText || strings('onboarding.warning_proceed')}
       confirmText={confirmText || strings('onboarding.warning_cancel')}
       onCancelPress={onCancelPress}
@@ -95,9 +91,6 @@ WarningExistingUserModal.propTypes = {
   cancelButtonDisabled: PropTypes.bool,
   confirmText: PropTypes.string,
   children: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
-  cancelTestID: PropTypes.string,
-  confirmTestID: PropTypes.string,
-
   /**
    * Whether the modal is visible
    */

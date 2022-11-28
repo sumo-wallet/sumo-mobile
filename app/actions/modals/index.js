@@ -11,6 +11,12 @@ export function toggleAccountsModal() {
   };
 }
 
+export function toggleAddAccountsModal() {
+  return {
+    type: 'TOGGLE_ADD_ACCOUNT_MODAL',
+  };
+}
+
 export function toggleCollectibleContractModal() {
   return {
     type: 'TOGGLE_COLLECTIBLE_CONTRACT_MODAL',

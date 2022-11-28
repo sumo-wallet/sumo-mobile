@@ -115,20 +115,20 @@ const UpdateEIP1559Tx = ({
       } else if (!isMaxFeePerGasMoreThanLegacyResult.result) {
         error = isCancel
           ? strings('edit_gas_fee_eip1559.max_fee_cancel_low', {
-              cancel_value: isMaxFeePerGasMoreThanLegacyResult.value,
-            })
+            cancel_value: isMaxFeePerGasMoreThanLegacyResult.value,
+          })
           : strings('edit_gas_fee_eip1559.max_fee_speed_up_low', {
-              speed_up_floor_value: isMaxFeePerGasMoreThanLegacyResult.value,
-            });
+            speed_up_floor_value: isMaxFeePerGasMoreThanLegacyResult.value,
+          });
       } else if (!isMaxPriorityFeePerGasMoreThanLegacyResult.result) {
         error = isCancel
           ? strings('edit_gas_fee_eip1559.max_priority_fee_cancel_low', {
-              cancel_value: isMaxPriorityFeePerGasMoreThanLegacyResult.value,
-            })
+            cancel_value: isMaxPriorityFeePerGasMoreThanLegacyResult.value,
+          })
           : strings('edit_gas_fee_eip1559.max_priority_fee_speed_up_low', {
-              speed_up_floor_value:
-                isMaxPriorityFeePerGasMoreThanLegacyResult.value,
-            });
+            speed_up_floor_value:
+              isMaxPriorityFeePerGasMoreThanLegacyResult.value,
+          });
       }
 
       return error;

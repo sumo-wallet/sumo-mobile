@@ -21,7 +21,6 @@ import {
   renderFromWei,
   toWei,
   weiToFiat,
-  calculateEthFeeForMultiLayer,
 } from '../../../../util/number';
 import { getQuotesSourceMessage } from '../utils';
 import Text from '../../../Base/Text';
@@ -146,7 +145,6 @@ function QuotesModal({
   quoteValues,
   showOverallValue,
   ticker,
-  multiLayerL1FeeTotal,
 }) {
   const bestOverallValue =
     quoteValues?.[quotes[0].aggregator]?.overallValueOfQuote ?? 0;
@@ -224,11 +222,6 @@ function QuotesModal({
       setDisplayDetails(false);
     }
   }, [displayDetails, selectedDetailsQuote]);
-
-  const selectedDetailsQuoteValuesEthFee = calculateEthFeeForMultiLayer({
-    multiLayerL1FeeTotal,
-    ethFee: selectedDetailsQuoteValues?.ethFee,
-  });
 
   return (
     <Modal
@@ -322,14 +315,14 @@ function QuotesModal({
                   <View style={styles.detailsRow}>
                     <Text small>{strings('swaps.estimated_network_fees')}</Text>
                     <Text primary>
-                      {renderFromWei(toWei(selectedDetailsQuoteValuesEthFee))}{' '}
+                      {renderFromWei(toWei(selectedDetailsQuoteValues.ethFee))}{' '}
                       <Text reset bold>
                         {ticker}
                       </Text>{' '}
                       <Text>
                         (~
                         {weiToFiat(
-                          toWei(selectedDetailsQuoteValuesEthFee),
+                          toWei(selectedDetailsQuoteValues.ethFee),
                           conversionRate,
                           currentCurrency,
                         )}
@@ -393,10 +386,6 @@ function QuotesModal({
                       const { aggregator } = quote;
                       const isSelected = aggregator === selectedQuote;
                       const quoteValue = quoteValues[aggregator];
-                      const quoteEthFee = calculateEthFeeForMultiLayer({
-                        multiLayerL1FeeTotal,
-                        ethFee: quoteValue?.ethFee,
-                      });
                       return (
                         <TouchableOpacity
                           key={aggregator}
@@ -419,7 +408,7 @@ function QuotesModal({
                           <View style={styles.columnFee}>
                             <Text primary bold={isSelected}>
                               {weiToFiat(
-                                toWei(quoteEthFee),
+                                toWei(quoteValue?.ethFee ?? 0),
                                 conversionRate,
                                 currentCurrency,
                               )}
@@ -515,7 +504,6 @@ QuotesModal.propTypes = {
   ticker: PropTypes.string,
   quoteValues: PropTypes.object,
   showOverallValue: PropTypes.bool,
-  multiLayerL1FeeTotal: PropTypes.string,
 };
 
 const mapStateToProps = (state) => ({

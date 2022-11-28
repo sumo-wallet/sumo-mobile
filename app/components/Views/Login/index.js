@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import {
   Alert,
-  ActivityIndicator,
+  // ActivityIndicator,
   Text,
   View,
   SafeAreaView,
@@ -11,12 +11,13 @@ import {
   InteractionManager,
   BackHandler,
   Platform,
+  TouchableOpacity,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import Button from 'react-native-button';
+// import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+// import Button from 'react-native-button';
 import Engine from '../../../core/Engine';
-import StyledButton from '../../UI/StyledButton';
+// import StyledButton from '../../UI/StyledButton';
 import { fontStyles } from '../../../styles/common';
 import { strings } from '../../../../locales/i18n';
 import SecureKeychain from '../../../core/SecureKeychain';
@@ -26,8 +27,8 @@ import { logIn, logOut, checkedAuth } from '../../../actions/user';
 import { setAllowLoginWithRememberMe } from '../../../actions/security';
 import { connect } from 'react-redux';
 import Device from '../../../util/device';
-import { OutlinedTextField } from 'react-native-material-textfield';
-import BiometryButton from '../../UI/BiometryButton';
+// import { OutlinedTextField } from 'react-native-material-textfield';
+// import BiometryButton from '../../UI/BiometryButton';
 import { recreateVaultWithSamePassword } from '../../../core/Vault';
 import Logger from '../../../util/Logger';
 import {
@@ -45,13 +46,29 @@ import { trackErrorAsAnalytics } from '../../../util/analyticsV2';
 import { toLowerCaseEquals } from '../../../util/general';
 import DefaultPreference from 'react-native-default-preference';
 import { ThemeContext, mockTheme } from '../../../util/theme';
-import AnimatedFox from 'react-native-animated-fox';
-import {
-  LOGIN_PASSWORD_ERROR,
-  RESET_WALLET_ID,
-} from '../../../constants/test-ids';
+// import AnimatedFox from 'react-native-animated-fox';
+// import {
+//   LOGIN_PASSWORD_ERROR,
+//   RESET_WALLET_ID,
+// } from '../../../constants/test-ids';
 import { LoginOptionsSwitch } from '../../UI/LoginOptionsSwitch';
-import generateTestId from '../../../../wdio/utils/generateTestId';
+import { Fonts, Colors, Style } from './../../../styles';
+import { icons } from './../../../assets';
+import SecurityPasswordModal from './../../UI/SecurityPasswordModal';
+
+export const getFaceIdIcon = () => {
+  if (Platform.OS === 'ios') {
+    return icons.iconFaceId;
+  }
+  return icons.iconFingerprint;
+};
+
+export const getUnlockName = () => {
+  if (Platform.OS === 'ios') {
+    return 'Face ID';
+  }
+  return 'Fingerprint';
+};
 
 const deviceHeight = Device.getDeviceHeight();
 const breakPoint = deviceHeight < 700;
@@ -245,9 +262,10 @@ class Login extends PureComponent {
     deleteText: '',
     showDeleteWarning: false,
     hasBiometricCredentials: false,
+    showSecurityPasswordModal: false,
   };
 
-  fieldRef = React.createRef();
+  // fieldRef = React.createRef();
 
   async componentDidMount() {
     const { initialScreen } = this.props;
@@ -260,7 +278,10 @@ class Login extends PureComponent {
       await KeyringController.setLocked();
     }
 
+    // console.log('componentDidMount');
+
     const biometryType = await SecureKeychain.getSupportedBiometryType();
+    // console.log('biometryType: ' + biometryType);
     if (biometryType) {
       const previouslyDisabled = await AsyncStorage.getItem(
         BIOMETRY_CHOICE_DISABLED,
@@ -275,6 +296,7 @@ class Login extends PureComponent {
       if (shouldHandleInitialAuth) {
         try {
           if (enabled && !previouslyDisabled) {
+            // console.log('tryBiometric');
             await this.tryBiometric();
           }
         } catch (e) {
@@ -350,7 +372,7 @@ class Login extends PureComponent {
 
   onLogin = async (hasCredentials = false) => {
     const { password } = this.state;
-    const { current: field } = this.fieldRef;
+    // const { current: field } = this.fieldRef;
     const locked = !passwordRequirementsMet(password);
     if (locked) this.setState({ error: strings('login.invalid_password') });
     if (this.state.loading || locked) return;
@@ -401,7 +423,7 @@ class Login extends PureComponent {
         password: '',
         hasBiometricCredentials: false,
       });
-      field.setValue('');
+      // field.setValue('');
     } catch (e) {
       // Should we force people to enable passcode / biometrics?
       const error = e.toString();
@@ -475,7 +497,9 @@ class Login extends PureComponent {
     );
   };
 
-  setPassword = (val) => this.setState({ password: val });
+  setPassword = (val) => {
+    this.setState({ password: val });
+  };
 
   onCancelPress = () => {
     this.toggleWarningModal();
@@ -484,40 +508,49 @@ class Login extends PureComponent {
 
   tryBiometric = async (e) => {
     if (e) e.preventDefault();
-    const { current: field } = this.fieldRef;
-    field.blur();
+    // console.log('preventDefault');
+    // const { current: field } = this.fieldRef;
+    // field.blur();
+    // console.log('blur');
     try {
       const credentials = await SecureKeychain.getGenericPassword();
+      // console.log('credentials: ', credentials);
       if (!credentials) {
         this.setState({ hasBiometricCredentials: false });
         return;
       }
-      field.blur();
+      // field.blur();
       this.setState({ password: credentials.password });
-      field.setValue(credentials.password);
-      field.blur();
+      // field.setValue(credentials.password);
+      // field.blur();
       await this.onLogin(true);
     } catch (error) {
       this.setState({ hasBiometricCredentials: true });
       Logger.log(error);
     }
-    field.blur();
+    // field.blur();
+  };
+
+  onPressUnlockWithSecurityPasword = () => {
+    this.setState({
+      showSecurityPasswordModal: true,
+    });
   };
 
   render = () => {
     const colors = this.context.colors || mockTheme.colors;
-    const themeAppearance = this.context.themeAppearance || 'light';
+    // const themeAppearance = this.context.themeAppearance || 'light';
     const styles = createStyles(colors);
 
     return (
       <ErrorBoundary view="Login">
         <SafeAreaView style={styles.mainWrapper}>
-          <KeyboardAwareScrollView
+          {/* <KeyboardAwareScrollView
             style={styles.wrapper}
             resetScrollToCoords={{ x: 0, y: 0 }}
-          >
-            <View testID={'login'} {...generateTestId(Platform, 'login')}>
-              <View style={styles.foxWrapper}>
+          > */}
+          <View style={Style.s({ flex: 1, px: 16 })} testID={'login'}>
+            {/* <View style={styles.foxWrapper}>
                 {Device.isAndroid() ? (
                   <Image
                     source={require('../../../images/fox.png')}
@@ -527,9 +560,58 @@ class Login extends PureComponent {
                 ) : (
                   <AnimatedFox bgColor={colors.background.default} />
                 )}
-              </View>
-              <Text style={styles.title}>{strings('login.title')}</Text>
-              <View style={styles.field}>
+              </View> */}
+            <View style={Style.s({ items: 'center', mt: 24 })}>
+              <Text
+                style={Fonts.t({
+                  s: 24,
+                  w: '700',
+                  c: colors.text.default,
+                })}
+              >
+                {strings('login.title')}
+              </Text>
+              <Text
+                style={Fonts.t({
+                  s: 14,
+                  w: '400',
+                  c: colors.text.default,
+                  t: 12,
+                })}
+              >
+                {'Unlock iCrossWallet with Face ID'}
+              </Text>
+            </View>
+            <View style={Style.s({ flex: 1, cen: true })}>
+              <TouchableOpacity onPress={() => this.tryBiometric()}>
+                <Image style={Style.s({ size: 80 })} source={getFaceIdIcon()} />
+              </TouchableOpacity>
+              <Text
+                style={Fonts.t({
+                  s: 14,
+                  w: '400',
+                  c: colors.text.default,
+                  t: 40,
+                })}
+              >
+                {`Tap to unlock with ${getUnlockName()}`}
+              </Text>
+              {!!this.state.error && (
+                <Text
+                  style={Fonts.t({
+                    s: 14,
+                    c: colors.error.default,
+                    text: 'center',
+                    t: 16,
+                  })}
+                // style={styles.errorMsg}
+                // testID={LOGIN_PASSWORD_ERROR}
+                >
+                  {this.state.error}
+                </Text>
+              )}
+            </View>
+            {/* <View style={styles.field}>
                 <Text style={styles.label}>{strings('login.password')}</Text>
                 <OutlinedTextField
                   style={styles.input}
@@ -560,43 +642,63 @@ class Login extends PureComponent {
                   )}
                   keyboardAppearance={themeAppearance}
                 />
-              </View>
+              </View> */}
 
-              {this.renderSwitch()}
+            {/* {this.renderSwitch()} */}
 
-              {!!this.state.error && (
-                <Text style={styles.errorMsg} testID={LOGIN_PASSWORD_ERROR}>
-                  {this.state.error}
-                </Text>
-              )}
-              <View style={styles.ctaWrapper} testID={'log-in-button'}>
-                <StyledButton type={'confirm'} onPress={this.triggerLogIn}>
-                  {this.state.loading ? (
-                    <ActivityIndicator
-                      size="small"
-                      color={colors.primary.inverse}
-                    />
-                  ) : (
-                    strings('login.unlock_button')
-                  )}
-                </StyledButton>
-              </View>
+            <Text
+              onPress={this.onPressUnlockWithSecurityPasword}
+              style={Fonts.t({
+                s: 14,
+                w: '500',
+                c: Colors.green[1],
+                b: 24,
+                text: 'center',
+              })}
+            >
+              {'Unlock with Security Pasword'}
+            </Text>
+            {/* <View style={styles.ctaWrapper} testID={'log-in-button'}>
+              <StyledButton type={'confirm'} onPress={this.triggerLogIn}>
+                {this.state.loading ? (
+                  <ActivityIndicator
+                    size="small"
+                    color={colors.primary.inverse}
+                  />
+                ) : (
+                  strings('login.unlock_button')
+                )}
+              </StyledButton>
+            </View> */}
 
-              <View style={styles.footer}>
-                <Text style={styles.cant}>{strings('login.go_back')}</Text>
-                <Button
-                  style={styles.goBack}
-                  onPress={this.toggleWarningModal}
-                  testID={RESET_WALLET_ID}
-                  {...generateTestId(Platform, RESET_WALLET_ID)}
-                >
-                  {strings('login.reset_wallet')}
-                </Button>
-              </View>
-            </View>
-          </KeyboardAwareScrollView>
+            {/* <View style={styles.footer}>
+              <Text style={styles.cant}>{strings('login.go_back')}</Text>
+              <Button
+                style={styles.goBack}
+                onPress={this.toggleWarningModal}
+                testID={RESET_WALLET_ID}
+              >
+                {strings('login.reset_wallet')}
+              </Button>
+            </View> */}
+          </View>
+          {/* </KeyboardAwareScrollView> */}
           <FadeOutOverlay />
         </SafeAreaView>
+        <SecurityPasswordModal
+          isOpen={this.state.showSecurityPasswordModal}
+          onClose={() =>
+            this.setState({
+              showSecurityPasswordModal: false,
+            })
+          }
+          onPassChanged={this.setPassword}
+          onConfirm={this.triggerLogIn}
+          onErase={this.toggleWarningModal}
+          // fieldRef={this.fieldRef}
+          errorMsg={this.state.error}
+          onTryBiometric={this.tryBiometric}
+        />
       </ErrorBoundary>
     );
   };

@@ -4344,7 +4344,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 
 ******************************
 
-@metamask/design-tokens
+@thanhpn1990/design-tokens
 1.4.2 <https://github.com/MetaMask/design-tokens>
 license: MIT
 authors: undefined

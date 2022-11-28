@@ -1,6 +1,6 @@
 // Third party dependencies.
 import { StyleSheet, Dimensions } from 'react-native';
-import { darkTheme } from '@metamask/design-tokens';
+import { darkTheme } from '@thanhpn1990/design-tokens';
 
 const { colors } = darkTheme;
 const marginWidth = 16;

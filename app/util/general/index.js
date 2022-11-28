@@ -1,3 +1,4 @@
+import { ROUTES } from './../../navigation/routes';
 import URL from 'url-parse';
 
 export const tlc = (str) => str?.toLowerCase?.();
@@ -35,7 +36,7 @@ export function findRouteNameFromNavigatorState(routes) {
   let name = route?.name;
 
   // For compatibility with the previous way on react navigation 4
-  if (name === 'Main' || name === 'WalletTabHome' || name === 'Home')
+  if (name === 'Main' || name === ROUTES.AppStackContainer || name === 'Home')
     name = 'WalletView';
   if (name === 'TransactionsHome') name = 'TransactionsView';
 

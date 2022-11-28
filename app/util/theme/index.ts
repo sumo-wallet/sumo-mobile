@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { useColorScheme, StatusBar, ColorSchemeName } from 'react-native';
 import { AppThemeKey, Theme } from './models';
 import { useSelector } from 'react-redux';
-import { lightTheme, darkTheme } from '@metamask/design-tokens';
+import { lightTheme, darkTheme } from '@thanhpn1990/design-tokens';
 import Device from '../device';
 
 /**
@@ -11,7 +11,7 @@ import Device from '../device';
  */
 export const mockTheme = {
   colors: lightTheme.colors,
-  themeAppearance: 'light',
+  themeAppearance: 'dark',
   typography: lightTheme.typography,
   shadows: lightTheme.shadows,
 };

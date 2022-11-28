@@ -43,6 +43,8 @@ module.exports = {
   rules: {
     'no-catch-shadow': 0,
     'no-console': ['error', { allow: ['warn', 'error'] }],
+    'react/display-name': 'off',
+
     quotes: [
       'error',
       'single',
@@ -65,7 +67,7 @@ module.exports = {
     'react/prefer-stateless-function': 0,
     'require-atomic-updates': 0,
     'array-callback-return': 2,
-    'arrow-body-style': 2,
+    'arrow-body-style': 'off',
     'dot-notation': 2,
     eqeqeq: 2,
     'import/no-amd': 2,
@@ -75,7 +77,7 @@ module.exports = {
     'import/no-mutable-exports': 2,
     'import/no-namespace': 2,
     'import/no-nodejs-modules': 2,
-    'import/prefer-default-export': 2,
+    'import/prefer-default-export': 'off',
     'no-alert': 2,
     'no-constant-condition': [
       2,
@@ -84,7 +86,7 @@ module.exports = {
       },
     ],
     'no-duplicate-imports': 2,
-    'no-empty-function': 2,
+    'no-empty-function': 'off',
     'no-else-return': 2,
     'no-eval': 2,
     'no-extend-native': 2,
@@ -126,8 +128,8 @@ module.exports = {
     'import/no-unresolved': 2,
     'eslint-comments/no-unlimited-disable': 0,
     'eslint-comments/no-unused-disable': 0,
-    'react-native/no-color-literals': 2,
-    'react-native/no-inline-styles': 2,
+    'react-native/no-color-literals': 'off',
+    'react-native/no-inline-styles': 0,
     'react-native/no-unused-styles': 0,
     'react-native/split-platform-components': 2,
     'react/jsx-boolean-value': 2,
@@ -146,10 +148,8 @@ module.exports = {
     ],
     'react/no-render-return-value': 2,
     'react/no-string-refs': 2,
-    'react/no-unused-prop-types': 2,
+    'react/no-unused-prop-types': 'off',
     'react/prefer-es6-class': 2,
     radix: 0,
   },
-
-  ignorePatterns: ['wdio.conf.js'],
 };

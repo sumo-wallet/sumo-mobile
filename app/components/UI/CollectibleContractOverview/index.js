@@ -13,6 +13,7 @@ import { newAssetTransaction } from '../../../actions/transaction';
 import { toLowerCaseEquals } from '../../../util/general';
 import { collectiblesSelector } from '../../../reducers/collectibles';
 import { ThemeContext, mockTheme } from '../../../util/theme';
+import { ROUTES } from './../../../navigation/routes';
 
 const createStyles = (colors) =>
   StyleSheet.create({
@@ -95,7 +96,7 @@ class CollectibleContractOverview extends PureComponent {
       toLowerCaseEquals(collectible.address, collectibleContract.address),
     );
     this.props.newAssetTransaction(collectible);
-    this.props.navigation.navigate('SendFlowView');
+    this.props.navigation.navigate(ROUTES.SendFlowView);
   };
 
   onInfo = () => this.props.toggleCollectibleContractModal();

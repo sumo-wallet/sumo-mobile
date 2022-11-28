@@ -10,7 +10,6 @@ import {
   Alert,
   Image,
   InteractionManager,
-  Platform,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import StyledButton from '../../UI/StyledButton';
@@ -45,15 +44,8 @@ import { EXISTING_USER, METRICS_OPT_IN } from '../../../constants/storage';
 import AnalyticsV2 from '../../../util/analyticsV2';
 import DefaultPreference from 'react-native-default-preference';
 import { ThemeContext, mockTheme } from '../../../util/theme';
-import AnimatedFox from 'react-native-animated-fox';
+// import AnimatedFox from 'react-native-animated-fox';
 import Routes from '../../../constants/navigation/Routes';
-import generateTestId from '../../../../wdio/utils/generateTestId';
-import {
-  WALLET_SETUP_SCREEN_TITLE_ID,
-  WALLET_SETUP_SCREEN_DESCRIPTION_ID,
-  WALLET_SETUP_SCREEN_IMPORT_FROM_SEED_BUTTON_ID,
-  WALLET_SETUP_CREATE_NEW_WALLET_BUTTON_ID,
-} from '../../../../wdio/features/testIDs/Screens/WalletSetupScreen.testIds';
 
 const PUB_KEY = process.env.MM_PUBNUB_PUB_KEY;
 
@@ -78,7 +70,8 @@ const createStyles = (colors) =>
       height: Device.isIos() ? 90 : 45,
     },
     termsAndConditions: {
-      paddingBottom: 30,
+      height: 100,
+      paddingBottom: 40,
     },
     title: {
       fontSize: 24,
@@ -416,26 +409,20 @@ class Onboarding extends PureComponent {
 
     return (
       <View style={styles.ctas}>
-        <Text
-          style={styles.title}
-          {...generateTestId(Platform, WALLET_SETUP_SCREEN_TITLE_ID)}
-        >
+        <Text style={styles.title} testID={'onboarding-screen-title'}>
           {strings('onboarding.title')}
         </Text>
         <View style={styles.importWrapper}>
-          <Text
-            style={styles.buttonDescription}
-            {...generateTestId(Platform, WALLET_SETUP_SCREEN_DESCRIPTION_ID)}
-          >
+          <Text style={styles.buttonDescription}>
             {strings('onboarding.import')}
           </Text>
         </View>
         <View style={styles.createWrapper}>
           <View style={styles.buttonWrapper}>
             <StyledButton
-              type={'normal'}
+              type={'blue'}
               onPress={this.onPressImport}
-              testID={WALLET_SETUP_SCREEN_IMPORT_FROM_SEED_BUTTON_ID}
+              testID={'import-wallet-import-from-seed-button'}
             >
               {strings('import_wallet.import_from_seed_button')}
             </StyledButton>
@@ -445,7 +432,7 @@ class Onboarding extends PureComponent {
             <View style={styles.buttonWrapper}>
               <StyledButton
                 style={styles.button}
-                type={'normal'}
+                type={'blue'}
                 onPress={this.onPressSync}
                 testID={'onboarding-import-button'}
               >
@@ -457,7 +444,7 @@ class Onboarding extends PureComponent {
             <StyledButton
               type={'blue'}
               onPress={this.onPressCreate}
-              testID={WALLET_SETUP_CREATE_NEW_WALLET_BUTTON_ID}
+              testID={'create-wallet-button'}
             >
               {strings('onboarding.start_exploring_now')}
             </StyledButton>
@@ -511,12 +498,13 @@ class Onboarding extends PureComponent {
                 <View style={styles.foxWrapper}>
                   {Device.isAndroid() ? (
                     <Image
-                      source={require('../../../images/fox.png')}
+                      source={require('../../../images/eth-logo.png')}
                       style={styles.image}
                       resizeMethod={'auto'}
                     />
                   ) : (
-                    <AnimatedFox bgColor={colors.background.default} />
+                    // <AnimatedFox bgColor={colors.background.default} /> //  todo add wallet logo
+                    <View />
                   )}
                 </View>
               )}

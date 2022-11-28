@@ -7,7 +7,6 @@ import {
   StyleSheet,
   Text,
   InteractionManager,
-  Platform,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -24,6 +23,7 @@ import {
 import Identicon from '../Identicon';
 import StyledButton from '../StyledButton';
 import AccountList from '../AccountList';
+import AccountListOption from '../AccountListOption';
 import NetworkList from '../NetworkList';
 import { renderFromWei, renderFiat } from '../../../util/number';
 import { strings } from '../../../../locales/i18n';
@@ -33,6 +33,7 @@ import {
   toggleNetworkModal,
   toggleAccountsModal,
   toggleReceiveModal,
+  toggleAddAccountsModal,
 } from '../../../actions/modals';
 import { showAlert } from '../../../actions/alert';
 import {
@@ -76,11 +77,7 @@ import {
   networkSwitched,
 } from '../../../actions/onboardNetwork';
 import Routes from '../../../constants/navigation/Routes';
-import generateTestId from '../../../../wdio/utils/generateTestId';
-import {
-  DRAWER_VIEW_LOCK_TEXT_ID,
-  DRAWER_VIEW_SETTINGS_TEXT_ID,
-} from '../../../../wdio/features/testIDs/Screens/DrawerView.testIds';
+import { ROUTES } from './../../../navigation/routes';
 
 const createStyles = (colors) =>
   StyleSheet.create({
@@ -362,6 +359,10 @@ class DrawerView extends PureComponent {
      */
     toggleAccountsModal: PropTypes.func,
     /**
+    * Action that toggles the accounts modal
+    */
+    toggleAddAccountsModal: PropTypes.func,
+    /**
      * Action that toggles the receive modal
      */
     toggleReceiveModal: PropTypes.func,
@@ -382,9 +383,13 @@ class DrawerView extends PureComponent {
      */
     newAssetTransaction: PropTypes.func.isRequired,
     /**
-     * Boolean that determines the status of the networks modal
+     * Boolean that determines the status of the accounts modal
      */
     accountsModalVisible: PropTypes.bool.isRequired,
+    /**
+     * Boolean that determines the status of the add accounts modal
+     */
+    addAccountsModalVisible: PropTypes.bool.isRequired,
     /**
      * Boolean that determines if the user has set a password before
      */
@@ -475,6 +480,7 @@ class DrawerView extends PureComponent {
   processedNewBalance = false;
   animatingNetworksModal = false;
   animatingAccountsModal = false;
+  animatingAddAccountsModal = false;
 
   isCurrentAccountImported() {
     let ret = false;
@@ -630,6 +636,18 @@ class DrawerView extends PureComponent {
       this.trackEvent(ANALYTICS_EVENT_OPTS.NAVIGATION_TAPS_ACCOUNT_NAME);
   };
 
+  toggleAddAccountsModal = async () => {
+    if (!this.animatingAddAccountsModal) {
+      this.animatingAddAccountsModal = true;
+      this.props.toggleAddAccountsModal();
+      setTimeout(() => {
+        this.animatingAddAccountsModal = false;
+      }, 500);
+    }
+    !this.props.accountsModalVisible &&
+      this.trackEvent(ANALYTICS_EVENT_OPTS.NAVIGATION_TAPS_ACCOUNT_NAME);
+  };
+
   toggleReceiveModal = () => {
     this.props.toggleReceiveModal();
   };
@@ -655,8 +673,8 @@ class DrawerView extends PureComponent {
     !showNetworkOnboarding && this.toggleNetworksModal();
     onboardNetworkAction(
       sanitizeUrl(networkUrl) ||
-        sanitizeUrl(switchedNetworkUrl) ||
-        this.state.networkUrl,
+      sanitizeUrl(switchedNetworkUrl) ||
+      this.state.networkUrl,
     );
     networkSwitched({ networkUrl: '', networkStatus: false });
     if (!manualClose) {
@@ -712,7 +730,7 @@ class DrawerView extends PureComponent {
 
   onSend = async () => {
     this.props.newAssetTransaction(getEther(this.props.ticker));
-    this.props.navigation.navigate('SendFlowView');
+    this.props.navigation.navigate(ROUTES.SendFlowView);
     this.hideDrawer();
     this.trackEvent(ANALYTICS_EVENT_OPTS.NAVIGATION_TAPS_SEND);
   };
@@ -725,7 +743,7 @@ class DrawerView extends PureComponent {
   };
 
   showWallet = () => {
-    this.props.navigation.navigate('WalletTabHome');
+    this.props.navigation.navigate(ROUTES.AppStackContainer);
     this.hideDrawer();
     this.trackEvent(ANALYTICS_EVENTS_V2.WALLET_OPENED);
   };
@@ -1024,7 +1042,6 @@ class DrawerView extends PureComponent {
           icon: this.getFeatherIcon('settings'),
           warning: strings('drawer.settings_warning_short'),
           action: this.showSettings,
-          testID: DRAWER_VIEW_SETTINGS_TEXT_ID,
         },
         {
           name: strings('drawer.help'),
@@ -1040,8 +1057,6 @@ class DrawerView extends PureComponent {
           name: strings('drawer.lock'),
           icon: this.getFeatherIcon('log-out'),
           action: this.logout,
-          // ...generateTestId(Platform, DRAWER_VIEW_LOCK_ICON_ID),
-          testID: DRAWER_VIEW_LOCK_TEXT_ID,
         },
       ],
     ];
@@ -1341,7 +1356,7 @@ class DrawerView extends PureComponent {
                           style={[
                             styles.menuItem,
                             item.routeNames &&
-                            item.routeNames.includes(currentRoute)
+                              item.routeNames.includes(currentRoute)
                               ? styles.selectedRoute
                               : null,
                           ]}
@@ -1362,11 +1377,10 @@ class DrawerView extends PureComponent {
                               styles.menuItemName,
                               !item.icon ? styles.noIcon : null,
                               item.routeNames &&
-                              item.routeNames.includes(currentRoute)
+                                item.routeNames.includes(currentRoute)
                                 ? styles.selectedName
                                 : null,
                             ]}
-                            {...generateTestId(Platform, item.testID)}
                             numberOfLines={1}
                           >
                             {item.name}
@@ -1446,6 +1460,30 @@ class DrawerView extends PureComponent {
             onImportAccount={this.onImportAccount}
             onConnectHardware={this.onConnectHardware}
             ticker={ticker}
+            navigation={this.props.navigation}
+          />
+        </Modal>
+        <Modal
+          isVisible={this.props.addAccountsModalVisible}
+          style={styles.bottomModal}
+          onBackdropPress={this.toggleAddAccountsModal}
+          onBackButtonPress={this.toggleAddAccountsModal}
+          onSwipeComplete={this.toggleAddAccountsModal}
+          swipeDirection={'down'}
+          propagateSwipe
+          backdropColor={colors.overlay.default}
+          backdropOpacity={1}
+        >
+          <AccountListOption
+            enableAccountsAddition
+            identities={identities}
+            selectedAddress={selectedAddress}
+            keyrings={keyrings}
+            onAccountChange={this.onAccountChange}
+            onImportAccount={this.onImportAccount}
+            onConnectHardware={this.onConnectHardware}
+            ticker={ticker}
+            navigation={this.props.navigation}
           />
         </Modal>
         {this.renderOnboardingWizard()}
@@ -1466,7 +1504,7 @@ class DrawerView extends PureComponent {
             showReceiveModal={this.showReceiveModal}
           />
         </Modal>
-        {this.renderProtectModal()}
+        {/* {this.renderProtectModal()} */}
       </View>
     );
   }
@@ -1485,6 +1523,7 @@ const mapStateToProps = (state) => ({
   keyrings: state.engine.backgroundState.KeyringController.keyrings,
   networkModalVisible: state.modals.networkModalVisible,
   accountsModalVisible: state.modals.accountsModalVisible,
+  addAccountsModalVisible: state.modals.addAccountsModalVisible,
   receiveModalVisible: state.modals.receiveModalVisible,
   passwordSet: state.user.passwordSet,
   wizard: state.wizard,
@@ -1504,6 +1543,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   toggleNetworkModal: () => dispatch(toggleNetworkModal()),
   toggleAccountsModal: () => dispatch(toggleAccountsModal()),
+  toggleAddAccountsModal: () => dispatch(toggleAddAccountsModal()),
   toggleReceiveModal: () => dispatch(toggleReceiveModal()),
   showAlert: (config) => dispatch(showAlert(config)),
   newAssetTransaction: (selectedAsset) =>

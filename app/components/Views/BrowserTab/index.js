@@ -8,6 +8,9 @@ import {
   Linking,
   BackHandler,
   InteractionManager,
+  TouchableOpacity,
+  SafeAreaView,
+  StatusBar,
 } from 'react-native';
 import { withNavigation } from '@react-navigation/compat';
 import { WebView } from 'react-native-webview';
@@ -17,7 +20,7 @@ import BrowserBottomBar from '../../UI/BrowserBottomBar';
 import PropTypes from 'prop-types';
 import Share from 'react-native-share';
 import { connect } from 'react-redux';
-import BackgroundBridge from '../../../core/BackgroundBridge/BackgroundBridge';
+import BackgroundBridge from '../../../core/BackgroundBridge';
 import Engine from '../../../core/Engine';
 import PhishingModal from '../../UI/PhishingModal';
 import WebviewProgressBar from '../../UI/WebviewProgressBar';
@@ -27,6 +30,7 @@ import onUrlSubmit, { getHost, getUrlObj, isTLD } from '../../../util/browser';
 import {
   SPA_urlChangeListener,
   JS_DESELECT_TEXT,
+  JS_WEBVIEW_URL,
 } from '../../../util/browserScripts';
 import resolveEnsToIpfsContentId from '../../../lib/ens-ipfs/resolver';
 import Button from '../../UI/Button';
@@ -36,7 +40,11 @@ import Modal from 'react-native-modal';
 import WebviewError from '../../UI/WebviewError';
 import { approveHost } from '../../../actions/privacy';
 import { addBookmark } from '../../../actions/bookmarks';
-import { addToHistory, addToWhitelist } from '../../../actions/browser';
+import {
+  addToHistory,
+  addToWhitelist,
+  clearHistory,
+} from '../../../actions/browser';
 import Device from '../../../util/device';
 import AppConstants from '../../../core/AppConstants';
 import SearchApi from 'react-native-search-api';
@@ -62,7 +70,18 @@ import {
 } from '../../../constants/urls';
 import sanitizeUrlInput from '../../../util/url/sanitizeUrlInput';
 
-const { HOMEPAGE_URL, NOTIFICATION_NAMES } = AppConstants;
+import { BrowserHeader } from './../Browser/BrowserHeader';;
+import { Style, Colors, Fonts } from './../../../styles';
+// import { SafeAreaView } from 'react-native-safe-area-context';
+import FastImage from 'react-native-fast-image';
+import { icons } from './../../../assets';
+// import { Dapp } from './../../../types';
+import { useNavigator } from './../../hooks';
+import { ROUTES } from './../../../navigation/routes';
+import ClipboardManager from './../../../core/ClipboardManager';
+import { showAlert } from '../../../actions/alert';
+
+const { HOMEPAGE_URL, USER_AGENT, NOTIFICATION_NAMES } = AppConstants;
 const HOMEPAGE_HOST = new URL(HOMEPAGE_URL)?.hostname;
 const MM_MIXPANEL_TOKEN = process.env.MM_MIXPANEL_TOKEN;
 
@@ -140,8 +159,8 @@ const createStyles = (colors, shadows) =>
     },
     optionIconWrapper: {
       flex: 0,
-      borderRadius: 5,
-      backgroundColor: colors.primary.muted,
+      // borderRadius: 5,
+      // backgroundColor: colors.primary.muted,
       padding: 3,
       marginRight: 10,
       alignSelf: 'center',
@@ -199,6 +218,59 @@ const createStyles = (colors, shadows) =>
     fullScreenModal: {
       flex: 1,
     },
+    modalWrapperBase: {
+      backgroundColor: colors.background.default,
+      borderTopLeftRadius: 10,
+      borderTopRightRadius: 10,
+    },
+    modalWrapper: {
+      backgroundColor: colors.background.default,
+      borderTopLeftRadius: 10,
+      borderTopRightRadius: 10,
+    },
+    titleWrapper: {
+      width: '100%',
+      minHeight: 40,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderColor: colors.border.muted,
+    },
+    dragger: {
+      width: 48,
+      height: 5,
+      borderRadius: 4,
+      backgroundColor: colors.border.default,
+      opacity: Device.isAndroid() ? 0.6 : 0.5,
+    },
+    optionViewBase: {
+      paddingBottom: Device.isIphoneX() ? 30 : 0,
+      flexDirection: 'column',
+      alignItems: 'center',
+      display: 'flex',
+    },
+    optionView: {
+      height: Device.isIphoneX() ? 120 : 100,
+    },
+    optionViewFull: {
+      height: Device.isIphoneX() ? 300 : 270,
+    },
+    btnText: {
+      fontSize: 14,
+      color: colors.primary.default,
+      ...fontStyles.normal,
+    },
+    optionButton: {
+      width: '100%',
+      height: 50,
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      borderTopWidth: StyleSheet.hairlineWidth,
+      borderColor: colors.border.muted,
+      flexDirection: 'row',
+      backgroundColor: 'transparent',
+      paddingVertical: 5,
+    },
   });
 
 const sessionENSNames = {};
@@ -218,6 +290,7 @@ export const BrowserTab = (props) => {
   const [firstUrlLoaded, setFirstUrlLoaded] = useState(false);
   const [error, setError] = useState(null);
   const [showOptions, setShowOptions] = useState(false);
+  const [showNetwork, setShowNetwork] = useState(false);
   const [entryScriptWeb3, setEntryScriptWeb3] = useState(null);
   const [showPhishingModal, setShowPhishingModal] = useState(false);
   const [blockedUrl, setBlockedUrl] = useState(undefined);
@@ -228,12 +301,17 @@ export const BrowserTab = (props) => {
   const url = useRef('');
   const title = useRef('');
   const icon = useRef(null);
+  const webviewUrlPostMessagePromiseResolve = useRef(null);
   const backgroundBridges = useRef([]);
   const fromHomepage = useRef(false);
   const wizardScrollAdjusted = useRef(false);
 
   const { colors, shadows } = useTheme();
   const styles = createStyles(colors, shadows);
+
+  React.useEffect(()=>{
+    console.log('initialUrl: ' + initialUrl)
+  }, [initialUrl])
 
   /**
    * Is the current tab the active tab
@@ -812,19 +890,26 @@ export const BrowserTab = (props) => {
    * When website finished loading
    */
   const onLoadEnd = ({ nativeEvent }) => {
-    // Do not update URL unless website has successfully completed loading.
-    if (nativeEvent.loading) {
-      return;
-    }
-    // Use URL to produce real url. This should be the actual website that the user is viewing.
-    const urlObj = new URL(nativeEvent.url);
-    const { origin, pathname = '', query = '' } = urlObj;
-    const realUrl = `${origin}${pathname}${query}`;
-    // Generate favicon.
-    const favicon = `https://api.faviconkit.com/${getHost(realUrl)}/32`;
-    // Update navigation bar address with title of loaded url.
-    changeUrl({ ...nativeEvent, url: realUrl, icon: favicon });
-    changeAddressBar({ ...nativeEvent, url: realUrl, icon: favicon });
+    if (nativeEvent.loading) return;
+    const { current } = webviewRef;
+
+    current && current.injectJavaScript(JS_WEBVIEW_URL);
+
+    const promiseResolver = (resolve) => {
+      webviewUrlPostMessagePromiseResolve.current = resolve;
+    };
+    const promise = current
+      ? new Promise(promiseResolver)
+      : Promise.resolve(url.current);
+
+    promise.then((info) => {
+      const { hostname: currentHostname } = new URL(url.current);
+      const { hostname } = new URL(nativeEvent.url);
+      if (info.url === nativeEvent.url && currentHostname === hostname) {
+        changeUrl({ ...nativeEvent, icon: info.icon });
+        changeAddressBar({ ...nativeEvent, icon: info.icon });
+      }
+    });
   };
 
   /**
@@ -847,6 +932,22 @@ export const BrowserTab = (props) => {
           }
         });
         return;
+      }
+
+      switch (data.type) {
+        /**
+        * Disabling iframes for now
+        case 'FRAME_READY': {
+          const { url } = data.payload;
+          onFrameLoadStarted(url);
+          break;
+        }*/
+        case 'GET_WEBVIEW_URL': {
+          const { url } = data.payload;
+          if (url === nativeEvent.url)
+            webviewUrlPostMessagePromiseResolve.current &&
+              webviewUrlPostMessagePromiseResolve.current(data.payload);
+        }
       }
     } catch (e) {
       Logger.error(e, `Browser::onMessage on ${url.current}`);
@@ -881,12 +982,22 @@ export const BrowserTab = (props) => {
       await go(sanitizedInput);
     },
     /* we do not want to depend on the props object
-		- since we are changing it here, this would give us a circular dependency and infinite re renders
-		*/
+    - since we are changing it here, this would give us a circular dependency and infinite re renders
+    */
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
 
+  const onClearHistory = useCallback(
+    async () => {
+      props.clearHistory();
+    },
+    /* we do not want to depend on the props object
+    - since we are changing it here, this would give us a circular dependency and infinite re renders
+    */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
   /**
    * Shows or hides the url input modal.
    * When opened it sets the current website url on the input.
@@ -897,13 +1008,15 @@ export const BrowserTab = (props) => {
       props.navigation.navigate(
         ...createBrowserUrlModalNavDetails({
           url: urlToShow,
+          history: props.history,
           onUrlInputSubmit,
+          onClearHistory,
         }),
       );
     },
     /* we do not want to depend on the props.navigation object
-		- since we are changing it here, this would give us a circular dependency and infinite re renders
-		*/
+    - since we are changing it here, this would give us a circular dependency and infinite re renders
+    */
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [onUrlInputSubmit],
   );
@@ -956,7 +1069,7 @@ export const BrowserTab = (props) => {
     if (!isAllowedUrl(hostname)) {
       return handleNotAllowedUrl(nativeEvent.url);
     }
-
+    webviewUrlPostMessagePromiseResolve.current = null;
     setError(false);
 
     changeUrl(nativeEvent);
@@ -987,8 +1100,8 @@ export const BrowserTab = (props) => {
       });
     }
     /* we do not want to depend on the entire props object
-		- since we are changing it here, this would give us a circular dependency and infinite re renders
-		*/
+    - since we are changing it here, this would give us a circular dependency and infinite re renders
+    */
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error, props.activeTab, props.id, toggleUrlModal]);
 
@@ -1081,7 +1194,7 @@ export const BrowserTab = (props) => {
             const item = {
               uniqueIdentifier: url,
               title: name || getMaskedUrl(url),
-              contentDescription: `Launch ${name || url} on MetaMask`,
+              contentDescription: `Launch ${name || url} on Sumo`,
               keywords: [name.split(' '), url, 'dapp'],
               thumbnail: {
                 uri:
@@ -1145,43 +1258,54 @@ export const BrowserTab = (props) => {
     if (isHomepage()) return null;
 
     return (
-      <React.Fragment>
-        <Button onPress={onReloadPress} style={styles.option}>
-          <View style={styles.optionIconWrapper}>
-            <Icon name="refresh" size={15} style={styles.optionIcon} />
-          </View>
-          <Text style={styles.optionText} numberOfLines={2}>
-            {strings('browser.reload')}
+      <View style={Style.s({})} >
+        <TouchableOpacity style={Style.s({direc: 'row', items: 'center', justify: 'space-between'})} >
+          <Text>
+            {'Copy web link'}
           </Text>
-        </Button>
-        {!isBookmark() && (
-          <Button onPress={addBookmark} style={styles.option}>
-            <View style={styles.optionIconWrapper}>
-              <Icon name="star" size={16} style={styles.optionIcon} />
-            </View>
-            <Text style={styles.optionText} numberOfLines={2}>
-              {strings('browser.add_to_favorites')}
-            </Text>
-          </Button>
-        )}
-        <Button onPress={share} style={styles.option}>
-          <View style={styles.optionIconWrapper}>
-            <Icon name="share" size={15} style={styles.optionIcon} />
-          </View>
-          <Text style={styles.optionText} numberOfLines={2}>
-            {strings('browser.share')}
-          </Text>
-        </Button>
-        <Button onPress={openInBrowser} style={styles.option}>
-          <View style={styles.optionIconWrapper}>
-            <Icon name="expand" size={16} style={styles.optionIcon} />
-          </View>
-          <Text style={styles.optionText} numberOfLines={2}>
-            {strings('browser.open_in_browser')}
-          </Text>
-        </Button>
-      </React.Fragment>
-    );
+          <FastImage  style={Style.s({size: 24 })} source={icons.iconCopyWebLink} />
+        </TouchableOpacity>
+      </View>
+    )
+
+    // return (
+    //   <React.Fragment>
+    //     <Button onPress={onReloadPress} style={styles.optionButton}>
+    //       <Text style={styles.btnText} numberOfLines={2}>
+    //         {strings('browser.reload')}
+    //       </Text>
+    //       <View style={styles.optionIconWrapper}>
+    //         <Icon name="refresh" size={20} style={styles.optionIcon} />
+    //       </View>
+    //     </Button>
+    //     {!isBookmark() && (
+    //       <Button onPress={addBookmark} style={styles.optionButton}>
+    //         <Text style={styles.btnText} numberOfLines={2}>
+    //           {strings('browser.add_to_favorites')}
+    //         </Text>
+    //         <View style={styles.optionIconWrapper}>
+    //           <Icon name="star" size={20} style={styles.optionIcon} />
+    //         </View>
+    //       </Button>
+    //     )}
+    //     <Button onPress={share} style={styles.optionButton}>
+    //       <Text style={styles.btnText} numberOfLines={2}>
+    //         {strings('browser.share')}
+    //       </Text>
+    //       <View style={styles.optionIconWrapper}>
+    //         <Icon name="share" size={20} style={styles.optionIcon} />
+    //       </View>
+    //     </Button>
+    //     <Button onPress={openInBrowser} style={styles.optionButton}>
+    //       <Text style={styles.btnText} numberOfLines={2}>
+    //         {strings('browser.open_in_browser')}
+    //       </Text>
+    //       <View style={styles.optionIconWrapper}>
+    //         <Icon name="expand" size={20} style={styles.optionIcon} />
+    //       </View>
+    //     </Button>
+    //   </React.Fragment>
+    // );
   };
 
   /**
@@ -1196,59 +1320,182 @@ export const BrowserTab = (props) => {
    * Handle switch network press
    */
   const switchNetwork = () => {
-    const { toggleNetworkModal, network } = props;
+    // const { toggleNetworkModal, network } = props;
+    setShowNetwork(true);
     toggleOptionsIfNeeded();
-    toggleNetworkModal();
-    trackSwitchNetworkEvent({ from: network });
+    // toggleNetworkModal();
+    // trackSwitchNetworkEvent({ from: network });
   };
 
   /**
    * Render options menu
    */
-  const renderOptions = () => {
-    if (showOptions) {
-      return (
-        <TouchableWithoutFeedback onPress={toggleOptions}>
-          <View style={styles.optionsOverlay}>
-            <View
-              style={[
-                styles.optionsWrapper,
-                Device.isAndroid()
-                  ? styles.optionsWrapperAndroid
-                  : styles.optionsWrapperIos,
-              ]}
-            >
-              <Button onPress={onNewTabPress} style={styles.option}>
-                <View style={styles.optionIconWrapper}>
-                  <MaterialCommunityIcon
-                    name="plus"
-                    size={18}
-                    style={styles.optionIcon}
-                  />
-                </View>
-                <Text style={styles.optionText} numberOfLines={1}>
-                  {strings('browser.new_tab')}
-                </Text>
-              </Button>
-              {renderNonHomeOptions()}
-              <Button onPress={switchNetwork} style={styles.option}>
-                <View style={styles.optionIconWrapper}>
-                  <MaterialCommunityIcon
-                    name="earth"
-                    size={18}
-                    style={styles.optionIcon}
-                  />
-                </View>
-                <Text style={styles.optionText} numberOfLines={2}>
-                  {strings('browser.switch_network')}
-                </Text>
-              </Button>
+  // const renderOptions = () => {
+  //   if (showOptions) {
+  //     return (
+  //       <TouchableWithoutFeedback onPress={toggleOptions}>
+  //         <View style={styles.optionsOverlay}>
+  //           <View
+  //             style={[
+  //               styles.optionsWrapper,
+  //               Device.isAndroid()
+  //                 ? styles.optionsWrapperAndroid
+  //                 : styles.optionsWrapperIos,
+  //             ]}
+  //           >
+  //             <Button onPress={onNewTabPress} style={styles.optionButton}>
+  //               <View style={styles.optionIconWrapper}>
+  //                 <MaterialCommunityIcon
+  //                   name="plus"
+  //                   size={18}
+  //                   style={styles.optionIcon}
+  //                 />
+  //               </View>
+  //               <Text style={styles.optionText} numberOfLines={1}>
+  //                 {strings('browser.new_tab')}
+  //               </Text>
+  //             </Button>
+  //             {renderNonHomeOptions()}
+  //             <Button onPress={switchNetwork} style={styles.optionButton}>
+  //               <View style={styles.optionIconWrapper}>
+  //                 <MaterialCommunityIcon
+  //                   name="earth"
+  //                   size={18}
+  //                   style={styles.optionIcon}
+  //                 />
+  //               </View>
+  //               <Text style={styles.optionText} numberOfLines={2}>
+  //                 {strings('browser.switch_network')}
+  //               </Text>
+  //             </Button>
+  //           </View>
+  //         </View>
+  //       </TouchableWithoutFeedback>
+  //     );
+  //   }
+  // };
+
+  const nav = useNavigator();
+  // const dispatch
+
+  const openAboutDapp = React.useCallback(()=>{
+    toggleOptionsIfNeeded();
+    nav.navigate(ROUTES.DappDetails, {dapp: props.dapp});
+  }, [toggleOptionsIfNeeded, props.dapp])
+
+  const handleCopyWebLink = React.useCallback(()=>{
+    toggleOptionsIfNeeded();
+    ClipboardManager.setString(props?.dapp?.website);
+    props.showAlert({
+      isVisible: true,
+      autodismiss: 2500,
+      content: 'clipboard-alert',
+      data: { msg: 'Web link copied to clipboard!' },
+    });
+  }, [props.dapp, props.showAlert, toggleOptionsIfNeeded])
+
+  /**
+   * Renders the Option modal
+   */
+  const renderOptionsModal = () => (
+    <Modal
+      isVisible={showOptions}
+      animationIn="slideInUp"
+      animationOut="slideOutDown"
+      style={styles.bottomModal}
+      backdropOpacity={0.5}
+      backdropColor={colors.background.default}
+      animationInTiming={300}
+      animationOutTiming={300}
+      useNativeDriver
+      swipeDirection="down"
+      propagateSwipe
+      onBackdropPress={() => {
+        toggleOptionsIfNeeded();
+      }}
+      onBackButtonPress={() => {
+        toggleOptionsIfNeeded();
+      }}
+      onSwipeComplete={() => {
+        setShowOptions(false);
+      }}
+      onModalHide={() => {
+        //This function is invoked when the first modal is closed. Now here
+        //set the state for the second Modal.
+        if (showNetwork) {
+          props.toggleNetworkModal();
+          setShowNetwork(false);
+        }
+      }}
+    >
+      <SafeAreaView style={styles.modalWrapper} testID={'browser-option'}>
+        <View style={styles.titleWrapper}>
+          <View style={styles.dragger} testID={'option-list-dragger'} />
+          <Text style={Fonts.t({s: 18, w: '500', c: colors.text.default, y: 10})} >
+            {props?.dapp?.name ?? 'Dapp'}
+          </Text>
+        </View>
+        <View style={Style.s({})} >
+          <TouchableOpacity onPress={handleCopyWebLink} style={Style.s({direc: 'row', items: 'center', justify: 'space-between', p: 16})} >
+            <Text style={Fonts.t({c: colors.text.default})} >
+              {'Copy web link'}
+            </Text>
+            <FastImage  style={Style.s({size: 24 })} source={icons.iconCopyWebLink} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={onReloadPress} style={Style.s({direc: 'row', items: 'center', justify: 'space-between', p: 16})} >
+          <Text style={Fonts.t({c: colors.text.default})} >
+              {'Refresh'}
+            </Text>
+            <FastImage  style={Style.s({size: 24 })} source={icons.iconArrowRefresh} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={addBookmark} style={Style.s({direc: 'row', items: 'center', justify: 'space-between', p: 16})} >
+          <Text style={Fonts.t({c: colors.text.default})} >
+              {'Favorites'}
+            </Text>
+            <FastImage  style={Style.s({size: 24 })} source={icons.iconFavorite} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={openAboutDapp} style={Style.s({direc: 'row', items: 'center', justify: 'space-between', p: 16})} >
+          <Text style={Fonts.t({c: colors.text.default})} >
+              {'About'}
+            </Text>
+            <FastImage  style={Style.s({size: 24 })} source={icons.iconAbout} />
+          </TouchableOpacity>
+        </View>
+        {/* <View
+          style={[
+            styles.optionViewBase,
+            isHomepage() ? styles.optionView : styles.optionViewFull,
+          ]}
+        >
+          <Button onPress={onNewTabPress} style={styles.optionButton}>
+            <Text style={styles.btnText} numberOfLines={2}>
+              {strings('browser.new_tab')}
+            </Text>
+            <View style={styles.optionIconWrapper}>
+              <MaterialCommunityIcon
+                name="plus"
+                size={22}
+                style={styles.optionIcon}
+              />
             </View>
-          </View>
-        </TouchableWithoutFeedback>
-      );
-    }
-  };
+          </Button>
+          {renderNonHomeOptions()}
+          <Button onPress={switchNetwork} style={styles.optionButton}>
+            <Text style={styles.btnText} numberOfLines={2}>
+              {strings('browser.switch_network')}
+            </Text>
+            <View style={styles.optionIconWrapper}>
+              <MaterialCommunityIcon
+                name="earth"
+                size={22}
+                style={styles.optionIcon}
+              />
+            </View>
+          </Button>
+        </View> */}
+      </SafeAreaView>
+    </Modal>
+  );
 
   /**
    * Show the different tabs
@@ -1271,6 +1518,8 @@ export const BrowserTab = (props) => {
       showUrlModal={toggleUrlModal}
       toggleOptions={toggleOptions}
       goHome={goToHomepage}
+      url={initialUrl}
+      dapp={props?.dapp}
     />
   );
 
@@ -1316,6 +1565,17 @@ export const BrowserTab = (props) => {
    */
   return (
     <ErrorBoundary view="BrowserTab">
+      <StatusBar barStyle="dark-content" />
+      {isTabActive() && (
+        <SafeAreaView>
+          <BrowserHeader
+            goForward={goForward}
+            goBack={goBack}
+            showTabs={showTabs}
+            toggleOptions={toggleOptions}
+          />
+        </SafeAreaView>
+      )}
       <View
         style={[styles.wrapper, !isTabActive() && styles.hide]}
         {...(Device.isAndroid() ? { collapsable: false } : {})}
@@ -1339,12 +1599,12 @@ export const BrowserTab = (props) => {
               onMessage={onMessage}
               onError={onError}
               onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
+              userAgent={USER_AGENT}
               sendCookies
               javascriptEnabled
               allowsInlineMediaPlayback
               useWebkit
               testID={'browser-webview'}
-              applicationNameForUserAgent={'WebView MetaMaskMobile'}
               onFileDownload={handleOnFileDownload}
             />
           )}
@@ -1352,7 +1612,8 @@ export const BrowserTab = (props) => {
         {updateAllowList()}
         {renderProgressBar()}
         {isTabActive() && renderPhishingModal()}
-        {isTabActive() && renderOptions()}
+        {/* {isTabActive() && renderOptions()} */}
+        {isTabActive() && renderOptionsModal()}
         {isTabActive() && renderBottomBar()}
         {isTabActive() && renderOnboardingWizard()}
       </View>
@@ -1483,7 +1744,9 @@ const mapStateToProps = (state) => ({
   searchEngine: state.settings.searchEngine,
   whitelist: state.browser.whitelist,
   activeTab: state.browser.activeTab,
+  history: state.browser.history,
   wizardStep: state.wizard.step,
+  dapp: state.browser.dapp,
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -1493,6 +1756,8 @@ const mapDispatchToProps = (dispatch) => ({
   addToWhitelist: (url) => dispatch(addToWhitelist(url)),
   toggleNetworkModal: () => dispatch(toggleNetworkModal()),
   setOnboardingWizardStep: (step) => dispatch(setOnboardingWizardStep(step)),
+  clearHistory: () => dispatch(clearHistory()),
+  showAlert: (config) => dispatch(showAlert(config)),
 });
 
 export default connect(

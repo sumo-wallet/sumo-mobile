@@ -7,7 +7,6 @@ import {
   setSwapsLiveness,
   swapsLivenessSelector,
 } from '../../../reducers/swaps';
-import Device from '../../../util/device';
 import Logger from '../../../util/Logger';
 import useInterval from '../../hooks/useInterval';
 import { isSwapsAllowed } from './utils';
@@ -23,15 +22,8 @@ function SwapLiveness({ isLive, chainId, setLiveness }) {
         chainId,
         AppConstants.SWAPS.CLIENT_ID,
       );
-      const isIphone = Device.isIos();
-      const isAndroid = Device.isAndroid();
-      const featureFlagKey = isIphone
-        ? 'mobileActiveIOS'
-        : isAndroid
-        ? 'mobileActiveAndroid'
-        : 'mobileActive';
       const liveness =
-        typeof data === 'boolean' ? data : data?.[featureFlagKey] ?? false;
+        typeof data === 'boolean' ? data : data?.mobileActive ?? false;
       setLiveness(liveness, chainId);
     } catch (error) {
       Logger.error(error, 'Swaps: error while fetching swaps liveness');

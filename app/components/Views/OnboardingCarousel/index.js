@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -8,7 +9,6 @@ import {
   Image,
   Dimensions,
   InteractionManager,
-  Platform,
 } from 'react-native';
 import StyledButton from '../../UI/StyledButton';
 import { fontStyles, baseStyles } from '../../../styles/common';
@@ -24,12 +24,7 @@ import AnalyticsV2, { ANALYTICS_EVENTS_V2 } from '../../../util/analyticsV2';
 import DefaultPreference from 'react-native-default-preference';
 import { METRICS_OPT_IN } from '../../../constants/storage';
 import { ThemeContext, mockTheme } from '../../../util/theme';
-import {
-  WELCOME_SCREEN_CAROUSEL_TITLE_ID,
-  WELCOME_SCREEN_GET_STARTED_BUTTON_ID,
-  WELCOME_SCREEN_CAROUSEL_CONTAINER_ID,
-} from '../../../../wdio/features/testIDs/Screens/WelcomeScreen.testIds';
-import generateTestId from '../../../../wdio/utils/generateTestId';
+import { PREVIOUS_SCREEN, ONBOARDING } from '../../../constants/navigation';
 
 const IMAGE_3_RATIO = 215 / 315;
 const IMAGE_2_RATIO = 222 / 239;
@@ -49,7 +44,7 @@ const createStyles = (colors) =>
     },
     title: {
       fontSize: 24,
-      marginBottom: 12,
+      // marginBottom: 12,
       color: colors.text.default,
       justifyContent: 'center',
       textAlign: 'center',
@@ -58,7 +53,7 @@ const createStyles = (colors) =>
     subtitle: {
       fontSize: 14,
       lineHeight: 19,
-      marginTop: 12,
+      marginTop: 10,
       marginBottom: 25,
       color: colors.text.alternative,
       justifyContent: 'center',
@@ -66,7 +61,7 @@ const createStyles = (colors) =>
       ...fontStyles.normal,
     },
     ctas: {
-      paddingHorizontal: 40,
+      paddingHorizontal: 16,
       paddingBottom: Device.isIphoneX() ? 40 : 20,
       flexDirection: 'column',
     },
@@ -117,9 +112,9 @@ const createStyles = (colors) =>
     },
   });
 
-const onboarding_carousel_1 = require('../../../images/onboarding-carousel-1.png'); // eslint-disable-line
-const onboarding_carousel_2 = require('../../../images/onboarding-carousel-2.png'); // eslint-disable-line
-const onboarding_carousel_3 = require('../../../images/onboarding-carousel-3.png'); // eslint-disable-line
+const onboarding_carousel_1 = require('../../../images/intro1.png'); // eslint-disable-line
+const onboarding_carousel_2 = require('../../../images/intro2.png'); // eslint-disable-line
+const onboarding_carousel_3 = require('../../../images/intro3.png'); // eslint-disable-line
 
 const carousel_images = [
   onboarding_carousel_1,
@@ -157,9 +152,99 @@ class OnboardingCarousel extends PureComponent {
     });
   };
 
-  onPressGetStarted = () => {
+  handleExistingUser = (action) => {
+    if (this.state.existingUser) {
+      this.alertExistingUser(action);
+    } else {
+      action();
+    }
+  };
+
+  onPressCreate = () => {
+    // const actionCreate = async () => {
+    //   const metricsOptIn = await DefaultPreference.get(METRICS_OPT_IN);
+    //   if (metricsOptIn) {
+    //     this.props.navigation.navigate('ChoosePassword', {
+    //       [PREVIOUS_SCREEN]: ONBOARDING_CAROUSEL,
+    //     });
+    //     this.track(AnalyticsV2.ANALYTICS_EVENTS.WALLET_SETUP_STARTED);
+    //   } else {
+    //     this.props.navigation.navigate('OptinMetrics', {
+    //       onContinue: () => {
+    //         this.props.navigation.replace('ChoosePassword', {
+    //           [PREVIOUS_SCREEN]: ONBOARDING_CAROUSEL,
+    //         });
+    //         this.track(AnalyticsV2.ANALYTICS_EVENTS.WALLET_SETUP_STARTED);
+    //       },
+    //     });
+    //   }
+    // };
+    // this.handleExistingUser(actionCreate);
     this.props.navigation.navigate('Onboarding');
     this.trackEvent(ANALYTICS_EVENTS_V2.ONBOARDING_STARTED);
+  };
+
+  warningCallback = () => true;
+
+  alertExistingUser = (callback) => {
+    this.warningCallback = () => {
+      callback();
+      this.toggleWarningModal();
+    };
+    this.toggleWarningModal();
+  };
+
+  toggleWarningModal = () => {
+    const warningModalVisible = this.state.warningModalVisible;
+    this.setState({ warningModalVisible: !warningModalVisible });
+  };
+
+  handleExistingUser = (action) => {
+    if (this.state.existingUser) {
+      this.alertExistingUser(action);
+    } else {
+      action();
+    }
+  };
+
+  onPressCreate = () => {
+    const action = async () => {
+      const metricsOptIn = await DefaultPreference.get(METRICS_OPT_IN);
+      if (metricsOptIn) {
+        this.props.navigation.navigate('ChoosePassword', {
+          [PREVIOUS_SCREEN]: ONBOARDING,
+        });
+        this.track(AnalyticsV2.ANALYTICS_EVENTS.WALLET_SETUP_STARTED);
+      } else {
+        this.props.navigation.navigate('OptinMetrics', {
+          onContinue: () => {
+            this.props.navigation.replace('ChoosePassword', {
+              [PREVIOUS_SCREEN]: ONBOARDING,
+            });
+            this.track(AnalyticsV2.ANALYTICS_EVENTS.WALLET_SETUP_STARTED);
+          },
+        });
+      }
+    };
+    this.handleExistingUser(action);
+  };
+
+  onPressImport = () => {
+    const action = async () => {
+      const metricsOptIn = await DefaultPreference.get(METRICS_OPT_IN);
+      if (metricsOptIn) {
+        this.props.navigation.push('ImportFromSeed');
+        this.track(AnalyticsV2.ANALYTICS_EVENTS.WALLET_IMPORT_STARTED);
+      } else {
+        this.props.navigation.navigate('OptinMetrics', {
+          onContinue: () => {
+            this.props.navigation.replace('ImportFromSeed');
+            this.track(AnalyticsV2.ANALYTICS_EVENTS.WALLET_IMPORT_STARTED);
+          },
+        });
+      }
+    };
+    this.handleExistingUser(action);
   };
 
   renderTabBar = () => <View />;
@@ -195,22 +280,13 @@ class OnboardingCarousel extends PureComponent {
     const styles = createStyles(colors);
 
     return (
-      <View
-        style={baseStyles.flexGrow}
-        testID={'onboarding-carouselcarousel-screen--screen'}
-      >
+      <View style={baseStyles.flexGrow} testID={'onboarding-carousel-screen'}>
         <OnboardingScreenWithBg screen={'carousel'}>
           <ScrollView
             style={baseStyles.flexGrow}
             contentContainerStyle={styles.scroll}
           >
-            <View
-              style={styles.wrapper}
-              {...generateTestId(
-                Platform,
-                WELCOME_SCREEN_CAROUSEL_CONTAINER_ID,
-              )}
-            >
+            <View style={styles.wrapper}>
               <ScrollableTabView
                 style={styles.scrollTabs}
                 renderTabBar={this.renderTabBar}
@@ -218,30 +294,30 @@ class OnboardingCarousel extends PureComponent {
               >
                 {['one', 'two', 'three'].map((value, index) => {
                   const key = index + 1;
-                  const imgStyleKey = `carouselImage${key}`;
+                  // const imgStyleKey = `carouselImage${key}`;
                   return (
-                    <View key={key} style={baseStyles.flexGrow}>
-                      <View
-                        style={styles.tab}
-                        {...generateTestId(
-                          Platform,
-                          WELCOME_SCREEN_CAROUSEL_TITLE_ID(key),
-                        )}
-                      >
-                        <Text style={styles.title}>
+                    <View key={key} style={[baseStyles.flexGrow]}>
+                      <View style={styles.carouselImageWrapper}>
+                        <Image
+                          source={carousel_images[index]}
+                          style={[
+                            styles.carouselImage,
+                            { width: 320, height: 320 },
+                          ]}
+                          resizeMethod="resize"
+                          testID={`carousel-${value}-image`}
+                        />
+                      </View>
+                      <View style={styles.tab}>
+                        <Text
+                          style={styles.title}
+                          testID={`carousel-screen-${value}`}
+                        >
                           {strings(`onboarding_carousel.title${key}`)}
                         </Text>
                         <Text style={styles.subtitle}>
                           {strings(`onboarding_carousel.subtitle${key}`)}
                         </Text>
-                      </View>
-                      <View style={styles.carouselImageWrapper}>
-                        <Image
-                          source={carousel_images[index]}
-                          style={[styles.carouselImage, styles[imgStyleKey]]}
-                          resizeMethod={'auto'}
-                          testID={`carousel-${value}-image`}
-                        />
                       </View>
                     </View>
                   );
@@ -264,11 +340,19 @@ class OnboardingCarousel extends PureComponent {
           <View style={styles.ctas}>
             <View style={styles.ctaWrapper}>
               <StyledButton
-                type={'normal'}
-                onPress={this.onPressGetStarted}
-                testID={WELCOME_SCREEN_GET_STARTED_BUTTON_ID}
+                type={'blue'}
+                onPress={this.onPressImport}
+                testID={'onboarding-get-started-button'}
               >
-                {strings('onboarding_carousel.get_started')}
+                {'Import using Secret Recovery Phrase'}
+              </StyledButton>
+              <View style={{ height: 16 }} />
+              <StyledButton
+                type={'blue'}
+                onPress={this.onPressCreate}
+                testID={'onboarding-get-started-button'}
+              >
+                {'Create a new wallet'}
               </StyledButton>
             </View>
           </View>

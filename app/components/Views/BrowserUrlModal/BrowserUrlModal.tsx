@@ -5,6 +5,9 @@ import {
   TouchableOpacity,
   TextInput,
   InteractionManager,
+  FlatList,
+  // StyleSheet,
+  SafeAreaView,
 } from 'react-native';
 import ReusableModal, { ReusableModalRef } from '../../UI/ReusableModal';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -19,17 +22,21 @@ import {
 } from '../../../util/navigation/navUtils';
 import Routes from '../../../constants/navigation/Routes';
 import Device from '../../../util/device';
+// import ListItem from '../../Base/ListItem';
 
 export interface BrowserUrlParams {
   onUrlInputSubmit: (inputValue: string | undefined) => void;
+  onClearHistory: () => void;
   url: string | undefined;
+  history: any;
 }
 
 export const createBrowserUrlModalNavDetails =
   createNavigationDetails<BrowserUrlParams>(Routes.BROWSER_URL_MODAL);
 
 const BrowserUrlModal = () => {
-  const { onUrlInputSubmit, url } = useParams<BrowserUrlParams>();
+  const { onUrlInputSubmit, onClearHistory, url, history } =
+    useParams<BrowserUrlParams>();
   const modalRef = useRef<ReusableModalRef | null>(null);
   const { colors, themeAppearance } = useTheme();
   const styles = createStyles(colors);
@@ -108,11 +115,66 @@ const BrowserUrlModal = () => {
           </Text>
         </TouchableOpacity>
       </View>
-      <UrlAutocomplete
-        onSubmit={triggerOnSubmit}
-        input={autocompleteValue}
-        onDismiss={triggerClose}
-      />
+      {!autocompleteValue && (
+        <SafeAreaView style={styles.searchSuggestion}>
+          <View style={styles.popularSearchArea}>
+            <Text style={styles.searchHistoryText}>{'Popular search'}</Text>
+            <View style={styles.popularSearch}>
+              <View style={styles.popularSearchItem}>
+                <Text>{'Pancake'}</Text>
+              </View>
+            </View>
+          </View>
+
+          <View style={styles.searchHistory}>
+            <View style={styles.searchHistoryTitle}>
+              <Text style={styles.searchHistoryText}>{'Search History'}</Text>
+              <TouchableOpacity
+                onPress={() => onClearHistory()}
+                style={styles.clearHistoryButton}
+              >
+                <Icon name="trash" size={24} color={colors.icon.default} />
+              </TouchableOpacity>
+            </View>
+            <FlatList
+              style={styles.history}
+              data={history}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  onPress={() => {
+                    triggerOnSubmit(item.url);
+                  }}
+                >
+                  <View style={styles.historyItem}>
+                    <View style={styles.historyItemBody}>
+                      <Text style={styles.historyItemTitle}>{item.name}</Text>
+                      <Text style={styles.historyItemUrl}>{item.url}</Text>
+                    </View>
+                    <TouchableOpacity
+                      onPress={clearSearchInput}
+                      style={styles.clearButton}
+                    >
+                      <Icon
+                        name="times"
+                        size={18}
+                        color={colors.icon.default}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </TouchableOpacity>
+              )}
+              keyExtractor={(item) => item.name}
+            />
+          </View>
+        </SafeAreaView>
+      )}
+      {autocompleteValue ? (
+        <UrlAutocomplete
+          onSubmit={triggerOnSubmit}
+          input={autocompleteValue}
+          onDismiss={triggerClose}
+        />
+      ) : null}
     </>
   );
 

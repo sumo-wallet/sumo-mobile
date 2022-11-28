@@ -68,8 +68,8 @@ import InfoModal from '../../../UI/Swaps/components/InfoModal';
 import { addHexPrefix, toChecksumAddress } from 'ethereumjs-util';
 import { removeFavoriteCollectible } from '../../../../actions/collectibles';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import TransactionReview from '../../../UI/TransactionReview/TransactionReviewEIP1559Update';
-import EditGasFee1559 from '../../../UI/EditGasFee1559Update';
+import TransactionReviewEIP1559Update from '../../../UI/TransactionReview/TransactionReviewEIP1559Update';
+import EditGasFee1559Update from '../../../UI/EditGasFee1559Update';
 import EditGasFeeLegacy from '../../../UI/EditGasFeeLegacyUpdate';
 import CustomNonce from '../../../UI/CustomNonce';
 import AppConstants from '../../../../core/AppConstants';
@@ -498,7 +498,7 @@ class Confirm extends PureComponent {
       )} ${parsedTicker}`;
       const collectibleTransferInformation =
         selectedAsset.address.toLowerCase() in
-          collectiblesTransferInformation &&
+        collectiblesTransferInformation &&
         collectiblesTransferInformation[selectedAsset.address.toLowerCase()];
       if (
         !collectibleTransferInformation ||
@@ -665,8 +665,8 @@ class Confirm extends PureComponent {
           weiBalance && weiBalance.gte(weiInput)
             ? undefined
             : strings('transaction.insufficient_tokens', {
-                token: selectedAsset.symbol,
-              });
+              token: selectedAsset.symbol,
+            });
       }
     } else {
       error = strings('transaction.invalid_amount');
@@ -893,7 +893,7 @@ class Confirm extends PureComponent {
         <KeyboardAwareScrollView
           contentContainerStyle={styles.keyboardAwareWrapper}
         >
-          <EditGasFee1559
+          <EditGasFee1559Update
             selectedGasValue={gasSelected}
             initialSuggestedGasLimit={this.state.suggestedGasLimit}
             gasOptions={gasFeeEstimates}
@@ -1261,7 +1261,7 @@ class Confirm extends PureComponent {
               </View>
             </View>
           )}
-          <TransactionReview
+          <TransactionReviewEIP1559Update
             gasSelected={this.state.gasSelected}
             primaryCurrency={primaryCurrency}
             onEdit={() => this.edit(!showFeeMarket ? EDIT : EDIT_EIP1559)}
@@ -1278,7 +1278,6 @@ class Confirm extends PureComponent {
             }
             updateTransactionState={this.updateTransactionState}
             legacy={!showFeeMarket}
-            onlyGas={false}
           />
           {showCustomNonce && (
             <CustomNonce

@@ -141,7 +141,7 @@
     "this_action": "Tindakan ini tidak dapat dibatalkan.",
     "you_can_only": "Anda HANYA dapat memulihkan dompet ini dengan ",
     "recovery_phrase": "Frasa Pemulihan Rahasia ",
-    "metamask_does_not": "MetaMask tidak memiliki Frasa Pemulihan Rahasia Anda.",
+    "metamask_does_not": "Sumo Wallet tidak memiliki Frasa Pemulihan Rahasia Anda.",
     "i_understand": "Saya paham, lanjutkan",
     "clean_vault_error": "MetaMask mengalami kesalahan karena mencapai batas penyimpanan. Data lokal sudah rusak. Instal ulang MetaMask dan pulihkan dengan Frasa Pemulihan Rahasia Anda."
   },

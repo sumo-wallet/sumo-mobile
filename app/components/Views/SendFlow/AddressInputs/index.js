@@ -15,6 +15,7 @@ import { strings } from '../../../../../locales/i18n';
 import Text from '../../../Base/Text';
 import { hasZeroWidthPoints } from '../../../../util/confusables';
 import { useTheme } from '../../../../util/theme';
+import { Colors, Style } from './../../../../styles';
 
 const createStyles = (colors) =>
   StyleSheet.create({
@@ -38,10 +39,10 @@ const createStyles = (colors) =>
       padding: 10,
       minHeight: 52,
       flexDirection: 'row',
-      borderWidth: 1,
+      // borderWidth: 1,
       borderRadius: 8,
       marginTop: 8,
-      borderColor: colors.border.default,
+      // borderColor: colors.border.default,
     },
     input: {
       flex: 1,
@@ -544,13 +545,14 @@ export const AddressFrom = (props) => {
 
   return (
     <View style={styles.wrapper}>
-      <View style={styles.label}>
+      {/* <View style={styles.label}>
         <Text style={styles.labelText}>From:</Text>
-      </View>
+      </View> */}
       <View
         style={[
           styles.inputWrapper,
-          highlighted ? styles.borderHighlighted : styles.borderOpaque,
+          // highlighted ? styles.borderHighlighted : styles.borderOpaque,
+          Style.s({ bg: Colors.gray[4] }),
         ]}
       >
         <View style={styles.identiconWrapper}>

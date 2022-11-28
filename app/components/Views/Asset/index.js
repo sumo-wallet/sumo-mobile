@@ -4,6 +4,7 @@ import {
   InteractionManager,
   View,
   StyleSheet,
+  Text,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -28,18 +29,19 @@ import {
   findBlockExplorerForRpc,
   isMainnetByChainId,
 } from '../../../util/networks';
+import { Colors, Style, Fonts } from './../../../styles';
 
 const createStyles = (colors) =>
   StyleSheet.create({
     wrapper: {
-      backgroundColor: colors.background.default,
+      // backgroundColor: 'red', // colors.background.default,
       flex: 1,
     },
     assetOverviewWrapper: {
-      height: 280,
+      minHeight: 280,
     },
     loader: {
-      backgroundColor: colors.background.default,
+      backgroundColor: Colors.grayscale[100], // colors.background.default,
       flex: 1,
       alignItems: 'center',
       justifyContent: 'center',
@@ -377,17 +379,27 @@ class Asset extends PureComponent {
     const styles = createStyles(colors);
 
     return (
-      <View style={styles.wrapper}>
+      <View style={[styles.wrapper, Style.s({ flex: 1 })]}>
         {loading ? (
           this.renderLoader()
         ) : (
           <Transactions
             header={
-              <View style={styles.assetOverviewWrapper}>
+              <View style={Style.s({ minH: 280, pb: 16 })}>
                 <AssetOverview
                   navigation={navigation}
                   asset={navigation && params}
                 />
+                <Text
+                  style={Fonts.t({
+                    s: 18,
+                    w: '500',
+                    c: Colors.white[2],
+                    x: 16,
+                  })}
+                >
+                  {'Transaction'}
+                </Text>
               </View>
             }
             assetSymbol={navigation && params.symbol}

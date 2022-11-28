@@ -46,6 +46,7 @@ import AssetSwapButton from '../Swaps/components/AssetSwapButton';
 import ClipboardManager from '../../../core/ClipboardManager';
 import { ThemeContext, mockTheme } from '../../../util/theme';
 import Routes from '../../../constants/navigation/Routes';
+import { ROUTES } from './../../../navigation/routes';
 
 const createStyles = (colors) =>
   StyleSheet.create({
@@ -322,7 +323,7 @@ class AccountOverview extends PureComponent {
   onSend = () => {
     const { newAssetTransaction, navigation, ticker } = this.props;
     newAssetTransaction(getEther(ticker));
-    navigation.navigate('SendFlowView');
+    navigation.navigate(ROUTES.SendFlowView);
   };
 
   onBuy = () => {
@@ -365,7 +366,7 @@ class AccountOverview extends PureComponent {
       swapsIsLive,
     } = this.props;
     const colors = this.context.colors || mockTheme.colors;
-    const themeAppearance = this.context.themeAppearance || 'light';
+    const themeAppearance = this.context.themeAppearance || 'dark';
     const styles = createStyles(colors);
 
     const fiatBalance = `${renderFiat(

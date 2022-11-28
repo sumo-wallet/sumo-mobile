@@ -94,3 +94,10 @@ export function updateTab(id, data) {
     data,
   };
 }
+
+export function openDapp({ dapp }) {
+  return {
+    type: 'OPEN_DAPP',
+    dapp,
+  };
+}

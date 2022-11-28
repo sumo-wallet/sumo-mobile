@@ -7,7 +7,6 @@ import {
   TextInput,
   SafeAreaView,
   Linking,
-  Platform,
 } from 'react-native';
 import { connect } from 'react-redux';
 import { fontStyles } from '../../../../../styles/common';
@@ -41,22 +40,15 @@ import { ThemeContext, mockTheme } from '../../../../../util/theme';
 import { showNetworkOnboardingAction } from '../../../../../actions/onboardNetwork';
 import sanitizeUrl from '../../../../../util/sanitizeUrl';
 import {
+  REMOVE_NETWORK_ID,
   ADD_NETWORKS_ID,
   RPC_VIEW_CONTAINER_ID,
   ADD_CUSTOM_RPC_NETWORK_BUTTON_ID,
+  INPUT_NETWORK_NAME,
 } from '../../../../../constants/test-ids';
 import hideKeyFromUrl from '../../../../../util/hideKeyFromUrl';
 import { themeAppearanceLight } from '../../../../../constants/storage';
 import CustomNetwork from './CustomNetworkView/CustomNetwork';
-import generateTestId from '../../../../../../wdio/utils/generateTestId';
-import {
-  INPUT_CHAIN_ID_FIELD,
-  INPUT_RPC_URL_FIELD,
-  INPUT_NETWORK_NAME,
-  NETWORKS_SYMBOL_INPUT_FIELD,
-  BLOCK_EXPLORER_FIELD,
-  REMOVE_NETWORK_BUTTON,
-} from '../../../../../../wdio/features/testIDs/Screens/NetworksScreen.testids';
 
 const createStyles = (colors) =>
   StyleSheet.create({
@@ -751,7 +743,7 @@ class NetworkSettings extends PureComponent {
               placeholder={strings('app_settings.network_name_placeholder')}
               placeholderTextColor={colors.text.muted}
               onSubmitEditing={this.jumpToRpcURL}
-              {...generateTestId(Platform, INPUT_NETWORK_NAME)}
+              testID={INPUT_NETWORK_NAME}
               keyboardAppearance={themeAppearance}
             />
             <Text style={styles.label}>
@@ -769,7 +761,7 @@ class NetworkSettings extends PureComponent {
               placeholder={strings('app_settings.network_rpc_placeholder')}
               placeholderTextColor={colors.text.muted}
               onSubmitEditing={this.jumpToChainId}
-              {...generateTestId(Platform, INPUT_RPC_URL_FIELD)}
+              testID={'input-rpc-url'}
               keyboardAppearance={themeAppearance}
             />
             {warningRpcUrl && (
@@ -794,7 +786,7 @@ class NetworkSettings extends PureComponent {
               placeholderTextColor={colors.text.muted}
               onSubmitEditing={this.jumpToSymbol}
               keyboardType={'numbers-and-punctuation'}
-              {...generateTestId(Platform, INPUT_CHAIN_ID_FIELD)}
+              testID={'input-chain-id'}
               keyboardAppearance={themeAppearance}
             />
             {warningChainId ? (
@@ -817,7 +809,7 @@ class NetworkSettings extends PureComponent {
               placeholder={strings('app_settings.network_symbol_placeholder')}
               placeholderTextColor={colors.text.muted}
               onSubmitEditing={this.jumpBlockExplorerURL}
-              {...generateTestId(Platform, NETWORKS_SYMBOL_INPUT_FIELD)}
+              testID={'input-network-symbol'}
               keyboardAppearance={themeAppearance}
             />
 
@@ -835,7 +827,6 @@ class NetworkSettings extends PureComponent {
               placeholder={strings(
                 'app_settings.network_block_explorer_placeholder',
               )}
-              {...generateTestId(Platform, BLOCK_EXPLORER_FIELD)}
               placeholderTextColor={colors.text.muted}
               onSubmitEditing={this.addRpcUrl}
               keyboardAppearance={themeAppearance}
@@ -848,7 +839,7 @@ class NetworkSettings extends PureComponent {
                   <StyledButton
                     type="danger"
                     onPress={this.removeRpcUrl}
-                    testID={REMOVE_NETWORK_BUTTON}
+                    testID={REMOVE_NETWORK_ID}
                     containerStyle={[styles.button, styles.cancel]}
                   >
                     <CustomText centered red>

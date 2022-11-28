@@ -141,7 +141,7 @@
     "this_action": "Tindakan ini tidak dapat dibatalkan.",
     "you_can_only": "Anda HANYA dapat memulihkan dompet ini dengan",
     "recovery_phrase": "Frasa Pemulihan Rahasia",
-    "metamask_does_not": "MetaMask tidak menyimpan Frasa Pemulihan Rahasia Anda.",
+    "metamask_does_not": "Sumo Wallet tidak menyimpan Frasa Pemulihan Rahasia Anda.",
     "i_understand": "Saya mengerti, lanjutkan",
     "passcode_not_set_error": "Galat: Kode sandi belum diatur.",
     "wrong_password_error": "Galat: Dekripsi gagal",
@@ -529,7 +529,7 @@
     "cancel_remove_network": "Batal",
     "info_title": "Seputar MetaMask",
     "experimental_title": "Eksperimental",
-    "experimental_desc": "MetaMask SDK, WalletConnect & lainnya...",
+    "experimental_desc": "WalletConnect & lainnya...",
     "legal_title": "Hukum",
     "conversion_title": "Konversi mata uang",
     "conversion_desc": "Menampilkan nilai fiat dalam menggunakan mata uang tertentu di seluruh aplikasi.",
@@ -575,26 +575,7 @@
     "theme_os": "Sistem",
     "theme_light": "Terang",
     "theme_dark": "Gelap",
-    "network_exists": "Jaringan ini telah ditambahkan.",
-    "delete_metrics_title": "Hapus data MetaMetrics",
-    "delete_metrics_description_part_one": "Tindakan ini akan menghapus data MetaMetrics historis yang terkait dengan dompet Anda.",
-    "delete_metrics_description_part_two": "Data MetaMetrics merupakan data penggunaan dan diagnostik yang dianonimkan.",
-    "delete_metrics_description_part_three": "Dompet dan akun Anda akan tetap sama seperti sekarang setelah data ini dihapus. Proses ini mungkin memerlukan waktu hingga 60 hari. Lihat",
-    "delete_metrics_description_part_four": "Anda memulai tindakan ini pada",
-    "delete_metrics_description_part_five": ". Proses ini bisa memerlukan waktu hingga 60 hari. Lihat",
-    "consensys_privacy_policy": "Kebijakan Privasi ConsenSys.",
-    "delete_metrics_button": "Hapus data MetaMetrics",
-    "check_status_button": "Periksa Status",
-    "delete_metrics_confirm_modal_title": "Hapus data MetaMetrics?",
-    "delete_metrics_confirm_modal_description": "Kami akan menghapus semua data MetaMetrics Anda. Lanjutkan?",
-    "delete_wallet_data_title": "Hapus dompet",
-    "delete_wallet_data_description": "Tindakan ini akan menghapus semua data terkait dompet dari perangkat Anda. Akun Anda terdapat di blockchain dan tidak terkait dengan MetaMask. Akun Anda dapat dipulihkan kapan saja menggunakan Frasa Pemulihan Rahasia.",
-    "delete_wallet_data_button": "Hapus dompet",
-    "delete_data_status_title": "Penghapusan Status Tugas",
-    "delete_data_status_description": "Status saat ini adalah",
-    "delete_metrics_error_title": "Kami tidak dapat menghapus data ini sekarang.",
-    "delete_metrics_error_description": "Permintaan ini tidak dapat diselesaikan sekarang karena masalah server sistem analitis, coba lagi nanti.",
-    "ok": "Oke"
+    "network_exists": "Jaringan ini telah ditambahkan."
   },
   "app_information": {
     "title": "Informasi",
@@ -2025,21 +2006,5 @@
     "placeholder": "Kata sandi",
     "description": "Jika Anda menonaktifkan opsi ini, Anda memerlukan kata sandi untuk membuka MetaMask mulai sekarang.",
     "action": "Nonaktifkan Ingatkan saya"
-  },
-  "automatic_security_checks": {
-    "title": "Pemeriksaan keamanan otomatis",
-    "description": "Memeriksa pembaruan secara otomatis dapat menampilkan alamat IP Anda ke server GitHub. Ini hanya menunjukkan bahwa alamat IP Anda sedang menggunakan MetaMask. Tidak ada alamat akun atau informasi lainnya yang ditampilkan."
-  },
-  "update_needed": {
-    "title": "Pembaruan diperlukan",
-    "description": "Kami telah meningkatkan keamanan untuk dompet Anda! Mohon luangkan waktu untuk melindungi diri Anda dan perbarui ke versi terkini.",
-    "primary_action": "Perbarui ke versi terkini",
-    "secondary_action": "Ingatkan saya nanti"
-  },
-  "enable_automatic_security_check_modal": {
-    "title": "Periksa pembaruan keamanan secara otomatis?",
-    "description": "Memeriksa pembaruan secara otomatis dapat menampilkan alamat IP Anda ke server GitHub. Ini hanya menunjukkan bahwa alamat IP Anda sedang menggunakan MetaMask. Tidak ada alamat akun atau informasi lainnya yang ditampilkan.",
-    "primary_action": "Aktifkan pemeriksaan keamanan otomatis",
-    "secondary_action": "Tidak, terima kasih"
   }
 }

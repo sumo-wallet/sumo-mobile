@@ -5,6 +5,7 @@ import {
   View,
   StyleSheet,
   InteractionManager,
+  TouchableOpacity,
 } from 'react-native';
 import { fontStyles } from '../../../styles/common';
 import Engine from '../../../core/Engine';
@@ -20,6 +21,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import WarningMessage from '../../Views/SendFlow/WarningMessage';
 import NotificationManager from '../../../core/NotificationManager';
 import { ThemeContext, mockTheme } from '../../../util/theme';
+import { useSelector } from 'react-redux';
 
 const createStyles = (colors) =>
   StyleSheet.create({
@@ -29,6 +31,11 @@ const createStyles = (colors) =>
     },
     rowWrapper: {
       padding: 20,
+    },
+    networkWrapper: {
+      padding: 20,
+      borderWidth: 1,
+      borderBottomColor: colors.border.default,
     },
     textInput: {
       borderWidth: 1,
@@ -41,6 +48,7 @@ const createStyles = (colors) =>
     inputLabel: {
       ...fontStyles.normal,
       color: colors.text.default,
+      marginBottom: 4,
     },
     warningText: {
       ...fontStyles.normal,
@@ -316,6 +324,30 @@ export default class AddCustomToken extends PureComponent {
     );
   };
 
+  renderNetwork = () => {
+    const { navigation } = this.props;
+    const colors = this.context.colors || mockTheme.colors;
+    const styles = createStyles(colors);
+    const { NetworkController: network }: { NetworkController: any } =
+      useSelector((state: any) => state?.engine?.backgroundState);
+
+    return (
+      <WarningMessage
+        style={styles.tokenDetectionBanner}
+        warningMessage={
+          <>
+            <TouchableOpacity style={styles.networkWrapper}>
+              <Text style={styles.inputLabel}>
+                {strings('app_settings.networks_title')}
+              </Text>
+            </TouchableOpacity>
+          </>
+        }
+      />
+    );
+  };
+
+
   renderBanner = () =>
     this.props.isTokenDetectionSupported
       ? this.renderWarningBanner()
@@ -338,6 +370,7 @@ export default class AddCustomToken extends PureComponent {
           testID={'add-asset-cancel-button'}
           onConfirmPress={this.addToken}
           confirmDisabled={!(address && symbol && decimals)}
+          showCancelButton={false}
         >
           <View>
             {this.renderBanner()}

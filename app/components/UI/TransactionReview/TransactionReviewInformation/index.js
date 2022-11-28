@@ -323,16 +323,14 @@ class TransactionReviewInformation extends PureComponent {
           currentCurrency,
           amountToken,
         );
-        const totalValue = `${
-          amountToken + ' ' + selectedAsset.symbol
-        } + ${renderFromWei(totalGas)} ${getTicker(ticker)}`;
+        const totalValue = `${amountToken + ' ' + selectedAsset.symbol
+          } + ${renderFromWei(totalGas)} ${getTicker(ticker)}`;
         return [totalFiat, totalValue];
       },
       ERC721: () => {
         const totalFiat = totalGasFiat;
-        const totalValue = `${selectedAsset.name}  (#${
-          selectedAsset.tokenId
-        }) + ${renderFromWei(totalGas)} ${getTicker(ticker)}`;
+        const totalValue = `${selectedAsset.name}  (#${selectedAsset.tokenId
+          }) + ${renderFromWei(totalGas)} ${getTicker(ticker)}`;
         return [totalFiat, totalValue];
       },
       default: () => [undefined, undefined],
@@ -483,13 +481,11 @@ class TransactionReviewInformation extends PureComponent {
           totalMaxConversion,
         });
 
-        renderableTotalMinNative = `${selectedAsset.name} ${
-          ' (#' + selectedAsset.tokenId + ')'
-        } + ${renderableTotalMinNative}`;
+        renderableTotalMinNative = `${selectedAsset.name} ${' (#' + selectedAsset.tokenId + ')'
+          } + ${renderableTotalMinNative}`;
 
-        renderableTotalMaxNative = `${selectedAsset.name} ${
-          ' (#' + selectedAsset.tokenId + ')'
-        } + ${renderableTotalMaxNative}`;
+        renderableTotalMaxNative = `${selectedAsset.name} ${' (#' + selectedAsset.tokenId + ')'
+          } + ${renderableTotalMaxNative}`;
 
         return [
           renderableTotalMinNative,

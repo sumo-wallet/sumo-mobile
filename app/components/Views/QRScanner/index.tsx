@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint @typescript-eslint/no-var-requires: "off" */
 /* eslint @typescript-eslint/no-require-imports: "off" */
 
@@ -15,9 +16,9 @@ import {
 import { useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { RNCamera } from 'react-native-camera';
-import Icon from 'react-native-vector-icons/Ionicons';
+// import Icon from 'react-native-vector-icons/Ionicons';
 import { parse } from 'eth-url-parser';
-import { colors as importedColors } from '../../../styles/common';
+// import { colors as importedColors } from '../../../styles/common';
 import { isValidAddress } from 'ethereumjs-util';
 import { strings } from '../../../../locales/i18n';
 import SharedDeeplinkManager from '../../../core/DeeplinkManager';
@@ -37,7 +38,11 @@ import {
   useParams,
 } from '../../../util/navigation/navUtils';
 
-const frameImage = require('../../../images/frame.png'); // eslint-disable-line import/no-commonjs
+import { Fonts, Style } from './../../../styles';
+import { icons } from './../../../assets';
+import Colors from './../../../styles/colors';
+
+// const frameImage = require('../../../images/frame.png'); // eslint-disable-line import/no-commonjs
 
 export interface QRScannerParams {
   onScanSuccess: (data: any, content?: string) => void;
@@ -59,6 +64,9 @@ const QRScanner = () => {
 
   const mountedRef = useRef<boolean>(true);
   const shouldReadBarCodeRef = useRef<boolean>(true);
+  const [flashMode, setFlashMode] = React.useState<any>(
+    RNCamera.Constants.FlashMode.auto,
+  );
 
   const currentChainId = useSelector(
     (state: any) =>
@@ -207,7 +215,7 @@ const QRScanner = () => {
         // Checking if it can be handled like deeplinks
         const handledByDeeplink = SharedDeeplinkManager.parse(content, {
           origin: AppConstants.DEEPLINKS.ORIGIN_QR_CODE,
-          onHandled: () => navigation.pop(2),
+          onHandled: () => navigation?.pop(2),
         });
 
         if (handledByDeeplink) {
@@ -276,15 +284,50 @@ const QRScanner = () => {
     [navigation],
   );
 
+  // return (
+  //   <SafeAreaView>
+  //     <View>
+  //       <TouchableOpacity>
+  //         <Image />
+  //       </TouchableOpacity>
+  //     </View>
+  //   </SafeAreaView>
+  // );
+
+  const onPressFlash = React.useCallback(() => {
+    if (flashMode !== 'torch') {
+      setFlashMode(RNCamera.Constants.FlashMode.torch);
+    } else {
+      setFlashMode(RNCamera.Constants.FlashMode.auto);
+    }
+  }, [flashMode]);
+
+  const onPressOpenGallery = () => {};
+
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <View
+        style={Style.s({ direc: 'row', px: 4, minH: 48, bg: Colors.white[1] })}
+      >
+        <TouchableOpacity onPress={goBack} style={Style.s({ p: 12 })}>
+          <Image style={Style.s({ size: 24 })} source={icons.iconArrowLeft} />
+        </TouchableOpacity>
+        <View style={Style.s({ flex: 1, cen: true })}>
+          <Text style={Fonts.t({ s: 14, w: '500', c: Colors.gray[1] })}>
+            {'Scan'}
+          </Text>
+        </View>
+        <TouchableOpacity onPress={onPressFlash} style={Style.s({ p: 12 })}>
+          <Image style={Style.s({ size: 24 })} source={icons.iconFlash} />
+        </TouchableOpacity>
+      </View>
       <RNCamera
         onMountError={onError}
         captureAudio={false}
         style={styles.preview}
         type={RNCamera.Constants.Type.back}
         onBarCodeRead={onBarCodeRead}
-        flashMode={RNCamera.Constants.FlashMode.auto}
+        flashMode={flashMode}
         androidCameraPermissionOptions={{
           title: strings('qr_scanner.allow_camera_dialog_title'),
           message: strings('qr_scanner.allow_camera_dialog_message'),
@@ -293,15 +336,58 @@ const QRScanner = () => {
         }}
         onStatusChange={onStatusChange}
       >
-        <SafeAreaView style={styles.innerView}>
-          <TouchableOpacity style={styles.closeIcon} onPress={goBack}>
+        <SafeAreaView style={Style.s({ flex: 1 })}>
+          <View style={Style.s({ flex: 1, bg: '#000311', op: 0.75 })} />
+          <View style={Style.s({ h: 210, direc: 'row', z: 2 })}>
+            <View style={Style.s({ flex: 1, bg: '#000311', op: 0.75 })} />
+            <View style={Style.s({ size: 210, cen: true, z: 2 })}>
+              <Image
+                style={Style.s({
+                  size: 226,
+                  self: 'center',
+                  pos: 'absolute',
+                  t: -8,
+                  z: 2,
+                })}
+                source={icons.iconScanFrame}
+              />
+            </View>
+            <View style={Style.s({ flex: 1, bg: '#000311', op: 0.75 })} />
+          </View>
+          <View
+            style={Style.s({
+              flex: 1,
+              bg: '#000311',
+              op: 0.75,
+            })}
+          >
+            <TouchableOpacity
+              onPress={onPressOpenGallery}
+              style={Style.s({ mt: 58, items: 'center' })}
+            >
+              <Image style={Style.s({ size: 48 })} source={icons.iconGallery} />
+              <Text
+                style={Fonts.t({
+                  s: 12,
+                  h: 18,
+                  c: Colors.white[2],
+                  t: 10,
+                  text: 'center',
+                  w: '500',
+                })}
+              >
+                {'Pick QR\nfrom gallery'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+          {/* <TouchableOpacity style={styles.closeIcon} onPress={goBack}>
             <Icon name={'ios-close'} size={50} color={importedColors.white} />
           </TouchableOpacity>
           <Image source={frameImage} style={styles.frame} />
-          <Text style={styles.text}>{strings('qr_scanner.scanning')}</Text>
+          <Text style={styles.text}>{strings('qr_scanner.scanning')}</Text> */}
         </SafeAreaView>
       </RNCamera>
-    </View>
+    </SafeAreaView>
   );
 };
 

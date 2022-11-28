@@ -18,12 +18,7 @@ const waitForInteraction = async () =>
     });
   });
 
-const wallet_addEthereumChain = async ({
-  req,
-  res,
-  requestUserApproval,
-  analytics,
-}) => {
+const wallet_addEthereumChain = async ({ req, res, requestUserApproval }) => {
   const { PreferencesController, CurrencyRateController, NetworkController } =
     Engine.context;
 
@@ -131,7 +126,6 @@ const wallet_addEthereumChain = async ({
       symbol: existingNetwork?.ticker,
       block_explorer_url: existingNetwork?.blockExplorerUrl,
       network_name: 'rpc',
-      ...analytics,
     };
 
     try {
@@ -269,7 +263,6 @@ const wallet_addEthereumChain = async ({
     symbol: ticker,
     block_explorer_url: firstValidBlockExplorerUrl,
     network_name: 'rpc',
-    ...analytics,
   };
 
   AnalyticsV2.trackEvent(

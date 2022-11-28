@@ -7497,8 +7497,8 @@ exports[`Amount should show an error message if balance is insufficient 1`] = `
                                       },
                                       undefined,
                                       Object {
-                                        "backgroundColor": "#D73A4919",
-                                        "borderColor": "#D73A49",
+                                        "backgroundColor": "#F6555619",
+                                        "borderColor": "#F65556",
                                       },
                                       undefined,
                                     ]

@@ -3,16 +3,14 @@ import PropTypes from 'prop-types';
 import {
   ActivityIndicator,
   Alert,
-  Text,
-  View,
-  TextInput,
-  SafeAreaView,
-  StyleSheet,
   Image,
   InteractionManager,
-  Platform,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
 } from 'react-native';
-import CheckBox from '@react-native-community/checkbox';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { connect } from 'react-redux';
@@ -30,53 +28,36 @@ import { fontStyles } from '../../../styles/common';
 import { strings } from '../../../../locales/i18n';
 import { getOnboardingNavbarOptions } from '../../UI/Navbar';
 import SecureKeychain from '../../../core/SecureKeychain';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import AppConstants from '../../../core/AppConstants';
-import OnboardingProgress from '../../UI/OnboardingProgress';
 import zxcvbn from 'zxcvbn';
 import Logger from '../../../util/Logger';
 import { ONBOARDING, PREVIOUS_SCREEN } from '../../../constants/navigation';
 import {
+  BIOMETRY_CHOICE_DISABLED,
   EXISTING_USER,
   NEXT_MAKER_REMINDER,
-  TRUE,
   SEED_PHRASE_HINTS,
-  BIOMETRY_CHOICE_DISABLED,
+  TRUE,
 } from '../../../constants/storage';
 import {
   getPasswordStrengthWord,
   passwordRequirementsMet,
-  MIN_PASSWORD_LENGTH,
 } from '../../../util/password';
-
-import { CHOOSE_PASSWORD_STEPS } from '../../../constants/onboarding';
 import AnalyticsV2 from '../../../util/analyticsV2';
-import { ThemeContext, mockTheme } from '../../../util/theme';
+import { mockTheme, ThemeContext } from '../../../util/theme';
 import AnimatedFox from 'react-native-animated-fox';
 
 import {
+  CONFIRM_CHANGE_PASSWORD_INPUT_BOX_ID,
   CREATE_PASSWORD_CONTAINER_ID,
-  CREATE_PASSWORD_INPUT_BOX_ID,
-  CONFIRM_PASSWORD_INPUT_BOX_ID,
-  IOS_I_UNDERSTAND_BUTTON_ID,
-  ANDROID_I_UNDERSTAND_BUTTON_ID,
 } from '../../../constants/test-ids';
 import { LoginOptionsSwitch } from '../../UI/LoginOptionsSwitch';
-import generateTestId from '../../../../wdio/utils/generateTestId';
+import { DynamicHeader } from '../../Base/DynamicHeader';
 
 const createStyles = (colors) =>
   StyleSheet.create({
-    mainWrapper: {
-      backgroundColor: colors.background.default,
-      flex: 1,
-    },
-    wrapper: {
-      flex: 1,
-      marginBottom: 10,
-    },
     scrollableWrapper: {
       flex: 1,
-      paddingHorizontal: 32,
     },
     keyboardScrollableWrapper: {
       flexGrow: 1,
@@ -98,19 +79,7 @@ const createStyles = (colors) =>
       width: 80,
       height: 80,
     },
-    content: {
-      textAlign: 'center',
-      alignItems: 'center',
-    },
-    title: {
-      fontSize: Device.isAndroid() ? 20 : 25,
-      marginTop: 20,
-      marginBottom: 20,
-      color: colors.text.default,
-      justifyContent: 'center',
-      textAlign: 'center',
-      ...fontStyles.bold,
-    },
+
     subtitle: {
       fontSize: 16,
       lineHeight: 23,
@@ -118,11 +87,7 @@ const createStyles = (colors) =>
       textAlign: 'center',
       ...fontStyles.normal,
     },
-    text: {
-      marginBottom: 10,
-      justifyContent: 'center',
-      ...fontStyles.normal,
-    },
+
     checkboxContainer: {
       marginTop: 10,
       marginHorizontal: 10,
@@ -137,13 +102,7 @@ const createStyles = (colors) =>
       margin: 10,
       marginTop: -5,
     },
-    label: {
-      ...fontStyles.normal,
-      fontSize: 14,
-      color: colors.text.default,
-      paddingHorizontal: 10,
-      lineHeight: 18,
-    },
+
     learnMore: {
       color: colors.primary.default,
       textDecorationLine: 'underline',
@@ -153,16 +112,7 @@ const createStyles = (colors) =>
       marginVertical: 5,
       position: 'relative',
     },
-    input: {
-      borderWidth: 1,
-      borderColor: colors.border.default,
-      padding: 10,
-      borderRadius: 6,
-      fontSize: 14,
-      height: 50,
-      ...fontStyles.normal,
-      color: colors.text.default,
-    },
+
     ctaWrapper: {
       flex: 1,
       marginTop: 20,
@@ -223,6 +173,198 @@ const createStyles = (colors) =>
       top: 52,
       right: 17,
       alignSelf: 'flex-end',
+    },
+
+    mainWrapper: {
+      backgroundColor: colors.background.default,
+      flex: 1,
+    },
+    wrapper: {
+      flex: 1,
+    },
+    onBoardingWrapper: {
+      paddingHorizontal: 20,
+    },
+    loader: {
+      backgroundColor: colors.background.default,
+      flex: 1,
+      minHeight: 300,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    action: {
+      fontSize: 24,
+      color: '#060A1D',
+      marginBottom: 16,
+      justifyContent: 'center',
+      textAlign: 'center',
+      ...fontStyles.bold,
+    },
+    infoWrapper: {
+      marginBottom: 16,
+      justifyContent: 'center',
+    },
+    info: {
+      fontSize: 14,
+      color: '#1B2537',
+      ...fontStyles.normal,
+    },
+    seedPhraseConcealerContainer: {
+      flex: 1,
+      borderRadius: 8,
+    },
+    seedPhraseConcealer: {
+      backgroundColor: colors.overlay.alternative,
+      alignItems: 'center',
+      borderRadius: 8,
+      paddingHorizontal: 24,
+      paddingVertical: 45,
+    },
+    blurView: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      bottom: 0,
+      right: 0,
+      borderRadius: 8,
+    },
+    icon: {
+      width: 24,
+      height: 24,
+      color: colors.overlay.inverse,
+      textAlign: 'center',
+      marginBottom: 32,
+    },
+    reveal: {
+      fontSize: Device.isMediumDevice() ? 13 : 16,
+      ...fontStyles.bold,
+      color: colors.overlay.inverse,
+      lineHeight: 22,
+      marginBottom: 8,
+      textAlign: 'center',
+    },
+    watching: {
+      fontSize: Device.isMediumDevice() ? 10 : 12,
+      color: colors.overlay.inverse,
+      lineHeight: 17,
+      marginBottom: 32,
+      textAlign: 'center',
+    },
+    viewButtonContainer: {
+      width: 155,
+      padding: 12,
+    },
+    seedPhraseWrapper: {
+      backgroundColor: colors.background.default,
+      borderRadius: 8,
+      flexDirection: 'row',
+      borderColor: colors.border.default,
+      borderWidth: 1,
+      marginBottom: 64,
+      minHeight: 275,
+    },
+    wordColumn: {
+      flex: 1,
+      alignItems: 'center',
+      paddingHorizontal: Device.isMediumDevice() ? 18 : 24,
+      paddingVertical: 18,
+      justifyContent: 'space-between',
+    },
+    wordWrapper: {
+      flexDirection: 'row',
+    },
+    word: {
+      paddingHorizontal: 8,
+      paddingVertical: 6,
+      fontSize: 14,
+      color: colors.text.default,
+      backgroundColor: colors.background.default,
+      borderColor: colors.primary.default,
+      borderWidth: 1,
+      borderRadius: 13,
+      textAlign: 'center',
+      textAlignVertical: 'center',
+      lineHeight: 14,
+      flex: 1,
+    },
+    confirmPasswordWrapper: {
+      flex: 1,
+      padding: 16,
+      paddingTop: 0,
+    },
+    passwordRequiredContent: {
+      marginBottom: 20,
+    },
+    content: {
+      alignItems: 'flex-start',
+    },
+    title: {
+      fontSize: 24,
+      marginBottom: 12,
+      color: colors.text.default,
+      justifyContent: 'center',
+      width: '100%',
+      ...fontStyles.bold,
+    },
+    text: {
+      marginBottom: 32,
+      justifyContent: 'center',
+    },
+    label: {
+      fontSize: 16,
+      lineHeight: 23,
+      color: colors.text.default,
+      textAlign: 'left',
+      ...fontStyles.normal,
+    },
+    buttonWrapper: {
+      flex: 1,
+      marginTop: 20,
+      justifyContent: 'flex-end',
+    },
+    input: {
+      borderWidth: 1,
+      borderRadius: 8,
+      width: '100%',
+      borderColor: colors.border.default,
+      padding: 16,
+      height: 48,
+      color: colors.text.default,
+    },
+    warningMessageText: {
+      paddingVertical: 10,
+      color: colors.error.default,
+      ...fontStyles.normal,
+    },
+    keyboardAvoidingView: {
+      flex: 1,
+      flexDirection: 'row',
+      alignSelf: 'center',
+    },
+    button: {
+      backgroundColor: '#060A1D',
+    },
+    titlePrivacy: {
+      fontSize: 12,
+      fontWeight: '400',
+      color: '#64748B',
+      marginBottom: 16,
+    },
+    subTitlePrivacy: {
+      fontSize: 12,
+      fontWeight: '500',
+      color: '#060A1D',
+      textDecorationLine: 'underline',
+    },
+    wrapperContent: {
+      marginVertical: 6,
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    iconContent: {
+      width: 20,
+      height: 20,
+      marginRight: 16,
     },
   });
 
@@ -341,18 +483,13 @@ class ChoosePassword extends PureComponent {
 
   onPressCreate = async () => {
     const { loading, isSelected, password, confirmPassword } = this.state;
-    const passwordsMatch = password !== '' && password === confirmPassword;
-    const canSubmit = passwordsMatch && isSelected;
 
-    if (!canSubmit) return;
     if (loading) return;
     if (!passwordRequirementsMet(password)) {
       Alert.alert('Error', strings('choose_password.password_length_error'));
       return;
-    } else if (password !== confirmPassword) {
-      Alert.alert('Error', strings('choose_password.password_dont_match'));
-      return;
     }
+
     InteractionManager.runAfterInteractions(() => {
       AnalyticsV2.trackEvent(
         AnalyticsV2.ANALYTICS_EVENTS.WALLET_CREATION_ATTEMPTED,
@@ -399,7 +536,9 @@ class ChoosePassword extends PureComponent {
       this.props.logIn();
       this.props.setLockTime(AppConstants.DEFAULT_LOCK_TIMEOUT);
       this.setState({ loading: false });
-      this.props.navigation.replace('AccountBackupStep1');
+      this.props.navigation.replace('ManualBackupStep1', {
+        password,
+      });
       InteractionManager.runAfterInteractions(() => {
         AnalyticsV2.trackEvent(AnalyticsV2.ANALYTICS_EVENTS.WALLET_CREATED, {
           biometrics_enabled: Boolean(this.state.biometryType),
@@ -651,132 +790,61 @@ class ChoosePassword extends PureComponent {
           </View>
         ) : (
           <View style={styles.wrapper} testID={'choose-password-screen'}>
-            <OnboardingProgress steps={CHOOSE_PASSWORD_STEPS} />
+            <DynamicHeader title={'Security Password'} isHiddenBackground />
             <KeyboardAwareScrollView
               style={styles.scrollableWrapper}
               contentContainerStyle={styles.keyboardScrollableWrapper}
               resetScrollToCoords={{ x: 0, y: 0 }}
             >
-              <View testID={CREATE_PASSWORD_CONTAINER_ID}>
-                <View style={styles.content}>
-                  <Text style={styles.title}>
-                    {strings('choose_password.title')}
-                  </Text>
-                  <View style={styles.text}>
-                    <Text style={styles.subtitle}>
-                      {strings('choose_password.subtitle')}
-                    </Text>
-                  </View>
-                </View>
-                <View style={styles.field}>
-                  <Text style={styles.hintLabel}>
-                    {strings('choose_password.password')}
-                  </Text>
-                  <Text
-                    onPress={this.toggleShowHide}
-                    style={[styles.hintLabel, styles.showPassword]}
+              <View
+                testID={CREATE_PASSWORD_CONTAINER_ID}
+                style={styles.wrapper}
+              >
+                <View style={[styles.confirmPasswordWrapper]}>
+                  <View
+                    style={(styles.content, styles.passwordRequiredContent)}
                   >
-                    {strings(
-                      `choose_password.${secureTextEntry ? 'show' : 'hide'}`,
-                    )}
-                  </Text>
-                  <TextInput
-                    style={[styles.input, inputWidth]}
-                    value={password}
-                    onChangeText={this.onPasswordChange}
-                    secureTextEntry={secureTextEntry}
-                    placeholder=""
-                    placeholderTextColor={colors.text.muted}
-                    {...generateTestId(Platform, CREATE_PASSWORD_INPUT_BOX_ID)}
-                    onSubmitEditing={this.jumpToConfirmPassword}
-                    returnKeyType="next"
-                    autoCapitalize="none"
-                    keyboardAppearance={themeAppearance}
-                  />
-                  {(password !== '' && (
-                    <Text style={styles.passwordStrengthLabel}>
-                      {strings('choose_password.password_strength')}
-                      <Text style={styles[`strength_${passwordStrengthWord}`]}>
-                        {' '}
-                        {strings(
-                          `choose_password.strength_${passwordStrengthWord}`,
-                        )}
+                    <Text style={styles.title}>
+                      {'First, let set your Security Password'}
+                    </Text>
+                    <View style={styles.text}>
+                      <Text style={styles.label}>
+                        {
+                          'It is used to unlock wallet, aprrove transactions and access Secret Recovery Phrase'
+                        }
+                      </Text>
+                    </View>
+                    <TextInput
+                      style={styles.input}
+                      placeholder={'Enter security password'}
+                      placeholderTextColor={colors.text.muted}
+                      onChangeText={this.onPasswordChange}
+                      secureTextEntry
+                      onSubmitEditing={this.tryUnlock}
+                      testID={CONFIRM_CHANGE_PASSWORD_INPUT_BOX_ID}
+                      keyboardAppearance={themeAppearance}
+                    />
+                  </View>
+                  <View style={styles.buttonWrapper}>
+                    <Text style={styles.titlePrivacy}>
+                      {'By continuing, you agree to the'}
+                      <Text style={styles.subTitlePrivacy}>
+                        {
+                          ' iCrosschain User  Account Agreement  and Privacy Policy'
+                        }
                       </Text>
                     </Text>
-                  )) || <Text style={styles.passwordStrengthLabel} />}
-                </View>
-                <View style={styles.field}>
-                  <Text style={styles.hintLabel}>
-                    {strings('choose_password.confirm_password')}
-                  </Text>
-                  <TextInput
-                    ref={this.confirmPasswordInput}
-                    style={[styles.input, inputWidth]}
-                    value={confirmPassword}
-                    onChangeText={this.setConfirmPassword}
-                    secureTextEntry={secureTextEntry}
-                    placeholder={''}
-                    placeholderTextColor={colors.text.muted}
-                    testID={CONFIRM_PASSWORD_INPUT_BOX_ID}
-                    accessibilityLabel={CONFIRM_PASSWORD_INPUT_BOX_ID}
-                    onSubmitEditing={this.onPressCreate}
-                    returnKeyType={'done'}
-                    autoCapitalize="none"
-                    keyboardAppearance={themeAppearance}
-                  />
-                  <View style={styles.showMatchingPasswords}>
-                    {passwordsMatch ? (
-                      <Icon
-                        name="check"
-                        size={16}
-                        color={colors.success.default}
-                      />
-                    ) : null}
+                    <StyledButton
+                      containerStyle={styles.button}
+                      type={'confirm'}
+                      onPress={this.onPressCreate}
+                      testID={'submit-button'}
+                    >
+                      {'Continue'}
+                    </StyledButton>
                   </View>
-                  <Text style={styles.passwordStrengthLabel}>
-                    {strings('choose_password.must_be_at_least', {
-                      number: MIN_PASSWORD_LENGTH,
-                    })}
-                  </Text>
                 </View>
-                <View>{this.renderSwitch()}</View>
-                <View style={styles.checkboxContainer}>
-                  <CheckBox
-                    value={isSelected}
-                    onValueChange={this.setSelection}
-                    style={styles.checkbox}
-                    tintColors={{
-                      true: colors.primary.default,
-                      false: colors.border.default,
-                    }}
-                    boxType="square"
-                    testID={IOS_I_UNDERSTAND_BUTTON_ID}
-                    accessibilityLabel={IOS_I_UNDERSTAND_BUTTON_ID}
-                  />
-                  <Text
-                    style={styles.label}
-                    onPress={this.setSelection}
-                    testID={ANDROID_I_UNDERSTAND_BUTTON_ID}
-                  >
-                    {strings('choose_password.i_understand')}{' '}
-                    <Text onPress={this.learnMore} style={styles.learnMore}>
-                      {strings('choose_password.learn_more')}
-                    </Text>
-                  </Text>
-                </View>
-
                 {!!error && <Text style={styles.errorMsg}>{error}</Text>}
-              </View>
-
-              <View style={styles.ctaWrapper}>
-                <StyledButton
-                  type={'blue'}
-                  onPress={this.onPressCreate}
-                  testID={'submit-button'}
-                  disabled={!canSubmit}
-                >
-                  {strings('choose_password.create_button')}
-                </StyledButton>
               </View>
             </KeyboardAwareScrollView>
           </View>

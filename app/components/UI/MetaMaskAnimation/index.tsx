@@ -1,17 +1,15 @@
 /* eslint-disable @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports, import/no-commonjs */
 import React from 'react';
-import { Animated, Dimensions, View, StyleSheet, Platform } from 'react-native';
+import { Animated, Dimensions, View, StyleSheet, Text } from 'react-native';
 import PropTypes from 'prop-types';
 import LottieView from 'lottie-react-native';
 import { useTheme, useAssetFromTheme } from '../../../util/theme';
-import generateTestId from '../../../../wdio/utils/generateTestId';
-import { SPLASH_SCREEN_METAMASK_ANIMATION_ID } from '../../../../wdio/features/testIDs/Components/MetaMaskAnimation.testIds';
 
 const LOGO_SIZE = 175;
 const LOGO_PADDING = 25;
 
-const wordmarkLight = require('../../../animations/wordmark-light.json');
-const wordmarkDark = require('../../../animations/wordmark-dark.json');
+// const wordmarkLight = require('../../../animations/wordmark-light.json');
+// const wordmarkDark = require('../../../animations/wordmark-dark.json');
 
 const createStyles = (colors: any) =>
   StyleSheet.create({
@@ -52,12 +50,15 @@ const createStyles = (colors: any) =>
       alignItems: 'center',
       justifyContent: 'center',
     },
+    title: {
+      color: 'white',
+    },
   });
 
 const MetaMaskAnimation = ({
   opacity,
   animation,
-  animationName,
+  // animationName,
   onAnimationFinish,
 }: {
   opacity: number;
@@ -67,16 +68,14 @@ const MetaMaskAnimation = ({
 }): JSX.Element => {
   const { colors } = useTheme();
   const styles = createStyles(colors);
-  const wordmark = useAssetFromTheme(wordmarkLight, wordmarkDark);
+  // const wordmark = useAssetFromTheme(wordmarkLight, wordmarkDark);
 
   return (
     <View style={styles.main}>
       <Animated.View style={[styles.logoWrapper, { opacity }]}>
         <View style={styles.fox}>
-          <View
-            style={styles.foxAndName}
-            {...generateTestId(Platform, SPLASH_SCREEN_METAMASK_ANIMATION_ID)}
-          >
+          <View style={styles.foxAndName}>
+            {/* TODO ADD WALLET LOGO */}
             <LottieView
               ref={animation}
               style={styles.animation}
@@ -85,13 +84,14 @@ const MetaMaskAnimation = ({
               source={require('../../../animations/fox-in.json')}
               onAnimationFinish={onAnimationFinish}
             />
-            <LottieView
+            {/* <LottieView
               ref={animationName}
               style={styles.metamaskName}
               loop={false}
               // eslint-disable-next-line
               source={wordmark}
-            />
+            /> */}
+            <Text style={styles.title}>{'SUMO WALLET'}</Text>
           </View>
         </View>
       </Animated.View>

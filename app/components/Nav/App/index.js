@@ -48,7 +48,6 @@ import { setCurrentRoute } from '../../../actions/navigation';
 import { findRouteNameFromNavigatorState } from '../../../util/general';
 import { useTheme } from '../../../util/theme';
 import Device from '../../../util/device';
-import SDKConnect from '../../../core/SDKConnect';
 import { colors as importedColors } from '../../../styles/common';
 import Routes from '../../../constants/navigation/Routes';
 import ModalConfirmation from '../../../component-library/components/Modals/ModalConfirmation';
@@ -56,8 +55,7 @@ import Toast, {
   ToastContext,
 } from '../../../component-library/components/Toast';
 import { TurnOffRememberMeModal } from '../../../components/UI/TurnOffRememberMeModal';
-import { UpdateNeeded } from '../../../components/UI/UpdateNeeded';
-import { EnableAutomaticSecurityChecksModal } from '../../../components/UI/EnableAutomaticSecurityChecksModal';
+import ManualBackupPhrase from '../../Views/ManualBackupPhrase';
 
 const Stack = createStackNavigator();
 /**
@@ -70,16 +68,18 @@ const OnboardingNav = () => (
       name="Onboarding"
       component={Onboarding}
       options={Onboarding.navigationOptions}
+    // options={{ headerShown: false }}
     />
     <Stack.Screen
       name="OnboardingCarousel"
       component={OnboardingCarousel}
-      options={OnboardingCarousel.navigationOptions}
+      // options={OnboardingCarousel.navigationOptions}
+      options={{ headerShown: false }}
     />
     <Stack.Screen
       name="ChoosePassword"
       component={ChoosePassword}
-      options={ChoosePassword.navigationOptions}
+      options={{ headerShown: false }}
     />
     <Stack.Screen name="ExtensionSync" component={ExtensionSync} />
     <Stack.Screen
@@ -95,12 +95,20 @@ const OnboardingNav = () => (
     <Stack.Screen
       name="ManualBackupStep1"
       component={ManualBackupStep1}
-      options={ManualBackupStep1.navigationOptions}
+      // options={ManualBackupStep1.navigationOptions}
+      options={{ headerShown: false }}
+    />
+    <Stack.Screen
+      name={'ManualBackupPhrase'}
+      component={ManualBackupPhrase}
+      // options={ManualBackupPhrase.navigationOptions}
+      options={{ headerShown: false }}
     />
     <Stack.Screen
       name="ManualBackupStep2"
       component={ManualBackupStep2}
-      options={ManualBackupStep2.navigationOptions}
+      // options={ManualBackupStep2.navigationOptions}
+      options={{ headerShown: false }}
     />
     <Stack.Screen
       name="ManualBackupStep3"
@@ -110,7 +118,8 @@ const OnboardingNav = () => (
     <Stack.Screen
       name="ImportFromSeed"
       component={ImportFromSeed}
-      options={ImportFromSeed.navigationOptions}
+      // options={ImportFromSeed.navigationOptions}
+      options={{ headerShown: false }}
     />
     <Stack.Screen
       name="OptinMetrics"
@@ -189,8 +198,8 @@ const App = ({ userLoggedIn }) => {
         const isUnlocked = KeyringController.isUnlocked();
         isUnlocked
           ? SharedDeeplinkManager.parse(deeplink, {
-              origin: AppConstants.DEEPLINKS.ORIGIN_DEEPLINK,
-            })
+            origin: AppConstants.DEEPLINKS.ORIGIN_DEEPLINK,
+          })
           : SharedDeeplinkManager.setDeeplink(deeplink);
       }
     } catch (e) {
@@ -251,10 +260,6 @@ const App = ({ userLoggedIn }) => {
     };
 
     initAnalytics();
-  }, []);
-
-  useEffect(() => {
-    SDKConnect.init();
   }, []);
 
   useEffect(() => {
@@ -366,14 +371,6 @@ const App = ({ userLoggedIn }) => {
       <Stack.Screen
         name={Routes.MODAL.TURN_OFF_REMEMBER_ME}
         component={TurnOffRememberMeModal}
-      />
-      <Stack.Screen
-        name={Routes.MODAL.UPDATE_NEEDED}
-        component={UpdateNeeded}
-      />
-      <Stack.Screen
-        name={Routes.MODAL.ENABLE_AUTOMATIC_SECURITY_CHECKS}
-        component={EnableAutomaticSecurityChecksModal}
       />
     </Stack.Navigator>
   );

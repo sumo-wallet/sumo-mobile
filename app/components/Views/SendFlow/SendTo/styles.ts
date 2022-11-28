@@ -1,3 +1,4 @@
+import { Colors } from './../../../../styles';
 import { StyleSheet } from 'react-native';
 import { fontStyles } from '../../../../styles/common';
 
@@ -5,7 +6,8 @@ const createStyles = (colors: any) =>
   StyleSheet.create({
     wrapper: {
       flex: 1,
-      backgroundColor: colors.background.default,
+      // backgroundColor: colors.background.default,
+      backgroundColor: Colors.grayscale[100],
     },
     imputWrapper: {
       flex: 0,

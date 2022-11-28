@@ -12,21 +12,14 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { CryptoCurrency } from '@consensys/on-ramp-sdk';
-
 import { useFiatOnRampSDK, useSDKMethod } from '../sdk';
-import usePaymentMethods from '../hooks/usePaymentMethods';
-import useAnalytics from '../hooks/useAnalytics';
-import { Region } from '../types';
 
 import useModalHandler from '../../../Base/hooks/useModalHandler';
 import BaseText from '../../../Base/Text';
-import BaseListItem from '../../../Base/ListItem';
 import BaseSelectorButton from '../../../Base/SelectorButton';
 import StyledButton from '../../StyledButton';
 
 import ScreenLayout from '../components/ScreenLayout';
-import Box from '../components/Box';
 import AssetSelectorButton from '../components/AssetSelectorButton';
 import PaymentMethodSelector from '../components/PaymentMethodSelector';
 import AmountInput from '../components/AmountInput';
@@ -34,23 +27,29 @@ import Keypad from '../components/Keypad';
 import QuickAmounts from '../components/QuickAmounts';
 import AccountSelector from '../components/AccountSelector';
 import TokenIcon from '../../Swaps/components/TokenIcon';
-import CustomActionButton from '../containers/CustomActionButton';
+
 import TokenSelectModal from '../components/TokenSelectModal';
 import PaymentMethodModal from '../components/PaymentMethodModal';
-import PaymentMethodIcon from '../components/PaymentMethodIcon';
+import PaymentIcon from '../components/PaymentIcon';
 import FiatSelectModal from '../components/modals/FiatSelectModal';
-import ErrorViewWithReporting from '../components/ErrorViewWithReporting';
 import RegionModal from '../components/RegionModal';
-import SkeletonText from '../components/SkeletonText';
-import ErrorView from '../components/ErrorView';
+import { getPaymentMethodIcon } from '../utils';
 
 import { getFiatOnRampAggNavbar } from '../../Navbar';
 import { useTheme } from '../../../../util/theme';
 import { strings } from '../../../../../locales/i18n';
-import Routes from '../../../../constants/navigation/Routes';
-import { Colors } from '../../../../util/theme/models';
+import Device from '../../../../util/device';
+import SkeletonText from '../components/SkeletonText';
+import BaseListItem from '../../../Base/ListItem';
+import Box from '../components/Box';
 import { NATIVE_ADDRESS, NETWORKS_NAMES } from '../../../../constants/on-ramp';
-import { formatAmount } from '../utils';
+import ErrorView from '../components/ErrorView';
+import ErrorViewWithReporting from '../components/ErrorViewWithReporting';
+import { Colors } from '../../../../util/theme/models';
+import { CryptoCurrency } from '@consensys/on-ramp-sdk';
+import Routes from '../../../../constants/navigation/Routes';
+import useAnalytics from '../hooks/useAnalytics';
+import { Region } from '../types';
 
 // TODO: Convert into typescript and correctly type
 const Text = BaseText as any;
@@ -199,13 +198,14 @@ const AmountToBuy = () => {
     selectedFiatCurrencyId,
   );
 
-  const {
-    data: paymentMethods,
-    error: errorPaymentMethods,
-    isFetching: isFetchingPaymentMethods,
-    query: queryGetPaymentMethods,
-    currentPaymentMethod,
-  } = usePaymentMethods();
+  const [
+    {
+      data: paymentMethods,
+      error: errorPaymentMethods,
+      isFetching: isFetchingPaymentMethods,
+    },
+    queryGetPaymentMethods,
+  ] = useSDKMethod('getPaymentMethods', selectedRegion?.id);
 
   const [{ data: limits }] = useSDKMethod(
     'getLimits',
@@ -250,6 +250,15 @@ const AmountToBuy = () => {
     navigation,
     selectedRegion,
   ]);
+
+  const filteredPaymentMethods = useMemo(() => {
+    if (paymentMethods) {
+      return paymentMethods.filter((paymentMethod) =>
+        Device.isAndroid() ? !paymentMethod.isApplePay : true,
+      );
+    }
+    return null;
+  }, [paymentMethods]);
 
   /**
    * Temporarily filter crypto currencies to match current chain id
@@ -333,6 +342,32 @@ const AmountToBuy = () => {
   }, [sdkCryptoCurrencies, selectedAsset, setSelectedAsset, tokens]);
 
   /**
+   * Select the default payment method if current selection is not available.
+   */
+  useEffect(() => {
+    if (
+      !isFetchingPaymentMethods &&
+      !errorPaymentMethods &&
+      filteredPaymentMethods
+    ) {
+      const foundPaymentMethod = filteredPaymentMethods?.find(
+        (pm) => pm.id === selectedPaymentMethodId,
+      );
+      if (foundPaymentMethod) {
+        setSelectedPaymentMethodId(foundPaymentMethod.id);
+      } else {
+        setSelectedPaymentMethodId(filteredPaymentMethods?.[0]?.id);
+      }
+    }
+  }, [
+    errorPaymentMethods,
+    filteredPaymentMethods,
+    isFetchingPaymentMethods,
+    selectedPaymentMethodId,
+    setSelectedPaymentMethodId,
+  ]);
+
+  /**
    * * Derived values
    */
 
@@ -352,6 +387,26 @@ const AmountToBuy = () => {
       defaultFiatCurrency;
     return currency;
   }, [fiatCurrencies, defaultFiatCurrency, selectedFiatCurrencyId]);
+
+  const currentPaymentMethod = useMemo(
+    () =>
+      filteredPaymentMethods?.find(
+        (method) => method.id === selectedPaymentMethodId,
+      ),
+    [filteredPaymentMethods, selectedPaymentMethodId],
+  );
+
+  /**
+   * Format the amount for display (iOS only)
+   */
+  const displayAmount = useMemo(() => {
+    if (Device.isIos() && Intl && Intl?.NumberFormat) {
+      return amountFocused
+        ? amount
+        : new Intl.NumberFormat().format(amountNumber);
+    }
+    return amount;
+  }, [amount, amountFocused, amountNumber]);
 
   const amountIsBelowMinimum = useMemo(
     () => amountNumber !== 0 && limits && amountNumber < limits.minAmount,
@@ -692,7 +747,7 @@ const AmountToBuy = () => {
           isVisible={isPaymentMethodModalVisible}
           dismiss={hidePaymentMethodModal as () => void}
           title={strings('fiat_on_ramp_aggregator.select_payment_method')}
-          paymentMethods={paymentMethods}
+          paymentMethods={filteredPaymentMethods}
           selectedPaymentMethodId={selectedPaymentMethodId}
           selectedPaymentMethodType={currentPaymentMethod?.paymentType}
           onItemPress={handleChangePaymentMethod}
@@ -740,25 +795,25 @@ const AmountToBuy = () => {
                 highlighted={amountFocused}
                 label={strings('fiat_on_ramp_aggregator.amount')}
                 currencySymbol={currentFiatCurrency?.denomSymbol}
-                amount={amountFocused ? amount : formatAmount(amountNumber)}
+                amount={displayAmount}
                 highlightedError={!amountIsValid}
                 currencyCode={currentFiatCurrency?.symbol}
                 onPress={onAmountInputPress}
                 onCurrencyPress={handleFiatSelectorPress}
               />
             </View>
-            {amountIsBelowMinimum && limits && (
+            {amountIsBelowMinimum && (
               <Text red small>
                 {strings('fiat_on_ramp_aggregator.minimum')}{' '}
                 {currentFiatCurrency?.denomSymbol}
-                {formatAmount(limits.minAmount)}
+                {limits?.minAmount}
               </Text>
             )}
-            {amountIsAboveMaximum && limits && (
+            {amountIsAboveMaximum && (
               <Text red small>
                 {strings('fiat_on_ramp_aggregator.maximum')}{' '}
                 {currentFiatCurrency?.denomSymbol}
-                {formatAmount(limits.maxAmount)}
+                {limits?.maxAmount}
               </Text>
             )}
           </ScreenLayout.Content>
@@ -769,9 +824,10 @@ const AmountToBuy = () => {
           <PaymentMethodSelector
             label={strings('fiat_on_ramp_aggregator.update_payment_method')}
             icon={
-              <PaymentMethodIcon
-                paymentMethodIcons={currentPaymentMethod?.icons}
-                paymentMethodType={currentPaymentMethod?.paymentType}
+              <PaymentIcon
+                iconType={getPaymentMethodIcon(
+                  currentPaymentMethod?.paymentType,
+                )}
                 size={20}
                 color={colors.icon.default}
               />
@@ -780,22 +836,13 @@ const AmountToBuy = () => {
             onPress={showPaymentMethodsModal as () => void}
           />
           <View style={[styles.row, styles.cta]}>
-            {currentPaymentMethod?.customAction ? (
-              <CustomActionButton
-                customAction={currentPaymentMethod.customAction}
-                amount={amountNumber}
-                disabled={!amountIsValid || amountNumber <= 0}
-                fiatSymbol={currentFiatCurrency?.symbol}
-              />
-            ) : (
-              <StyledButton
-                type="confirm"
-                onPress={handleGetQuotePress}
-                disabled={amountNumber <= 0}
-              >
-                {strings('fiat_on_ramp_aggregator.get_quotes')}
-              </StyledButton>
-            )}
+            <StyledButton
+              type="confirm"
+              onPress={handleGetQuotePress}
+              disabled={!amountIsValid || amountNumber <= 0}
+            >
+              {strings('fiat_on_ramp_aggregator.get_quotes')}
+            </StyledButton>
           </View>
         </ScreenLayout.Content>
       </ScreenLayout.Footer>
@@ -847,7 +894,7 @@ const AmountToBuy = () => {
         isVisible={isPaymentMethodModalVisible}
         dismiss={hidePaymentMethodModal as () => void}
         title={strings('fiat_on_ramp_aggregator.select_payment_method')}
-        paymentMethods={paymentMethods}
+        paymentMethods={filteredPaymentMethods}
         selectedPaymentMethodId={selectedPaymentMethodId}
         selectedPaymentMethodType={currentPaymentMethod?.paymentType}
         onItemPress={handleChangePaymentMethod}

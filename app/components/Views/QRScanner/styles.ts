@@ -4,7 +4,6 @@ import { colors as importedColors } from '../../../styles/common';
 export default StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: importedColors.black,
   },
   preview: {
     flex: 1,

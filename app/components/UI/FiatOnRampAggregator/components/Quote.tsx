@@ -4,7 +4,6 @@ import {
   View,
   TouchableOpacity,
   LayoutChangeEvent,
-  ActivityIndicator,
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import Animated, {
@@ -13,7 +12,6 @@ import Animated, {
   useSharedValue,
   withDelay,
   withTiming,
-  WithTimingConfig,
 } from 'react-native-reanimated';
 import { QuoteResponse } from '@consensys/on-ramp-sdk';
 import Box from './Box';
@@ -64,11 +62,10 @@ interface Props {
   onPress?: () => any;
   onPressBuy?: () => any;
   highlighted?: boolean;
-  isLoading?: boolean;
   showInfo: () => any;
 }
 
-const animationConfig: WithTimingConfig = {
+const animationConfig: Animated.WithTimingConfig = {
   duration: 150,
   easing: Easing.elastic(0.3),
 };
@@ -78,7 +75,6 @@ const Quote: React.FC<Props> = ({
   onPress,
   onPressBuy,
   showInfo,
-  isLoading,
   highlighted,
 }: Props) => {
   const { colors } = useTheme();
@@ -248,21 +244,10 @@ const Quote: React.FC<Props> = ({
                 label={strings('fiat_on_ramp_aggregator.pay_with')}
               />
             ) : (
-              <StyledButton
-                type={'blue'}
-                onPress={onPressBuy}
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <ActivityIndicator
-                    size={'small'}
-                    color={colors.primary.inverse}
-                  />
-                ) : (
-                  strings('fiat_on_ramp_aggregator.buy_with', {
-                    provider: provider.name,
-                  })
-                )}
+              <StyledButton type={'blue'} onPress={onPressBuy}>
+                {strings('fiat_on_ramp_aggregator.buy_with', {
+                  provider: provider.name,
+                })}
               </StyledButton>
             )}
           </View>

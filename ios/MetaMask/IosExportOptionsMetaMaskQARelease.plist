@@ -4,8 +4,8 @@
   <dict>
     <key>provisioningProfiles</key>
     <dict>
-      <key>io.metamask.MetaMask-QA</key>
-      <string>Bitrise Internal Release - MetaMask-QA</string>
+      <key>com.vappsmart.sumo-QA</key>
+      <string>Bitrise Internal Release - Sumo-QA</string>
     </dict>
     <key>uploadSymbols</key>
     <true/>

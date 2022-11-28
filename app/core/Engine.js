@@ -85,7 +85,7 @@ class Engine {
         },
       );
       const networkController = new NetworkController({
-        infuraProjectId: process.env.MM_INFURA_PROJECT_ID || NON_EMPTY,
+        infuraProjectId: 'ca28dbffc5d14deca2170b6287d8a792' || NON_EMPTY,
         providerConfig: {
           static: {
             eth_sendTransaction: async (
@@ -340,8 +340,6 @@ class Engine {
               swapsUtils.SWAPS_TESTNET_CHAIN_ID,
               swapsUtils.POLYGON_CHAIN_ID,
               swapsUtils.AVALANCHE_CHAIN_ID,
-              swapsUtils.ARBITRUM_CHAIN_ID,
-              swapsUtils.OPTIMISM_CHAIN_ID,
             ],
           },
         ),
@@ -561,9 +559,9 @@ class Engine {
             item.balance ||
             (item.address in tokenBalances
               ? renderFromTokenMinimalUnit(
-                  tokenBalances[item.address],
-                  item.decimals,
-                )
+                tokenBalances[item.address],
+                item.decimals,
+              )
               : undefined);
           const tokenBalanceFiat = balanceToFiatNumber(
             tokenBalance,

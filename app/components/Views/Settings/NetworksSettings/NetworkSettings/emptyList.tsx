@@ -5,6 +5,7 @@ import { strings } from '../../../../../../locales/i18n';
 import Alert, { AlertType } from '../../../../Base/Alert';
 import { useTheme } from '../../../../../util/theme';
 import { CHAINLIST_URL } from '../../../../../constants/urls';
+import { ROUTES } from './../../../../../navigation/routes';
 
 const createStyles = (colors: any) =>
   StyleSheet.create({
@@ -27,7 +28,7 @@ const EmptyPopularList = ({ goToCustomNetwork }: Props) => {
   const navigation = useNavigation();
 
   const goToBrowserTab = () => {
-    navigation.navigate('BrowserTabHome', {
+    navigation.navigate(ROUTES.BrowserTabHome, {
       screen: 'BrowserView',
       params: {
         newTabUrl: CHAINLIST_URL,

@@ -1,6 +1,6 @@
 # Text
 
-Text is a text component that standardizes on typography provided through theme via [@metamask/design-tokens](https://www.npmjs.com/package/@metamask/design-tokens) library.
+Text is a text component that standardizes on typography provided through theme via [@thanhpn1990/design-tokens](https://www.npmjs.com/package/@thanhpn1990/design-tokens) library.
 
 ## Props
 

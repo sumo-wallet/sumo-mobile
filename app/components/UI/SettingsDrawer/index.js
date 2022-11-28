@@ -10,12 +10,15 @@ import { useTheme } from '../../../util/theme';
 const createStyles = (colors) =>
   StyleSheet.create({
     root: {
-      backgroundColor: colors.background.default,
-      borderBottomColor: colors.border.muted,
+      backgroundColor: colors.background.alternative,
       borderBottomWidth: 1,
       flexDirection: 'row',
       minHeight: 100,
       paddingVertical: 18,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: 6,
+      borderRadius: 10,
     },
     content: {
       flex: 1,
@@ -36,6 +39,16 @@ const createStyles = (colors) =>
     action: {
       flex: 0,
       paddingHorizontal: 16,
+      opacity: 0.5,
+    },
+    logoView: {
+      width: 40,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    logo: {
+      color: colors.icon.alternative,
+      right: 4,
     },
     icon: {
       bottom: 8,
@@ -75,19 +88,24 @@ const propTypes = {
    * Display SettingsNotification
    */
   warning: PropTypes.bool,
+
+  icon: PropTypes.string,
 };
 
 const defaultProps = {
   onPress: undefined,
 };
 
-const SettingsDrawer = ({ title, description, noBorder, onPress, warning }) => {
+const SettingsDrawer = ({ icon, title, description, noBorder, onPress, warning }) => {
   const { colors } = useTheme();
   const styles = createStyles(colors);
 
   return (
     <TouchableOpacity onPress={onPress}>
       <View style={noBorder ? [styles.root, styles.noBorder] : styles.root}>
+        <View style={styles.logoView}>
+          <Icon name={icon || ""} size={18} style={styles.logo} />
+        </View>
         <View style={styles.content}>
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.description}>{description}</Text>
@@ -106,7 +124,7 @@ const SettingsDrawer = ({ title, description, noBorder, onPress, warning }) => {
           </View>
         </View>
         <View style={styles.action}>
-          <Icon name="angle-right" size={36} style={styles.icon} />
+          <Icon name="angle-right" size={20} style={styles.icon} />
         </View>
       </View>
     </TouchableOpacity>

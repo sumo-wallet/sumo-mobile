@@ -7,10 +7,11 @@ import {
   View,
   SafeAreaView,
   StyleSheet,
+  FlatList,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import OnboardingProgress from '../../UI/OnboardingProgress';
-import { fontStyles } from '../../../styles/common';
+import { baseStyles, fontStyles } from '../../../styles/common';
 import ActionView from '../../UI/ActionView';
 import { strings } from '../../../../locales/i18n';
 import { connect } from 'react-redux';
@@ -20,6 +21,7 @@ import Device from '../../../util/device';
 import { getOnboardingNavbarOptions } from '../../UI/Navbar';
 import AnalyticsV2 from '../../../util/analyticsV2';
 import { ThemeContext, mockTheme } from '../../../util/theme';
+import StyledButton from '../../UI/StyledButton';
 
 const createStyles = (colors) =>
   StyleSheet.create({
@@ -29,15 +31,15 @@ const createStyles = (colors) =>
     },
     wrapper: {
       flex: 1,
-      paddingHorizontal: 32,
+      paddingHorizontal: 16,
     },
     onBoardingWrapper: {
       paddingHorizontal: 20,
     },
     action: {
-      fontSize: 18,
+      fontSize: 24,
+      color: '#060A1D',
       marginBottom: 16,
-      color: colors.text.default,
       justifyContent: 'center',
       textAlign: 'center',
       ...fontStyles.bold,
@@ -47,20 +49,21 @@ const createStyles = (colors) =>
       justifyContent: 'center',
     },
     info: {
-      fontSize: 16,
-      color: colors.text.default,
+      fontSize: 14,
+      color: '#060A1D',
       textAlign: 'center',
       ...fontStyles.normal,
       paddingHorizontal: 6,
     },
     seedPhraseWrapper: {
       backgroundColor: colors.background.default,
-      borderRadius: 8,
       flexDirection: 'row',
-      justifyContent: 'space-between',
-      borderColor: colors.border.default,
-      borderWidth: 1,
-      marginBottom: 24,
+      marginTop: 24,
+      flexWrap: 'wrap',
+      justifyContent: Device.isMediumDevice()
+        ? 'space-around'
+        : 'space-between',
+      marginBottom: 32,
     },
     seedPhraseWrapperComplete: {
       borderColor: colors.success.default,
@@ -87,46 +90,44 @@ const createStyles = (colors) =>
       marginBottom: 14,
     },
     wordWrapper: {
-      paddingHorizontal: 8,
-      paddingVertical: 6,
-      width: Device.isMediumDevice() ? 75 : 95,
+      paddingHorizontal: 12,
+      paddingVertical: 12,
+      width: Device.isMediumDevice() ? 90 : 110,
       backgroundColor: colors.background.default,
-      borderColor: colors.border.default,
+      borderColor: '#E2E8F0',
       borderWidth: 1,
-      borderRadius: 34,
-      borderStyle: 'dashed',
+      borderRadius: 8,
       marginLeft: 4,
+      flexDirection: 'row',
+      alignItems: 'center',
     },
     word: {
       fontSize: 14,
-      color: colors.text.default,
+      color: '#060A1D',
       lineHeight: 14,
+      fontWeight: '400',
       textAlign: 'center',
     },
     selectableWord: {
-      paddingHorizontal: 8,
-      paddingVertical: 6,
+      paddingHorizontal: 12,
+      paddingVertical: 10,
       color: colors.text.default,
-      width: 95,
-      backgroundColor: colors.background.default,
-      borderColor: colors.primary.default,
-      borderWidth: 1,
-      marginBottom: 6,
-      borderRadius: 13,
+      backgroundColor: '#E2E8F0',
+      marginBottom: 8,
+      borderRadius: 8,
       textAlign: 'center',
+      marginHorizontal: 4,
     },
     selectableWordText: {
       textAlign: 'center',
       fontSize: 14,
       lineHeight: 14,
-      color: colors.text.default,
+      color: '#060A1D',
+      fontWeight: '400',
     },
     words: {
       flexDirection: 'row',
       flexWrap: 'wrap',
-      justifyContent: Device.isMediumDevice()
-        ? 'space-around'
-        : 'space-between',
     },
     successRow: {
       flexDirection: 'row',
@@ -140,7 +141,6 @@ const createStyles = (colors) =>
     },
     selectedWord: {
       backgroundColor: colors.icon.muted,
-      borderWidth: 1,
       borderColor: colors.icon.muted,
     },
     selectedWordText: {
@@ -156,7 +156,14 @@ const createStyles = (colors) =>
       borderStyle: 'solid',
     },
     wordBoxIndex: {
-      color: colors.text.default,
+      color: '#8E9BAE',
+      fontSize: 12,
+      fontWeight: '500',
+      marginRight: 8,
+    },
+    button: {
+      backgroundColor: '#060A1D',
+      marginHorizontal: 16,
     },
   });
 
@@ -348,7 +355,6 @@ class ManualBackupStep2 extends PureComponent {
 
     return (
       <View key={`word_${i}`} style={styles.wordBoxWrapper}>
-        <Text style={styles.wordBoxIndex}>{i + 1}.</Text>
         <TouchableOpacity
           // eslint-disable-next-line react/jsx-no-bind
           onPress={() => {
@@ -360,6 +366,7 @@ class ManualBackupStep2 extends PureComponent {
             confirmedWords[i].word && styles.confirmedWord,
           ]}
         >
+          <Text style={styles.wordBoxIndex}>{i + 1}</Text>
           <Text style={styles.word}>{word}</Text>
         </TouchableOpacity>
       </View>
@@ -401,27 +408,13 @@ class ManualBackupStep2 extends PureComponent {
 
     return (
       <SafeAreaView style={styles.mainWrapper}>
-        <View style={styles.onBoardingWrapper}>
-          <OnboardingProgress
-            currentStep={this.state.currentStep}
-            steps={this.steps}
-          />
-        </View>
-        <ActionView
-          confirmTestID={'manual-backup-step-2-continue-button'}
-          confirmText={strings('manual_backup_step_2.complete')}
-          onConfirmPress={this.goNext}
-          confirmDisabled={!seedPhraseReady || !this.validateWords()}
-          showCancelButton={false}
-          confirmButtonMode={'confirm'}
-        >
+        <View style={styles.onBoardingWrapper} />
+        <View style={baseStyles.flexGrow}>
           <View style={styles.wrapper} testID={'protect-your-account-screen'}>
-            <Text style={styles.action}>
-              {strings('manual_backup_step_2.action')}
-            </Text>
+            <Text style={styles.action}>{'Verify Your Phrase'}</Text>
             <View style={styles.infoWrapper}>
               <Text style={styles.info}>
-                {strings('manual_backup_step_2.info')}
+                {'Click the words in the correct order'}
               </Text>
             </View>
 
@@ -432,20 +425,19 @@ class ManualBackupStep2 extends PureComponent {
                 this.validateWords() && styles.seedPhraseWrapperComplete,
               ]}
             >
-              <View style={styles.colLeft}>
-                {confirmedWords
-                  .slice(0, half)
-                  .map(({ word }, i) => this.renderWordBox(word, i))}
-              </View>
-              <View style={styles.colRight}>
-                {confirmedWords
-                  .slice(-half)
-                  .map(({ word }, i) => this.renderWordBox(word, i + half))}
-              </View>
+              {confirmedWords.map(({ word }, i) => this.renderWordBox(word, i))}
             </View>
             {this.validateWords() ? this.renderSuccess() : this.renderWords()}
           </View>
-        </ActionView>
+          <StyledButton
+            containerStyle={styles.button}
+            type={'confirm'}
+            onPress={this.goNext}
+            testID={'submit-button'}
+          >
+            {'Verify'}
+          </StyledButton>
+        </View>
       </SafeAreaView>
     );
   };
