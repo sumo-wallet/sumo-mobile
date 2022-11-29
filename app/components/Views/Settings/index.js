@@ -130,12 +130,12 @@ class Settings extends PureComponent {
 
     return (
       <ScrollView style={styles.wrapper}>
-        <SettingsDrawer
+        {/* <SettingsDrawer
           description={strings('app_settings.general_desc')}
           onPress={this.onPressGeneral}
           title={strings('app_settings.general_title')}
           icon={"gears"}
-        />
+        /> */}
         <SettingsDrawer
           description={strings('app_settings.security_desc')}
           onPress={this.onPressSecurity}
@@ -143,7 +143,7 @@ class Settings extends PureComponent {
           warning={!seedphraseBackedUp}
           icon={"user-secret"}
         />
-        <SettingsDrawer
+        {/* <SettingsDrawer
           description={strings('app_settings.advanced_desc')}
           onPress={this.onPressAdvanced}
           title={strings('app_settings.advanced_title')}
@@ -166,7 +166,7 @@ class Settings extends PureComponent {
           description={strings('app_settings.experimental_desc')}
           onPress={this.onPressExperimental}
           icon={"plug"}
-        />
+        /> */}
         {/* <SettingsDrawer
           title={strings('app_settings.info_title')}
           onPress={this.onPressInfo}

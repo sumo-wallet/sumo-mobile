@@ -27,10 +27,10 @@ const createStyles = (colors) =>
       color: colors.secondary.default,
     },
     infoText: {
-      color: '#060A1D', // colors.primary.default,
+      color: colors.primary.default,
     },
     confirm: {
-      backgroundColor: '#060A1D', // colors.primary.default,
+      backgroundColor: colors.primary.default,
       minHeight: 50,
     },
     confirmText: {
@@ -39,19 +39,19 @@ const createStyles = (colors) =>
     roundedNormal: {
       backgroundColor: colors.background.default,
       borderWidth: 1,
-      borderColor: '#060A1D', // colors.primary.default,
+      borderColor: colors.primary.default,
       padding: 8,
     },
     roundedNormalText: {
-      color: '#060A1D', // colors.primary.default,
+      color: colors.primary.default,
     },
     normal: {
       backgroundColor: colors.background.default,
       borderWidth: 1,
-      borderColor: '#060A1D', // colors.primary.default,
+      borderColor: colors.primary.default,
     },
     normalText: {
-      color: '#060A1D', // colors.primary.default,
+      color: colors.primary.default,
     },
     transparent: {
       backgroundColor: importedColors.transparent,
@@ -69,10 +69,10 @@ const createStyles = (colors) =>
     signingCancel: {
       backgroundColor: colors.background.default,
       borderWidth: 1,
-      borderColor: '#060A1D', // colors.primary.default,
+      borderColor: colors.primary.default,
     },
     signingCancelText: {
-      color: '#060A1D', // colors.primary.default,
+      color: colors.primary.default,
     },
     warning: {
       backgroundColor: colors.error.default,
@@ -80,7 +80,7 @@ const createStyles = (colors) =>
     info: {
       backgroundColor: colors.background.default,
       borderWidth: 1,
-      borderColor: '#060A1D', // colors.primary.default,
+      borderColor: colors.primary.default,
     },
     warningText: {
       color: colors.error.inverse,
@@ -97,9 +97,9 @@ const createStyles = (colors) =>
       color: colors.text.alternative,
     },
     sign: {
-      backgroundColor: '#060A1D', // colors.primary.default,
+      backgroundColor: colors.primary.default,
       borderWidth: 1,
-      borderColor: '#060A1D', // colors.primary.default,
+      borderColor: colors.primary.default,
     },
     signText: {
       color: colors.primary.inverse,

@@ -1140,17 +1140,17 @@ class Settings extends PureComponent {
             !biometryChoice &&
             this.renderDevicePasscodeSection()}
           {this.renderPrivateKeySection()}
-          <Heading>{strings('app_settings.privacy_heading')}</Heading>
-          {this.renderClearPrivacySection()}
-          {this.renderClearBrowserHistorySection()}
-          <ClearCookiesSection />
-          {this.renderPrivacyModeSection()}
-          {this.renderMetaMetricsSection()}
-          <DeleteMetaMetricsData />
-          <DeleteWalletData />
-          {this.renderThirdPartySection()}
-          {this.renderApprovalModal()}
-          {this.renderHistoryModal()}
+          {/* <Heading>{strings('app_settings.privacy_heading')}</Heading> */}
+          {/* {this.renderClearPrivacySection()} */}
+          {/* {this.renderClearBrowserHistorySection()} */}
+          {/* <ClearCookiesSection /> */}
+          {/* {this.renderPrivacyModeSection()} */}
+          {/* {this.renderMetaMetricsSection()} */}
+          {/* <DeleteMetaMetricsData /> */}
+          {/* <DeleteWalletData /> */}
+          {/* {this.renderThirdPartySection()} */}
+          {/* {this.renderApprovalModal()} */}
+          {/* {this.renderHistoryModal()} */}
           {this.isMainnet() && this.renderOpenSeaSettings()}
           {__DEV__ ? <AutomaticSecurityChecks /> : null}
           {this.renderHint()}
