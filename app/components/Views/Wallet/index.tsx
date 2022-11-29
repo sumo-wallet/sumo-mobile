@@ -51,6 +51,8 @@ const createStyles = (colors: any) =>
     tabUnderlineStyle: {
       height: 2,
       backgroundColor: colors.primary.default,
+      width: 60,
+      marginHorizontal: 70,
     },
     tabStyle: {
       paddingBottom: 0,
@@ -89,7 +91,7 @@ const createStyles = (colors: any) =>
     },
     title: {
       fontSize: 16,
-      fontWeight: '500',
+      fontWeight: '600',
       color: colors.text.default,
     },
     iconArrow: {
@@ -269,11 +271,11 @@ const Wallet = ({ navigation }: any) => {
   }, []);
 
   const renderContent = useCallback(() => {
-    const account = {
-      address: selectedAddress,
-      ...identities[selectedAddress],
-      ...accounts[selectedAddress],
-    };
+    // const account = {
+    //   address: selectedAddress,
+    //   ...identities[selectedAddress],
+    //   ...accounts[selectedAddress],
+    // };
     let balance: any = 0;
     let assets = tokens;
     if (accounts[selectedAddress]) {
@@ -376,6 +378,8 @@ const Wallet = ({ navigation }: any) => {
         title={''}
         isHiddenTitle
         hideGoBack
+        isShowAvatar
+        address={selectedAddress}
         centerComponent={
           <TouchableOpacity
             style={styles.containerHeader}
@@ -387,9 +391,6 @@ const Wallet = ({ navigation }: any) => {
         }
       >
         <View style={styles.containerRight}>
-          <TouchableOpacity onPress={() => { navigation.navigate(Routes.NOTIFICATIONS.NOTIFICATIONS) }}>
-            <Image source={icons.iconBell} style={styles.icon} />
-          </TouchableOpacity>
           <TouchableOpacity onPress={() => { navigation.navigate(Routes.QR_SCANNER); }}>
             <Image source={icons.iconScanQR} style={styles.iconQR} />
           </TouchableOpacity>

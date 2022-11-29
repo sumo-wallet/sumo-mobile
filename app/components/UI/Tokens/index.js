@@ -437,7 +437,7 @@ class Tokens extends PureComponent {
         />
         <View style={styles.containerSearchBar}>
           <SearchBar
-            style={{ width: 220 }}
+            style={{ width: 280 }}
             placeholder={'Search...'}
             onInputSubmit={(text) => { }}
           />

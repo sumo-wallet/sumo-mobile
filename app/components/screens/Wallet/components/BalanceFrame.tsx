@@ -20,7 +20,7 @@ const createStyles = (colors: any) =>
     title: {
       fontSize: 14,
       fontWeight: '400',
-      color: colors.text.default,
+      color: colors.text.muted,
     },
     containerTitle: {
       flexDirection: 'row',
@@ -43,10 +43,10 @@ const createStyles = (colors: any) =>
       alignItems: 'center',
       justifyContent: 'space-between',
       borderBottomWidth: 1,
-      borderBottomColor: colors.border.default,
+      borderBottomColor: colors.border.muted,
     },
     titleAmount: {
-      fontSize: 32,
+      fontSize: 38,
       fontWeight: '500',
       color: colors.text.default,
     },
@@ -59,7 +59,6 @@ const createStyles = (colors: any) =>
       flexDirection: 'row',
       marginTop: 12,
       alignItems: 'center',
-      marginBottom: 16,
     },
     titleWallet: {
       fontSize: 14,

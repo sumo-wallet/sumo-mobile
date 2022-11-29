@@ -44,13 +44,13 @@ export const SearchBar = ({
         })}
       >
         <Image
-          style={Style.s({ size: 20, tin: colors.text.default })}
+          style={Style.s({ size: 20, tin: colors.text.alternative })}
           source={icons.iconSearch}
         />
         <Text
           style={[
             Style.s({ flex: 1, mx: 12, py: 6, px: 6 }),
-            Fonts.t({ c: colors.text.default }),
+            Fonts.t({ c: colors.text.alternative }),
           ]}
         >
           {placeholder}
