@@ -91,7 +91,7 @@ const OfflineMode = ({ navigation, infuraBlocked }) => {
           </Text>
         </View>
         <View style={styles.buttonContainer}>
-          <StyledButton type={'green'} onPress={action}>
+          <StyledButton type={'blue'} onPress={action}>
             {strings(
               `offline_mode.${infuraBlocked ? 'learn_more' : 'try_again'}`,
             )}
