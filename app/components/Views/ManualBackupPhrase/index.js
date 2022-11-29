@@ -59,7 +59,7 @@ const createStyles = (colors) =>
     },
     info: {
       fontSize: 14,
-      color: '#1B2537',
+      color: colors.text.default,
       ...fontStyles.normal,
     },
 
@@ -97,7 +97,7 @@ const createStyles = (colors) =>
     },
     word: {
       fontSize: 14,
-      color: '#060A1D',
+      color: colors.text.default,
       textAlign: 'center',
       textAlignVertical: 'center',
       lineHeight: 14,

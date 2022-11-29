@@ -2,8 +2,8 @@
 import { useNavigation } from '@react-navigation/native';
 import { strings } from '../../../../locales/i18n';
 import React from 'react';
-import { View, SafeAreaView, Text, StatusBar } from 'react-native';
-import { Colors, Style } from './../../../styles';
+import { View, SafeAreaView, StatusBar } from 'react-native';
+import { Style } from './../../../styles';
 import { SHeader } from './../../common/SHeader';
 import Networks from './Networks';
 import { useTheme } from '../../../util/theme';

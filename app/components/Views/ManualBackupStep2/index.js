@@ -22,6 +22,7 @@ import { getOnboardingNavbarOptions } from '../../UI/Navbar';
 import AnalyticsV2 from '../../../util/analyticsV2';
 import { ThemeContext, mockTheme } from '../../../util/theme';
 import StyledButton from '../../UI/StyledButton';
+import { color } from '@storybook/addon-knobs';
 
 const createStyles = (colors) =>
   StyleSheet.create({
@@ -103,7 +104,7 @@ const createStyles = (colors) =>
     },
     word: {
       fontSize: 14,
-      color: '#060A1D',
+      color: colors.text.default,
       lineHeight: 14,
       fontWeight: '400',
       textAlign: 'center',

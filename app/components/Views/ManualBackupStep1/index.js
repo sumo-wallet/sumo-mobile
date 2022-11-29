@@ -71,7 +71,7 @@ const createStyles = (colors) =>
     },
     info: {
       fontSize: 14,
-      color: '#1B2537',
+      color: colors.text.default,
       ...fontStyles.normal,
     },
     seedPhraseConcealerContainer: {
@@ -212,14 +212,14 @@ const createStyles = (colors) =>
     titlePrivacy: {
       fontSize: 12,
       fontWeight: '400',
-      color: '#64748B',
+      color: colors.text.default,
       marginBottom: 16,
     },
     subTitlePrivacy: {
       fontSize: 12,
       fontWeight: '500',
-      color: '#060A1D',
       textDecorationLine: 'underline',
+      color: colors.text.default,
     },
     wrapperContent: {
       marginVertical: 6,
@@ -283,7 +283,7 @@ class ManualBackupStep1 extends PureComponent {
             this.props.route.params?.password,
           );
         }
-      } catch (e) {}
+      } catch (e) { }
     }
     this.setState({ ready: true });
     InteractionManager.runAfterInteractions(() => PreventScreenshot.forbid());
