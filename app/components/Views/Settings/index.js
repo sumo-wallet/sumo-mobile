@@ -135,10 +135,11 @@ class Settings extends PureComponent {
 
     return (
       <ScrollView style={styles.wrapper}>
-        {/* <SettingsDrawer
+        <SettingsDrawer
           description={strings('app_settings.general_desc')}
           onPress={this.onPressGeneral}
           title={strings('app_settings.general_title')}
+<<<<<<< HEAD
 <<<<<<< HEAD
           icon={'gears'}
         />
@@ -146,6 +147,10 @@ class Settings extends PureComponent {
           icon={"gears"}
         /> */}
 >>>>>>> 42b434a3... fix style button and setting, hide settings
+=======
+          icon={'gears'}
+        />
+>>>>>>> 508174d3... update setting
         <SettingsDrawer
           description={strings('app_settings.security_desc')}
           onPress={this.onPressSecurity}
