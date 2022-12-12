@@ -662,10 +662,10 @@ function SwapsAmountView({
               <Text style={styles.amountInvalid}>
                 {hasInvalidDecimals
                   ? strings('swaps.allows_up_to_decimals', {
-                      symbol: sourceToken.symbol,
-                      decimals: sourceToken.decimals,
-                      // eslint-disable-next-line no-mixed-spaces-and-tabs
-                    })
+                    symbol: sourceToken.symbol,
+                    decimals: sourceToken.decimals,
+                    // eslint-disable-next-line no-mixed-spaces-and-tabs
+                  })
                   : strings('swaps.not_enough', { symbol: sourceToken.symbol })}
               </Text>
             ) : isAmountZero ? (
@@ -732,7 +732,7 @@ function SwapsAmountView({
         </View>
         <View>
           {Boolean(destinationToken) &&
-          !isSwapsNativeAsset(destinationToken) ? (
+            !isSwapsNativeAsset(destinationToken) ? (
             destinationTokenHasEnoughOcurrances ? (
               <TouchableOpacity
                 onPress={explorer.isValid ? handleVerifyPress : undefined}
@@ -759,7 +759,7 @@ function SwapsAmountView({
               <ActionAlert
                 type={
                   !destinationToken.occurances ||
-                  isDynamicToken(destinationToken)
+                    isDynamicToken(destinationToken)
                     ? AlertType.Error
                     : AlertType.Warning
                 }
@@ -776,19 +776,19 @@ function SwapsAmountView({
                   >
                     <Text style={textStyle} bold centered>
                       {!destinationToken.occurrences ||
-                      isDynamicToken(destinationToken)
+                        isDynamicToken(destinationToken)
                         ? strings('swaps.added_manually', {
-                            symbol: destinationToken.symbol,
-                            // eslint-disable-next-line no-mixed-spaces-and-tabs
-                          })
+                          symbol: destinationToken.symbol,
+                          // eslint-disable-next-line no-mixed-spaces-and-tabs
+                        })
                         : strings('swaps.only_verified_on', {
-                            symbol: destinationToken.symbol,
-                            occurrences: destinationToken.occurrences,
-                            // eslint-disable-next-line no-mixed-spaces-and-tabs
-                          })}
+                          symbol: destinationToken.symbol,
+                          occurrences: destinationToken.occurrences,
+                          // eslint-disable-next-line no-mixed-spaces-and-tabs
+                        })}
                     </Text>
                     {!destinationToken.occurrences ||
-                    isDynamicToken(destinationToken) ? (
+                      isDynamicToken(destinationToken) ? (
                       <Text style={textStyle} centered>
                         {`${strings('swaps.verify_this_token_on')} `}
                         {explorer.isValid ? (
