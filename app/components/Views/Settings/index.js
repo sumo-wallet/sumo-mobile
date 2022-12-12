@@ -1,6 +1,11 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
-import { StyleSheet, ScrollView, InteractionManager, Alert } from 'react-native';
+import {
+  StyleSheet,
+  ScrollView,
+  InteractionManager,
+  Alert,
+} from 'react-native';
 import SettingsDrawer from '../../UI/SettingsDrawer';
 import { getClosableNavigationOptions } from '../../UI/Navbar';
 import { strings } from '../../../../locales/i18n';
@@ -130,18 +135,18 @@ class Settings extends PureComponent {
 
     return (
       <ScrollView style={styles.wrapper}>
-        {/* <SettingsDrawer
+        <SettingsDrawer
           description={strings('app_settings.general_desc')}
           onPress={this.onPressGeneral}
           title={strings('app_settings.general_title')}
-          icon={"gears"}
-        /> */}
+          icon={'gears'}
+        />
         <SettingsDrawer
           description={strings('app_settings.security_desc')}
           onPress={this.onPressSecurity}
           title={strings('app_settings.security_title')}
           warning={!seedphraseBackedUp}
-          icon={"user-secret"}
+          icon={'user-secret'}
         />
         {/* <SettingsDrawer
           description={strings('app_settings.advanced_desc')}
@@ -174,7 +179,7 @@ class Settings extends PureComponent {
         <SettingsDrawer
           title={strings('app_settings.logout')}
           onPress={this.logout}
-          icon={"logout"}
+          icon={'logout'}
         />
       </ScrollView>
     );

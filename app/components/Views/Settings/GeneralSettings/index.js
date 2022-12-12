@@ -34,8 +34,8 @@ import PickComponent from '../../PickComponent';
 import { toDataUrl } from '../../../../util/blockies.js';
 import Jazzicon from 'react-native-jazzicon';
 import { ThemeContext, mockTheme } from '../../../../util/theme';
-// import { AppThemeKey } from '../../../../util/theme/models';
-// import StyledButton from '../../../UI/StyledButton';
+import { AppThemeKey } from '../../../../util/theme/models';
+import StyledButton from '../../../UI/StyledButton';
 
 const diameter = 40;
 const spacing = 8;
@@ -192,7 +192,7 @@ class Settings extends PureComponent {
     /**
      * App theme
      */
-    // appTheme: PropTypes.string,
+    appTheme: PropTypes.string,
   };
 
   state = {
@@ -269,32 +269,32 @@ class Settings extends PureComponent {
   };
 
   // TODO - Reintroduce once we enable manual theme settings
-  // goToThemeSettings = () => {
-  //   const { navigation } = this.props;
-  //   navigation.navigate('ThemeSettings');
-  // };
+  goToThemeSettings = () => {
+    const { navigation } = this.props;
+    navigation.navigate('ThemeSettings');
+  };
 
-  // renderThemeSettingsSection = () => {
-  //   const { appTheme } = this.props;
-  //   const colors = this.context.colors || mockTheme.colors;
-  //   const styles = createStyles(colors);
+  renderThemeSettingsSection = () => {
+    const { appTheme } = this.props;
+    const colors = this.context.colors || mockTheme.colors;
+    const styles = createStyles(colors);
 
-  //   return (
-  //     <View style={styles.setting}>
-  //       <View>
-  //         <Text style={styles.title}>
-  //           {strings('app_settings.theme_title', {
-  //             theme: strings(`app_settings.theme_${AppThemeKey[appTheme]}`),
-  //           })}
-  //         </Text>
-  //         <Text style={styles.desc}>{strings('app_settings.theme_description')}</Text>
-  //         <StyledButton type="normal" onPress={this.goToThemeSettings} containerStyle={styles.marginTop}>
-  //           {strings('app_settings.theme_button_text')}
-  //         </StyledButton>
-  //       </View>
-  //     </View>
-  //   );
-  // };
+    return (
+      <View style={styles.setting}>
+        <View>
+          <Text style={styles.title}>
+            {strings('app_settings.theme_title', {
+              theme: strings(`app_settings.theme_${AppThemeKey[appTheme]}`),
+            })}
+          </Text>
+          <Text style={styles.desc}>{strings('app_settings.theme_description')}</Text>
+          <StyledButton type="normal" onPress={this.goToThemeSettings} containerStyle={styles.marginTop}>
+            {strings('app_settings.theme_button_text')}
+          </StyledButton>
+        </View>
+      </View>
+    );
+  };
 
   render() {
     const {
@@ -457,7 +457,7 @@ class Settings extends PureComponent {
               </TouchableOpacity>
             </View>
           </View>
-          {/* {this.renderThemeSettingsSection()} */}
+          {this.renderThemeSettingsSection()}
         </View>
       </ScrollView>
     );
@@ -475,7 +475,7 @@ const mapStateToProps = (state) => ({
   selectedAddress:
     state.engine.backgroundState.PreferencesController.selectedAddress,
   hideZeroBalanceTokens: state.settings.hideZeroBalanceTokens,
-  // appTheme: state.user.appTheme,
+  appTheme: state.user.appTheme,
 });
 
 const mapDispatchToProps = (dispatch) => ({

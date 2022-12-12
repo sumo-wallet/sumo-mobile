@@ -40,7 +40,7 @@ import Routes from '../../../constants/navigation/Routes';
 import { DynamicHeader } from '../../Base/DynamicHeader';
 import { icons } from '../../../assets';
 import { toggleAccountsModal } from '../../../actions/modals';
-import { isDefaultAccountName } from '../../../util/ENSUtils';
+// import { isDefaultAccountName } from '../../../util/ENSUtils';
 
 const createStyles = (colors: any) =>
   StyleSheet.create({
@@ -401,8 +401,8 @@ const Wallet = ({ navigation }: any) => {
           style={styles.wrapper}
           refreshControl={
             <RefreshControl
-              colors={[colors.gray5]}
-              tintColor={colors.gray5}
+              colors={[colors.primary.default]}
+              tintColor={colors.primary.default}
               refreshing={refreshing}
               onRefresh={onRefresh}
             />
@@ -410,7 +410,7 @@ const Wallet = ({ navigation }: any) => {
         >
           {selectedAddress ? renderContent() : renderLoader()}
         </ScrollView>
-        {renderOnboardingWizard()}
+        {/* {renderOnboardingWizard()} */}
       </View>
     </ErrorBoundary>
   );
