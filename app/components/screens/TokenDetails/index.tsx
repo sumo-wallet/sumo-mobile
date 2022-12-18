@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, SafeAreaView, Text } from 'react-native';
+import { SafeAreaView } from 'react-native';
 import { Style } from './../../../styles';
 import { TransactionsPager } from './TransactionsPager';
 

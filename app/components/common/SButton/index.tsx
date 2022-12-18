@@ -1,3 +1,4 @@
+import { ThemeColors } from '@thanhpn1990/design-tokens/dist/js/themes/types';
 import React from 'react';
 import {
   Text,
@@ -7,8 +8,10 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { Fonts, Style, Colors } from './../../../styles';
+import { useTheme } from './../../../util/theme';
 
 export const getSButtonStyle = (
+  colors: ThemeColors | undefined,
   type: SButtonType = 'primary',
   disabled = false,
 ): any => {
@@ -23,24 +26,25 @@ export const getSButtonStyle = (
     case 'danger':
       return Style.s({ bg: Colors.red[1] });
     case 'border':
-      return Style.b({ bor: 100, width: 1, color: Colors.white[1] });
+      return Style.b({ bor: 100, width: 1, color: colors?.border.default });
     default:
       return {};
   }
 };
 
 export const getSButtonTitleStyle = (
-  type: SButtonType = 'primary',
+  colors: ThemeColors | undefined,
+  type: SButtonType | undefined = 'primary',
 ): ViewStyle => {
   switch (type) {
     case 'primary':
-      return Fonts.t({ c: Colors.gray[4] });
+      return Fonts.t({ c: colors?.text.alternative });
     case 'textOnly':
-      return Fonts.t({ c: Colors.gray[1] });
+      return Fonts.t({ c: colors?.text.default });
     case 'danger':
-      return Fonts.t({ c: Colors.gray[1] });
+      return Fonts.t({ c: colors?.text.default });
     case 'border':
-      return Fonts.t({ c: Colors.white[1] });
+      return Fonts.t({ c: colors?.text.default });
     default:
       return {};
   }
@@ -66,6 +70,7 @@ export const SButton = ({
   disabled,
   children,
 }: React.PropsWithChildren<SButtonProps>) => {
+  const { colors } = useTheme();
   const _onPress = React.useCallback(() => {
     if (disabled) {
       return;
@@ -78,7 +83,7 @@ export const SButton = ({
       onPress={_onPress}
       style={[
         Style.s({ h: 48, bor: 48, cen: true, direc: 'row' }),
-        getSButtonStyle(type, disabled),
+        getSButtonStyle(colors, type, disabled),
         style,
       ]}
     >
@@ -86,7 +91,7 @@ export const SButton = ({
       <Text
         style={[
           Fonts.t({ s: 14, w: '500' }),
-          getSButtonTitleStyle(type),
+          getSButtonTitleStyle(colors, type),
           titleStyle,
         ]}
       >
