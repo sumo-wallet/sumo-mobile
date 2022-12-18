@@ -3,7 +3,7 @@ import React from 'react';
 import { View, UIManager, Text } from 'react-native';
 import Modalbox from 'react-native-modalbox';
 import Device from '../../../util/device';
-import { Colors, Fonts, Style } from './../../../styles';
+import { Fonts, Style } from './../../../styles';
 import { SInput } from './../../common/SInput';
 import { SButton } from './../../common/SButton';
 import { useTheme } from '../../../util/theme';
@@ -48,13 +48,21 @@ const SecurityPasswordModal = ({
       onClosed={onClose}
     >
       <View
-        style={Style.s({ w: 343, h: 410, bg: 'white', pt: 24, bor: 8, px: 16 })}
+        style={Style.s({
+          w: 343,
+          h: 410,
+          bg: colors.background.default,
+          // bg: 'red',
+          pt: 24,
+          bor: 8,
+          px: 16,
+        })}
       >
         <Text
           style={Fonts.t({
             s: 24,
             w: '700',
-            c: colors.background.default,
+            c: colors.text.default,
             x: 8,
             text: 'center',
           })}
@@ -79,16 +87,16 @@ const SecurityPasswordModal = ({
             style={Style.s({ mt: 20 })}
           />
           <View style={Style.s({ direc: 'row', items: 'center', mt: 24 })}>
-            <View style={Style.s({ flex: 1, h: 1, bg: Colors.gray[3] })} />
-            <Text style={Fonts.t({ s: 14, c: colors.background.default, x: 13 })}>
+            <View style={Style.s({ flex: 1, h: 1, bg: colors.border.muted })} />
+            <Text style={Fonts.t({ s: 14, c: colors.text.default, x: 13 })}>
               {'or'}
             </Text>
-            <View style={Style.s({ flex: 1, h: 1, bg: Colors.gray[3] })} />
+            <View style={Style.s({ flex: 1, h: 1, bg: colors.border.muted })} />
           </View>
           <Text
             style={Fonts.t({
               s: 14,
-              c: colors.background.default,
+              c: colors.text.default,
               x: 13,
               t: 24,
               text: 'center',
@@ -98,7 +106,12 @@ const SecurityPasswordModal = ({
             {"Wallet wont's unlock? You can"}
             <Text
               onPress={onErase}
-              style={Fonts.t({ s: 14, c: Colors.green[1], x: 13, w: '600' })}
+              style={Fonts.t({
+                s: 14,
+                c: colors.primary.default,
+                x: 13,
+                w: '600',
+              })}
             >
               {' Erase '}
             </Text>

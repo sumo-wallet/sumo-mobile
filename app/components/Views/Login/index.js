@@ -52,7 +52,7 @@ import { ThemeContext, mockTheme } from '../../../util/theme';
 //   RESET_WALLET_ID,
 // } from '../../../constants/test-ids';
 import { LoginOptionsSwitch } from '../../UI/LoginOptionsSwitch';
-import { Fonts, Colors, Style } from './../../../styles';
+import { Fonts, Style } from './../../../styles';
 import { icons } from './../../../assets';
 import SecurityPasswordModal from './../../UI/SecurityPasswordModal';
 
@@ -651,7 +651,7 @@ class Login extends PureComponent {
               style={Fonts.t({
                 s: 14,
                 w: '500',
-                c: Colors.green[1],
+                c: colors.primary.default,
                 b: 24,
                 text: 'center',
               })}

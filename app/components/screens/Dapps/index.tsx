@@ -2,9 +2,10 @@
 import React from 'react';
 import { SafeAreaView, ScrollView, StatusBar } from 'react-native';
 import { useDisclosure } from '@dwarvesf/react-hooks';
+import { useDispatch } from 'react-redux';
 
-import { useNavigator, useNavigatorParams } from './../../hooks';
-import { Style, Colors } from './../../../styles';
+import { useNavigator } from './../../hooks';
+import { Style } from './../../../styles';
 import { SearchBar } from './SearchBar';
 import { NowTrending } from './NowTrending';
 import { AppGroupPager } from './AppGroupPager';
@@ -13,14 +14,19 @@ import { SecurityWarningModal } from './SecurityWarningModal';
 import { Dapp } from './../../../types';
 
 import { ROUTES } from './../../../navigation/routes';
-import { useDispatch } from 'react-redux';
 import { createNewTab, openDapp } from './../../../actions/browser';
+import { useTheme } from './../../../util/theme';
+import { useFetchDappHome } from './../../../services/dapp/useFetchDappHome';
 
 export const DappsScreen = React.memo(() => {
   const nav = useNavigator();
   const dispatch = useDispatch();
+  const { colors } = useTheme();
   const securityWarningModal = useDisclosure();
   const [curDapp, setDapp] = React.useState<Dapp>();
+
+  const { data = {} } = useFetchDappHome();
+  const { banner, category, home_list, hot_dapp } = data;
 
   const handleConfirmWarning = React.useCallback(() => {
     if (curDapp && curDapp?.website) {
@@ -42,7 +48,7 @@ export const DappsScreen = React.memo(() => {
     [nav, dispatch],
   );
   return (
-    <SafeAreaView style={Style.s({ flex: 1, bg: Colors.grayscale[100] })}>
+    <SafeAreaView style={Style.s({ flex: 1, bg: colors.background.default })}>
       <StatusBar barStyle="light-content" />
       <SearchBar placeholder="Search DApp or enter a link" />
       <ScrollView

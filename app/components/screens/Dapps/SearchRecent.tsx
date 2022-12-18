@@ -9,9 +9,10 @@ import {
   FlatList,
   TouchableOpacity,
 } from 'react-native';
-import { Style, Colors, Fonts } from './../../../styles';
+import { Style, Fonts } from './../../../styles';
 import { placeholders } from './../../../assets';
 import { Dapp } from './../../../types';
+import { useTheme } from './../../../util/theme';
 
 export const dummyDataRecent: Dapp[] = [
   {
@@ -41,6 +42,7 @@ export const SearchRecent = ({
   data,
   onSelect,
 }: SearchRecentProps) => {
+  const { colors } = useTheme();
   const renderItem = React.useCallback(
     ({ item }: { item: Dapp }) => {
       return (
@@ -53,7 +55,7 @@ export const SearchRecent = ({
   );
   return (
     <View style={[style]}>
-      <Text style={Fonts.t({ s: 12, c: Colors.grayscale[60] })}>{title}</Text>
+      <Text style={Fonts.t({ s: 12, c: colors.text.default })}>{title}</Text>
       <FlatList
         style={Style.s({ mt: 8 })}
         horizontal

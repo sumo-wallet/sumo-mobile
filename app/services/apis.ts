@@ -1,8 +1,9 @@
 // destructuring env keys might not work in old node versions
 // import Config from 'react-native-config';
 // import { glo } from './../types/coingecko/schema';
-import qs from 'query-string';
+// import qs from 'query-string';
 import fetcher from './fetcher';
+import { HandlerDappHomeResponse } from './../types';
 
 /* eslint-disable prefer-destructuring */
 export const COINGECKO_BASE_URL = 'https://api.coingecko.com/api/v3/';
@@ -29,6 +30,7 @@ class Client {
     'Content-Type': 'application/json',
   };
 
+  baseUrl = 'https://prod3-api.bicyclefi.io';
   address = '';
 
   setHeaders(headers: Record<string, any>) {
@@ -65,20 +67,31 @@ class Client {
       headers: this.headers,
     });
   }
-  getCoindeskTickers(tickers: string) {
-    return fetcher<any>(`https://production.api.coindesk.com/v2/tb/price/ticker?assets=BTC,ETH,XRP,BCH,BNB`, {
-      headers: this.headers,
-    });
+  getCoindeskTickers() {
+    return fetcher<any>(
+      `https://production.api.coindesk.com/v2/tb/price/ticker?assets=BTC,ETH,XRP,BCH,BNB`,
+      {
+        headers: this.headers,
+      },
+    );
   }
   getCoingeckoGlobal() {
     return fetcher<any>(`${COINGECKO_BASE_URL}${PATHS.coingeckoGlobal}`, {
       headers: this.headers,
     });
   }
-  getTokenPrice(address: string) {
+  getTokenPrice() {
     return fetcher<any>(`${COINGECKO_BASE_URL}${PATHS.coingeckoGlobal}`, {
       headers: this.headers,
     });
+  }
+  public getDappHome() {
+    return fetcher<HandlerDappHomeResponse>(
+      `${this.baseUrl}/api/v1/dapp/home`,
+      {
+        headers: this.headers,
+      },
+    );
   }
 }
 

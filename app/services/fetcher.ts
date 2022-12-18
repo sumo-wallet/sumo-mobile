@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-shadow */
 import fetch from 'isomorphic-unfetch';
 import { emitter, EVENTS } from './emitter';
 

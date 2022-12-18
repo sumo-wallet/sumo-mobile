@@ -13,6 +13,7 @@ import { Style, Colors, Fonts } from '../../../styles';
 import { placeholders } from '../../../assets';
 import { Dapp } from './../../../types';
 // import FlatMarquee from './FlatMarquee/FlatMarquee';
+import { useTheme } from '../../../util/theme';
 
 export const data = [
   'AAPL',
@@ -135,6 +136,7 @@ export interface NowTrendingProps {
 }
 
 export const NowTrending = ({ style, onSelect }: NowTrendingProps) => {
+  const { colors } = useTheme();
   const renderItem = React.useCallback(
     ({ item }: { item: Dapp; index: number }) => {
       return (
@@ -149,7 +151,7 @@ export const NowTrending = ({ style, onSelect }: NowTrendingProps) => {
   return (
     <View
       style={[
-        Style.s({ bg: Colors.gray[4], mt: 24, pb: 16 }),
+        Style.s({ bg: colors.background.default, mt: 24, pb: 16 }),
         Style.shadow(Colors.shadow[1], 2, 4, 16),
         style,
       ]}
@@ -160,10 +162,12 @@ export const NowTrending = ({ style, onSelect }: NowTrendingProps) => {
           pt: 12,
         })}
       >
-        <Text style={Fonts.t({ s: 12, c: Colors.white[2] })}>
+        <Text style={Fonts.t({ s: 12, c: colors.text.default })}>
           {'NOW TRENDING'}
         </Text>
-        <Text style={Fonts.t({ s: 24, w: '700', c: Colors.white[2], t: 4 })}>
+        <Text
+          style={Fonts.t({ s: 24, w: '700', c: colors.text.default, t: 4 })}
+        >
           {'Top Dapps all \nover the world'}
         </Text>
       </View>

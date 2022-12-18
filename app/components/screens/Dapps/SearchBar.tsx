@@ -6,7 +6,6 @@ import {
   View,
   ViewStyle,
   TouchableOpacity,
-  TextInput,
 } from 'react-native';
 import { Fonts, Style } from './../../../styles';
 import { icons } from './../../../assets';
@@ -19,10 +18,7 @@ export interface SearchBarProps {
   placeholder?: string;
 }
 
-export const SearchBar = ({
-  style,
-  placeholder,
-}: SearchBarProps) => {
+export const SearchBar = ({ style, placeholder }: SearchBarProps) => {
   const nav = useNavigator();
   const { colors } = useTheme();
   const handleOpenSearchScreen = React.useCallback(() => {

@@ -10,6 +10,7 @@ import { Colors, Fonts, Style } from './../../../styles';
 import { SCREEN_WIDTH } from './../../../constants/ui';
 import { icons } from './../../../assets';
 import { SButton } from './../../common/SButton';
+import { useTheme } from '../../../util/theme';
 
 export const SECURITY_WARNING_DESCRIPTION = `You are about to redirect to a third-party Dapp. When making a transfer, please make  sure you are aware of the financial risks and operate with caution. 
 
@@ -25,6 +26,8 @@ export interface Props {
 export const SecurityWarningModal = React.memo(
   ({ isOpen, onClose, onConfirm, onCancel }: Props) => {
     const [confirmed, setConfirm] = React.useState<boolean>(false);
+
+    const { colors } = useTheme();
 
     const onValueChange = React.useCallback((value: boolean) => {
       setConfirm(value);
@@ -50,17 +53,24 @@ export const SecurityWarningModal = React.memo(
         position={'center'}
         onClosed={onClose}
       >
-        <View style={Style.s({ bg: Colors.gray[4], bor: 20, px: 16, py: 24 })}>
+        <View
+          style={Style.s({
+            bg: colors.background.default,
+            bor: 20,
+            px: 16,
+            py: 24,
+          })}
+        >
           <FastImage
             style={Style.s({ size: 80, self: 'center' })}
-            tintColor={Colors.yellow[1]}
+            tintColor={colors.warning.alternative}
             source={icons.iconWarningRed}
           />
           <View style={Style.s({ mt: 20 })}>
             <Text
               style={Fonts.t({
                 s: 20,
-                c: Colors.white[2],
+                c: colors.text.default,
                 text: 'center',
                 w: '700',
               })}
@@ -70,7 +80,7 @@ export const SecurityWarningModal = React.memo(
             <Text
               style={Fonts.t({
                 s: 14,
-                c: Colors.white[2],
+                c: colors.text.default,
                 text: 'center',
                 t: 12,
               })}
@@ -88,7 +98,7 @@ export const SecurityWarningModal = React.memo(
             <Text
               style={Fonts.t({
                 s: 14,
-                c: Colors.white[2],
+                c: colors.text.default,
                 l: 12,
               })}
             >
@@ -107,7 +117,7 @@ export const SecurityWarningModal = React.memo(
             title="Cancel"
             type="textOnly"
             style={Style.s({ mt: 8 })}
-            titleStyle={Fonts.t({ c: Colors.white[2] })}
+            titleStyle={Fonts.t({ c: colors.text.default })}
           />
         </View>
       </Modalbox>

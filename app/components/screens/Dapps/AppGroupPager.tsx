@@ -11,6 +11,7 @@ import { Style, Colors, Fonts } from '../../../styles';
 import { AppGroupCard } from './AppGroupCard';
 import { dummyDAppPageData } from './../../../data';
 import { DAppPageData } from 'app/types';
+import { useTheme } from './../../..//util/theme';
 
 export interface AppGroupPagerProps {
   style?: StyleProp<ViewStyle>;
@@ -18,12 +19,13 @@ export interface AppGroupPagerProps {
 
 export const AppGroupPager = ({ style }: AppGroupPagerProps) => {
   const [curPage, setPage] = React.useState<DAppPageData>(dummyDAppPageData[0]);
+  const { colors } = useTheme();
 
   const renderItem = React.useCallback(
     ({ item }: { item: DAppPageData }) => {
       const isCurPage = curPage.id === item.id;
-      const titleColor = isCurPage ? Colors.grayscale[100] : Colors.gray[2];
-      const bgColor = isCurPage ? Colors.green[1] : Colors.tran;
+      const titleColor = isCurPage ? colors.text.default : colors.text.muted;
+      const bgColor = isCurPage ? colors.primary.default : Colors.tran;
       return (
         <TouchableOpacity
           onPress={() => setPage(item)}
@@ -35,7 +37,7 @@ export const AppGroupPager = ({ style }: AppGroupPagerProps) => {
               cen: true,
               bg: bgColor,
             }),
-            Style.b({ bor: 50, width: 0.5, color: Colors.white[2] }),
+            Style.b({ bor: 50, width: 0.5, color: colors.border.default }),
           ]}
         >
           <Text style={Fonts.t({ s: 14, c: titleColor, w: '500' })}>
@@ -44,7 +46,13 @@ export const AppGroupPager = ({ style }: AppGroupPagerProps) => {
         </TouchableOpacity>
       );
     },
-    [curPage],
+    [
+      colors.border.default,
+      colors.primary.default,
+      colors.text.default,
+      colors.text.muted,
+      curPage.id,
+    ],
   );
   const separator = React.useCallback(() => {
     return <View style={Style.s({ w: 8 })} />;

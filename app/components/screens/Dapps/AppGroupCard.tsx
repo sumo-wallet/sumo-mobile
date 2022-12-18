@@ -8,10 +8,11 @@ import {
   Image,
   Dimensions,
 } from 'react-native';
-import { Style, Colors, Fonts } from '../../../styles';
+import { Style, Fonts } from '../../../styles';
 import { icons } from './../../../assets';
 import { DappCell } from './DappCell';
 import { GroupDapp } from './../../../types';
+import { useTheme } from './../../..//util/theme';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('screen');
 export { SCREEN_WIDTH, SCREEN_HEIGHT };
@@ -23,6 +24,7 @@ export interface AppGroupCardProps {
 }
 
 export const AppGroupCard = ({ style, title, groups }: AppGroupCardProps) => {
+  const { colors } = useTheme();
   return (
     <View style={[Style.s({ mb: 24 }), style]}>
       <View
@@ -34,7 +36,7 @@ export const AppGroupCard = ({ style, title, groups }: AppGroupCardProps) => {
         })}
       >
         {title ? (
-          <Text style={Fonts.t({ s: 18, w: '500', c: Colors.white[2] })}>
+          <Text style={Fonts.t({ s: 18, w: '500', c: colors.text.default })}>
             {title}
           </Text>
         ) : null}
@@ -43,7 +45,7 @@ export const AppGroupCard = ({ style, title, groups }: AppGroupCardProps) => {
             style={Fonts.t({
               s: 14,
               w: '500',
-              c: Colors.green[1],
+              c: colors.primary.default,
               r: 8,
             })}
           >

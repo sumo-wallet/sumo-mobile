@@ -13,7 +13,7 @@ import {
 import FastImage from 'react-native-fast-image';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { Style, Colors, Fonts } from './../../../styles';
+import { Style, Fonts } from './../../../styles';
 import { icons, images } from './../../../assets';
 import { useNavigator, useDebounce } from './../../hooks';
 import { dummyDAppPageData } from './../../../data';
@@ -52,17 +52,15 @@ export const DappSearch = React.memo(() => {
   const { colors } = useTheme();
 
   React.useEffect(() => {
-    console.log('colors: ', colors);
-  }, [colors]);
-
-  React.useEffect(() => {
     pushToHistory('Pancake');
   }, [colors]);
 
   const [textSearch, setTextSearch] = React.useState<string>('');
   const inputRef = React.useRef<TextInput>();
   const [searchResults, setSearchResults] = React.useState<Dapp[]>([]);
-  const handleClearSearchHistory = React.useCallback(() => {}, []);
+  const handleClearSearchHistory = React.useCallback(() => {
+    console.log('handleClearSearchHistory: ');
+  }, []);
   const handleDeleteHistory = React.useCallback((history: string) => {
     console.log('history: ', history);
   }, []);
@@ -101,7 +99,7 @@ export const DappSearch = React.memo(() => {
     return (
       <ScrollView style={Style.s({ flex: 1 })}>
         <View style={Style.s({ mt: 24, px: 16 })}>
-          <Text style={Fonts.t({ s: 18, w: '500', c: Colors.white[2] })}>
+          <Text style={Fonts.t({ s: 18, w: '500', c: colors.text.default })}>
             {'Popular search'}
           </Text>
           <View style={Style.s({ direc: 'row', wrap: 'wrap', mt: 12 })}>
@@ -113,10 +111,14 @@ export const DappSearch = React.memo(() => {
                     key={keyword}
                     style={[
                       Style.s({ px: 16, py: 6, cen: true, mb: 12, mr: 12 }),
-                      Style.b({ color: Colors.white[2], width: 1, bor: 40 }),
+                      Style.b({
+                        color: colors.border.default,
+                        width: 1,
+                        bor: 40,
+                      }),
                     ]}
                   >
-                    <Text style={Fonts.t({ s: 14, c: Colors.white[2] })}>
+                    <Text style={Fonts.t({ s: 14, c: colors.text.default })}>
                       {keyword}
                     </Text>
                   </TouchableOpacity>
@@ -133,7 +135,7 @@ export const DappSearch = React.memo(() => {
               justify: 'space-between',
             })}
           >
-            <Text style={Fonts.t({ s: 18, w: '500', c: Colors.white[2] })}>
+            <Text style={Fonts.t({ s: 18, w: '500', c: colors.text.default })}>
               {'Search History'}
             </Text>
             <TouchableOpacity
@@ -165,7 +167,7 @@ export const DappSearch = React.memo(() => {
                     onPress={() => handleSelectPopular(history)}
                     style={Style.s({ flex: 1, mr: 12 })}
                   >
-                    <Text style={Fonts.t({ s: 14, c: Colors.white[2] })}>
+                    <Text style={Fonts.t({ s: 14, c: colors.text.default })}>
                       {history}
                     </Text>
                   </TouchableOpacity>
@@ -185,6 +187,8 @@ export const DappSearch = React.memo(() => {
       </ScrollView>
     );
   }, [
+    colors.border.default,
+    colors.text.default,
     handleClearSearchHistory,
     handleDeleteHistory,
     handleSelectPopular,
@@ -212,26 +216,26 @@ export const DappSearch = React.memo(() => {
         >
           <FastImage style={Style.s({ size: 40 })} source={item.image} />
           <View style={Style.s({ ml: 12 })}>
-            <Text style={Fonts.t({ s: 14, c: Colors.white[2] })}>
+            <Text style={Fonts.t({ s: 14, c: colors.text.default })}>
               {item?.name}
             </Text>
-            <Text style={Fonts.t({ s: 14, c: Colors.white[2] })}>
+            <Text style={Fonts.t({ s: 14, c: colors.text.default })}>
               {item?.description}
             </Text>
           </View>
         </TouchableOpacity>
       );
     },
-    [handlePressDapp],
+    [colors.text.default, handlePressDapp],
   );
 
   const renderItemSeparator = React.useCallback(() => {
     return (
       <View
-        style={Style.s({ my: 13, ml: 52, h: 1, bg: Colors.grayscale[80] })}
+        style={Style.s({ my: 13, ml: 52, h: 1, bg: colors.border.default })}
       />
     );
-  }, []);
+  }, [colors.border.default]);
 
   const renderEmptyComponent = React.useCallback(() => {
     return (
@@ -241,16 +245,16 @@ export const DappSearch = React.memo(() => {
           source={images.emptyBox}
         />
         <View style={Style.s({ mt: 20, items: 'center' })}>
-          <Text style={Fonts.t({ s: 18, w: '500', c: Colors.white[2] })}>
+          <Text style={Fonts.t({ s: 18, w: '500', c: colors.text.default })}>
             {'No search result found!'}
           </Text>
-          <Text style={Fonts.t({ s: 14, c: Colors.grayscale[60], t: 8 })}>
+          <Text style={Fonts.t({ s: 14, c: colors.text.alternative, t: 8 })}>
             {'All Dapps include the keyword will appear here'}
           </Text>
         </View>
       </View>
     );
-  }, []);
+  }, [colors.text.alternative, colors.text.default]);
 
   const renderSearchResults = React.useCallback(() => {
     if (!isSearching) {
@@ -276,7 +280,7 @@ export const DappSearch = React.memo(() => {
   ]);
 
   return (
-    <SafeAreaView style={Style.s({ flex: 1, bg: Colors.grayscale[100] })}>
+    <SafeAreaView style={Style.s({ flex: 1, bg: colors.background.default })}>
       <View style={Style.s({ direc: 'row', items: 'center', pl: 16 })}>
         <View
           style={Style.s({
@@ -285,7 +289,7 @@ export const DappSearch = React.memo(() => {
             direc: 'row',
             items: 'center',
             bor: 8,
-            bg: Colors.grayscale[80],
+            bg: colors.background.defaultHover,
             px: 16,
             py: 8,
           })}
@@ -295,9 +299,9 @@ export const DappSearch = React.memo(() => {
             ref={inputRef as any}
             style={[
               Style.s({ flex: 1, mx: 12, py: 6, px: 6 }),
-              Fonts.t({ c: Colors.white[2], w: '600' }),
+              Fonts.t({ c: colors.text.alternative, w: '600' }),
             ]}
-            placeholderTextColor={Colors.grayscale[40]}
+            placeholderTextColor={colors.text.muted}
             placeholder="Search..."
             onChangeText={(text: string) => {
               setTextSearch(text);
@@ -311,7 +315,7 @@ export const DappSearch = React.memo(() => {
           onPress={nav.goBack}
           style={Style.s({ px: 16, py: 14 })}
         >
-          <Text style={Fonts.t({ s: 14, w: '500', c: Colors.white[2] })}>
+          <Text style={Fonts.t({ s: 14, w: '500', c: colors.text.default })}>
             {'Cancel'}
           </Text>
         </TouchableOpacity>
