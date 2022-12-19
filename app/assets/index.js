@@ -56,6 +56,7 @@ import iconCopyWebLink from './icons/iconCopyWebLink.png';
 import iconAbout from './icons/iconAbout.png';
 import iconHistory from './icons/iconHistory.png';
 import iconChart from './icons/iconChart.png';
+import iconSlippage from './icons/iconSlippage.png';
 
 import imageBanner from './images/imageBanner.png';
 import imageNew1 from './images/imageNew1.png';
@@ -125,6 +126,7 @@ export const icons = {
   iconAbout,
   iconHistory,
   iconChart,
+  iconSlippage,
 };
 
 export const images = {
