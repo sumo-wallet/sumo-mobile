@@ -22,6 +22,8 @@ import DefaultTabBar from 'react-native-scrollable-tab-view/DefaultTabBar';
 import { fontStyles, baseStyles } from '../../../styles/common';
 import AccountOverview from '../../UI/AccountOverview';
 import Tokens from '../../UI/Tokens';
+import SwapsAmountView from '../../UI/SumoSwaps';
+import SumoExchangeView from '../../UI/SumoExchange';
 import { getWalletNavbarOptions } from '../../UI/Navbar';
 import { strings } from '../../../../locales/i18n';
 import { renderFromWei, weiToFiat, hexToBN } from '../../../util/number';
@@ -52,7 +54,7 @@ const createStyles = (colors: any) =>
       height: 2,
       backgroundColor: colors.primary.default,
       width: 60,
-      marginHorizontal: 70,
+      marginHorizontal: 30,
     },
     tabStyle: {
       paddingBottom: 0,
@@ -105,7 +107,7 @@ const createStyles = (colors: any) =>
 /**
  * Main view for the wallet
  */
-const Wallet = ({ navigation }: any) => {
+const SwapMenu = ({ navigation }: any) => {
   const { drawerRef } = useContext(DrawerContext);
   const [refreshing, setRefreshing] = useState(false);
   const accountOverviewRef = useRef(null);
@@ -305,16 +307,22 @@ const Wallet = ({ navigation }: any) => {
           renderTabBar={renderTabBar}
           // eslint-disable-next-line react/jsx-no-bind
           onChangeTab={onChangeTab}
+          style={{ flexGrow: 1 }}
         >
-          <Tokens
+          <SwapsAmountView
             tabLabel={'Token'}
             key={'tokens-tab'}
             navigation={navigation}
             tokens={assets}
           />
           <CollectibleContracts
-            tabLabel={strings('wallet.collectibles')}
+            tabLabel={'Bridge'}
             key={'nfts-tab'}
+            navigation={navigation}
+          />
+          <SumoExchangeView
+            tabLabel={'Exchange'}
+            key={'exchange-tab'}
             navigation={navigation}
           />
         </ScrollableTabView>
@@ -392,28 +400,19 @@ const Wallet = ({ navigation }: any) => {
       >
         <View style={styles.containerRight}>
           <TouchableOpacity onPress={() => { navigation.navigate(Routes.QR_SCANNER); }}>
-            <Image source={icons.iconScanQR} style={styles.iconQR} />
+            <Image source={icons.iconArrowRefresh} style={styles.iconQR} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => { navigation.navigate(Routes.QR_SCANNER); }}>
+            <Image source={icons.iconArrowRefresh} style={styles.iconQR} />
           </TouchableOpacity>
         </View>
       </DynamicHeader>
       <View style={baseStyles.flexGrow} testID={'wallet-screen'}>
-        <ScrollView
-          style={styles.wrapper}
-          refreshControl={
-            <RefreshControl
-              colors={[colors.primary.default]}
-              tintColor={colors.primary.default}
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-            />
-          }
-        >
-          {selectedAddress ? renderContent() : renderLoader()}
-        </ScrollView>
+        {selectedAddress ? renderContent() : renderLoader()}
         {/* {renderOnboardingWizard()} */}
       </View>
     </ErrorBoundary>
   );
 };
 
-export default Wallet;
+export default SwapMenu;
