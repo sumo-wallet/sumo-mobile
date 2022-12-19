@@ -56,11 +56,12 @@ import { getSwapsAmountNavbar } from '../Navbar';
 import Onboarding from './components/Onboarding';
 import useModalHandler from '../../Base/hooks/useModalHandler';
 import Text from '../../Base/Text';
-import Keypad from '../../Base/Keypad';
 import StyledButton from '../StyledButton';
 import ScreenView from '../FiatOrders/components/ScreenView';
 import ActionAlert from './components/ActionAlert';
 import TokenSelectModal from './components/TokenSelectModal';
+import ChainSelectModal from './components/ChainSelectModal';
+
 import SlippageModal from './components/SlippageModal';
 import useBalance from './utils/useBalance';
 import useBlockExplorer from './utils/useBlockExplorer';
@@ -71,7 +72,6 @@ import { isZero, gte } from '../../../util/lodash';
 import { useTheme } from '../../../util/theme';
 import TokenIcon from './components/TokenIcon';
 import Icon from 'react-native-vector-icons/FontAwesome';
-// import TokenIcon from './../../../TokenIcon';
 
 const createStyles = (colors) =>
   StyleSheet.create({
@@ -93,6 +93,7 @@ const createStyles = (colors) =>
     content: {
       flexGrow: 1,
       justifyContent: 'center',
+      paddingHorizontal: 10,
     },
     keypad: {
       flexGrow: 1,
@@ -101,7 +102,7 @@ const createStyles = (colors) =>
     tokenButtonContainer: {
       flexDirection: 'row',
       justifyContent: 'center',
-      margin: Device.isIphone5() ? 5 : 10,
+      marginVertical: Device.isIphone5() ? 5 : 10,
     },
     amountContainer: {
       alignItems: 'center',
@@ -133,8 +134,8 @@ const createStyles = (colors) =>
       alignItems: 'center',
       justifyContent: 'center',
       position: 'absolute',
-      top: 143,
-      left: '44%',
+      top: 190,
+      left: '80%',
     },
     horizontalRule: {
       flex: 1,
@@ -144,7 +145,7 @@ const createStyles = (colors) =>
     },
     arrowDown: {
       color: colors.background.default,
-      fontSize: 25,
+      fontSize: 21,
       marginHorizontal: 15,
       transform: [{ rotate: '90deg' }],
     },
@@ -167,16 +168,22 @@ const createStyles = (colors) =>
     },
     cta: {
       flex: 1,
+      height: 50,
       paddingHorizontal: Device.isIphone5() ? 10 : 20,
     },
     disabled: {
       opacity: 0.4,
     },
+
+    selectTokenView: {
+      padding: 10,
+      marginTop: 10,
+      borderRadius: 10,
+      backgroundColor: colors.box.default,
+    },
     sendTokenContainer: {
-      flex: 1,
-      flexDirection: 'column',
-      justifyContent: 'flex-end',
-      height: 156,
+      // flex: 1,
+      width: '100%',
       padding: 10,
       borderRadius: 10,
       backgroundColor: colors.box.default,
@@ -190,28 +197,10 @@ const createStyles = (colors) =>
       justifyContent: 'space-between',
     },
 
-    sendOptionButton: {
-      flexDirection: 'row',
-      height: 30,
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginLeft: 5,
-      borderRadius: 10,
-      borderWidth: 1,
-      paddingHorizontal: 10,
-      borderColor: colors.border.muted,
-    },
     sendOptionRight: {
       flexDirection: 'row',
       justifyContent: 'center',
       alignItems: 'center',
-    },
-    sendOptionButtonTitle: {
-      textAlignVertical: 'center',
-      fontSize: Device.isIphone5() ? 10 : 14,
-      height: Device.isIphone5() ? 13 : 16,
-      fontWeight: '500',
-      color: colors.text.default,
     },
 
     selectTokenInputContainer: {
@@ -223,7 +212,6 @@ const createStyles = (colors) =>
       alignItems: 'center',
     },
     selectTokenContainer: {
-      flex: 1,
       flexDirection: 'row',
       padding: 10,
     },
@@ -249,9 +237,9 @@ const createStyles = (colors) =>
       marginRight: 8,
     },
     flipButton: {
-      width: 56,
-      height: 56,
-      borderRadius: 28,
+      width: 50,
+      height: 50,
+      borderRadius: 25,
       alignItems: 'center',
       justifyContent: 'center',
       backgroundColor: colors.primary.default,
@@ -292,13 +280,22 @@ const createStyles = (colors) =>
       borderBottomColor: colors.border.default,
       borderBottomWidth: 0.3,
     },
+    amountInputView: {
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      flexDirection: 'row',
+      padding: 10,
+      marginTop: 10,
+      borderRadius: 10,
+      backgroundColor: colors.box.default,
+    },
   });
 
 const SWAPS_NATIVE_ADDRESS = swapsUtils.NATIVE_SWAPS_TOKEN_ADDRESS;
 const TOKEN_MINIMUM_SOURCES = 1;
 const MAX_TOP_ASSETS = 20;
 
-function SwapsAmountView({
+function BridgeView({
   swapsTokens,
   swapsControllerTokens,
   accounts,
@@ -341,6 +338,9 @@ function SwapsAmountView({
     ),
   );
   const [destinationToken, setDestinationToken] = useState(null);
+  const [sourceChain, setSourceChain] = useState(null);
+  const [destinationChain, setDestinationChain] = useState(null);
+
   const [hasDismissedTokenAlert, setHasDismissedTokenAlert] = useState(true);
   const [contractBalance, setContractBalance] = useState(null);
   const [contractBalanceAsUnits, setContractBalanceAsUnits] = useState(
@@ -773,6 +773,27 @@ function SwapsAmountView({
         automaticallyAdjustContentInsets={false}
       >
         <View style={styles.content}>
+          {isInitialLoadingTokens ? (
+            <ActivityIndicator size="small" />
+          ) : (
+            <View style={styles.selectTokenView}>
+              <TouchableOpacity
+                style={styles.selectTokenContainer}
+                onPress={toggleSourceModal}
+              >
+                <View style={styles.icon}>
+                  <TokenIcon
+                    icon={sourceToken?.iconUrl}
+                    symbol={sourceToken?.symbol}
+                  />
+                </View>
+                <Text primary>
+                  {sourceToken?.symbol || strings('swaps.select_a_token')}
+                </Text>
+                <Icon name="caret-down" size={18} style={styles.caretDown} />
+              </TouchableOpacity>
+            </View>
+          )}
           <View
             style={[
               styles.tokenButtonContainer,
@@ -786,106 +807,25 @@ function SwapsAmountView({
               <View style={styles.sendTokenContainer}>
                 <View style={styles.sendOptionContainer}>
                   <Text>{'SEND'}</Text>
-                  <View style={styles.sendOptionRight}>
-                    <TouchableOpacity
-                      style={styles.sendOptionButton}
-                      onPress={handleUse50Max}
-                    >
-                      <Text style={styles.sendOptionButtonTitle}>{'50%'}</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={styles.sendOptionButton}
-                      onPress={handleUseMax}
-                    >
-                      <Text>{'MAX'}</Text>
-                    </TouchableOpacity>
-                  </View>
                 </View>
-
-                <View style={styles.selectTokenInputContainer}>
-                  <TouchableOpacity
-                    style={styles.selectTokenContainer}
-                    onPress={toggleSourceModal}
-                  >
-                    <View style={styles.icon}>
-                      <TokenIcon
-                        icon={sourceToken?.iconUrl}
-                        symbol={sourceToken?.symbol}
-                      />
-                    </View>
-                    <Text primary>
-                      {sourceToken?.symbol || strings('swaps.select_a_token')}
-                    </Text>
-                    <Icon
-                      name="caret-down"
-                      size={18}
-                      style={styles.caretDown}
+                <TouchableOpacity
+                  style={styles.selectTokenContainer}
+                  onPress={toggleSourceModal}
+                >
+                  <View style={styles.icon}>
+                    <TokenIcon
+                      icon={sourceChain?.iconUrl}
+                      symbol={sourceChain?.symbol}
                     />
-                  </TouchableOpacity>
-
-                  <TextInput
-                    style={styles.amount}
-                    numberOfLines={1}
-                    adjustsFontSizeToFit
-                    allowFontScaling
-                    // ref={this.amountInput}
-                    value={amount}
-                    onChangeText={(value) => {
-                      if (value.length > 0) {
-                        if (value.includes(',')) {
-                          setAmount(value.replace(',', '.'));
-                        } else {
-                          setAmount(value);
-                        }
-                      } else {
-                        setAmount('0');
-                      }
-                    }}
-                    keyboardType={'decimal-pad'}
-                    placeholder={'0'}
-                    placeholderTextColor={colors.text.muted}
-                    testID={'txn-amount-input'}
-                  // keyboardAppearance={themeAppearance}
-                  />
-                </View>
-                <TouchableOpacity style={styles.balanceContainer}>
-                  {!!sourceToken &&
-                    (hasInvalidDecimals ||
-                      (!isAmountZero && !hasEnoughBalance) ? (
-                      <Text style={styles.amountInvalid}>
-                        {hasInvalidDecimals
-                          ? strings('swaps.allows_up_to_decimals', {
-                            symbol: sourceToken.symbol,
-                            decimals: sourceToken.decimals,
-                            // eslint-disable-next-line no-mixed-spaces-and-tabs
-                          })
-                          : strings('swaps.not_enough', {
-                            symbol: sourceToken.symbol,
-                          })}
-                      </Text>
-                    ) : isAmountZero ? (
-                      <Text>
-                        {!!sourceToken &&
-                          balance !== null &&
-                          strings('swaps.available_to_swap', {
-                            asset: `${balance} ${sourceToken.symbol}`,
-                          })}
-                        {!isSwapsNativeAsset(sourceToken) && hasBalance && (
-                          <Text style={styles.linkText} onPress={handleUseMax}>
-                            {' '}
-                            {strings('swaps.use_max')}
-                          </Text>
-                        )}
-                      </Text>
-                    ) : (
-                      <Text upper>
-                        {currencyAmount ? `~${currencyAmount}` : ''}
-                      </Text>
-                    ))}
+                  </View>
+                  <Text primary>
+                    {sourceChain?.symbol || 'Select source chain'}
+                  </Text>
+                  <Icon name="caret-down" size={18} style={styles.caretDown} />
                 </TouchableOpacity>
               </View>
             )}
-            <TokenSelectModal
+            <ChainSelectModal
               isVisible={isSourceModalVisible}
               dismiss={toggleSourceModal}
               title={strings('swaps.convert_from')}
@@ -905,78 +845,26 @@ function SwapsAmountView({
             <View style={styles.sendOptionContainer}>
               <Text>{'RECEIVE'}</Text>
             </View>
-
-            <View style={styles.selectTokenInputContainer}>
-              {isInitialLoadingTokens ? (
-                <ActivityIndicator size="small" />
-              ) : (
-                <TouchableOpacity
-                  style={styles.selectTokenContainer}
-                  onPress={toggleDestinationModal}
-                >
-                  <View style={styles.icon}>
-                    <TokenIcon
-                      icon={destinationToken?.iconUrl}
-                      symbol={destinationToken?.symbol}
-                    />
-                  </View>
-                  <Text primary>
-                    {destinationToken?.symbol ||
-                      strings('swaps.select_a_token')}
-                  </Text>
-                  <Icon name="caret-down" size={18} style={styles.caretDown} />
-                </TouchableOpacity>
-              )}
-
-              <TextInput
-                style={styles.amount}
-                numberOfLines={1}
-                adjustsFontSizeToFit
-                allowFontScaling
-                // ref={this.amountInput}
-                // value={amount}
-                // onChangeText={this.onInputChange}
-                keyboardType={'numeric'}
-                placeholder={'0'}
-                placeholderTextColor={colors.text.muted}
-                testID={'txn-amount-input'}
-              />
-            </View>
-
-            <TouchableOpacity>
-              {!!destinationToken &&
-                (hasInvalidDecimals || (!isAmountZero && !hasEnoughBalance) ? (
-                  <Text style={styles.amountInvalid}>
-                    {hasInvalidDecimals
-                      ? strings('swaps.allows_up_to_decimals', {
-                        symbol: sourceToken.symbol,
-                        decimals: sourceToken.decimals,
-                        // eslint-disable-next-line no-mixed-spaces-and-tabs
-                      })
-                      : strings('swaps.not_enough', {
-                        symbol: sourceToken.symbol,
-                      })}
-                  </Text>
-                ) : isAmountZero ? (
-                  <Text>
-                    {!!destinationToken &&
-                      balance !== null &&
-                      strings('swaps.available_to_swap', {
-                        asset: `${balance} ${destinationToken.symbol}`,
-                      })}
-                    {!isSwapsNativeAsset(destinationToken) && hasBalance && (
-                      <Text style={styles.linkText} onPress={handleUseMax}>
-                        {' '}
-                        {strings('swaps.use_max')}
-                      </Text>
-                    )}
-                  </Text>
-                ) : (
-                  <Text upper>
-                    {currencyAmount ? `~${currencyAmount}` : ''}
-                  </Text>
-                ))}
-            </TouchableOpacity>
+            {isInitialLoadingTokens ? (
+              <ActivityIndicator size="small" />
+            ) : (
+              <TouchableOpacity
+                style={styles.selectTokenContainer}
+                onPress={toggleDestinationModal}
+              >
+                <View style={styles.icon}>
+                  <TokenIcon
+                    icon={destinationChain?.iconUrl}
+                    symbol={destinationChain?.symbol}
+                  />
+                </View>
+                <Text primary>
+                  {destinationChain?.symbol ||
+                    'Select destination chain'}
+                </Text>
+                <Icon name="caret-down" size={18} style={styles.caretDown} />
+              </TouchableOpacity>
+            )}
           </View>
 
           <View style={styles.tokenButtonContainer}>
@@ -1107,6 +995,27 @@ function SwapsAmountView({
           </View>
         </View>
 
+        {isInitialLoadingTokens ? (
+          <ActivityIndicator size="small" />
+        ) : (
+          <View style={styles.amountInputView}>
+            <Text>{'Amount'}</Text>
+            <TextInput
+              style={styles.amount}
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              allowFontScaling
+              // ref={this.amountInput}
+              // value={amount}
+              // onChangeText={this.onInputChange}
+              keyboardType={'numeric'}
+              placeholder={'0'}
+              placeholderTextColor={colors.text.muted}
+              testID={'txn-amount-input'}
+            />
+          </View>
+        )}
+
         <View
           style={[styles.keypad, disabledView && styles.disabled]}
           pointerEvents={disabledView ? 'none' : 'auto'}
@@ -1124,7 +1033,7 @@ function SwapsAmountView({
                 isAmountZero
               }
             >
-              {strings('swaps.get_quotes')}
+              {'Bridge'}
             </StyledButton>
           </View>
           <View style={styles.providerContainer}>
@@ -1132,30 +1041,6 @@ function SwapsAmountView({
             <Icon name="arrow-right" size={18} style={styles.caretDown}></Icon>
           </View>
 
-          <TouchableOpacity
-            style={styles.providerContainer}
-            onPress={toggleSlippageModal}
-            hitSlop={{ top: 10, right: 10, bottom: 10, left: 10 }}
-            disabled={isDirectWrapping}
-          >
-            <Text style={styles.swapDetailTitle}>{'Slippage'}</Text>
-            <Text style={styles.swapDetailTitle}>{`${slippage}%`}</Text>
-          </TouchableOpacity>
-
-          <View style={styles.swapDetailContainer}>
-            <View style={styles.swapDetailItemContainer}>
-              <Text style={styles.swapDetailTitle}>{'Provider Fee'}</Text>
-              <Text style={styles.swapDetailTitle}>{'0.1'}</Text>
-            </View>
-            <View style={styles.swapDetailItemContainer}>
-              <Text style={styles.swapDetailTitle}>{'Price Impact'}</Text>
-              <Text style={styles.swapDetailTitle}>{'0.1%'}</Text>
-            </View>
-            <View style={styles.swapDetailItemContainer}>
-              <Text style={styles.swapDetailTitle}>{'Routing'}</Text>
-              <Text style={styles.swapDetailTitle}>{''}</Text>
-            </View>
-          </View>
           {/* <AnimatableView ref={keypadViewRef}>
             <Keypad
               onChange={handleKeypadChange}
@@ -1209,7 +1094,7 @@ function SwapsAmountView({
   );
 }
 
-SwapsAmountView.propTypes = {
+BridgeView.propTypes = {
   swapsTokens: PropTypes.arrayOf(PropTypes.object),
   swapsControllerTokens: PropTypes.arrayOf(PropTypes.object),
   tokensWithBalance: PropTypes.arrayOf(PropTypes.object),
@@ -1294,4 +1179,4 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(setSwapsLiveness(liveness, chainId)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(SwapsAmountView);
+export default connect(mapStateToProps, mapDispatchToProps)(BridgeView);

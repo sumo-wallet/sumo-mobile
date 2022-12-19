@@ -24,6 +24,8 @@ import AccountOverview from '../../UI/AccountOverview';
 import Tokens from '../../UI/Tokens';
 import SwapsAmountView from '../../UI/SumoSwaps';
 import SumoExchangeView from '../../UI/SumoExchange';
+import BridgeView from '../../UI/SumoSwaps/BridgeView';
+
 import { getWalletNavbarOptions } from '../../UI/Navbar';
 import { strings } from '../../../../locales/i18n';
 import { renderFromWei, weiToFiat, hexToBN } from '../../../util/number';
@@ -315,7 +317,7 @@ const SwapMenu = ({ navigation }: any) => {
             navigation={navigation}
             tokens={assets}
           />
-          <CollectibleContracts
+          <BridgeView
             tabLabel={'Bridge'}
             key={'nfts-tab'}
             navigation={navigation}
