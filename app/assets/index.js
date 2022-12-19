@@ -54,6 +54,8 @@ import iconFavorite from './icons/iconFavorite.png';
 import iconArrowRefresh from './icons/iconArrowRefresh.png';
 import iconCopyWebLink from './icons/iconCopyWebLink.png';
 import iconAbout from './icons/iconAbout.png';
+import iconHistory from './icons/iconHistory.png';
+import iconChart from './icons/iconChart.png';
 
 import imageBanner from './images/imageBanner.png';
 import imageNew1 from './images/imageNew1.png';
@@ -62,6 +64,7 @@ import imageNew3 from './images/imageNew3.png';
 import imageNew4 from './images/imageNew4.png';
 import emptyBox from './images/emptyBox.png';
 import imageEmptyView from './images/imageEmptyView.png';
+import imageCryptoAsset from './images/crypto-asset.png';
 
 export const icons = {
   iconEyeClose,
@@ -120,6 +123,8 @@ export const icons = {
   iconArrowRefresh,
   iconCopyWebLink,
   iconAbout,
+  iconHistory,
+  iconChart,
 };
 
 export const images = {
@@ -130,6 +135,7 @@ export const images = {
   imageNew4,
   emptyBox,
   imageEmptyView,
+  imageCryptoAsset,
 };
 
 import dapp1 from './placeholders/dapp1.png';
