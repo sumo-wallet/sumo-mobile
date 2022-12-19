@@ -57,9 +57,13 @@ import iconAbout from './icons/iconAbout.png';
 import iconHistory from './icons/iconHistory.png';
 import iconChart from './icons/iconChart.png';
 <<<<<<< HEAD
+<<<<<<< HEAD
 import iconSlippage from './icons/iconSlippage.png';
 =======
 >>>>>>> 7e3e051e... feat: swap exchange screen
+=======
+import iconSlippage from './icons/iconSlippage.png';
+>>>>>>> 6e5e0448... chore: swap ui
 
 import imageBanner from './images/imageBanner.png';
 import imageNew1 from './images/imageNew1.png';
@@ -130,9 +134,13 @@ export const icons = {
   iconHistory,
   iconChart,
 <<<<<<< HEAD
+<<<<<<< HEAD
   iconSlippage,
 =======
 >>>>>>> 7e3e051e... feat: swap exchange screen
+=======
+  iconSlippage,
+>>>>>>> 6e5e0448... chore: swap ui
 };
 
 export const images = {

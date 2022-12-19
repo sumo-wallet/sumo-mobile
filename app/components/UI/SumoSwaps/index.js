@@ -61,9 +61,12 @@ import StyledButton from '../StyledButton';
 import ScreenView from '../FiatOrders/components/ScreenView';
 import ActionAlert from './components/ActionAlert';
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 import TokenSelectButton from './components/TokenSelectButton';
 >>>>>>> 59f329c5... wip: swap view
+=======
+>>>>>>> 6e5e0448... chore: swap ui
 import TokenSelectModal from './components/TokenSelectModal';
 import SlippageModal from './components/SlippageModal';
 import useBalance from './utils/useBalance';
@@ -115,6 +118,7 @@ const createStyles = (colors) =>
     amount: {
       textAlignVertical: 'center',
 <<<<<<< HEAD
+<<<<<<< HEAD
       fontSize: Device.isIphone5() ? 20 : 30,
       height: Device.isIphone5() ? 30 : 40,
       maxWidth: '50%',
@@ -122,6 +126,11 @@ const createStyles = (colors) =>
       fontSize: Device.isIphone5() ? 30 : 40,
       height: Device.isIphone5() ? 40 : 50,
 >>>>>>> 59f329c5... wip: swap view
+=======
+      fontSize: Device.isIphone5() ? 20 : 30,
+      height: Device.isIphone5() ? 30 : 40,
+      maxWidth: '50%',
+>>>>>>> 6e5e0448... chore: swap ui
       color: colors.text.default,
     },
     amountInvalid: {
@@ -144,10 +153,14 @@ const createStyles = (colors) =>
       position: 'absolute',
       top: 143,
 <<<<<<< HEAD
+<<<<<<< HEAD
       left: '44%',
 =======
       left: '46%',
 >>>>>>> 59f329c5... wip: swap view
+=======
+      left: '44%',
+>>>>>>> 6e5e0448... chore: swap ui
     },
     horizontalRule: {
       flex: 1,
@@ -160,9 +173,13 @@ const createStyles = (colors) =>
       fontSize: 25,
       marginHorizontal: 15,
 <<<<<<< HEAD
+<<<<<<< HEAD
       transform: [{ rotate: '90deg' }],
 =======
 >>>>>>> 59f329c5... wip: swap view
+=======
+      transform: [{ rotate: '90deg' }],
+>>>>>>> 6e5e0448... chore: swap ui
     },
     buttonsContainer: {
       marginTop: Device.isIphone5() ? 10 : 30,
@@ -283,9 +300,13 @@ const createStyles = (colors) =>
       borderRadius: 10,
       marginHorizontal: 10,
 <<<<<<< HEAD
+<<<<<<< HEAD
       marginVertical: 5,
 =======
 >>>>>>> 59f329c5... wip: swap view
+=======
+      marginVertical: 5,
+>>>>>>> 6e5e0448... chore: swap ui
     },
     swapDetailTitle: {
       fontSize: 14,
@@ -311,10 +332,14 @@ const createStyles = (colors) =>
       borderBottomColor: colors.border.default,
       borderBottomWidth: 0.3,
 <<<<<<< HEAD
+<<<<<<< HEAD
     },
 =======
     }
 >>>>>>> 59f329c5... wip: swap view
+=======
+    },
+>>>>>>> 6e5e0448... chore: swap ui
   });
 
 const SWAPS_NATIVE_ADDRESS = swapsUtils.NATIVE_SWAPS_TOKEN_ADDRESS;
@@ -727,6 +752,9 @@ function SwapsAmountView({
     );
   }, [balanceAsUnits, sourceToken]);
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 6e5e0448... chore: swap ui
   const handleUse50Max = useCallback(() => {
     if (!sourceToken || !balanceAsUnits) {
       return;
@@ -738,8 +766,11 @@ function SwapsAmountView({
       ),
     );
   }, [balanceAsUnits, sourceToken]);
+<<<<<<< HEAD
 =======
 >>>>>>> 59f329c5... wip: swap view
+=======
+>>>>>>> 6e5e0448... chore: swap ui
 
   const handleSlippageChange = useCallback((value) => {
     setSlippage(value);
@@ -801,10 +832,14 @@ function SwapsAmountView({
         <View style={styles.content}>
           <View
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 6e5e0448... chore: swap ui
             style={[
               styles.tokenButtonContainer,
               disabledView && styles.disabled,
             ]}
+<<<<<<< HEAD
             pointerEvents={disabledView ? 'none' : 'auto'}
           >
 
@@ -833,6 +868,8 @@ function SwapsAmountView({
                 ) : (
 =======
             style={[styles.tokenButtonContainer, disabledView && styles.disabled]}
+=======
+>>>>>>> 6e5e0448... chore: swap ui
             pointerEvents={disabledView ? 'none' : 'auto'}
           >
             {isInitialLoadingTokens ? (
@@ -842,10 +879,16 @@ function SwapsAmountView({
                 <View style={styles.sendOptionContainer}>
                   <Text>{'SEND'}</Text>
                   <View style={styles.sendOptionRight}>
-                    <TouchableOpacity style={styles.sendOptionButton}>
+                    <TouchableOpacity
+                      style={styles.sendOptionButton}
+                      onPress={handleUse50Max}
+                    >
                       <Text style={styles.sendOptionButtonTitle}>{'50%'}</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.sendOptionButton}>
+                    <TouchableOpacity
+                      style={styles.sendOptionButton}
+                      onPress={handleUseMax}
+                    >
                       <Text>{'MAX'}</Text>
                     </TouchableOpacity>
                   </View>
@@ -867,11 +910,15 @@ function SwapsAmountView({
                       {sourceToken?.symbol || strings('swaps.select_a_token')}
                     </Text>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 6e5e0448... chore: swap ui
                     <Icon
                       name="caret-down"
                       size={18}
                       style={styles.caretDown}
                     />
+<<<<<<< HEAD
                   </TouchableOpacity>
                 )}
 
@@ -939,6 +986,8 @@ function SwapsAmountView({
 
 =======
                     <Icon name="caret-down" size={18} style={styles.caretDown} />
+=======
+>>>>>>> 6e5e0448... chore: swap ui
                   </TouchableOpacity>
 
                   <TextInput
@@ -950,13 +999,16 @@ function SwapsAmountView({
                     value={amount}
                     onChangeText={(value) => {
                       if (value.length > 0) {
-                        setAmount(value)
+                        if (value.includes(',')) {
+                          setAmount(value.replace(',', '.'));
+                        } else {
+                          setAmount(value);
+                        }
                       } else {
-                        setAmount('0')
+                        setAmount('0');
                       }
-
                     }}
-                    keyboardType={'numeric'}
+                    keyboardType={'decimal-pad'}
                     placeholder={'0'}
                     placeholderTextColor={colors.text.muted}
                     testID={'txn-amount-input'}
@@ -1038,11 +1090,16 @@ function SwapsAmountView({
                   </View>
                   <Text primary>
 <<<<<<< HEAD
+<<<<<<< HEAD
                     {destinationToken?.symbol ||
                       strings('swaps.select_a_token')}
 =======
                     {destinationToken?.symbol || strings('swaps.select_a_token')}
 >>>>>>> 59f329c5... wip: swap view
+=======
+                    {destinationToken?.symbol ||
+                      strings('swaps.select_a_token')}
+>>>>>>> 6e5e0448... chore: swap ui
                   </Text>
                   <Icon name="caret-down" size={18} style={styles.caretDown} />
                 </TouchableOpacity>
@@ -1055,10 +1112,14 @@ function SwapsAmountView({
                 allowFontScaling
                 // ref={this.amountInput}
 <<<<<<< HEAD
+<<<<<<< HEAD
                 // value={amount}
 =======
                 value={amount}
 >>>>>>> 59f329c5... wip: swap view
+=======
+                // value={amount}
+>>>>>>> 6e5e0448... chore: swap ui
                 // onChangeText={this.onInputChange}
                 keyboardType={'numeric'}
                 placeholder={'0'}
@@ -1110,12 +1171,18 @@ function SwapsAmountView({
                   </Text>
                 ) : (
 <<<<<<< HEAD
+<<<<<<< HEAD
                   <Text upper>
                     {currencyAmount ? `~${currencyAmount}` : ''}
                   </Text>
 =======
                   <Text upper>{currencyAmount ? `~${currencyAmount}` : ''}</Text>
 >>>>>>> 59f329c5... wip: swap view
+=======
+                  <Text upper>
+                    {currencyAmount ? `~${currencyAmount}` : ''}
+                  </Text>
+>>>>>>> 6e5e0448... chore: swap ui
                 ))}
             </TouchableOpacity>
           </View>
@@ -1240,15 +1307,21 @@ function SwapsAmountView({
             pointerEvents={disabledView ? 'none' : 'auto'}
           >
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 6e5e0448... chore: swap ui
             <TouchableOpacity
               style={styles.flipButton}
               onPress={handleFlipTokens}
             >
               <IonicIcon style={styles.arrowDown} name="ios-swap" />
+<<<<<<< HEAD
 =======
             <TouchableOpacity style={styles.flipButton} onPress={handleFlipTokens}>
               <IonicIcon style={styles.arrowDown} name="md-arrow-down" />
 >>>>>>> 59f329c5... wip: swap view
+=======
+>>>>>>> 6e5e0448... chore: swap ui
             </TouchableOpacity>
           </View>
         </View>
@@ -1276,6 +1349,7 @@ function SwapsAmountView({
           <View style={styles.providerContainer}>
             <Text style={styles.swapDetailTitle}>{'Provider'}</Text>
 <<<<<<< HEAD
+<<<<<<< HEAD
             <Icon name="arrow-right" size={18} style={styles.caretDown}></Icon>
           </View>
 
@@ -1294,6 +1368,21 @@ function SwapsAmountView({
           </View>
 
 >>>>>>> 59f329c5... wip: swap view
+=======
+            <Icon name="arrow-right" size={18} style={styles.caretDown}></Icon>
+          </View>
+
+          <TouchableOpacity
+            style={styles.providerContainer}
+            onPress={toggleSlippageModal}
+            hitSlop={{ top: 10, right: 10, bottom: 10, left: 10 }}
+            disabled={isDirectWrapping}
+          >
+            <Text style={styles.swapDetailTitle}>{'Slippage'}</Text>
+            <Text style={styles.swapDetailTitle}>{`${slippage}%`}</Text>
+          </TouchableOpacity>
+
+>>>>>>> 6e5e0448... chore: swap ui
           <View style={styles.swapDetailContainer}>
             <View style={styles.swapDetailItemContainer}>
               <Text style={styles.swapDetailTitle}>{'Provider Fee'}</Text>
@@ -1309,15 +1398,20 @@ function SwapsAmountView({
             </View>
           </View>
 <<<<<<< HEAD
+<<<<<<< HEAD
           {/* <AnimatableView ref={keypadViewRef}>
 =======
           <AnimatableView ref={keypadViewRef}>
 >>>>>>> 59f329c5... wip: swap view
+=======
+          {/* <AnimatableView ref={keypadViewRef}>
+>>>>>>> 6e5e0448... chore: swap ui
             <Keypad
               onChange={handleKeypadChange}
               value={amount}
               currency="native"
             />
+<<<<<<< HEAD
 <<<<<<< HEAD
           </AnimatableView> */}
           {/* <View style={styles.buttonsContainer}>
@@ -1326,6 +1420,10 @@ function SwapsAmountView({
 
           <View style={styles.buttonsContainer}>
 >>>>>>> 59f329c5... wip: swap view
+=======
+          </AnimatableView> */}
+          {/* <View style={styles.buttonsContainer}>
+>>>>>>> 6e5e0448... chore: swap ui
             <View style={styles.column}>
               <TouchableOpacity
                 onPress={toggleSlippageModal}
@@ -1340,10 +1438,14 @@ function SwapsAmountView({
               </TouchableOpacity>
             </View>
 <<<<<<< HEAD
+<<<<<<< HEAD
           </View> */}
 =======
           </View>
 >>>>>>> 59f329c5... wip: swap view
+=======
+          </View> */}
+>>>>>>> 6e5e0448... chore: swap ui
         </View>
         <InfoModal
           isVisible={isTokenVerificationModalVisisble}
