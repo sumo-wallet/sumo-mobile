@@ -4,12 +4,18 @@ import React, {
 import PropTypes from 'prop-types';
 import {
 <<<<<<< HEAD
+<<<<<<< HEAD
   FlatList,
   StyleSheet,
   TouchableOpacity,
 =======
   StyleSheet,
 >>>>>>> 59f329c5... wip: swap view
+=======
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+>>>>>>> 7e3e051e... feat: swap exchange screen
   View,
 } from 'react-native';
 import { connect } from 'react-redux';
@@ -25,10 +31,15 @@ import ScreenView from '../FiatOrders/components/ScreenView';
 import { useTheme } from '../../../util/theme';
 import Icon from 'react-native-vector-icons/FontAwesome';
 <<<<<<< HEAD
+<<<<<<< HEAD
 import FastImage from 'react-native-fast-image';
 import { images } from '../../../assets';
 =======
 >>>>>>> 59f329c5... wip: swap view
+=======
+import FastImage from 'react-native-fast-image';
+import { images } from '../../../assets';
+>>>>>>> 7e3e051e... feat: swap exchange screen
 
 const createStyles = (colors) =>
   StyleSheet.create({
@@ -40,6 +51,7 @@ const createStyles = (colors) =>
       justifyContent: 'space-between',
       backgroundColor: colors.background.default,
     },
+<<<<<<< HEAD
 <<<<<<< HEAD
     providerContainer: {
       padding: 10,
@@ -219,11 +231,16 @@ const createStyles = (colors) =>
       padding: 10,
       height: 60,
 >>>>>>> 59f329c5... wip: swap view
+=======
+    providerContainer: {
+      padding: 10,
+>>>>>>> 7e3e051e... feat: swap exchange screen
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
       backgroundColor: colors.box.default,
       borderRadius: 10,
+<<<<<<< HEAD
 <<<<<<< HEAD
       paddingVertical: 10,
       marginHorizontal: 10,
@@ -277,35 +294,63 @@ const EXCHANGE = [
 ]
 
 =======
+=======
+      paddingVertical: 10,
+>>>>>>> 7e3e051e... feat: swap exchange screen
       marginHorizontal: 10,
+      marginVertical: 4,
     },
     swapDetailTitle: {
-      fontSize: 14,
+      fontSize: 16,
       fontWeight: '400',
       color: colors.text.default,
     },
-    swapDetailContainer: {
+    swapDetailDescription: {
+      fontSize: 14,
+      fontWeight: '400',
+      color: colors.text.muted,
+    },
+    headerContainer: {
       flex: 1,
+      height: 200,
       padding: 10,
-      marginTop: 10,
+      marginVertical: 20,
       flexDirection: 'column',
       alignItems: 'center',
-      backgroundColor: colors.box.default,
-      borderRadius: 10,
-      marginHorizontal: 10,
     },
-    swapDetailItemContainer: {
-      width: '100%',
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      paddingVertical: 10,
-      borderBottomColor: colors.border.default,
-      borderBottomWidth: 0.3,
+    logo: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+    },
+    cryptoAsset: {
+      width: 200,
+      height: 200,
     }
   });
 
+<<<<<<< HEAD
 >>>>>>> 59f329c5... wip: swap view
+=======
+const EXCHANGE = [
+  {
+    logo: 'https://seeklogo.com/images/B/binance-coin-bnb-logo-CD94CC6D31-seeklogo.com.png',
+    name: 'Binance',
+    description: 'Spot, future & saving, KYC required',
+  },
+  {
+    logo: 'https://styles.redditmedia.com/t5_261gdr/styles/communityIcon_u34qachuimz31.png',
+    name: 'MEXC',
+    description: 'Spot, future trading',
+  },
+  {
+    logo: 'https://s2.coinmarketcap.com/static/img/coins/64x64/16334.png',
+    name: 'ApolloX',
+    description: 'Future trading DEX',
+  }
+]
+
+>>>>>>> 7e3e051e... feat: swap exchange screen
 function SumoExchangeView({
   swapsTokens,
   swapsControllerTokens,
@@ -332,6 +377,9 @@ function SumoExchangeView({
   return (
     <View style={{ flex: 1 }}>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 7e3e051e... feat: swap exchange screen
       <FlatList
         data={EXCHANGE}
         ListHeaderComponent={() => {
@@ -362,6 +410,7 @@ function SumoExchangeView({
           )
         }}
       ></FlatList>
+<<<<<<< HEAD
 =======
       <ScreenView
         style={styles.container}
@@ -380,6 +429,8 @@ function SumoExchangeView({
         </View>
       </ScreenView>
 >>>>>>> 59f329c5... wip: swap view
+=======
+>>>>>>> 7e3e051e... feat: swap exchange screen
     </View>
   );
 }

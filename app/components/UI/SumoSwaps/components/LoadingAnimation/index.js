@@ -155,6 +155,9 @@ function LoadingAnimation({
       headPan
         ? metadata.reduce((acc, curr, index) => {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 7e3e051e... feat: swap exchange screen
           // Vertical position is random and is in range [-0.6, 0.6]
           // making the head not look so steep up/down
           const y = Math.random() * 0.6 * (Math.random() < 0.5 ? -1 : 1);
@@ -186,6 +189,7 @@ function LoadingAnimation({
           };
           // eslint-disable-next-line no-mixed-spaces-and-tabs
         }, {})
+<<<<<<< HEAD
 =======
             // Vertical position is random and is in range [-0.6, 0.6]
             // making the head not look so steep up/down
@@ -219,6 +223,8 @@ function LoadingAnimation({
             // eslint-disable-next-line no-mixed-spaces-and-tabs
           }, {})
 >>>>>>> 59f329c5... wip: swap view
+=======
+>>>>>>> 7e3e051e... feat: swap exchange screen
         : {},
     [metadata, headPan],
   );
@@ -229,6 +235,9 @@ function LoadingAnimation({
       headPan
         ? metadata.reduce(
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 7e3e051e... feat: swap exchange screen
           (acc, curr) => ({
             ...acc,
             [curr.key]: new Animated.Value(0),
@@ -236,6 +245,7 @@ function LoadingAnimation({
           {},
           // eslint-disable-next-line no-mixed-spaces-and-tabs
         )
+<<<<<<< HEAD
 =======
             (acc, curr) => ({
               ...acc,
@@ -245,6 +255,8 @@ function LoadingAnimation({
             // eslint-disable-next-line no-mixed-spaces-and-tabs
           )
 >>>>>>> 59f329c5... wip: swap view
+=======
+>>>>>>> 7e3e051e... feat: swap exchange screen
         : {},
     [metadata, headPan],
   );
@@ -255,6 +267,9 @@ function LoadingAnimation({
       headPan
         ? [
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 7e3e051e... feat: swap exchange screen
           // Animated.delay(INITIAL_DELAY),
           ...metadata.reduce(
             (acc, cur, index, array) => [
@@ -265,6 +280,7 @@ function LoadingAnimation({
               Animated.timing(currentQuoteIndexValue, {
                 toValue: index,
                 duration: 0,
+<<<<<<< HEAD
                 useNativeDriver: true,
               }),
               Animated.parallel([
@@ -376,19 +392,71 @@ function LoadingAnimation({
               Animated.timing(opacities[[...metadata].pop()?.key], {
                 toValue: 0,
                 duration: PAN_DURATION,
+=======
+>>>>>>> 7e3e051e... feat: swap exchange screen
                 useNativeDriver: true,
               }),
-              // Reset to fox head to origing
-              !Device.isAndroid() &&
-                Animated.timing(foxHeadPan, {
-                  toValue: { x: 0, y: 0 },
+              Animated.parallel([
+                // If is not the first aggregator, reduce previous aggregator opacity to 1
+                index > 0 &&
+                Animated.timing(opacities[array[index - 1].key], {
+                  toValue: 0,
                   duration: PAN_DURATION,
                   useNativeDriver: true,
                 }),
+                // Set current aggregator opacity to 1
+                Animated.timing(opacities[cur.key], {
+                  toValue: 1,
+                  duration: PAN_DURATION,
+                  useNativeDriver: true,
+                }),
+                // Update progress bar given the current index
+                Animated.timing(progressValue, {
+                  toValue:
+                    (FINALIZING_PERCENTAGE / array.length) * (index + 1),
+                  duration: PAN_DURATION,
+                  useNativeDriver: false,
+                }),
+                // Make the fox head pan to the aggregator position
+                !Device.isAndroid() &&
+                Animated.timing(foxHeadPan, {
+                  toValue: {
+                    x: positions[cur.key][0],
+                    y: positions[cur.key][1],
+                  },
+                  duration: PAN_DURATION,
+                  useNativeDriver: true,
+                }),
+<<<<<<< HEAD
             ]),
             // eslint-disable-next-line no-mixed-spaces-and-tabs
           ]
 >>>>>>> 59f329c5... wip: swap view
+=======
+              ]),
+            ],
+            [],
+          ),
+          // Final animation of the sequence
+          Animated.delay(DELAY),
+          Animated.parallel([
+            // Set last aggregator icon opacity to 0
+            Animated.timing(opacities[[...metadata].pop()?.key], {
+              toValue: 0,
+              duration: PAN_DURATION,
+              useNativeDriver: true,
+            }),
+            // Reset to fox head to origing
+            !Device.isAndroid() &&
+            Animated.timing(foxHeadPan, {
+              toValue: { x: 0, y: 0 },
+              duration: PAN_DURATION,
+              useNativeDriver: true,
+            }),
+          ]),
+          // eslint-disable-next-line no-mixed-spaces-and-tabs
+        ]
+>>>>>>> 7e3e051e... feat: swap exchange screen
         : [],
     [
       currentQuoteIndexValue,
@@ -568,19 +636,27 @@ function LoadingAnimation({
       </View>
       <View style={styles.foxContainer} pointerEvents="none">
 <<<<<<< HEAD
+<<<<<<< HEAD
         {/* <Fox
 =======
         <Fox
 >>>>>>> 59f329c5... wip: swap view
+=======
+        {/* <Fox
+>>>>>>> 7e3e051e... feat: swap exchange screen
           ref={foxRef}
           customContent={backgroundShapes}
           customStyle={customStyle(colors)}
           renderLoading={() => null}
 <<<<<<< HEAD
+<<<<<<< HEAD
         /> */}
 =======
         />
 >>>>>>> 59f329c5... wip: swap view
+=======
+        /> */}
+>>>>>>> 7e3e051e... feat: swap exchange screen
         {renderLogos &&
           headPan &&
           metadata &&

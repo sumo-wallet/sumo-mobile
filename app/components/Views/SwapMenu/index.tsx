@@ -410,6 +410,7 @@ const SwapMenu = ({ navigation }: any) => {
         <View style={styles.containerRight}>
           <TouchableOpacity onPress={() => { navigation.navigate(Routes.QR_SCANNER); }}>
 <<<<<<< HEAD
+<<<<<<< HEAD
             <Image source={icons.iconSlippage} style={styles.iconQR} />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => { navigation.navigate(Routes.QR_SCANNER); }}>
@@ -420,6 +421,12 @@ const SwapMenu = ({ navigation }: any) => {
           <TouchableOpacity onPress={() => { navigation.navigate(Routes.QR_SCANNER); }}>
             <Image source={icons.iconArrowRefresh} style={styles.iconQR} />
 >>>>>>> 59f329c5... wip: swap view
+=======
+            <Image source={icons.iconChart} style={styles.iconQR} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => { navigation.navigate(Routes.QR_SCANNER); }}>
+            <Image source={icons.iconHistory} style={styles.iconQR} />
+>>>>>>> 7e3e051e... feat: swap exchange screen
           </TouchableOpacity>
         </View>
       </DynamicHeader>
