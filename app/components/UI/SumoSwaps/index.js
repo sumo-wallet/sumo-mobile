@@ -60,7 +60,6 @@ import Keypad from '../../Base/Keypad';
 import StyledButton from '../StyledButton';
 import ScreenView from '../FiatOrders/components/ScreenView';
 import ActionAlert from './components/ActionAlert';
-import TokenSelectButton from './components/TokenSelectButton';
 import TokenSelectModal from './components/TokenSelectModal';
 import SlippageModal from './components/SlippageModal';
 import useBalance from './utils/useBalance';
@@ -111,8 +110,9 @@ const createStyles = (colors) =>
     },
     amount: {
       textAlignVertical: 'center',
-      fontSize: Device.isIphone5() ? 30 : 40,
-      height: Device.isIphone5() ? 40 : 50,
+      fontSize: Device.isIphone5() ? 20 : 30,
+      height: Device.isIphone5() ? 30 : 40,
+      maxWidth: '50%',
       color: colors.text.default,
     },
     amountInvalid: {
@@ -134,7 +134,7 @@ const createStyles = (colors) =>
       justifyContent: 'center',
       position: 'absolute',
       top: 143,
-      left: '46%',
+      left: '44%',
     },
     horizontalRule: {
       flex: 1,
@@ -146,6 +146,7 @@ const createStyles = (colors) =>
       color: colors.background.default,
       fontSize: 25,
       marginHorizontal: 15,
+      transform: [{ rotate: '90deg' }],
     },
     buttonsContainer: {
       marginTop: Device.isIphone5() ? 10 : 30,
@@ -265,6 +266,7 @@ const createStyles = (colors) =>
       backgroundColor: colors.box.default,
       borderRadius: 10,
       marginHorizontal: 10,
+      marginVertical: 5,
     },
     swapDetailTitle: {
       fontSize: 14,
@@ -289,7 +291,7 @@ const createStyles = (colors) =>
       paddingVertical: 10,
       borderBottomColor: colors.border.default,
       borderBottomWidth: 0.3,
-    }
+    },
   });
 
 const SWAPS_NATIVE_ADDRESS = swapsUtils.NATIVE_SWAPS_TOKEN_ADDRESS;
@@ -701,6 +703,17 @@ function SwapsAmountView({
       ),
     );
   }, [balanceAsUnits, sourceToken]);
+  const handleUse50Max = useCallback(() => {
+    if (!sourceToken || !balanceAsUnits) {
+      return;
+    }
+    setAmount(
+      fromTokenMinimalUnitString(
+        (balanceAsUnits / 2).toString(10),
+        sourceToken.decimals,
+      ),
+    );
+  }, [balanceAsUnits, sourceToken]);
 
   const handleSlippageChange = useCallback((value) => {
     setSlippage(value);
@@ -761,7 +774,10 @@ function SwapsAmountView({
       >
         <View style={styles.content}>
           <View
-            style={[styles.tokenButtonContainer, disabledView && styles.disabled]}
+            style={[
+              styles.tokenButtonContainer,
+              disabledView && styles.disabled,
+            ]}
             pointerEvents={disabledView ? 'none' : 'auto'}
           >
             {isInitialLoadingTokens ? (
@@ -771,10 +787,16 @@ function SwapsAmountView({
                 <View style={styles.sendOptionContainer}>
                   <Text>{'SEND'}</Text>
                   <View style={styles.sendOptionRight}>
-                    <TouchableOpacity style={styles.sendOptionButton}>
+                    <TouchableOpacity
+                      style={styles.sendOptionButton}
+                      onPress={handleUse50Max}
+                    >
                       <Text style={styles.sendOptionButtonTitle}>{'50%'}</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.sendOptionButton}>
+                    <TouchableOpacity
+                      style={styles.sendOptionButton}
+                      onPress={handleUseMax}
+                    >
                       <Text>{'MAX'}</Text>
                     </TouchableOpacity>
                   </View>
@@ -794,7 +816,11 @@ function SwapsAmountView({
                     <Text primary>
                       {sourceToken?.symbol || strings('swaps.select_a_token')}
                     </Text>
-                    <Icon name="caret-down" size={18} style={styles.caretDown} />
+                    <Icon
+                      name="caret-down"
+                      size={18}
+                      style={styles.caretDown}
+                    />
                   </TouchableOpacity>
 
                   <TextInput
@@ -806,13 +832,16 @@ function SwapsAmountView({
                     value={amount}
                     onChangeText={(value) => {
                       if (value.length > 0) {
-                        setAmount(value)
+                        if (value.includes(',')) {
+                          setAmount(value.replace(',', '.'));
+                        } else {
+                          setAmount(value);
+                        }
                       } else {
-                        setAmount('0')
+                        setAmount('0');
                       }
-
                     }}
-                    keyboardType={'numeric'}
+                    keyboardType={'decimal-pad'}
                     placeholder={'0'}
                     placeholderTextColor={colors.text.muted}
                     testID={'txn-amount-input'}
@@ -892,7 +921,8 @@ function SwapsAmountView({
                     />
                   </View>
                   <Text primary>
-                    {destinationToken?.symbol || strings('swaps.select_a_token')}
+                    {destinationToken?.symbol ||
+                      strings('swaps.select_a_token')}
                   </Text>
                   <Icon name="caret-down" size={18} style={styles.caretDown} />
                 </TouchableOpacity>
@@ -904,7 +934,7 @@ function SwapsAmountView({
                 adjustsFontSizeToFit
                 allowFontScaling
                 // ref={this.amountInput}
-                value={amount}
+                // value={amount}
                 // onChangeText={this.onInputChange}
                 keyboardType={'numeric'}
                 placeholder={'0'}
@@ -942,7 +972,9 @@ function SwapsAmountView({
                     )}
                   </Text>
                 ) : (
-                  <Text upper>{currencyAmount ? `~${currencyAmount}` : ''}</Text>
+                  <Text upper>
+                    {currencyAmount ? `~${currencyAmount}` : ''}
+                  </Text>
                 ))}
             </TouchableOpacity>
           </View>
@@ -1066,8 +1098,11 @@ function SwapsAmountView({
             ]}
             pointerEvents={disabledView ? 'none' : 'auto'}
           >
-            <TouchableOpacity style={styles.flipButton} onPress={handleFlipTokens}>
-              <IonicIcon style={styles.arrowDown} name="md-arrow-down" />
+            <TouchableOpacity
+              style={styles.flipButton}
+              onPress={handleFlipTokens}
+            >
+              <IonicIcon style={styles.arrowDown} name="ios-swap" />
             </TouchableOpacity>
           </View>
         </View>
@@ -1094,8 +1129,18 @@ function SwapsAmountView({
           </View>
           <View style={styles.providerContainer}>
             <Text style={styles.swapDetailTitle}>{'Provider'}</Text>
-            <Icon name="arrow-right" size={18} style={styles.caretDown} ></Icon>
+            <Icon name="arrow-right" size={18} style={styles.caretDown}></Icon>
           </View>
+
+          <TouchableOpacity
+            style={styles.providerContainer}
+            onPress={toggleSlippageModal}
+            hitSlop={{ top: 10, right: 10, bottom: 10, left: 10 }}
+            disabled={isDirectWrapping}
+          >
+            <Text style={styles.swapDetailTitle}>{'Slippage'}</Text>
+            <Text style={styles.swapDetailTitle}>{`${slippage}%`}</Text>
+          </TouchableOpacity>
 
           <View style={styles.swapDetailContainer}>
             <View style={styles.swapDetailItemContainer}>
@@ -1111,15 +1156,14 @@ function SwapsAmountView({
               <Text style={styles.swapDetailTitle}>{''}</Text>
             </View>
           </View>
-          <AnimatableView ref={keypadViewRef}>
+          {/* <AnimatableView ref={keypadViewRef}>
             <Keypad
               onChange={handleKeypadChange}
               value={amount}
               currency="native"
             />
-          </AnimatableView>
-
-          <View style={styles.buttonsContainer}>
+          </AnimatableView> */}
+          {/* <View style={styles.buttonsContainer}>
             <View style={styles.column}>
               <TouchableOpacity
                 onPress={toggleSlippageModal}
@@ -1133,7 +1177,7 @@ function SwapsAmountView({
                 </Text>
               </TouchableOpacity>
             </View>
-          </View>
+          </View> */}
         </View>
         <InfoModal
           isVisible={isTokenVerificationModalVisisble}
