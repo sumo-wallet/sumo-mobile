@@ -25,10 +25,15 @@ import Tokens from '../../UI/Tokens';
 import SwapsAmountView from '../../UI/SumoSwaps';
 import SumoExchangeView from '../../UI/SumoExchange';
 <<<<<<< HEAD
+<<<<<<< HEAD
 import BridgeView from '../../UI/SumoSwaps/BridgeView';
 
 =======
 >>>>>>> 59f329c5... wip: swap view
+=======
+import BridgeView from '../../UI/SumoSwaps/BridgeView';
+
+>>>>>>> 6d5f5782... feat: bridge ui
 import { getWalletNavbarOptions } from '../../UI/Navbar';
 import { strings } from '../../../../locales/i18n';
 import { renderFromWei, weiToFiat, hexToBN } from '../../../util/number';
@@ -321,10 +326,14 @@ const SwapMenu = ({ navigation }: any) => {
             tokens={assets}
           />
 <<<<<<< HEAD
+<<<<<<< HEAD
           <BridgeView
 =======
           <CollectibleContracts
 >>>>>>> 59f329c5... wip: swap view
+=======
+          <BridgeView
+>>>>>>> 6d5f5782... feat: bridge ui
             tabLabel={'Bridge'}
             key={'nfts-tab'}
             navigation={navigation}

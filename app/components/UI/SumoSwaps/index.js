@@ -1130,10 +1130,14 @@ function SwapsAmountView({
 
             <TouchableOpacity>
 <<<<<<< HEAD
+<<<<<<< HEAD
               {!!destinationToken &&
 =======
               {!!sourceToken &&
 >>>>>>> 59f329c5... wip: swap view
+=======
+              {!!destinationToken &&
+>>>>>>> 6d5f5782... feat: bridge ui
                 (hasInvalidDecimals || (!isAmountZero && !hasEnoughBalance) ? (
                   <Text style={styles.amountInvalid}>
                     {hasInvalidDecimals
@@ -1149,6 +1153,7 @@ function SwapsAmountView({
                 ) : isAmountZero ? (
                   <Text>
 <<<<<<< HEAD
+<<<<<<< HEAD
                     {!!destinationToken &&
                       balance !== null &&
                       strings('swaps.available_to_swap', {
@@ -1157,12 +1162,19 @@ function SwapsAmountView({
                     {!isSwapsNativeAsset(destinationToken) && hasBalance && (
 =======
                     {!!sourceToken &&
+=======
+                    {!!destinationToken &&
+>>>>>>> 6d5f5782... feat: bridge ui
                       balance !== null &&
                       strings('swaps.available_to_swap', {
-                        asset: `${balance} ${sourceToken.symbol}`,
+                        asset: `${balance} ${destinationToken.symbol}`,
                       })}
+<<<<<<< HEAD
                     {!isSwapsNativeAsset(sourceToken) && hasBalance && (
 >>>>>>> 59f329c5... wip: swap view
+=======
+                    {!isSwapsNativeAsset(destinationToken) && hasBalance && (
+>>>>>>> 6d5f5782... feat: bridge ui
                       <Text style={styles.linkText} onPress={handleUseMax}>
                         {' '}
                         {strings('swaps.use_max')}
