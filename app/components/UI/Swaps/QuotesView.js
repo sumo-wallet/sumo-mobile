@@ -302,12 +302,15 @@ function getTransactionPropertiesFromGasEstimates(gasEstimateType, estimates) {
           estimates.maxPriorityFeePerGas ||
           estimates[DEFAULT_GAS_FEE_OPTION_FEE_MARKET]
             .suggestedMaxPriorityFeePerGas,
+<<<<<<< HEAD
         ),
       ),
       estimatedBaseFee: addHexPrefix(
         decGWEIToHexWEI(
           estimates.estimatedBaseFee ||
             estimates[DEFAULT_GAS_FEE_OPTION_FEE_MARKET].estimatedBaseFee,
+=======
+>>>>>>> 59f329c5... wip: swap view
         ),
       ),
     };

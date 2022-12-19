@@ -1116,6 +1116,7 @@
 				CODE_SIGN_STYLE = Automatic;
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 				CURRENT_PROJECT_VERSION = 25;
 =======
 				CURRENT_PROJECT_VERSION = 19;
@@ -1123,6 +1124,9 @@
 =======
 				CURRENT_PROJECT_VERSION = 21;
 >>>>>>> 508174d3... update setting
+=======
+				CURRENT_PROJECT_VERSION = 22;
+>>>>>>> 59f329c5... wip: swap view
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = QN4M8347A6;
@@ -1191,6 +1195,7 @@
 				CODE_SIGN_STYLE = Automatic;
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 				CURRENT_PROJECT_VERSION = 25;
 =======
 				CURRENT_PROJECT_VERSION = 19;
@@ -1198,6 +1203,9 @@
 =======
 				CURRENT_PROJECT_VERSION = 21;
 >>>>>>> 508174d3... update setting
+=======
+				CURRENT_PROJECT_VERSION = 22;
+>>>>>>> 59f329c5... wip: swap view
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = QN4M8347A6;
 				FRAMEWORK_SEARCH_PATHS = (

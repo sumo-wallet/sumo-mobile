@@ -76,10 +76,14 @@
     "create-release": "./scripts/set-versions.sh && yarn update-changelog",
     "swagger:coingecko": "swagger-typescript-api --no-client --extract-request-params -p https://www.coingecko.com/api/documentations/v3/swagger.json -o ./app/types/coingecko -n schema.ts",
 <<<<<<< HEAD
+<<<<<<< HEAD
     "swagger:sumo": "swagger-typescript-api --no-client --extract-request-params -p https://prod3-api.bicyclefi.io/swagger/doc.json -o ./app/types/sumo -n schema.ts",
 =======
     "swagger:sumo": "swagger-typescript-api --no-client --extract-request-params -p http://localhost:8080/swagger/doc.json -o ./app/types/sumo -n schema.ts",
 >>>>>>> 37af8673... feat: gen swagger for sumo api
+=======
+    "swagger:sumo": "swagger-typescript-api --no-client --extract-request-params -p https://prod3-api.bicyclefi.io/swagger/doc.json -o ./app/types/sumo -n schema.ts",
+>>>>>>> 59f329c5... wip: swap view
     "bundle:ios": "react-native bundle --entry-file index.js --platform ios --dev false --bundle-output ios/main.jsbundle --assets-dest ios",
     "depcheck": "npx depcheck"
   },

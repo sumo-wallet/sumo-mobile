@@ -24,8 +24,11 @@ import AccountOverview from '../../UI/AccountOverview';
 import Tokens from '../../UI/Tokens';
 import SwapsAmountView from '../../UI/SumoSwaps';
 import SumoExchangeView from '../../UI/SumoExchange';
+<<<<<<< HEAD
 import BridgeView from '../../UI/SumoSwaps/BridgeView';
 
+=======
+>>>>>>> 59f329c5... wip: swap view
 import { getWalletNavbarOptions } from '../../UI/Navbar';
 import { strings } from '../../../../locales/i18n';
 import { renderFromWei, weiToFiat, hexToBN } from '../../../util/number';
@@ -317,7 +320,11 @@ const SwapMenu = ({ navigation }: any) => {
             navigation={navigation}
             tokens={assets}
           />
+<<<<<<< HEAD
           <BridgeView
+=======
+          <CollectibleContracts
+>>>>>>> 59f329c5... wip: swap view
             tabLabel={'Bridge'}
             key={'nfts-tab'}
             navigation={navigation}
@@ -402,10 +409,17 @@ const SwapMenu = ({ navigation }: any) => {
       >
         <View style={styles.containerRight}>
           <TouchableOpacity onPress={() => { navigation.navigate(Routes.QR_SCANNER); }}>
+<<<<<<< HEAD
             <Image source={icons.iconSlippage} style={styles.iconQR} />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => { navigation.navigate(Routes.QR_SCANNER); }}>
             <Image source={icons.iconHistory} style={styles.iconQR} />
+=======
+            <Image source={icons.iconArrowRefresh} style={styles.iconQR} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => { navigation.navigate(Routes.QR_SCANNER); }}>
+            <Image source={icons.iconArrowRefresh} style={styles.iconQR} />
+>>>>>>> 59f329c5... wip: swap view
           </TouchableOpacity>
         </View>
       </DynamicHeader>
