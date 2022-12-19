@@ -79,9 +79,12 @@ export const News = function News({ news, onSelect }: RawNewsInterface) {
     <View style={styles.screenWrapper}>
       <View style={styles.containerHeader}>
         <Text style={styles.title}>{'News'}</Text>
-        <TouchableOpacity style={styles.containerViewAll} onPress={() => {
-          navigation.navigate(Routes.NEWS)
-        }}>
+        <TouchableOpacity
+          style={styles.containerViewAll}
+          onPress={() => {
+            navigation.navigate(Routes.NEWS);
+          }}
+        >
           <Text style={styles.titleViewAll}>{'View all'}</Text>
           <Image source={icons.iconArrowRight} style={styles.icon} />
         </TouchableOpacity>

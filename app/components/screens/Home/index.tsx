@@ -14,7 +14,6 @@ import { icons, images } from '../../../assets';
 import { RawFeatureInterface } from './types';
 import {
   Hot24hComponent,
-  ParamsHot24hInterface,
 } from './components/Hot24hComponent';
 import FastImage from 'react-native-fast-image';
 import { FavouriteComponent } from './components/FavouriteComponent';
