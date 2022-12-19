@@ -400,10 +400,10 @@ const SwapMenu = ({ navigation }: any) => {
       >
         <View style={styles.containerRight}>
           <TouchableOpacity onPress={() => { navigation.navigate(Routes.QR_SCANNER); }}>
-            <Image source={icons.iconArrowRefresh} style={styles.iconQR} />
+            <Image source={icons.iconChart} style={styles.iconQR} />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => { navigation.navigate(Routes.QR_SCANNER); }}>
-            <Image source={icons.iconArrowRefresh} style={styles.iconQR} />
+            <Image source={icons.iconHistory} style={styles.iconQR} />
           </TouchableOpacity>
         </View>
       </DynamicHeader>
