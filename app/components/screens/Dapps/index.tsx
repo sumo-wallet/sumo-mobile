@@ -71,7 +71,7 @@ export const DappsScreen = React.memo(() => {
         <NowTrending
           style={Style.s({ mx: 16 })}
           onSelect={handleOpenTrending}
-          dapps={hot_dapp}
+          hotDapps={hot_dapp}
         />
         <AppGroupPager categories={category} dappByCate={home_list} />
       </ScrollView>
