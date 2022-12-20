@@ -26,7 +26,7 @@ import { getWalletNavbarOptions } from '../../UI/Navbar';
 import { strings } from '../../../../locales/i18n';
 import { renderFromWei, weiToFiat, hexToBN } from '../../../util/number';
 import Engine from '../../../core/Engine';
-import CollectibleContracts from '../../UI/CollectibleContracts';
+import CollectionNFT from '../../UI/CollectionNFT';
 import Analytics from '../../../core/Analytics/Analytics';
 import { ANALYTICS_EVENT_OPTS } from '../../../util/analytics';
 import { getTicker } from '../../../util/transactions';
@@ -312,7 +312,7 @@ const Wallet = ({ navigation }: any) => {
             navigation={navigation}
             tokens={assets}
           />
-          <CollectibleContracts
+          <CollectionNFT
             tabLabel={strings('wallet.collectibles')}
             key={'nfts-tab'}
             navigation={navigation}

@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../../../util/theme';
 import { fontStyles } from '../../../styles/common';
 
-const createStyles = (colors) =>
+const createStyles = (colors: any) =>
   StyleSheet.create({
     wrapper: {
       backgroundColor: colors.background.default,
@@ -56,7 +56,7 @@ const createStyles = (colors) =>
       fontSize: 14,
     },
   });
-export const NftScreen = React.memo(() => {
+export const NftCollectionScreen = React.memo(() => {
   const navigation = useNavigation();
   const { colors } = useTheme();
   const styles = createStyles(colors);
