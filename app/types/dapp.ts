@@ -1,3 +1,5 @@
+import { ModelDApp } from './sumo/schema';
+
 export interface Dapp {
   id: number | string;
   image: string | any;
@@ -18,4 +20,8 @@ export interface DAppPageData {
   id: string | number;
   title: string;
   groups: GroupDapp[];
+}
+
+export interface DappByPage {
+  apps: ModelDApp[];
 }

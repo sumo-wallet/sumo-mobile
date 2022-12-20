@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { Style, Colors, Fonts } from '../../../styles';
 import { placeholders } from '../../../assets';
-import { Dapp } from './../../../types';
+import { Dapp, ModelCategoryApp } from './../../../types';
 // import FlatMarquee from './FlatMarquee/FlatMarquee';
 import { useTheme } from '../../../util/theme';
 
@@ -133,10 +133,20 @@ export const dummyDataNowTrending: Dapp[] = [
 export interface NowTrendingProps {
   style?: StyleProp<ViewStyle>;
   onSelect?: (dapp: Dapp) => void;
+  hotDapps?: ModelCategoryApp[];
 }
 
-export const NowTrending = ({ style, onSelect }: NowTrendingProps) => {
+export const NowTrending = ({
+  style,
+  onSelect,
+  hotDapps = [],
+}: NowTrendingProps) => {
   const { colors } = useTheme();
+
+  // React.useEffect(() => {
+  //   console.log('hotDapps: ', hotDapps);
+  // }, [hotDapps]);
+
   const renderItem = React.useCallback(
     ({ item }: { item: Dapp; index: number }) => {
       return (
@@ -172,22 +182,23 @@ export const NowTrending = ({ style, onSelect }: NowTrendingProps) => {
         </Text>
       </View>
       <View style={Style.s({ mt: 18 })}>
-        <FlatList
-          data={dummyDataNowTrending}
-          contentContainerStyle={Style.s({ l: -20 })}
-          horizontal
-          renderItem={renderItem}
-          showsHorizontalScrollIndicator={false}
-          ItemSeparatorComponent={() => <View style={Style.s({ w: 8 })} />}
-        />
-        <FlatList
-          style={Style.s({ mt: 8 })}
-          data={dummyDataNowTrending}
-          horizontal
-          renderItem={renderItem}
-          showsHorizontalScrollIndicator={false}
-          ItemSeparatorComponent={() => <View style={Style.s({ w: 8 })} />}
-        />
+        {hotDapps.map((cate: ModelCategoryApp) => {
+          if (!cate.dapp || !Array.isArray(cate.dapp)) {
+            return null;
+          }
+          return (
+            <FlatList
+              key={cate.category_id}
+              data={cate?.dapp}
+              style={Style.s({ mt: 8 })}
+              contentContainerStyle={Style.s({ l: -20 })}
+              horizontal
+              renderItem={renderItem}
+              showsHorizontalScrollIndicator={false}
+              ItemSeparatorComponent={() => <View style={Style.s({ w: 8 })} />}
+            />
+          );
+        })}
         {/* <FlatList
           style={Style.s({ mt: 8 })}
           contentContainerStyle={Style.s({ l: -26 })}

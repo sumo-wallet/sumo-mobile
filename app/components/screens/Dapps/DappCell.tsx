@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { Style, Fonts } from '../../../styles';
-import { Dapp } from './../../../types';
+import { ModelDApp } from './../../../types';
 import { createNewTab, openDapp } from './../../../actions/browser';
 import { ROUTES } from './../../../navigation/routes';
 import { useNavigator } from './../../hooks';
@@ -22,7 +22,7 @@ export { SCREEN_WIDTH, SCREEN_HEIGHT };
 
 export interface DappCellProps {
   style?: StyleProp<ViewStyle>;
-  dapp?: Dapp;
+  dapp?: ModelDApp;
 }
 
 export const DappCell = ({ style, dapp }: DappCellProps) => {
@@ -41,7 +41,10 @@ export const DappCell = ({ style, dapp }: DappCellProps) => {
 
   return (
     <View style={[Style.s({ direc: 'row', items: 'center', mt: 16 }), style]}>
-      <Image style={Style.s({ size: 40, bor: 8 })} source={dapp?.image} />
+      <Image
+        style={Style.s({ size: 40, bor: 8 })}
+        source={{ uri: dapp?.logo }}
+      />
       <View style={Style.s({ ml: 12 })}>
         <Text style={Fonts.t({ s: 14, c: colors.text.default })}>
           {dapp?.name}

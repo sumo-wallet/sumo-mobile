@@ -28,6 +28,10 @@ export const DappsScreen = React.memo(() => {
   const { data = {} } = useFetchDappHome();
   const { banner, category, home_list, hot_dapp } = data;
 
+  React.useEffect(() => {
+    console.log('hot_dapp: ', hot_dapp);
+  }, [hot_dapp]);
+
   const handleConfirmWarning = React.useCallback(() => {
     if (curDapp && curDapp?.website) {
       dispatch(createNewTab(curDapp?.website));
@@ -67,8 +71,9 @@ export const DappsScreen = React.memo(() => {
         <NowTrending
           style={Style.s({ mx: 16 })}
           onSelect={handleOpenTrending}
+          dapps={hot_dapp}
         />
-        <AppGroupPager />
+        <AppGroupPager categories={category} dappByCate={home_list} />
       </ScrollView>
       <SecurityWarningModal
         isOpen={securityWarningModal.isOpen}
