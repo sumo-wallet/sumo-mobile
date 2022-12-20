@@ -4,7 +4,9 @@ import { SecuritySettingsState } from '../../actions/security/state';
 
 const initialState: Readonly<SecuritySettingsState> = {
   allowLoginWithRememberMe: false,
-  automaticSecurityChecks: true,
+  automaticSecurityChecksEnabled: false,
+  hasUserSelectedAutomaticSecurityCheckOption: false,
+  isAutomaticSecurityChecksModalOpen: false,
 };
 
 const securityReducer = (
@@ -21,6 +23,11 @@ const securityReducer = (
       return {
         ...state,
         automaticSecurityChecks: action.enabled,
+      };
+    case ActionType.SET_AUTOMATIC_SECURITY_CHECKS_MODAL_OPEN:
+      return {
+        ...state,
+        isAutomaticSecurityChecksModalOpen: action.open,
       };
     default:
       return state;

@@ -43,6 +43,9 @@ export interface IFiatOnRampSDK {
   selectedRegion: Region | null;
   setSelectedRegion: (region: Region | null) => void;
 
+  unsupportedRegion?: Region;
+  setUnsupportedRegion: (region?: Region) => void;
+
   selectedPaymentMethodId: string | null;
   setSelectedPaymentMethodId: (paymentMethodId: string | null) => void;
 
@@ -134,6 +137,8 @@ export const FiatOnRampSDKProvider = ({
   const INITIAL_SELECTED_ASSET = null;
 
   const [selectedRegion, setSelectedRegion] = useState(INITIAL_SELECTED_REGION);
+  const [unsupportedRegion, setUnsupportedRegion] = useState<Region>();
+
   const [selectedAsset, setSelectedAsset] = useState(INITIAL_SELECTED_ASSET);
   const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState(
     INITIAL_PAYMENT_METHOD_ID,
@@ -179,6 +184,9 @@ export const FiatOnRampSDKProvider = ({
 
     selectedRegion,
     setSelectedRegion: setSelectedRegionCallback,
+
+    unsupportedRegion,
+    setUnsupportedRegion,
 
     selectedPaymentMethodId,
     setSelectedPaymentMethodId: setSelectedPaymentMethodIdCallback,

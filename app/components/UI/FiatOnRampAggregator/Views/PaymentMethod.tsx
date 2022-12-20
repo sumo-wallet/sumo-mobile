@@ -20,6 +20,8 @@ import ErrorView from '../components/ErrorView';
 import ErrorViewWithReporting from '../components/ErrorViewWithReporting';
 import Routes from '../../../../constants/navigation/Routes';
 import useAnalytics from '../hooks/useAnalytics';
+import usePaymentMethods from '../hooks/usePaymentMethods';
+import useRegions from '../hooks/useRegions';
 // TODO: Convert into typescript and correctly type
 const Text = BaseText as any;
 const ListItem = BaseListItem as any;
@@ -57,43 +59,18 @@ const PaymentMethod = () => {
   const { params } = useRoute();
 
   const {
-    selectedRegion,
+    setSelectedRegion,
     selectedPaymentMethodId,
     setSelectedPaymentMethodId,
     selectedChainId,
     sdkError,
   } = useFiatOnRampSDK();
 
-  const [{ data: paymentMethods, isFetching, error }, queryGetPaymentMethods] =
-    useSDKMethod('getPaymentMethods', selectedRegion?.id);
+  const { selectedRegion } = useRegions();
 
-  const filteredPaymentMethods = useMemo(() => {
-    if (paymentMethods) {
-      return paymentMethods.filter((paymentMethod) =>
-        Device.isAndroid() ? !paymentMethod.isApplePay : true,
-      );
-    }
-    return null;
-  }, [paymentMethods]);
-
-  const currentPaymentMethod = useMemo(
-    () =>
-      filteredPaymentMethods?.find(
-        (method) => method.id === selectedPaymentMethodId,
-      ),
-    [filteredPaymentMethods, selectedPaymentMethodId],
-  );
-
-  useEffect(() => {
-    if (!isFetching && !error && filteredPaymentMethods) {
-      const paymentMethod = filteredPaymentMethods.find(
-        (pm) => pm.id === selectedPaymentMethodId,
-      );
-      if (!paymentMethod) {
-        setSelectedPaymentMethodId(filteredPaymentMethods?.[0]?.id);
-      }
-    }
-  }, [
+  const {
+    data: paymentMethods,
+    isFetching,
     error,
     filteredPaymentMethods,
     isFetching,
@@ -101,120 +78,120 @@ const PaymentMethod = () => {
     setSelectedPaymentMethodId,
   ]);
 
-  const handleCancelPress = useCallback(() => {
-    trackEvent('ONRAMP_CANCELED', {
+const handleCancelPress = useCallback(() => {
+  trackEvent('ONRAMP_CANCELED', {
+    location: 'Payment Method Screen',
+    chain_id_destination: selectedChainId,
+  });
+}, [selectedChainId, trackEvent]);
+
+const handlePaymentMethodPress = useCallback(
+  (id) => {
+    setSelectedPaymentMethodId(id);
+    trackEvent('ONRAMP_PAYMENT_METHOD_SELECTED', {
+      payment_method_id: id,
       location: 'Payment Method Screen',
-      chain_id_destination: selectedChainId,
     });
-  }, [selectedChainId, trackEvent]);
+  },
+  [setSelectedPaymentMethodId, trackEvent],
+);
 
-  const handlePaymentMethodPress = useCallback(
-    (id) => {
-      setSelectedPaymentMethodId(id);
-      trackEvent('ONRAMP_PAYMENT_METHOD_SELECTED', {
-        payment_method_id: id,
-        location: 'Payment Method Screen',
-      });
-    },
-    [setSelectedPaymentMethodId, trackEvent],
+const handleContinueToAmount = useCallback(() => {
+  navigation.navigate(Routes.FIAT_ON_RAMP_AGGREGATOR.AMOUNT_TO_BUY);
+}, [navigation]);
+
+useEffect(() => {
+  navigation.setOptions(
+    getFiatOnRampAggNavbar(
+      navigation,
+      {
+        title: strings(
+          'fiat_on_ramp_aggregator.payment_method.payment_method',
+        ),
+        // @ts-expect-error navigation params error
+        showBack: params?.showBack,
+      },
+      colors,
+      handleCancelPress,
+    ),
   );
+  // @ts-expect-error navigation params error
+}, [navigation, colors, handleCancelPress, params?.showBack]);
 
-  const handleContinueToAmount = useCallback(() => {
-    navigation.navigate(Routes.FIAT_ON_RAMP_AGGREGATOR.AMOUNT_TO_BUY);
-  }, [navigation]);
-
-  useEffect(() => {
-    navigation.setOptions(
-      getFiatOnRampAggNavbar(
-        navigation,
-        {
-          title: strings(
-            'fiat_on_ramp_aggregator.payment_method.payment_method',
-          ),
-          // @ts-expect-error navigation params error
-          showBack: params?.showBack,
-        },
-        colors,
-        handleCancelPress,
-      ),
-    );
-    // @ts-expect-error navigation params error
-  }, [navigation, colors, handleCancelPress, params?.showBack]);
-
-  if (sdkError) {
-    return (
-      <ScreenLayout>
-        <ScreenLayout.Body>
-          <ErrorViewWithReporting
-            error={sdkError}
-            location={'Payment Method Screen'}
-          />
-        </ScreenLayout.Body>
-      </ScreenLayout>
-    );
-  }
-
-  if (error) {
-    return (
-      <ScreenLayout>
-        <ScreenLayout.Body>
-          <ErrorView
-            description={error}
-            ctaOnPress={queryGetPaymentMethods}
-            location={'Payment Method Screen'}
-          />
-        </ScreenLayout.Body>
-      </ScreenLayout>
-    );
-  }
-
-  if (isFetching) {
-    return (
-      <ScreenLayout>
-        <ScreenLayout.Body>
-          <ScreenLayout.Content>
-            <SkeletonPaymentOption />
-            <SkeletonPaymentOption />
-            <SkeletonPaymentOption />
-          </ScreenLayout.Content>
-        </ScreenLayout.Body>
-      </ScreenLayout>
-    );
-  }
-
+if (sdkError) {
   return (
     <ScreenLayout>
       <ScreenLayout.Body>
-        <ScrollView>
-          <ScreenLayout.Content>
-            {filteredPaymentMethods?.map(
-              ({ id, name, delay, amountTier, paymentType, logo }) => (
-                <View key={id} style={styles.row}>
-                  <PaymentOption
-                    highlighted={id === selectedPaymentMethodId}
-                    title={name}
-                    time={delay}
-                    id={id}
-                    onPress={
-                      id === selectedPaymentMethodId
-                        ? undefined
-                        : () => handlePaymentMethodPress(id)
-                    }
-                    amountTier={amountTier}
-                    paymentTypeIcon={getPaymentMethodIcon(paymentType)}
-                    logo={logo}
-                  />
-                </View>
-              ),
-            )}
-          </ScreenLayout.Content>
-        </ScrollView>
+        <ErrorViewWithReporting
+          error={sdkError}
+          location={'Payment Method Screen'}
+        />
       </ScreenLayout.Body>
-      <ScreenLayout.Footer>
+    </ScreenLayout>
+  );
+}
+
+if (error) {
+  return (
+    <ScreenLayout>
+      <ScreenLayout.Body>
+        <ErrorView
+          description={error}
+          ctaOnPress={queryGetPaymentMethods}
+          location={'Payment Method Screen'}
+        />
+      </ScreenLayout.Body>
+    </ScreenLayout>
+  );
+}
+
+if (isFetching) {
+  return (
+    <ScreenLayout>
+      <ScreenLayout.Body>
         <ScreenLayout.Content>
-          {(currentPaymentMethod?.paymentType === PaymentType.ApplePay ||
-            currentPaymentMethod?.paymentType ===
-              PaymentType.DebitCreditCard) && (
+          <SkeletonPaymentOption />
+          <SkeletonPaymentOption />
+          <SkeletonPaymentOption />
+        </ScreenLayout.Content>
+      </ScreenLayout.Body>
+    </ScreenLayout>
+  );
+}
+
+return (
+  <ScreenLayout>
+    <ScreenLayout.Body>
+      <ScrollView>
+        <ScreenLayout.Content>
+          {filteredPaymentMethods?.map(
+            ({ id, name, delay, amountTier, paymentType, logo }) => (
+              <View key={id} style={styles.row}>
+                <PaymentOption
+                  highlighted={id === selectedPaymentMethodId}
+                  title={name}
+                  time={delay}
+                  id={id}
+                  onPress={
+                    id === selectedPaymentMethodId
+                      ? undefined
+                      : () => handlePaymentMethodPress(id)
+                  }
+                  amountTier={amountTier}
+                  paymentTypeIcon={getPaymentMethodIcon(paymentType)}
+                  logo={logo}
+                />
+              </View>
+            ),
+          )}
+        </ScreenLayout.Content>
+      </ScrollView>
+    </ScreenLayout.Body>
+    <ScreenLayout.Footer>
+      <ScreenLayout.Content>
+        {(currentPaymentMethod?.paymentType === PaymentType.ApplePay ||
+          currentPaymentMethod?.paymentType ===
+          PaymentType.DebitCreditCard) && (
             <View style={styles.row}>
               <Text small grey centered>
                 {currentPaymentMethod?.paymentType === PaymentType.ApplePay &&
@@ -227,21 +204,21 @@ const PaymentMethod = () => {
               </Text>
             </View>
           )}
-          <View style={styles.row}>
-            <StyledButton
-              type={'confirm'}
-              onPress={handleContinueToAmount}
-              disabled={!selectedPaymentMethodId}
-            >
-              {strings(
-                'fiat_on_ramp_aggregator.payment_method.continue_to_amount',
-              )}
-            </StyledButton>
-          </View>
-        </ScreenLayout.Content>
-      </ScreenLayout.Footer>
-    </ScreenLayout>
-  );
+        <View style={styles.row}>
+          <StyledButton
+            type={'confirm'}
+            onPress={handleContinueToAmount}
+            disabled={!selectedPaymentMethodId}
+          >
+            {strings(
+              'fiat_on_ramp_aggregator.payment_method.continue_to_amount',
+            )}
+          </StyledButton>
+        </View>
+      </ScreenLayout.Content>
+    </ScreenLayout.Footer>
+  </ScreenLayout>
+);
 };
 
 export default PaymentMethod;

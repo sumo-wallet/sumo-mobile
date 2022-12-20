@@ -52,15 +52,23 @@ function useApplePay(quote: QuoteResponse) {
         paymentResponse.details,
       );
 
-      if (purchaseResult.success) {
-        paymentResponse.complete(PAYMENT_REQUEST_COMPLETE.SUCCESS);
-        return purchaseResult.order;
-      }
-      paymentResponse.complete(PAYMENT_REQUEST_COMPLETE.FAIL);
-      if (purchaseResult.error?.message) {
-        throw purchaseResult.error;
-      } else {
-        throw new Error(purchaseResult.error);
+      switch (purchaseResult.status) {
+        case ApplePayPurchaseStatus.FAILURE: {
+          paymentResponse.complete(PAYMENT_REQUEST_COMPLETE.FAIL);
+          if (purchaseResult.error?.message) {
+            throw purchaseResult.error;
+          } else {
+            throw new Error(purchaseResult.error);
+          }
+        }
+        case ApplePayPurchaseStatus.SUCCESS:
+        case ApplePayPurchaseStatus.PENDING: {
+          paymentResponse.complete(PAYMENT_REQUEST_COMPLETE.SUCCESS);
+          return {
+            order: purchaseResult.order,
+            authenticationUrl: purchaseResult.authenticationUrl,
+          };
+        }
       }
     } catch (error) {
       if ((error as Error).message.includes('AbortError')) {

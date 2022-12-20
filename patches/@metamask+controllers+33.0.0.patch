@@ -1,8 +1,12 @@
 diff --git a/node_modules/@metamask/controllers/dist/keyring/KeyringController.js b/node_modules/@metamask/controllers/dist/keyring/KeyringController.js
+<<<<<<< HEAD:patches/@metamask+controllers+30.3.0.patch
 index 8b9d1ba..818792b 100644
+=======
+index 906985d..6984571 100644
+>>>>>>> main:patches/@metamask+controllers+33.0.0.patch
 --- a/node_modules/@metamask/controllers/dist/keyring/KeyringController.js
 +++ b/node_modules/@metamask/controllers/dist/keyring/KeyringController.js
-@@ -119,6 +119,7 @@ class KeyringController extends BaseController_1.BaseController {
+@@ -125,6 +125,7 @@ class KeyringController extends BaseController_1.BaseController {
      }
      /**
       * Adds a new account to the default (first) HD seed phrase keyring.
@@ -10,12 +14,16 @@ index 8b9d1ba..818792b 100644
       *
       * @returns Promise resolving to current state when the account is added.
       */
+<<<<<<< HEAD:patches/@metamask+controllers+30.3.0.patch
 @@ -129,16 +130,10 @@ class KeyringController extends BaseController_1.BaseController {
              if (!primaryKeyring) {
                  throw new Error('No HD keyring found');
              }
 -            const oldAccounts = yield __classPrivateFieldGet(this, _KeyringController_keyring, "f").getAccounts();
              yield __classPrivateFieldGet(this, _KeyringController_keyring, "f").addNewAccount(primaryKeyring);
+=======
+@@ -140,12 +141,13 @@ class KeyringController extends BaseController_1.BaseController {
+>>>>>>> main:patches/@metamask+controllers+33.0.0.patch
              const newAccounts = yield __classPrivateFieldGet(this, _KeyringController_keyring, "f").getAccounts();
              yield this.verifySeedPhrase();
              this.updateIdentities(newAccounts);
@@ -27,7 +35,12 @@ index 8b9d1ba..818792b 100644
              return this.fullUpdate();
          });
      }
+<<<<<<< HEAD:patches/@metamask+controllers+30.3.0.patch
 @@ -307,8 +302,8 @@ class KeyringController extends BaseController_1.BaseController {
+=======
+     /**
+@@ -313,8 +315,8 @@ class KeyringController extends BaseController_1.BaseController {
+>>>>>>> main:patches/@metamask+controllers+33.0.0.patch
              const accounts = yield newKeyring.getAccounts();
              const allAccounts = yield __classPrivateFieldGet(this, _KeyringController_keyring, "f").getAccounts();
              this.updateIdentities(allAccounts);

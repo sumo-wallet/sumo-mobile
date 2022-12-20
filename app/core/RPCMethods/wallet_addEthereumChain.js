@@ -67,8 +67,8 @@ const wallet_addEthereumChain = async ({ req, res, requestUserApproval }) => {
   const firstValidBlockExplorerUrl =
     blockExplorerUrls !== null && Array.isArray(blockExplorerUrls)
       ? blockExplorerUrls.find((blockExplorerUrl) =>
-          validUrl.isHttpsUri(blockExplorerUrl),
-        )
+        validUrl.isHttpsUri(blockExplorerUrl),
+      )
       : null;
 
   if (!firstValidRPCUrl) {
@@ -120,12 +120,10 @@ const wallet_addEthereumChain = async ({ req, res, requestUserApproval }) => {
     }
 
     const analyticsParams = {
-      rpc_url: existingNetwork?.rpcUrl,
       chain_id: _chainId,
       source: 'Custom Network API',
       symbol: existingNetwork?.ticker,
-      block_explorer_url: existingNetwork?.blockExplorerUrl,
-      network_name: 'rpc',
+      ...analytics,
     };
 
     try {
@@ -257,12 +255,10 @@ const wallet_addEthereumChain = async ({ req, res, requestUserApproval }) => {
   requestData.alert = alert;
 
   const analyticsParamsAdd = {
-    rpc_url: firstValidRPCUrl,
     chain_id: chainIdDecimal,
     source: 'Custom Network API',
     symbol: ticker,
-    block_explorer_url: firstValidBlockExplorerUrl,
-    network_name: 'rpc',
+    ...analytics,
   };
 
   AnalyticsV2.trackEvent(

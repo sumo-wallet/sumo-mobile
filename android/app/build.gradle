@@ -159,8 +159,8 @@ android {
 		applicationId "com.vappsmart.sumo"
 		minSdkVersion rootProject.ext.minSdkVersion
 		targetSdkVersion rootProject.ext.targetSdkVersion
-		versionCode 6
-		versionName "1.0.0"
+		versionCode 1030
+		versionName "5.12.1"
 		multiDexEnabled true
 		testBuildType System.getProperty('testBuildType', 'debug')
 		missingDimensionStrategy "minReactNative", "minReactNative46"

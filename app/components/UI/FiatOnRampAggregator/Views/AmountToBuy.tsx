@@ -13,6 +13,9 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useFiatOnRampSDK, useSDKMethod } from '../sdk';
+import usePaymentMethods from '../hooks/usePaymentMethods';
+import useRegions from '../hooks/useRegions';
+import useAnalytics from '../hooks/useAnalytics';
 
 import useModalHandler from '../../../Base/hooks/useModalHandler';
 import BaseText from '../../../Base/Text';
@@ -142,22 +145,29 @@ const AmountToBuy = () => {
     sdkError,
   } = useFiatOnRampSDK();
 
+  const {
+    data: regions,
+    isFetching: isFetchingRegions,
+    error: errorRegions,
+    query: queryGetRegions,
+  } = useRegions();
+
+  const {
+    data: paymentMethods,
+    error: errorPaymentMethods,
+    isFetching: isFetchingPaymentMethods,
+    query: queryGetPaymentMethods,
+    currentPaymentMethod,
+  } = usePaymentMethods();
+
   /**
    * SDK methods are called as the parameters change.
    * We get
-   * - getCountries -> countries
    * - defaultFiatCurrency -> getDefaultFiatCurrency
    * - getFiatCurrencies -> currencies
    * - getCryptoCurrencies -> sdkCryptoCurrencies
-   * - paymentMethods -> getPaymentMethods
    * - limits -> getLimits
    */
-
-  const [
-    { data: countries, isFetching: isFetchingCountries, error: errorCountries },
-    queryGetCountries,
-  ] = useSDKMethod('getCountries');
-
   const [
     {
       data: defaultFiatCurrency,
@@ -198,15 +208,6 @@ const AmountToBuy = () => {
     selectedFiatCurrencyId,
   );
 
-  const [
-    {
-      data: paymentMethods,
-      error: errorPaymentMethods,
-      isFetching: isFetchingPaymentMethods,
-    },
-    queryGetPaymentMethods,
-  ] = useSDKMethod('getPaymentMethods', selectedRegion?.id);
-
   const [{ data: limits }] = useSDKMethod(
     'getLimits',
     selectedRegion?.id,
@@ -218,47 +219,6 @@ const AmountToBuy = () => {
   /**
    * * Defaults and validation of selected values
    */
-
-  useEffect(() => {
-    if (
-      selectedRegion &&
-      !isFetchingCountries &&
-      !errorCountries &&
-      countries
-    ) {
-      const allRegions: Region[] = countries.reduce(
-        (acc: Region[], region: Region) => [
-          ...acc,
-          region,
-          ...((region.states as Region[]) || []),
-        ],
-        [],
-      );
-      const selectedRegionFromAPI =
-        allRegions.find((region) => region.id === selectedRegion.id) ?? null;
-
-      if (!selectedRegionFromAPI || selectedRegionFromAPI.unsupported) {
-        navigation.reset({
-          routes: [{ name: Routes.FIAT_ON_RAMP_AGGREGATOR.REGION }],
-        });
-      }
-    }
-  }, [
-    countries,
-    errorCountries,
-    isFetchingCountries,
-    navigation,
-    selectedRegion,
-  ]);
-
-  const filteredPaymentMethods = useMemo(() => {
-    if (paymentMethods) {
-      return paymentMethods.filter((paymentMethod) =>
-        Device.isAndroid() ? !paymentMethod.isApplePay : true,
-      );
-    }
-    return null;
-  }, [paymentMethods]);
 
   /**
    * Temporarily filter crypto currencies to match current chain id
@@ -376,7 +336,7 @@ const AmountToBuy = () => {
     isFetchingPaymentMethods ||
     isFetchingFiatCurrencies ||
     isFetchingDefaultFiatCurrency ||
-    isFetchingCountries;
+    isFetchingRegions;
 
   /**
    * Get the fiat currency object by id
@@ -626,18 +586,18 @@ const AmountToBuy = () => {
       return queryGetFiatCurrencies();
     } else if (errorDefaultFiatCurrency) {
       return queryDefaultFiatCurrency();
-    } else if (errorCountries) {
-      return queryGetCountries();
+    } else if (errorRegions) {
+      return queryGetRegions();
     }
   }, [
     error,
-    errorCountries,
+    errorRegions,
     errorDefaultFiatCurrency,
     errorFiatCurrencies,
     errorPaymentMethods,
     errorSdkCryptoCurrencies,
     queryDefaultFiatCurrency,
-    queryGetCountries,
+    queryGetRegions,
     queryGetCryptoCurrencies,
     queryGetFiatCurrencies,
     queryGetPaymentMethods,
@@ -649,11 +609,11 @@ const AmountToBuy = () => {
         errorPaymentMethods ||
         errorFiatCurrencies ||
         errorDefaultFiatCurrency ||
-        errorCountries) ??
-        null,
+        errorRegions) ??
+      null,
     );
   }, [
-    errorCountries,
+    errorRegions,
     errorDefaultFiatCurrency,
     errorFiatCurrencies,
     errorPaymentMethods,
@@ -904,7 +864,7 @@ const AmountToBuy = () => {
         isVisible={isRegionModalVisible}
         title={strings('fiat_on_ramp_aggregator.region.title')}
         description={strings('fiat_on_ramp_aggregator.region.description')}
-        data={countries}
+        data={regions}
         dismiss={hideRegionModal as () => void}
         onRegionPress={handleRegionPress}
         location={'Amount to Buy Screen'}

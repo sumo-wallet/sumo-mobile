@@ -4,7 +4,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import StyledButton from '../StyledButton';
 import { strings } from '../../../../locales/i18n';
 import NetworkMainAssetLogo from '../NetworkMainAssetLogo';
-import { MAINNET, RPC } from '../../../constants/network';
+import { RPC } from '../../../constants/network';
 import { connect } from 'react-redux';
 import Description from './InfoDescription';
 import { useTheme } from '../../../util/theme';
@@ -15,6 +15,8 @@ import {
 } from '../../../constants/test-ids';
 import { fontStyles } from '../../../styles/common';
 import { util as controllerUtils } from '@metamask/controllers';
+import { NETWORK_EDUCATION_MODAL_CLOSE_BUTTON } from '../../../../wdio/features/testIDs/Screens/NetworksScreen.testids.js';
+import { isMainnetByChainId } from '../../../util/networks';
 
 const createStyles = (colors: {
   background: { default: string };
@@ -133,6 +135,7 @@ const NetworkInfo = (props: NetworkInfoProps) => {
   const styles = createStyles(colors);
   const isTokenDetectionSupported =
     controllerUtils.isTokenDetectionSupportedForNetwork(chainId);
+  const isMainnet = isMainnetByChainId(chainId);
 
   const isTokenDetectionEnabledForNetwork = useMemo(() => {
     if (isTokenDetectionSupported && isTokenDetectionEnabled) {
@@ -175,9 +178,9 @@ const NetworkInfo = (props: NetworkInfoProps) => {
                 >
                   {type === RPC
                     ? `${nickname}`
-                    : type === MAINNET
-                    ? `${type}`
-                    : `${strings('network_information.testnet_network', {
+                    : isMainnet
+                      ? `${type}`
+                      : `${strings('network_information.testnet_network', {
                         type,
                       })}`}
                 </Text>
@@ -198,12 +201,12 @@ const NetworkInfo = (props: NetworkInfoProps) => {
               type !== RPC
                 ? strings('network_information.first_description', { ticker })
                 : [
-                    networkTicker === undefined
-                      ? strings('network_information.private_network')
-                      : strings('network_information.first_description', {
-                          ticker,
-                        }),
-                  ]
+                  networkTicker === undefined
+                    ? strings('network_information.private_network')
+                    : strings('network_information.first_description', {
+                      ticker,
+                    }),
+                ]
             }
             number={1}
             clickableText={undefined}
