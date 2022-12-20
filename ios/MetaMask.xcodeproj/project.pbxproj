@@ -1118,6 +1118,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 				CURRENT_PROJECT_VERSION = 25;
 =======
 				CURRENT_PROJECT_VERSION = 19;
@@ -1131,6 +1132,9 @@
 =======
 				CURRENT_PROJECT_VERSION = 24;
 >>>>>>> 6e5e0448... chore: swap ui
+=======
+				CURRENT_PROJECT_VERSION = 25;
+>>>>>>> a8e91aa4... fix: ui add token and build
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = QN4M8347A6;
@@ -1201,6 +1205,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 				CURRENT_PROJECT_VERSION = 25;
 =======
 				CURRENT_PROJECT_VERSION = 19;
@@ -1214,6 +1219,9 @@
 =======
 				CURRENT_PROJECT_VERSION = 24;
 >>>>>>> 6e5e0448... chore: swap ui
+=======
+				CURRENT_PROJECT_VERSION = 25;
+>>>>>>> a8e91aa4... fix: ui add token and build
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = QN4M8347A6;
 				FRAMEWORK_SEARCH_PATHS = (
