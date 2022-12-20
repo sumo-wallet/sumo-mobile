@@ -400,7 +400,7 @@ export default class AddCustomToken extends PureComponent {
               </Text>
               <TextInput
                 style={styles.textInput}
-                placeholder={'GNO'}
+                placeholder={'SUMO'}
                 placeholderTextColor={colors.text.muted}
                 value={this.state.symbol}
                 onChangeText={this.onSymbolChange}
