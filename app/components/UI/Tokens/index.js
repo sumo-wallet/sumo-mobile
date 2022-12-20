@@ -8,7 +8,7 @@ import {
   Image,
 } from 'react-native';
 import TokenImage from '../TokenImage';
-import { colors, fontStyles } from '../../../styles/common';
+import { fontStyles } from '../../../styles/common';
 import { strings } from '../../../../locales/i18n';
 import ActionSheet from 'react-native-actionsheet';
 import {

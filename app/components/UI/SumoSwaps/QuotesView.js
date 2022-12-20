@@ -2088,11 +2088,11 @@ function SwapsQuotesView({
           disabled={unableToSwap || isAnimating}
           onComplete={handleCompleteSwap}
         />
-        {/* <TouchableOpacity onPress={handleTermsPress} style={styles.termsButton}>
+        <TouchableOpacity onPress={handleTermsPress} style={styles.termsButton}>
           <Text link centered>
             {strings('swaps.terms_of_service')}
           </Text>
-        </TouchableOpacity> */}
+        </TouchableOpacity>
       </View>
 
       <InfoModal

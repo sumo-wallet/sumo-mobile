@@ -95,6 +95,8 @@ import { useTheme } from '../../../util/theme';
 
 // import ManagerCoinModal from '../../screens/Wallet/modal/ManagerCoinModal';
 
+import SwapMenu from '../../Views/SwapMenu';
+
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const BottomTab = createBottomTabNavigator();
@@ -221,6 +223,42 @@ const WalletTabStackFlow = () => (
   </Stack.Navigator>
 );
 
+const SwapModalFlow = () => (
+  <Stack.Navigator mode={'modal'} screenOptions={clearStackNavigatorOptions}>
+    <Stack.Screen
+      name={'Swap'}
+      component={SwapMenu}
+      options={{ headerShown: false, animationEnabled: false }}
+    />
+    <Stack.Screen name={'DetectedTokens'} component={DetectedTokensFlow} />
+  </Stack.Navigator>
+);
+
+const SwapTabStackFlow = () => (
+  <Stack.Navigator initialRouteName={'SwapView'}>
+    <Stack.Screen
+      name="SwapView"
+      component={SwapModalFlow}
+      options={{ headerShown: false }}
+    />
+    <Stack.Screen
+      name="SwapsAmountView"
+      component={SwapsAmountView}
+      options={SwapsAmountView.navigationOptions}
+    />
+    <Stack.Screen
+      name="SwapsQuotesView"
+      component={SwapsQuotesView}
+      options={SwapsQuotesView.navigationOptions}
+    />
+    <Stack.Screen name={'WalletTabStackFlow'} component={WalletTabStackFlow} />
+    <Stack.Screen
+      name={'AssetHideConfirmation'}
+      component={AssetHideConfirmation}
+    />
+  </Stack.Navigator>
+);
+
 export const WalletTabModalFlow = () => (
   <Stack.Navigator mode={'modal'} screenOptions={clearStackNavigatorOptions}>
     <Stack.Screen name={'WalletTabStackFlow'} component={WalletTabStackFlow} />
@@ -228,6 +266,12 @@ export const WalletTabModalFlow = () => (
       name={'AssetHideConfirmation'}
       component={AssetHideConfirmation}
     />
+  </Stack.Navigator>
+);
+
+export const SwapTabModalFlow2 = () => (
+  <Stack.Navigator mode={'modal'} screenOptions={clearStackNavigatorOptions}>
+    <Stack.Screen name={'SwapTabStackFlow'} component={SwapTabStackFlow} />
   </Stack.Navigator>
 );
 
@@ -336,9 +380,9 @@ export const BottomTabContainer = () => {
           },
         }}
       />
-      {/* <Tab.Screen
+      <Tab.Screen
         name={ROUTES.SwapScreen}
-        component={SwapTabModalFlow}
+        component={SwapTabModalFlow2}
         options={{
           title: 'Swap',
           tabBarIcon: ({ color }) => {
@@ -350,7 +394,7 @@ export const BottomTabContainer = () => {
             );
           },
         }}
-      /> */}
+      />
       <Tab.Screen
         name={ROUTES.NftScreen}
         component={NftScreen}
