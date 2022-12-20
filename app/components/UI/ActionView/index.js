@@ -28,7 +28,6 @@ const styles = StyleSheet.create({
   },
   confirm: {
     marginLeft: 8,
-    backgroundColor: '#70D925',
   },
 });
 

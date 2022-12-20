@@ -780,29 +780,30 @@ function SwapsAmountView({
             ]}
             pointerEvents={disabledView ? 'none' : 'auto'}
           >
-            {isInitialLoadingTokens ? (
-              <ActivityIndicator size="small" />
-            ) : (
-              <View style={styles.sendTokenContainer}>
-                <View style={styles.sendOptionContainer}>
-                  <Text>{'SEND'}</Text>
-                  <View style={styles.sendOptionRight}>
-                    <TouchableOpacity
-                      style={styles.sendOptionButton}
-                      onPress={handleUse50Max}
-                    >
-                      <Text style={styles.sendOptionButtonTitle}>{'50%'}</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={styles.sendOptionButton}
-                      onPress={handleUseMax}
-                    >
-                      <Text>{'MAX'}</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
 
-                <View style={styles.selectTokenInputContainer}>
+            <View style={styles.sendTokenContainer}>
+              <View style={styles.sendOptionContainer}>
+                <Text>{'SEND'}</Text>
+                <View style={styles.sendOptionRight}>
+                  <TouchableOpacity
+                    style={styles.sendOptionButton}
+                    onPress={handleUse50Max}
+                  >
+                    <Text style={styles.sendOptionButtonTitle}>{'50%'}</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.sendOptionButton}
+                    onPress={handleUseMax}
+                  >
+                    <Text>{'MAX'}</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              <View style={styles.selectTokenInputContainer}>
+                {isInitialLoadingTokens ? (
+                  <ActivityIndicator size="small" />
+                ) : (
                   <TouchableOpacity
                     style={styles.selectTokenContainer}
                     onPress={toggleSourceModal}
@@ -822,69 +823,70 @@ function SwapsAmountView({
                       style={styles.caretDown}
                     />
                   </TouchableOpacity>
+                )}
 
-                  <TextInput
-                    style={styles.amount}
-                    numberOfLines={1}
-                    adjustsFontSizeToFit
-                    allowFontScaling
-                    // ref={this.amountInput}
-                    value={amount}
-                    onChangeText={(value) => {
-                      if (value.length > 0) {
-                        if (value.includes(',')) {
-                          setAmount(value.replace(',', '.'));
-                        } else {
-                          setAmount(value);
-                        }
+                <TextInput
+                  style={styles.amount}
+                  numberOfLines={1}
+                  adjustsFontSizeToFit
+                  allowFontScaling
+                  // ref={this.amountInput}
+                  value={amount}
+                  onChangeText={(value) => {
+                    if (value.length > 0) {
+                      if (value.includes(',')) {
+                        setAmount(value.replace(',', '.'));
                       } else {
-                        setAmount('0');
+                        setAmount(value);
                       }
-                    }}
-                    keyboardType={'decimal-pad'}
-                    placeholder={'0'}
-                    placeholderTextColor={colors.text.muted}
-                    testID={'txn-amount-input'}
-                  // keyboardAppearance={themeAppearance}
-                  />
-                </View>
-                <TouchableOpacity style={styles.balanceContainer}>
-                  {!!sourceToken &&
-                    (hasInvalidDecimals ||
-                      (!isAmountZero && !hasEnoughBalance) ? (
-                      <Text style={styles.amountInvalid}>
-                        {hasInvalidDecimals
-                          ? strings('swaps.allows_up_to_decimals', {
-                            symbol: sourceToken.symbol,
-                            decimals: sourceToken.decimals,
-                            // eslint-disable-next-line no-mixed-spaces-and-tabs
-                          })
-                          : strings('swaps.not_enough', {
-                            symbol: sourceToken.symbol,
-                          })}
-                      </Text>
-                    ) : isAmountZero ? (
-                      <Text>
-                        {!!sourceToken &&
-                          balance !== null &&
-                          strings('swaps.available_to_swap', {
-                            asset: `${balance} ${sourceToken.symbol}`,
-                          })}
-                        {!isSwapsNativeAsset(sourceToken) && hasBalance && (
-                          <Text style={styles.linkText} onPress={handleUseMax}>
-                            {' '}
-                            {strings('swaps.use_max')}
-                          </Text>
-                        )}
-                      </Text>
-                    ) : (
-                      <Text upper>
-                        {currencyAmount ? `~${currencyAmount}` : ''}
-                      </Text>
-                    ))}
-                </TouchableOpacity>
+                    } else {
+                      setAmount('0');
+                    }
+                  }}
+                  keyboardType={'decimal-pad'}
+                  placeholder={'0'}
+                  placeholderTextColor={colors.text.muted}
+                  testID={'txn-amount-input'}
+                // keyboardAppearance={themeAppearance}
+                />
               </View>
-            )}
+              <TouchableOpacity style={styles.balanceContainer}>
+                {!!sourceToken &&
+                  (hasInvalidDecimals ||
+                    (!isAmountZero && !hasEnoughBalance) ? (
+                    <Text style={styles.amountInvalid}>
+                      {hasInvalidDecimals
+                        ? strings('swaps.allows_up_to_decimals', {
+                          symbol: sourceToken.symbol,
+                          decimals: sourceToken.decimals,
+                          // eslint-disable-next-line no-mixed-spaces-and-tabs
+                        })
+                        : strings('swaps.not_enough', {
+                          symbol: sourceToken.symbol,
+                        })}
+                    </Text>
+                  ) : isAmountZero ? (
+                    <Text>
+                      {!!sourceToken &&
+                        balance !== null &&
+                        strings('swaps.available_to_swap', {
+                          asset: `${balance} ${sourceToken.symbol}`,
+                        })}
+                      {!isSwapsNativeAsset(sourceToken) && hasBalance && (
+                        <Text style={styles.linkText} onPress={handleUseMax}>
+                          {' '}
+                          {strings('swaps.use_max')}
+                        </Text>
+                      )}
+                    </Text>
+                  ) : (
+                    <Text upper>
+                      {currencyAmount ? `~${currencyAmount}` : ''}
+                    </Text>
+                  ))}
+              </TouchableOpacity>
+            </View>
+
             <TokenSelectModal
               isVisible={isSourceModalVisible}
               dismiss={toggleSourceModal}

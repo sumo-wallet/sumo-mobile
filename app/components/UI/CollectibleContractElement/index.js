@@ -16,7 +16,7 @@ import { collectibleContractsSelector } from '../../../reducers/collectibles';
 import { useTheme } from '../../../util/theme';
 
 const DEVICE_WIDTH = Device.getDeviceWidth();
-const COLLECTIBLE_WIDTH = (DEVICE_WIDTH - 30 - 16) / 3;
+const COLLECTIBLE_WIDTH = (DEVICE_WIDTH - 30 - 16) / 2;
 
 const createStyles = (colors) =>
   StyleSheet.create({
