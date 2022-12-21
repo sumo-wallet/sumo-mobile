@@ -144,7 +144,8 @@ const CollectionNFT = ({
 
   const onItemPress = useCallback(
     (collectible, contractName) => {
-      navigation.navigate('CollectiblesDetails', { collectible, contractName });
+      // navigation.navigate('CollectiblesDetails', { collectible, contractName });
+      navigation.navigate('NFTCollectionView', { collectible, contractName });
     },
     [navigation],
   );
@@ -241,7 +242,7 @@ const CollectionNFT = ({
             contractCollectibles={contractCollectibles}
             collectiblesVisible={index === 0}
           /> */}
-          <TouchableOpacity style={styles.nftItem}>
+          <TouchableOpacity style={styles.nftItem} onPress={onItemPress}>
             <View style={styles.nftThumbnail}>
               <Text>{item.address}</Text>
             </View>

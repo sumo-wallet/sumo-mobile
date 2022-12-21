@@ -91,6 +91,7 @@ import { ReceiveScreen } from '../../screens/Receive';
 import { ChangeNetwork } from './../../screens/ChangeNetwork';
 import { DappDetails } from './../../screens/DappDetails';
 import { DappSearch } from './../../screens/DappSearch';
+import { NftCollectionScreen } from './../../screens/NftCollection';
 import { useTheme } from '../../../util/theme';
 
 // import ManagerCoinModal from '../../screens/Wallet/modal/ManagerCoinModal';
@@ -218,6 +219,12 @@ const WalletTabStackFlow = () => (
     <Stack.Screen
       name="WalletDetailView"
       component={WalletDetailScreen}
+      options={{ headerShown: false }}
+    />
+
+    <Stack.Screen
+      name="NFTCollectionView"
+      component={NftCollectionScreen}
       options={{ headerShown: false }}
     />
   </Stack.Navigator>
