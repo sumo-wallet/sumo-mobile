@@ -40,6 +40,8 @@ export const DappsScreen = React.memo(() => {
     category,
     mutate: mutateDappHome,
     isLoading,
+    isFirstLoading,
+    isValidating,
   } = useFetchDappHome();
   const { recent, mutate: mutateRecent } = useFetchDappRecent();
 
@@ -85,7 +87,7 @@ export const DappsScreen = React.memo(() => {
           <RefreshControl
             colors={[colors.primary.default, colors.primary.default]}
             tintColor={colors.primary.default}
-            refreshing={isLoading}
+            refreshing={isLoading || isFirstLoading || isValidating}
             onRefresh={handleRefreshData}
           />
         }

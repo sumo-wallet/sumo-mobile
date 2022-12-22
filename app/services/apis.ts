@@ -8,6 +8,7 @@ import {
   HandlerDappHomeResponse,
   HandlerSearchDappResponse,
   HandlerSearchDappRequest,
+  HandlerPopularSearchResponse,
 } from './../types';
 
 /* eslint-disable prefer-destructuring */
@@ -104,6 +105,14 @@ class Client {
       {
         headers: this.headers,
         method: 'GET',
+      },
+    );
+  }
+  public getDappSearchPopular() {
+    return fetcher<HandlerPopularSearchResponse>(
+      `${this.baseUrl}/api/v1/dapp/popular-search`,
+      {
+        headers: this.headers,
       },
     );
   }

@@ -89,16 +89,6 @@ export const NowTrending = ({
             />
           );
         })}
-
-        {/* <FlatList
-          style={Style.s({ mt: 8 })}
-          contentContainerStyle={Style.s({ l: -26 })}
-          data={dummyDataNowTrending}
-          horizontal
-          renderItem={renderItem}
-          showsHorizontalScrollIndicator={false}
-          ItemSeparatorComponent={() => <View style={Style.s({ w: 8 })} />}
-        /> */}
       </View>
     </View>
   );

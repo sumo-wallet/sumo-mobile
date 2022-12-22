@@ -4,7 +4,7 @@ import { useFetchWithCache } from '../useFetchWithCache';
 const KEY = 'SWR_KEYS_DAPP_HOME';
 
 export const useFetchDappHome = () => {
-  const { data, isLoading, mutate } = useFetchWithCache([KEY], () =>
+  const { data, ...rest } = useFetchWithCache([KEY], () =>
     client.getDappHome(),
   );
 
@@ -13,7 +13,6 @@ export const useFetchDappHome = () => {
     category: data?.category,
     homeList: data?.home_list,
     hotDapp: data?.hot_dapp,
-    isLoading,
-    mutate,
+    ...rest,
   };
 };

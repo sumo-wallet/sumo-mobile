@@ -17,21 +17,19 @@ import { useDispatch } from 'react-redux';
 import { Style, Fonts } from './../../../styles';
 import { icons, images } from './../../../assets';
 import { useNavigator, useDebounce } from './../../hooks';
-import { ModelDApp } from './../../../types';
-import { keyExtractor } from './../../../util';
+import { ModelDApp, ModelSearchHistory } from './../../../types';
 import { useTheme } from './../../../util/theme';
 import { ROUTES } from './../../../navigation/routes';
 import { createNewTab, openDapp } from './../../../actions/browser';
 import { useFetchDappSearch } from './../../../services/dapp/useFetchDappSearch';
+import { useFetchDappPopularSearch } from './../../../services/dapp/useFetchDappPopularSearch';
 
 const DAPP_SEARCH_HISTORY_KEY = 'DAPP_SEARCH_HISTORY_KEY';
 
 export const pushToHistory = async (keyword: string) => {
   const historiesString =
     (await AsyncStorage.getItem(DAPP_SEARCH_HISTORY_KEY)) ?? '[]';
-  // console.log('historiesString: ' + historiesString);
   const histories = JSON.parse(historiesString);
-  // console.log('histories: ' + JSON.stringify(histories));
   let dataToSave: string[] = [];
   if (Array.isArray(histories)) {
     const remove = histories.filter((item: string) => item !== keyword);
@@ -41,7 +39,6 @@ export const pushToHistory = async (keyword: string) => {
   } else {
     dataToSave = [keyword];
   }
-  // console.log('dataToSave: ' + JSON.stringify(dataToSave));
   AsyncStorage.setItem(DAPP_SEARCH_HISTORY_KEY, JSON.stringify(dataToSave));
 };
 
@@ -51,21 +48,23 @@ export const DappSearch = React.memo(() => {
   const { colors } = useTheme();
   const inputRef = React.useRef<TextInput>();
 
-  React.useEffect(() => {
-    pushToHistory('Pancake');
-  }, [colors]);
-
   const [textSearch, setTextSearch] = React.useState<string>('');
-  const { dapps: dappsResultSearch } = useFetchDappSearch({ text: textSearch });
+  const {
+    dapps: dappsResultSearch,
+    isValidating,
+    isLoading,
+  } = useFetchDappSearch({ text: textSearch });
+  const { data: dataPopularSearch = [] } = useFetchDappPopularSearch();
 
   const handleClearSearchHistory = React.useCallback(() => {
     console.log('handleClearSearchHistory: ');
   }, []);
+
   const handleDeleteHistory = React.useCallback((history: string) => {
     console.log('history: ', history);
   }, []);
 
-  const isSearching = textSearch?.length > 0;
+  const isSearching = textSearch?.length > 0 && isValidating && isLoading;
 
   const handleSearch = React.useCallback((keyword: string) => {
     setTextSearch(keyword);
@@ -78,7 +77,7 @@ export const DappSearch = React.memo(() => {
   const debounceSearchRequest = useDebounce(handleSearch, 500);
 
   const renderRecommend = React.useCallback(() => {
-    if (isSearching) {
+    if (textSearch?.length > 0) {
       return null;
     }
     return (
@@ -88,28 +87,30 @@ export const DappSearch = React.memo(() => {
             {'Popular search'}
           </Text>
           <View style={Style.s({ direc: 'row', wrap: 'wrap', mt: 12 })}>
-            {['Binance', 'PancakeSwap', 'Uniswap', 'CoinMarketCap'].map(
-              (keyword) => {
-                return (
-                  <TouchableOpacity
-                    onPress={() => handleSelectPopular(keyword)}
-                    key={keyword}
-                    style={[
-                      Style.s({ px: 16, py: 6, cen: true, mb: 12, mr: 12 }),
-                      Style.b({
-                        color: colors.border.default,
-                        width: 1,
-                        bor: 40,
-                      }),
-                    ]}
-                  >
-                    <Text style={Fonts.t({ s: 14, c: colors.text.default })}>
-                      {keyword}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              },
-            )}
+            {dataPopularSearch.map((searchHistory: ModelSearchHistory) => {
+              const { search_text } = searchHistory;
+              if (!search_text) {
+                return null;
+              }
+              return (
+                <TouchableOpacity
+                  onPress={() => handleSelectPopular(search_text)}
+                  key={searchHistory.id}
+                  style={[
+                    Style.s({ px: 16, py: 6, cen: true, mb: 12, mr: 12 }),
+                    Style.b({
+                      color: colors.border.default,
+                      width: 1,
+                      bor: 40,
+                    }),
+                  ]}
+                >
+                  <Text style={Fonts.t({ s: 14, c: colors.text.default })}>
+                    {search_text}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
           </View>
         </View>
         <View style={Style.s({ mt: 24, px: 16 })}>
@@ -174,10 +175,11 @@ export const DappSearch = React.memo(() => {
   }, [
     colors.border.default,
     colors.text.default,
+    dataPopularSearch,
     handleClearSearchHistory,
     handleDeleteHistory,
     handleSelectPopular,
-    isSearching,
+    textSearch?.length,
   ]);
 
   const handlePressDapp = React.useCallback(
@@ -246,8 +248,9 @@ export const DappSearch = React.memo(() => {
     );
   }, [colors.text.alternative, colors.text.default]);
 
+  const keyEx = React.useCallback((i: ModelDApp) => `${i?.id}`, []);
   const renderSearchResults = React.useCallback(() => {
-    if (!isSearching) {
+    if (textSearch?.length === 0) {
       return null;
     }
     return (
@@ -257,16 +260,19 @@ export const DappSearch = React.memo(() => {
         data={dappsResultSearch}
         renderItem={renderItemResult}
         ItemSeparatorComponent={renderItemSeparator}
-        keyExtractor={keyExtractor}
+        keyExtractor={keyEx}
         ListEmptyComponent={renderEmptyComponent}
+        refreshing={isSearching}
       />
     );
   }, [
-    isSearching,
-    renderEmptyComponent,
+    textSearch?.length,
+    dappsResultSearch,
     renderItemResult,
     renderItemSeparator,
-    dappsResultSearch,
+    keyEx,
+    renderEmptyComponent,
+    isSearching,
   ]);
 
   return (
