@@ -11,7 +11,8 @@ import { NowTrending } from './NowTrending';
 import { AppGroupPager } from './AppGroupPager';
 import { SearchRecent, dummyDataRecent } from './SearchRecent';
 import { SecurityWarningModal } from './SecurityWarningModal';
-import { Dapp } from './../../../types';
+import { Dapp, ModelDApp } from './../../../types';
+import { CategoryHeader } from './CategoryHeader';
 
 import { ROUTES } from './../../../navigation/routes';
 import { createNewTab, openDapp } from './../../../actions/browser';
@@ -25,12 +26,7 @@ export const DappsScreen = React.memo(() => {
   const securityWarningModal = useDisclosure();
   const [curDapp, setDapp] = React.useState<Dapp>();
 
-  const { data = {} } = useFetchDappHome();
-  const { banner, category, home_list, hot_dapp } = data;
-
-  React.useEffect(() => {
-    console.log('hot_dapp: ', hot_dapp);
-  }, [hot_dapp]);
+  const { hotDapp, homeList, category } = useFetchDappHome();
 
   const handleConfirmWarning = React.useCallback(() => {
     if (curDapp && curDapp?.website) {
@@ -43,7 +39,7 @@ export const DappsScreen = React.memo(() => {
   }, [curDapp, dispatch, nav, securityWarningModal]);
 
   const handleOpenTrending = React.useCallback(
-    (dapp: Dapp) => {
+    (dapp: ModelDApp) => {
       if (dapp.website) {
         dispatch(createNewTab(dapp?.website));
         nav.navigate(ROUTES.DappDetails, { dapp });
@@ -56,6 +52,7 @@ export const DappsScreen = React.memo(() => {
       <StatusBar barStyle="light-content" />
       <SearchBar placeholder="Search DApp or enter a link" />
       <ScrollView
+        stickyHeaderIndices={[2]}
         style={Style.s({ flex: 1 })}
         contentContainerStyle={Style.s({ px: 0 })}
       >
@@ -71,9 +68,10 @@ export const DappsScreen = React.memo(() => {
         <NowTrending
           style={Style.s({ mx: 16 })}
           onSelect={handleOpenTrending}
-          hotDapps={hot_dapp}
+          hotDapps={hotDapp}
         />
-        <AppGroupPager categories={category} dappByCate={home_list} />
+        <CategoryHeader categories={category} />
+        <AppGroupPager dappByCate={homeList} />
       </ScrollView>
       <SecurityWarningModal
         isOpen={securityWarningModal.isOpen}

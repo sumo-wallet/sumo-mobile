@@ -10,131 +10,23 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { Style, Colors, Fonts } from '../../../styles';
-import { placeholders } from '../../../assets';
-import { Dapp, ModelCategoryApp } from './../../../types';
-// import FlatMarquee from './FlatMarquee/FlatMarquee';
+import { ModelDApp } from './../../../types';
 import { useTheme } from '../../../util/theme';
-
-export const data = [
-  'AAPL',
-  'GOOGL',
-  'GOOG',
-  'MSFT',
-  'FB',
-  'TSM',
-  'INTC',
-  'ORCL',
-  'CSCO',
-  'NVDA',
-  'IBM',
-  'SAP',
-  'TXN',
-  'QCOM',
-  'ADBE',
-  'AVGO',
-  'DCM',
-  'CRM',
-  'AABA',
-  'BIDU',
-  'ITW',
-  'ATVI',
-  'AMAT',
-  'ADP',
-  'MU',
-  'VMW',
-  'CTSH',
-  'INTU',
-  'NXPI',
-  'INFY',
-  'EA',
-  'ETN',
-  'HPQ',
-  'ADI',
-  'NOK',
-  'FISV',
-  'DXC',
-  'LRCX',
-  'NOW',
-  'HPE',
-  'WDC',
-  'WDAY',
-  'WIT',
-  'TWTR',
-  'ADSK',
-  'SNAP',
-  'WPP',
-  'RHT',
-  'KYO',
-  'CERN',
-].map((item) => ({
-  title: item,
-  price: parseInt((Math.random() * 1000).toFixed(2), 10),
-  change: parseInt((Math.random() * 100).toFixed(2), 10),
-  isGain: Math.floor(Math.random() * 10).toFixed(2) > 5,
-}));
-
-export const dummyDataNowTrending: Dapp[] = [
-  {
-    id: 0,
-    name: 'AAVE',
-    image: placeholders.dapp3,
-    banner: undefined,
-    chainName: 'Binance Smart Chain',
-    provider: 'AAVE',
-    website: 'https://aave.com/',
-  },
-  {
-    id: 1,
-    name: 'UniSwap',
-    image: placeholders.dapp4,
-    banner: undefined,
-    chainName: 'Ethereum',
-    provider: 'Ethereum',
-    website: 'https://uniswap.org/',
-  },
-  {
-    id: 2,
-    name: 'Biswap',
-    image: placeholders.dapp5,
-    banner: undefined,
-    chainName: 'Binance Smart Chain',
-    provider: 'Biswap',
-    website: 'https://biswap.org/',
-  },
-  {
-    id: 3,
-    name: 'Solana',
-    image: placeholders.dapp6,
-    banner: placeholders.dappBanner1,
-  },
-  {
-    id: 4,
-    name: 'PancakeSwap',
-    image: placeholders.dapp7,
-    banner: placeholders.dappBanner1,
-    chainName: 'Binance Smart Chain',
-    provider: 'PancakeSwap',
-    website: 'https://pancakeswap.finance',
-  },
-  {
-    id: 5,
-    name: 'AAVE',
-    image: placeholders.dapp3,
-    banner: placeholders.dappBanner1,
-  },
-  {
-    id: 6,
-    name: 'UniSwap',
-    image: placeholders.dapp4,
-    banner: placeholders.dappBanner1,
-  },
-];
 
 export interface NowTrendingProps {
   style?: StyleProp<ViewStyle>;
-  onSelect?: (dapp: Dapp) => void;
-  hotDapps?: ModelCategoryApp[];
+  onSelect?: (dapp: ModelDApp) => void;
+  hotDapps?: ModelDApp[];
 }
+
+export const parseLogoUrl = (logo?: string): string => {
+  return `${logo}`.replace(/\\/g, '');
+};
+
+export const sliceArrHotApps = (data: ModelDApp[]) => {
+  const size = Math.round(data.length / 2);
+  return [data.slice(0, size), data.slice(size, data.length - 1)];
+};
 
 export const NowTrending = ({
   style,
@@ -143,15 +35,16 @@ export const NowTrending = ({
 }: NowTrendingProps) => {
   const { colors } = useTheme();
 
-  // React.useEffect(() => {
-  //   console.log('hotDapps: ', hotDapps);
-  // }, [hotDapps]);
+  const dappByRow = sliceArrHotApps(hotDapps);
 
   const renderItem = React.useCallback(
-    ({ item }: { item: Dapp; index: number }) => {
+    ({ item }: { item: ModelDApp; index: number }) => {
       return (
         <TouchableOpacity onPress={() => onSelect && onSelect(item)}>
-          <Image style={Style.s({ size: 64, bor: 8 })} source={item.image} />
+          <Image
+            style={Style.s({ size: 64, bor: 8 })}
+            source={{ uri: parseLogoUrl(item?.logo) }}
+          />
         </TouchableOpacity>
       );
     },
@@ -182,14 +75,11 @@ export const NowTrending = ({
         </Text>
       </View>
       <View style={Style.s({ mt: 18 })}>
-        {hotDapps.map((cate: ModelCategoryApp) => {
-          if (!cate.dapp || !Array.isArray(cate.dapp)) {
-            return null;
-          }
+        {dappByRow.map((row, index) => {
           return (
             <FlatList
-              key={cate.category_id}
-              data={cate?.dapp}
+              key={`NowTrending.FlatList.${index}`}
+              data={row}
               style={Style.s({ mt: 8 })}
               contentContainerStyle={Style.s({ l: -20 })}
               horizontal
@@ -199,6 +89,7 @@ export const NowTrending = ({
             />
           );
         })}
+
         {/* <FlatList
           style={Style.s({ mt: 8 })}
           contentContainerStyle={Style.s({ l: -26 })}
@@ -206,21 +97,6 @@ export const NowTrending = ({
           horizontal
           renderItem={renderItem}
           showsHorizontalScrollIndicator={false}
-          ItemSeparatorComponent={() => <View style={Style.s({ w: 8 })} />}
-        /> */}
-        {/* <FlatMarquee
-          style={Style.s({ mt: 8 })}
-          data={data}
-          renderItem={({item, index}) => {
-            return (
-              <TouchableOpacity>
-                <Image
-                  style={Style.s({ size: 64, bor: 8 })}
-                  source={placeholders.dapp1}
-                />
-              </TouchableOpacity>
-            );
-          }}
           ItemSeparatorComponent={() => <View style={Style.s({ w: 8 })} />}
         /> */}
       </View>

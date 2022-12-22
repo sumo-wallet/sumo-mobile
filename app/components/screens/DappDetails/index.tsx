@@ -1,14 +1,14 @@
 import React from 'react';
 import { View, SafeAreaView, Text, StatusBar, ScrollView } from 'react-native';
 import FastImage from 'react-native-fast-image';
+import { useDispatch } from 'react-redux';
 
 import { Style, Fonts } from './../../../styles';
 import { SHeader, SButton } from './../../common';
 import { useNavigator, useNavigatorParams } from './../../hooks';
-import { Dapp } from './../../../types';
+import { ModelDApp } from './../../../types';
 import { icons } from './../../../assets';
 import { ROUTES } from './../../../navigation/routes';
-import { useDispatch } from 'react-redux';
 import { createNewTab, openDapp } from './../../../actions/browser';
 import { useTheme } from './../../../util/theme';
 
@@ -35,7 +35,7 @@ export const InfoRow = ({ title, value }: { title: string; value: string }) => {
 };
 
 export const DappDetails = React.memo(() => {
-  const { dapp }: { dapp: Dapp } = useNavigatorParams();
+  const { dapp }: { dapp: ModelDApp } = useNavigatorParams();
   const dispatch = useDispatch();
   const nav = useNavigator();
   const { colors } = useTheme();
@@ -56,7 +56,7 @@ export const DappDetails = React.memo(() => {
         <View style={Style.s({ items: 'center', self: 'center', mt: 20 })}>
           <FastImage
             style={Style.s({ size: 72, bor: 8 })}
-            source={dapp?.image}
+            source={{ uri: dapp?.logo }}
           />
           <Text
             style={Fonts.t({ s: 18, w: '500', c: colors.text.default, t: 12 })}
@@ -85,14 +85,14 @@ export const DappDetails = React.memo(() => {
             title="Open"
           />
         </View>
-        {dapp?.banner ? (
+        {dapp?.thumbnail ? (
           <View style={Style.s({ px: 16, mt: 32 })}>
             <Text style={Fonts.t({ s: 14, w: '500', c: colors.text.default })}>
               {'Preview'}
             </Text>
             <FastImage
               style={Style.s({ h: 192, bor: 8, mt: 8 })}
-              source={dapp.banner}
+              source={{ uri: dapp.thumbnail }}
             />
           </View>
         ) : null}
