@@ -1,3 +1,5 @@
+import { pushToDappRecent } from './../../util';
+
 /**
  * Adds a new entry to the browser history
  *
@@ -95,9 +97,10 @@ export function updateTab(id, data) {
   };
 }
 
-export function openDapp({ dapp }) {
+export const openDapp = ({ dapp }) => {
+  pushToDappRecent(dapp);
   return {
     type: 'OPEN_DAPP',
     dapp,
   };
-}
+};

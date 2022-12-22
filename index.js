@@ -7,7 +7,7 @@ import crypto from 'crypto'; // eslint-disable-line import/no-nodejs-modules, no
 require('react-native-browser-polyfill'); // eslint-disable-line import/no-commonjs
 
 import { setupSentry } from './app/util/sentryUtils';
-setupSentry();
+// setupSentry();
 
 import { AppRegistry, LogBox } from 'react-native';
 import Root from './app/components/Views/Root';
@@ -63,7 +63,7 @@ LogBox.ignoreLogs([
 ]);
 
 if (__DEV__) {
-  import('./ReactotronConfig').then(() => {});
+  import('./ReactotronConfig').then(() => { });
 }
 
 /* Uncomment and comment regular registration below */

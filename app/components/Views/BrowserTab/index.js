@@ -3,7 +3,6 @@ import {
   Text,
   StyleSheet,
   View,
-  TouchableWithoutFeedback,
   Alert,
   Linking,
   BackHandler,
@@ -14,12 +13,16 @@ import {
 } from 'react-native';
 import { withNavigation } from '@react-navigation/compat';
 import { WebView } from 'react-native-webview';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import BrowserBottomBar from '../../UI/BrowserBottomBar';
 import PropTypes from 'prop-types';
 import Share from 'react-native-share';
 import { connect } from 'react-redux';
+import URL from 'url-parse';
+import Modal from 'react-native-modal';
+import FastImage from 'react-native-fast-image';
+// import Icon from 'react-native-vector-icons/FontAwesome';
+// import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import BrowserBottomBar from '../../UI/BrowserBottomBar';
+
 import BackgroundBridge from '../../../core/BackgroundBridge';
 import Engine from '../../../core/Engine';
 import PhishingModal from '../../UI/PhishingModal';
@@ -33,10 +36,7 @@ import {
   JS_WEBVIEW_URL,
 } from '../../../util/browserScripts';
 import resolveEnsToIpfsContentId from '../../../lib/ens-ipfs/resolver';
-import Button from '../../UI/Button';
 import { strings } from '../../../../locales/i18n';
-import URL from 'url-parse';
-import Modal from 'react-native-modal';
 import WebviewError from '../../UI/WebviewError';
 import { approveHost } from '../../../actions/privacy';
 import { addBookmark } from '../../../actions/bookmarks';
@@ -70,12 +70,9 @@ import {
 } from '../../../constants/urls';
 import sanitizeUrlInput from '../../../util/url/sanitizeUrlInput';
 
-import { BrowserHeader } from './../Browser/BrowserHeader';;
-import { Style, Colors, Fonts } from './../../../styles';
-// import { SafeAreaView } from 'react-native-safe-area-context';
-import FastImage from 'react-native-fast-image';
+import { BrowserHeader } from './../Browser/BrowserHeader';
+import { Style, Fonts } from './../../../styles';
 import { icons } from './../../../assets';
-// import { Dapp } from './../../../types';
 import { useNavigator } from './../../hooks';
 import { ROUTES } from './../../../navigation/routes';
 import ClipboardManager from './../../../core/ClipboardManager';
@@ -309,10 +306,6 @@ export const BrowserTab = (props) => {
   const { colors, shadows } = useTheme();
   const styles = createStyles(colors, shadows);
 
-  React.useEffect(()=>{
-    console.log('initialUrl: ' + initialUrl)
-  }, [initialUrl])
-
   /**
    * Is the current tab the active tab
    */
@@ -523,9 +516,8 @@ export const BrowserTab = (props) => {
           name: hostname,
         });
         if (type === 'ipfs-ns') {
-          gatewayUrl = `${props.ipfsGateway}${hash}${pathname || '/'}${
-            query || ''
-          }`;
+          gatewayUrl = `${props.ipfsGateway}${hash}${pathname || '/'}${query || ''
+            }`;
           const response = await fetch(gatewayUrl);
           const statusCode = response.status;
           if (statusCode >= 400) {
@@ -534,13 +526,11 @@ export const BrowserTab = (props) => {
             return null;
           }
         } else if (type === 'swarm-ns') {
-          gatewayUrl = `${AppConstants.SWARM_DEFAULT_GATEWAY_URL}${hash}${
-            pathname || '/'
-          }${query || ''}`;
+          gatewayUrl = `${AppConstants.SWARM_DEFAULT_GATEWAY_URL}${hash}${pathname || '/'
+            }${query || ''}`;
         } else if (type === 'ipns-ns') {
-          gatewayUrl = `${AppConstants.IPNS_DEFAULT_GATEWAY_URL}${hostname}${
-            pathname || '/'
-          }${query || ''}`;
+          gatewayUrl = `${AppConstants.IPNS_DEFAULT_GATEWAY_URL}${hostname}${pathname || '/'
+            }${query || ''}`;
         }
         return {
           url: gatewayUrl,
@@ -1259,11 +1249,11 @@ export const BrowserTab = (props) => {
 
     return (
       <View style={Style.s({})} >
-        <TouchableOpacity style={Style.s({direc: 'row', items: 'center', justify: 'space-between'})} >
+        <TouchableOpacity style={Style.s({ direc: 'row', items: 'center', justify: 'space-between' })} >
           <Text>
             {'Copy web link'}
           </Text>
-          <FastImage  style={Style.s({size: 24 })} source={icons.iconCopyWebLink} />
+          <FastImage style={Style.s({ size: 24 })} source={icons.iconCopyWebLink} />
         </TouchableOpacity>
       </View>
     )
@@ -1378,12 +1368,12 @@ export const BrowserTab = (props) => {
   const nav = useNavigator();
   // const dispatch
 
-  const openAboutDapp = React.useCallback(()=>{
+  const openAboutDapp = React.useCallback(() => {
     toggleOptionsIfNeeded();
-    nav.navigate(ROUTES.DappDetails, {dapp: props.dapp});
+    nav.navigate(ROUTES.DappDetails, { dapp: props.dapp });
   }, [toggleOptionsIfNeeded, props.dapp])
 
-  const handleCopyWebLink = React.useCallback(()=>{
+  const handleCopyWebLink = React.useCallback(() => {
     toggleOptionsIfNeeded();
     ClipboardManager.setString(props?.dapp?.website);
     props.showAlert({
@@ -1431,34 +1421,34 @@ export const BrowserTab = (props) => {
       <SafeAreaView style={styles.modalWrapper} testID={'browser-option'}>
         <View style={styles.titleWrapper}>
           <View style={styles.dragger} testID={'option-list-dragger'} />
-          <Text style={Fonts.t({s: 18, w: '500', c: colors.text.default, y: 10})} >
+          <Text style={Fonts.t({ s: 18, w: '500', c: colors.text.default, y: 10 })} >
             {props?.dapp?.name ?? 'Dapp'}
           </Text>
         </View>
         <View style={Style.s({})} >
-          <TouchableOpacity onPress={handleCopyWebLink} style={Style.s({direc: 'row', items: 'center', justify: 'space-between', p: 16})} >
-            <Text style={Fonts.t({c: colors.text.default})} >
+          <TouchableOpacity onPress={handleCopyWebLink} style={Style.s({ direc: 'row', items: 'center', justify: 'space-between', p: 16 })} >
+            <Text style={Fonts.t({ c: colors.text.default })} >
               {'Copy web link'}
             </Text>
-            <FastImage  style={Style.s({size: 24 })} source={icons.iconCopyWebLink} />
+            <FastImage style={Style.s({ size: 24 })} source={icons.iconCopyWebLink} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={onReloadPress} style={Style.s({direc: 'row', items: 'center', justify: 'space-between', p: 16})} >
-          <Text style={Fonts.t({c: colors.text.default})} >
+          <TouchableOpacity onPress={onReloadPress} style={Style.s({ direc: 'row', items: 'center', justify: 'space-between', p: 16 })} >
+            <Text style={Fonts.t({ c: colors.text.default })} >
               {'Refresh'}
             </Text>
-            <FastImage  style={Style.s({size: 24 })} source={icons.iconArrowRefresh} />
+            <FastImage style={Style.s({ size: 24 })} source={icons.iconArrowRefresh} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={addBookmark} style={Style.s({direc: 'row', items: 'center', justify: 'space-between', p: 16})} >
-          <Text style={Fonts.t({c: colors.text.default})} >
+          <TouchableOpacity onPress={addBookmark} style={Style.s({ direc: 'row', items: 'center', justify: 'space-between', p: 16 })} >
+            <Text style={Fonts.t({ c: colors.text.default })} >
               {'Favorites'}
             </Text>
-            <FastImage  style={Style.s({size: 24 })} source={icons.iconFavorite} />
+            <FastImage style={Style.s({ size: 24 })} source={icons.iconFavorite} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={openAboutDapp} style={Style.s({direc: 'row', items: 'center', justify: 'space-between', p: 16})} >
-          <Text style={Fonts.t({c: colors.text.default})} >
+          <TouchableOpacity onPress={openAboutDapp} style={Style.s({ direc: 'row', items: 'center', justify: 'space-between', p: 16 })} >
+            <Text style={Fonts.t({ c: colors.text.default })} >
               {'About'}
             </Text>
-            <FastImage  style={Style.s({size: 24 })} source={icons.iconAbout} />
+            <FastImage style={Style.s({ size: 24 })} source={icons.iconAbout} />
           </TouchableOpacity>
         </View>
         {/* <View

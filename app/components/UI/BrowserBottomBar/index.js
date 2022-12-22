@@ -151,10 +151,10 @@ export default class BrowserBottomBar extends PureComponent {
       this.trackNavigationEvent('Go Home');
     };
 
-    console.log('dapp: ', dapp);
+    // console.log('dapp: ', dapp);
 
     return (
-      <ElevatedView elevation={11} style={[styles.bottomBar, Style.s({px: 24, pb: 34})]}>
+      <ElevatedView elevation={11} style={[styles.bottomBar, Style.s({ px: 24, pb: 34 })]}>
         <View style={Style.s({ flex: 1 })} >
           <Text style={Fonts.t({ s: 16, w: '500', c: Colors.grayscale[100] })} >
             {dapp?.name ?? url}
