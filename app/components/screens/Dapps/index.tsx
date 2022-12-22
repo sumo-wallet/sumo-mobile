@@ -12,7 +12,7 @@ import { Style } from './../../../styles';
 import { SearchBar } from './SearchBar';
 import { DappListByCategory } from './DappListByCategory';
 import { SecurityWarningModal } from './SecurityWarningModal';
-import { ModelDApp } from './../../../types';
+import { ModelDApp, ModelCategory } from './../../../types';
 import { CategoryHeader } from './CategoryHeader';
 
 import { ROUTES } from './../../../navigation/routes';
@@ -73,6 +73,19 @@ export const DappsScreen = React.memo(() => {
     }
   };
 
+  const onSeeMoreCategory = React.useCallback(
+    (item: ModelCategory) => {
+      const matchedIndex = category.findIndex((cat) => cat.id === item?.id);
+      if (matchedIndex > 0) {
+        setPageIndex(matchedIndex);
+        if (pagerViewRef) {
+          pagerViewRef.current?.setPage(matchedIndex);
+        }
+      }
+    },
+    [category],
+  );
+
   return (
     <SafeAreaView
       edges={['top']}
@@ -107,6 +120,7 @@ export const DappsScreen = React.memo(() => {
             setDapp(dapp);
             securityWarningModal.onOpen();
           }}
+          onSeeMoreCategory={onSeeMoreCategory}
         />
         {category.map((cate) => {
           return (

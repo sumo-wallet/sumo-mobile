@@ -8,6 +8,7 @@ import {
   Text,
   Image,
   Dimensions,
+  TouchableOpacity,
 } from 'react-native';
 import { Style, Fonts } from '../../../styles';
 import { icons } from './../../../assets';
@@ -22,9 +23,15 @@ export interface AppGroupCardProps {
   style?: StyleProp<ViewStyle>;
   title?: string;
   dapps?: ModelDApp[];
+  onMore?: () => void;
 }
 
-export const AppGroupCard = ({ style, title, dapps }: AppGroupCardProps) => {
+export const AppGroupCard = ({
+  style,
+  title,
+  dapps,
+  onMore,
+}: AppGroupCardProps) => {
   const { colors } = useTheme();
 
   const dappByPageData = React.useMemo(() => {
@@ -57,7 +64,7 @@ export const AppGroupCard = ({ style, title, dapps }: AppGroupCardProps) => {
             {title}
           </Text>
         ) : null}
-        <View style={Style.s({ direc: 'row' })}>
+        <TouchableOpacity onPress={onMore} style={Style.s({ direc: 'row' })}>
           <Text
             style={Fonts.t({
               s: 14,
@@ -72,7 +79,7 @@ export const AppGroupCard = ({ style, title, dapps }: AppGroupCardProps) => {
             style={Style.s({ size: 14 })}
             source={icons.iconChevronRight}
           />
-        </View>
+        </TouchableOpacity>
       </View>
       <FlatList
         horizontal

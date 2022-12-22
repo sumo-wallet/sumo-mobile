@@ -7,7 +7,7 @@ import { useNavigator } from './../../hooks';
 import { Style } from './../../../styles';
 import { NowTrending } from './NowTrending';
 import { SearchRecent } from './SearchRecent';
-import { ModelDApp, ModelDApps } from './../../../types';
+import { ModelDApp, ModelDApps, ModelCategory } from './../../../types';
 import { ROUTES } from './../../../navigation/routes';
 import { createNewTab, openDapp } from './../../../actions/browser';
 import { AppGroupCard } from './AppGroupCard';
@@ -17,6 +17,7 @@ interface AllDappListProps {
   hotDapp?: ModelDApp[];
   recent?: ModelDApp[];
   onSelect?: (dapp: ModelDApp) => void;
+  onSeeMoreCategory?: (item: ModelCategory) => void;
 }
 
 export const AllDappList = React.memo(
@@ -25,6 +26,7 @@ export const AllDappList = React.memo(
     hotDapp = [],
     recent = [],
     onSelect,
+    onSeeMoreCategory,
   }: AllDappListProps) => {
     const nav = useNavigator();
     const dispatch = useDispatch();
@@ -68,6 +70,11 @@ export const AllDappList = React.memo(
               title={item?.category?.name}
               dapps={item?.app}
               key={`AppGroupCard.${item?.category?.id}.${index}`}
+              onMore={() => {
+                if (onSeeMoreCategory && item.category) {
+                  onSeeMoreCategory(item.category);
+                }
+              }}
             />
           );
         }}
