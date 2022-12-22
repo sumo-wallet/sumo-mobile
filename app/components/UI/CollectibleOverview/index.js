@@ -205,14 +205,14 @@ const CollectibleOverview = ({
     renderCollectibleInfoRow(
       strings('collectible.collectible_last_sold'),
       collectible?.lastSale?.event_timestamp &&
-        toLocaleDate(
-          new Date(collectible?.lastSale?.event_timestamp),
-        ).toString(),
+      toLocaleDate(
+        new Date(collectible?.lastSale?.event_timestamp),
+      ).toString(),
     ),
     renderCollectibleInfoRow(
       strings('collectible.collectible_last_price_sold'),
       collectible?.lastSale?.total_price &&
-        `${renderFromWei(collectible?.lastSale?.total_price)} ETH`,
+      `${renderFromWei(collectible?.lastSale?.total_price)} ETH`,
     ),
     renderCollectibleInfoRow(
       strings('collectible.collectible_source'),
@@ -253,11 +253,9 @@ const CollectibleOverview = ({
   const shareCollectible = useCallback(() => {
     if (!collectible?.externalLink) return;
     Share.open({
-      message: `${strings('collectible.share_check_out_nft')} ${
-        collectible.externalLink
-      }\n${strings('collectible.share_via')} ${
-        AppConstants.SHORT_HOMEPAGE_URL
-      }`,
+      message: `${strings('collectible.share_check_out_nft')} ${collectible.externalLink
+        }\n${strings('collectible.share_via')} ${AppConstants.SHORT_HOMEPAGE_URL
+        }`,
     });
   }, [collectible.externalLink]);
 
@@ -522,8 +520,8 @@ export default connect(
   Device.isIos()
     ? CollectibleOverview
     : gestureHandlerRootHOC(CollectibleOverview, {
-        flex: 0,
-        zIndex: 0,
-        elevation: 0,
-      }),
+      flex: 0,
+      zIndex: 0,
+      elevation: 0,
+    }),
 );

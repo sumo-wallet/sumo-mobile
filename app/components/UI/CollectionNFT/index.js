@@ -32,6 +32,7 @@ import { FlatList } from 'react-native-gesture-handler';
 import { SearchBar } from '../../screens/Dapps/SearchBar';
 import { icons } from '../../../assets';
 import Device from '../../../util/device';
+import CollectibleMedia from '../CollectibleMedia';
 
 const DEVICE_WIDTH = Device.getDeviceWidth();
 const COLLECTIBLE_WIDTH = (DEVICE_WIDTH - 30 - 16) / 2;
@@ -117,8 +118,31 @@ const createStyles = (colors) =>
     nftTitle: {
       flex: 1,
       width: '100%',
+      paddingHorizontal: 10,
+      marginTop: 10,
       flexDirection: 'row',
       justifyContent: 'space-between',
+    },
+    collectionCount: {
+      width: 20,
+      height: 20,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 10,
+      backgroundColor: colors.box.default,
+    },
+    collectibleIcon: {
+      width: COLLECTIBLE_WIDTH,
+      height: COLLECTIBLE_WIDTH,
+    },
+    nftItemContainer: {
+      height: COLLECTIBLE_WIDTH + 40,
+      width: '100%',
+      margin: 10,
+      marginHorizontal: 10,
+      paddingHorizontal: 10,
+      justifyContent: 'center',
+      alignItems: 'center',
     },
   });
 
@@ -233,27 +257,28 @@ const CollectionNFT = ({
       const contractCollectibles = collectibles?.filter((collectible) =>
         toLowerCaseEquals(collectible.address, item.address),
       );
+      const name =
+        item.name ||
+        collectibleContracts.find(({ address }) => address === item.address)
+          ?.name;
       return (
-        <View>
-          {/* <CollectionNFTElement
-            onPress={onItemPress}
-            asset={item}
-            key={item.address}
-            contractCollectibles={contractCollectibles}
-            collectiblesVisible={index === 0}
-          /> */}
-          <TouchableOpacity style={styles.nftItem} onPress={onItemPress}>
-            <View style={styles.nftThumbnail}>
-              <Text>{item.address}</Text>
+        <TouchableOpacity
+          style={styles.nftItemContainer}
+          onPress={() => {
+            onItemPress(contractCollectibles, name);
+          }}
+        >
+          <CollectibleMedia
+            style={styles.collectibleIcon}
+            collectible={{ ...item, name }}
+          />
+          <View style={styles.nftTitle}>
+            <Text>{item.name}</Text>
+            <View style={styles.collectionCount}>
+              <Text>{contractCollectibles.length}</Text>
             </View>
-            <View style={styles.nftTitle}>
-              <Text>{item.name}</Text>
-              <Text style={{ width: 20, height: 20, borderRadius: 10 }}>
-                {contractCollectibles.length}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        </View>
+          </View>
+        </TouchableOpacity>
       );
     },
     [collectibles, onItemPress],
@@ -320,7 +345,7 @@ const CollectionNFT = ({
         numColumns={2}
         renderItem={({ item, index }) => {
           return (
-            <View style={{ flex: 1, backgroundColor: 'blue', margin: 10 }}>
+            <View style={styles.nftItem}>
               {renderCollectibleContract(item, index)}
             </View>
           );

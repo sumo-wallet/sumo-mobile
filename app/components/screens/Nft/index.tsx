@@ -1,4 +1,4 @@
-import CollectionNFT from '../../UI/CollectionNFT';
+import CollectibleContracts from '../../UI/CollectibleContracts';
 import React from 'react';
 import { View, SafeAreaView, Text, StyleSheet } from 'react-native';
 import { strings } from '../../../../locales/i18n';
@@ -63,7 +63,7 @@ export const NftScreen = React.memo(() => {
   return (
     <SafeAreaView style={styles.wrapper}>
       <View style={styles.wrapper}>
-        <CollectionNFT
+        <CollectibleContracts
           key={'nfts-tab'}
           navigation={navigation}
           style={styles.wrapper}
