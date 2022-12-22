@@ -46,7 +46,7 @@ const createStyles = (colors: any) =>
     },
     title: {
       fontSize: 18,
-      fontWeight: '500',
+      fontWeight: '600',
       color: colors.text.default,
     },
     titleViewAll: {

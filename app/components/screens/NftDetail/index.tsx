@@ -40,6 +40,9 @@ import {
   removeFavoriteCollectible,
 } from '../../../actions/collectibles';
 import { isCollectibleInFavoritesSelector } from '../../../reducers/collectibles';
+import { renderShortText } from '../../../util/general';
+import ClipboardManager from '../../../core/ClipboardManager';
+import { showAlert } from '../../../actions/alert';
 
 const DEVICE_WIDTH = Device.getDeviceWidth();
 const COLLECTIBLE_WIDTH = (DEVICE_WIDTH - 30 - 16) / 2;
@@ -307,7 +310,17 @@ export const NftDetailScreen = React.memo(() => {
     addFavoriteCollectibleHandle,
   ]);
 
-  console.log(JSON.stringify(collectible));
+  const onClipBoard = useCallback(async (content) => {
+    await ClipboardManager.setString(content);
+    dispatch(
+      showAlert({
+        isVisible: true,
+        autodismiss: 1500,
+        content: 'clipboard-alert',
+        data: { msg: content },
+      }),
+    );
+  }, []);
 
   return (
     <SafeAreaView style={styles.wrapper}>
@@ -328,7 +341,9 @@ export const NftDetailScreen = React.memo(() => {
               <Text style={styles.collectionAddressTitle}>
                 {renderShortAddress(collectible?.address)}
               </Text>
-              <TouchableOpacity onPress={() => { }}>
+              <TouchableOpacity onPress={() => {
+                onClipBoard(collectible?.address);
+              }}>
                 <Image source={icons.iconCopy} style={styles.iconQR} />
               </TouchableOpacity>
               <TouchableOpacity onPress={() => {
@@ -345,9 +360,11 @@ export const NftDetailScreen = React.memo(() => {
             <Text style={styles.collectionNameTitle}>{'Token ID'}</Text>
             <View style={styles.collectionItemOptionContainer}>
               <Text style={styles.collectionSubTitle}>
-                {collectible.tokenId}
+                {renderShortText(collectible.tokenId, 8)}
               </Text>
-              <TouchableOpacity onPress={() => { }}>
+              <TouchableOpacity onPress={() => {
+                onClipBoard(collectible.tokenId);
+              }}>
                 <Image source={icons.iconCopy} style={styles.iconQR} />
               </TouchableOpacity>
             </View>

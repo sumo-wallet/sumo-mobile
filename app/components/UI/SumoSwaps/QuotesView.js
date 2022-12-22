@@ -250,6 +250,18 @@ const createStyles = (colors) =>
     fetchingText: {
       color: colors.text.default,
     },
+
+    swapButton: {
+      height: 50,
+      borderRadius: 30,
+      backgroundColor: colors.primary.default,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    swapButtonText: {
+      fontSize: 16,
+      color: colors.primary.inverse,
+    },
   });
 
 async function resetAndStartPolling({
@@ -2070,7 +2082,7 @@ function SwapsQuotesView({
             </QuotesSummary.Body>
           </QuotesSummary>
         )}
-        <SliderButton
+        {/* <SliderButton
           incompleteText={
             <Text style={styles.sliderButtonText}>
               {`${strings('swaps.swipe_to')} `}
@@ -2087,12 +2099,20 @@ function SwapsQuotesView({
           }
           disabled={unableToSwap || isAnimating}
           onComplete={handleCompleteSwap}
-        />
-        <TouchableOpacity onPress={handleTermsPress} style={styles.termsButton}>
+        /> */}
+        <TouchableOpacity
+          style={styles.swapButton}
+          onPress={() => {
+            handleCompleteSwap();
+          }}
+        >
+          <Text style={styles.swapButtonText}>{'Swap'}</Text>
+        </TouchableOpacity>
+        {/* <TouchableOpacity onPress={handleTermsPress} style={styles.termsButton}>
           <Text link centered>
             {strings('swaps.terms_of_service')}
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
 
       <InfoModal

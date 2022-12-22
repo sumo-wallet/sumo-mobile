@@ -19,6 +19,7 @@ import { SHeader } from '../../../components/common';
 import { useNavigatorParams } from '../../../components/hooks';
 import CollectibleMedia from '../../UI/CollectibleMedia';
 import Device from '../../../util/device';
+import { renderShortText } from '../../../util/general';
 
 const DEVICE_WIDTH = Device.getDeviceWidth();
 const COLLECTIBLE_WIDTH = (DEVICE_WIDTH - 30 - 16) / 2;
@@ -255,7 +256,7 @@ export const NftCollectionScreen = React.memo(() => {
               <View style={styles.nftTitle}>
                 <Text
                   style={styles.nftTitleContent}
-                >{`# ${item.tokenId}`}</Text>
+                >{`# ${renderShortText(item.tokenId)}`}</Text>
               </View>
             </TouchableOpacity>
           );

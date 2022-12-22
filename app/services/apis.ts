@@ -9,6 +9,7 @@ import {
   HandlerSearchDappResponse,
   HandlerSearchDappRequest,
   HandlerPopularSearchResponse,
+  HandlerWalletHomeConfigResponse,
 } from './../types';
 
 /* eslint-disable prefer-destructuring */
@@ -111,6 +112,14 @@ class Client {
   public getDappSearchPopular() {
     return fetcher<HandlerPopularSearchResponse>(
       `${this.baseUrl}/api/v1/dapp/popular-search`,
+      {
+        headers: this.headers,
+      },
+    );
+  }
+  public getWalletHome() {
+    return fetcher<HandlerWalletHomeConfigResponse>(
+      `${this.baseUrl}/api/v1/wallet/home`,
       {
         headers: this.headers,
       },

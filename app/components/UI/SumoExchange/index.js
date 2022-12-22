@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { View as AnimatableView } from 'react-native-animatable';
 
@@ -22,6 +22,8 @@ import { useTheme } from '../../../util/theme';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import FastImage from 'react-native-fast-image';
 import { images } from '../../../assets';
+import { createNewTab, openDapp } from '../../../actions/browser';
+import { ROUTES } from '../../../navigation/routes';
 
 const createStyles = (colors) =>
   StyleSheet.create({
@@ -78,18 +80,21 @@ const EXCHANGE = [
     logo: 'https://seeklogo.com/images/B/binance-coin-bnb-logo-CD94CC6D31-seeklogo.com.png',
     name: 'Binance',
     description: 'Spot, future & saving, KYC required',
+    url: 'https://accounts.binance.com/en/register',
   },
   {
     logo: 'https://styles.redditmedia.com/t5_261gdr/styles/communityIcon_u34qachuimz31.png',
     name: 'MEXC',
     description: 'Spot, future trading',
+    url: 'https://www.m.mexc.com/',
   },
   {
     logo: 'https://s2.coinmarketcap.com/static/img/coins/64x64/16334.png',
     name: 'ApolloX',
     description: 'Future trading DEX',
-  }
-]
+    url: 'https://www.apollox.finance/en',
+  },
+];
 
 function SumoExchangeView({
   swapsTokens,
@@ -111,8 +116,15 @@ function SumoExchangeView({
 }) {
   const navigation = useNavigation();
   const route = useRoute();
+  const dispatch = useDispatch();
   const { colors } = useTheme();
   const styles = createStyles(colors);
+
+  const openDappBrowser = (dapp) => {
+    dispatch(createNewTab(dapp?.url));
+    dispatch(openDapp({ dapp }));
+    navigation.navigate(ROUTES.BrowserTabHome, { dapp });
+  };
 
   return (
     <View style={{ flex: 1 }}>
@@ -127,11 +139,13 @@ function SumoExchangeView({
                 resizeMode={FastImage.resizeMode.stretch}
               />
             </View>
-          )
+          );
         }}
         renderItem={({ item }) => {
           return (
-            <TouchableOpacity style={styles.providerContainer}>
+            <TouchableOpacity style={styles.providerContainer} onPress={() => {
+              openDappBrowser(item);
+            }}>
               <FastImage
                 source={{ uri: item.logo }}
                 style={styles.logo}
@@ -143,7 +157,7 @@ function SumoExchangeView({
               </View>
               <Icon name="share" size={18} style={styles.caretDown} ></Icon>
             </TouchableOpacity>
-          )
+          );
         }}
       ></FlatList>
     </View>
