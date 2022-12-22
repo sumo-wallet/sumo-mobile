@@ -22,7 +22,7 @@ export interface HandlerDappHomeResponse {
   banner?: ModelBanner[];
   category?: ModelCategory[];
   home_list?: ModelDApps[];
-  hot_dapp?: ModelCategoryApp[];
+  hot_dapp?: ModelDApp[];
 }
 
 export interface HandlerFeature {

@@ -18,6 +18,7 @@ import recentsReducer from './recents';
 import navigationReducer from './navigation';
 import networkOnboardReducer from './networkSelector';
 import securityReducer from './security';
+import dappReducer from './dapp';
 import { combineReducers } from 'redux';
 
 const rootReducer = combineReducers({
@@ -41,6 +42,7 @@ const rootReducer = combineReducers({
   navigation: navigationReducer,
   networkOnboarded: networkOnboardReducer,
   security: securityReducer,
+  dapp: dappReducer,
 });
 
 export default rootReducer;

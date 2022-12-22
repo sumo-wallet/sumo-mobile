@@ -4,36 +4,20 @@ import {
   View,
   StyleProp,
   ViewStyle,
-  Image,
   Text,
   FlatList,
   TouchableOpacity,
 } from 'react-native';
+import FastImage from 'react-native-fast-image';
 import { Style, Fonts } from './../../../styles';
-import { placeholders } from './../../../assets';
-import { Dapp } from './../../../types';
+import { ModelDApp } from './../../../types';
 import { useTheme } from './../../../util/theme';
-
-export const dummyDataRecent: Dapp[] = [
-  {
-    id: 0,
-    name: 'PancakeSwap',
-    image: placeholders.dapp7,
-    website: 'https://pancakeswap.finance/',
-  },
-  {
-    id: 1,
-    name: 'Uniswap',
-    image: placeholders.dapp4,
-    website: 'https://app.uniswap.org/#/swap',
-  },
-];
 
 export interface SearchRecentProps {
   style?: StyleProp<ViewStyle>;
   title?: string;
-  data?: Dapp[];
-  onSelect?: (item: Dapp) => void;
+  data?: ModelDApp[];
+  onSelect?: (item: ModelDApp) => void;
 }
 
 export const SearchRecent = ({
@@ -44,10 +28,13 @@ export const SearchRecent = ({
 }: SearchRecentProps) => {
   const { colors } = useTheme();
   const renderItem = React.useCallback(
-    ({ item }: { item: Dapp }) => {
+    ({ item }: { item: ModelDApp }) => {
       return (
         <TouchableOpacity onPress={() => onSelect && onSelect(item)}>
-          <Image style={Style.s({ size: 40 })} source={item.image} />
+          <FastImage
+            style={Style.s({ size: 40 })}
+            source={{ uri: item?.logo }}
+          />
         </TouchableOpacity>
       );
     },

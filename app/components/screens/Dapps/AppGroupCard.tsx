@@ -32,11 +32,11 @@ export const AppGroupCard = ({ style, title, dapps }: AppGroupCardProps) => {
     if (dapps?.length === 0) {
       return [];
     }
-    dapps?.forEach((dapp: ModelDApp) => {
-      if (result[result.length - 1].apps.length < 3) {
-        result[result.length - 1].apps.push(dapp);
+    dapps?.forEach((item: ModelDApp) => {
+      if (result[result?.length - 1]?.apps?.length < 3) {
+        result[result?.length - 1]?.apps?.push(item);
       } else {
-        result.push({ apps: [dapp] });
+        result.push({ apps: [item] });
       }
     });
     return result;
