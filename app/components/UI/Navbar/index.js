@@ -1023,8 +1023,7 @@ export function getNetworkNavbarOptions(
 ) {
   const innerStyles = StyleSheet.create({
     headerStyle: {
-      // backgroundColor: themeColors.background.default,
-      backgroundColor: Colors.grayscale[100],
+      backgroundColor: themeColors.background.default,
       shadowColor: importedColors.transparent,
       elevation: 0,
     },

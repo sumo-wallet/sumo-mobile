@@ -74,8 +74,7 @@ const createStyles = (colors) =>
     },
     amount: {
       fontSize: 30,
-      // color: colors.text.default,
-      color: Colors.white[1],
+      color: colors.text.default,
       // ...fontStyles.normal,
       textTransform: 'uppercase',
     },

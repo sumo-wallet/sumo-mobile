@@ -38,8 +38,7 @@ const createStyles = (colors: ThemeColors) =>
     title: {
       fontSize: 18,
       ...fontStyles.normal,
-      // color: colors.text.default,
-      color: Colors.white[2],
+      color: colors.text.default,
     },
     otherNetworkIcon: {
       backgroundColor: importedColors.transparent,

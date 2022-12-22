@@ -45,14 +45,14 @@ import { collectibleContractsSelector } from '../../../reducers/collectibles';
 import { isQRHardwareAccount } from '../../../util/address';
 import { ThemeContext, mockTheme } from '../../../util/theme';
 import withQRHardwareAwareness from '../QRHardware/withQRHardwareAwareness';
-import { Style, Colors, Fonts } from './../../../styles';
+import { Style, Fonts } from './../../../styles';
 import FastImage from 'react-native-fast-image';
 import { images } from './../../../assets';
 
 const createStyles = (colors) =>
   StyleSheet.create({
     wrapper: {
-      backgroundColor: Colors.grayscale[100], // colors.background.default,
+      backgroundColor: colors.background.default,
       flex: 1,
     },
     bottomModal: {
@@ -63,7 +63,7 @@ const createStyles = (colors) =>
       flex: 1,
       justifyContent: 'center',
       // alignItems: 'center',
-      backgroundColor: Colors.grayscale[100], // colors.background.default,
+      backgroundColor: colors.background.default,
       minHeight: Dimensions.get('window').height / 2,
     },
     keyboardAwareWrapper: {
@@ -336,13 +336,13 @@ class Transactions extends PureComponent {
             source={images.emptyBox}
           />
           <View style={Style.s({ mt: 12, items: 'center' })}>
-            <Text style={Fonts.t({ s: 14, c: Colors.white[2], w: '500' })}>
+            <Text style={Fonts.t({ s: 14, c: colors.text.default, w: '500' })}>
               {'No transaction yet'}
             </Text>
             <Text
               style={Fonts.t({
                 s: 12,
-                c: Colors.grayscale[60],
+                c: colors.text.alternative,
                 w: '400',
                 t: 4,
               })}
@@ -759,8 +759,8 @@ class Transactions extends PureComponent {
           ? this.renderLoader()
           : this.props.transactions.length ||
             this.props.submittedTransactions.length
-          ? this.renderList()
-          : this.renderEmpty()}
+            ? this.renderList()
+            : this.renderEmpty()}
         {(this.state.speedUp1559IsOpen || this.state.cancel1559IsOpen) &&
           this.renderUpdateTxEIP1559Gas(this.state.cancel1559IsOpen)}
       </SafeAreaView>

@@ -40,7 +40,7 @@ import {
 
 import { Fonts, Style } from './../../../styles';
 import { icons } from './../../../assets';
-import Colors from './../../../styles/colors';
+import { useTheme } from './../../../util/theme';
 
 // const frameImage = require('../../../images/frame.png'); // eslint-disable-line import/no-commonjs
 
@@ -61,6 +61,8 @@ const QRScanner = () => {
   const navigation = useNavigation();
   const { onScanError, onScanSuccess, onStartScan, origin } =
     useParams<QRScannerParams>();
+
+  const { colors } = useTheme();
 
   const mountedRef = useRef<boolean>(true);
   const shouldReadBarCodeRef = useRef<boolean>(true);
@@ -284,16 +286,6 @@ const QRScanner = () => {
     [navigation],
   );
 
-  // return (
-  //   <SafeAreaView>
-  //     <View>
-  //       <TouchableOpacity>
-  //         <Image />
-  //       </TouchableOpacity>
-  //     </View>
-  //   </SafeAreaView>
-  // );
-
   const onPressFlash = React.useCallback(() => {
     if (flashMode !== 'torch') {
       setFlashMode(RNCamera.Constants.FlashMode.torch);
@@ -302,18 +294,25 @@ const QRScanner = () => {
     }
   }, [flashMode]);
 
-  const onPressOpenGallery = () => {};
+  const onPressOpenGallery = () => {
+    console.log('onPressOpenGallery');
+  };
 
   return (
     <SafeAreaView style={styles.container}>
       <View
-        style={Style.s({ direc: 'row', px: 4, minH: 48, bg: Colors.white[1] })}
+        style={Style.s({
+          direc: 'row',
+          px: 4,
+          minH: 48,
+          bg: colors.background.default,
+        })}
       >
         <TouchableOpacity onPress={goBack} style={Style.s({ p: 12 })}>
           <Image style={Style.s({ size: 24 })} source={icons.iconArrowLeft} />
         </TouchableOpacity>
         <View style={Style.s({ flex: 1, cen: true })}>
-          <Text style={Fonts.t({ s: 14, w: '500', c: Colors.gray[1] })}>
+          <Text style={Fonts.t({ s: 14, w: '500', c: colors.text.default })}>
             {'Scan'}
           </Text>
         </View>
@@ -370,7 +369,7 @@ const QRScanner = () => {
                 style={Fonts.t({
                   s: 12,
                   h: 18,
-                  c: Colors.white[2],
+                  c: colors.text.default,
                   t: 10,
                   text: 'center',
                   w: '500',

@@ -1,12 +1,15 @@
 import React, { memo, useCallback } from 'react';
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import PagerView from 'react-native-pager-view';
+import { useNavigation } from '@react-navigation/native';
+
 import { baseStyles, colors } from '../../../styles/common';
 import { DynamicHeader } from '../../Base/DynamicHeader';
 import { icons } from '../../../assets';
-import PagerView from 'react-native-pager-view';
 import TokenList from './modal/TokenList';
 import NFTList from './modal/NFTList';
 import ScrollTab from './components/ScrollTab';
+import Routes from './../../../constants/navigation/Routes';
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -37,6 +40,7 @@ const styles = StyleSheet.create({
 
 export const WalletScreen = () => {
   const pagerViewRef = React.useRef<PagerView>();
+  const navigation = useNavigation();
 
   const onChangeTab = useCallback((value: number) => {
     if (value === 0) {
@@ -49,15 +53,23 @@ export const WalletScreen = () => {
 
   return (
     <View style={styles.wrapper}>
-      <DynamicHeader title={'Wallet name'} hideGoBack >
+      <DynamicHeader title={'Wallet name'} hideGoBack>
         <View style={styles.containerLeft}>
           <Image source={icons.iconBitcoin} style={styles.icon} />
         </View>
         <View style={styles.containerRight}>
-          <TouchableOpacity onPress={() => { navigation.navigate(Routes.NOTIFICATIONS.NOTIFICATIONS) }}>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate(Routes.NOTIFICATIONS.NOTIFICATIONS);
+            }}
+          >
             <Image source={icons.iconBell} style={styles.icon} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => { navigation.navigate(Routes.QR_SCANNER) }}>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate(Routes.QR_SCANNER);
+            }}
+          >
             <Image source={icons.iconScanQR} style={styles.iconQR} />
           </TouchableOpacity>
         </View>

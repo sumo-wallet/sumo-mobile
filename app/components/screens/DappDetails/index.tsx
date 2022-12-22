@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, SafeAreaView, Text, StatusBar, ScrollView } from 'react-native';
+import { View, SafeAreaView, Text, ScrollView } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { useDispatch } from 'react-redux';
 
@@ -50,7 +50,6 @@ export const DappDetails = React.memo(() => {
 
   return (
     <SafeAreaView style={Style.s({ flex: 1, bg: colors.background.default })}>
-      <StatusBar barStyle="light-content" />
       <SHeader title="PancakeSwap" />
       <ScrollView style={Style.s({ flex: 1 })}>
         <View style={Style.s({ items: 'center', self: 'center', mt: 20 })}>

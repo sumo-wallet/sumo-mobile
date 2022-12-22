@@ -7,7 +7,7 @@ import FastImage from 'react-native-fast-image';
 // import { toChecksumAddress } from 'ethereumjs-util';
 import { useSelector } from 'react-redux';
 
-import { Colors, Fonts, Style } from './../../../styles';
+import { Fonts, Style } from './../../../styles';
 // import { SInput } from './../../common/SInput';
 // import { SButton } from './../../common/SButton';
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from './../../../constants/ui';
@@ -16,6 +16,7 @@ import { SCREEN_HEIGHT, SCREEN_WIDTH } from './../../../constants/ui';
 // import Identicon from '../../UI/Identicon';
 // import AssetIcon from '../../UI/AssetIcon';
 import { UserToken } from './../../../types';
+import { useTheme } from './../../../util/theme';
 
 export interface Props {
   isOpen: boolean;
@@ -28,6 +29,8 @@ export const ChooseCurrencyModal = React.memo(
     const { tokens }: { tokens: UserToken[] } = useSelector(
       (state: any) => state?.engine?.backgroundState?.TokensController,
     );
+
+    const { colors } = useTheme();
 
     // React.useEffect(() => {
     //   console.log('tokens: ', tokens);
@@ -70,7 +73,7 @@ export const ChooseCurrencyModal = React.memo(
               py: 12,
               direc: 'row',
               items: 'center',
-              bg: Colors.gray[4],
+              bg: colors.background.alternative,
               bor: 8,
             })}
           >
@@ -78,19 +81,19 @@ export const ChooseCurrencyModal = React.memo(
               style={Style.s({ size: 40 })}
               source={{ uri: item?.image }}
             />
-            <Text style={Fonts.t({ s: 14, c: Colors.white[2], l: 16 })}>
+            <Text style={Fonts.t({ s: 14, c: colors.text.default, l: 16 })}>
               {item?.symbol}
               {/* <Text style={Fonts.t({ s: 14, c: Colors.grayscale[60] })}>
             {'BEP2'}
           </Text> */}
             </Text>
-            <Text style={Fonts.t({ s: 14, c: Colors.white[2], l: 'auto' })}>
+            <Text style={Fonts.t({ s: 14, c: colors.text.default, l: 'auto' })}>
               {'0'}
             </Text>
           </TouchableOpacity>
         );
       },
-      [handleSelectToken],
+      [colors.text.default, handleSelectToken],
     );
 
     const height = SCREEN_HEIGHT - 56 - 34 - 100;
@@ -112,7 +115,7 @@ export const ChooseCurrencyModal = React.memo(
           style={Style.s({
             w: SCREEN_WIDTH,
             h: height,
-            bg: Colors.grayscale[80],
+            bg: colors.background.default,
             bor: 8,
             px: 16,
           })}
@@ -122,7 +125,7 @@ export const ChooseCurrencyModal = React.memo(
               w: 40,
               h: 4,
               bor: 4,
-              bg: Colors.white[1],
+              bg: colors.border.default,
               self: 'center',
               mt: 8,
             })}
@@ -132,7 +135,7 @@ export const ChooseCurrencyModal = React.memo(
               s: 18,
               w: '500',
               t: 24,
-              c: Colors.white[2],
+              c: colors.text.default,
               self: 'center',
             })}
           >

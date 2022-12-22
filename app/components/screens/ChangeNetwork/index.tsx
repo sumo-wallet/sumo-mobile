@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { useNavigation } from '@react-navigation/native';
-import { strings } from '../../../../locales/i18n';
 import React from 'react';
-import { View, SafeAreaView, StatusBar } from 'react-native';
+import { View, SafeAreaView } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+
+import { strings } from '../../../../locales/i18n';
 import { Style } from './../../../styles';
 import { SHeader } from './../../common/SHeader';
 import Networks from './Networks';
@@ -18,7 +19,6 @@ export const ChangeNetwork = React.memo(() => {
 
   return (
     <SafeAreaView style={Style.s({ flex: 1, bg: colors.background.default })}>
-      <StatusBar barStyle="light-content" />
       <SHeader title={strings('app_settings.networks_title')} />
       <Networks
         navigation={nav}

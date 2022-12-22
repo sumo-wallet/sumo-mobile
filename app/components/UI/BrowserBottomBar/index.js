@@ -1,5 +1,11 @@
 import React, { PureComponent } from 'react';
-import { Platform, TouchableOpacity, StyleSheet, Text, View } from 'react-native';
+import {
+  Platform,
+  TouchableOpacity,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import PropTypes from 'prop-types';
 import ElevatedView from 'react-native-elevated-view';
 import TabCountIcon from '../Tabs/TabCountIcon';
@@ -154,9 +160,12 @@ export default class BrowserBottomBar extends PureComponent {
     // console.log('dapp: ', dapp);
 
     return (
-      <ElevatedView elevation={11} style={[styles.bottomBar, Style.s({ px: 24, pb: 34 })]}>
-        <View style={Style.s({ flex: 1 })} >
-          <Text style={Fonts.t({ s: 16, w: '500', c: Colors.grayscale[100] })} >
+      <ElevatedView
+        elevation={11}
+        style={[styles.bottomBar, Style.s({ px: 24, pb: 34 })]}
+      >
+        <View style={Style.s({ flex: 1 })}>
+          <Text style={Fonts.t({ s: 16, w: '500', c: colors.text.default })}>
             {dapp?.name ?? url}
           </Text>
         </View>
@@ -199,7 +208,7 @@ export default class BrowserBottomBar extends PureComponent {
         >
           <SimpleLineIcons name="home" size={22} style={styles.icon} />
         </TouchableOpacity> */}
-        <View style={Style.s({ direc: 'row', items: 'center', pr: 16 })} >
+        <View style={Style.s({ direc: 'row', items: 'center', pr: 16 })}>
           <TouchableOpacity
             onPress={showTabs}
             style={styles.iconButton}

@@ -29,19 +29,19 @@ import {
   findBlockExplorerForRpc,
   isMainnetByChainId,
 } from '../../../util/networks';
-import { Colors, Style, Fonts } from './../../../styles';
+import { Style, Fonts } from './../../../styles';
 
 const createStyles = (colors) =>
   StyleSheet.create({
     wrapper: {
-      // backgroundColor: 'red', // colors.background.default,
+      backgroundColor: colors.background.default,
       flex: 1,
     },
     assetOverviewWrapper: {
       minHeight: 280,
     },
     loader: {
-      backgroundColor: Colors.grayscale[100], // colors.background.default,
+      backgroundColor: colors.background.default,
       flex: 1,
       alignItems: 'center',
       justifyContent: 'center',
@@ -137,9 +137,9 @@ class Asset extends PureComponent {
         colors,
         shouldShowMoreOptionsInNavBar
           ? () =>
-              navigation.navigate('AssetOptions', {
-                isNativeCurrency: isNativeToken,
-              })
+            navigation.navigate('AssetOptions', {
+              isNativeCurrency: isNativeToken,
+            })
           : undefined,
         true,
       ),
@@ -394,7 +394,7 @@ class Asset extends PureComponent {
                   style={Fonts.t({
                     s: 18,
                     w: '500',
-                    c: Colors.white[2],
+                    c: colors.text.default,
                     x: 16,
                   })}
                 >

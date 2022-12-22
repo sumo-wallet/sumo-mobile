@@ -32,10 +32,10 @@ export const BrowserHeader = ({
   const dispatch = useDispatch();
   const { activeTab: activeTabId } = useSelector((state: any) => state?.browser);
 
-  const handleCloseBrowser = React.useCallback(()=>{
+  const handleCloseBrowser = React.useCallback(() => {
     nav.goBack();
   }, [nav])
-  const handleCloseTab = React.useCallback(()=>{
+  const handleCloseTab = React.useCallback(() => {
     // dispatch(closeTab(activeTabId))
   }, [])
   return (
@@ -48,7 +48,6 @@ export const BrowserHeader = ({
         py: 12,
         minH: 48,
         bg: colors.background.default,
-        // bg: Colors.grayscale[100],
       })}
     >
       <View style={Style.s({ direc: 'row', items: 'center', py: 2 })}>

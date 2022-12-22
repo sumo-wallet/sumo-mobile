@@ -33,7 +33,7 @@ const { weiHexToGweiDec, isEIP1559Transaction } = util;
 const createStyles = (colors) =>
   StyleSheet.create({
     row: {
-      // backgroundColor: Colors.gray[4], // colors.background.default,
+      backgroundColor: colors.background.default,
       flex: 1,
       // borderBottomWidth: StyleSheet.hairlineWidth,
       // borderColor: colors.border.muted,

@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/prefer-optional-chain */
 import React from 'react';
-import { StatusBar, ActivityIndicator } from 'react-native';
+import { ActivityIndicator } from 'react-native';
 import { useDisclosure } from '@dwarvesf/react-hooks';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import PagerView from 'react-native-pager-view';
@@ -21,6 +21,7 @@ import { useTheme } from './../../../util/theme';
 import { useFetchDappHome } from './../../../services/dapp/useFetchDappHome';
 import { useFetchDappRecent } from './../../../services/dapp/useFetchDappRecent';
 import { AllDappList } from './AllDappList';
+import { showDappWarningAlert } from './../../../actions/dapp';
 
 export const DappsScreen = React.memo(() => {
   const nav = useNavigator();
@@ -31,6 +32,13 @@ export const DappsScreen = React.memo(() => {
   const mounted = React.useRef<boolean>(false);
   const [pageIndex, setPageIndex] = React.useState(0);
   const pagerViewRef = React.useRef<PagerView>();
+  const showWarningAlert = useSelector(
+    (state: any) => state.dapp.showWarningAlert,
+  );
+
+  React.useEffect(() => {
+    console.log('showWarningAlert: ', showWarningAlert);
+  }, [showWarningAlert]);
 
   const {
     hotDapp,
@@ -59,6 +67,7 @@ export const DappsScreen = React.memo(() => {
 
   const handleConfirmWarning = React.useCallback(() => {
     if (curDapp && curDapp?.website) {
+      dispatch(showDappWarningAlert());
       dispatch(createNewTab(curDapp?.website));
       dispatch(openDapp({ dapp: curDapp }));
       nav.navigate(ROUTES.BrowserTabHome, { dapp: curDapp });
@@ -91,7 +100,6 @@ export const DappsScreen = React.memo(() => {
       edges={['top']}
       style={Style.s({ flex: 1, bg: colors.background.default })}
     >
-      <StatusBar barStyle="light-content" />
       <SearchBar placeholder="Search DApp or enter a link" />
       <CategoryHeader
         pageIndex={pageIndex}
@@ -118,7 +126,11 @@ export const DappsScreen = React.memo(() => {
           recent={recent}
           onSelect={(dapp: ModelDApp) => {
             setDapp(dapp);
-            securityWarningModal.onOpen();
+            if (!showWarningAlert) {
+              securityWarningModal.onOpen();
+            } else {
+              handleConfirmWarning();
+            }
           }}
           onSeeMoreCategory={onSeeMoreCategory}
         />

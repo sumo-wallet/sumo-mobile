@@ -6,16 +6,16 @@ import {
   Dimensions,
   TextInput,
   TouchableOpacity,
-  StatusBar,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import FastImage from 'react-native-fast-image';
 import QRCode from 'react-native-qrcode-svg';
 import Share from 'react-native-share';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import Logger from '../../../util/Logger';
+import { useDisclosure } from '@dwarvesf/react-hooks';
 
-import { Colors, Fonts, Style } from './../../../styles';
+import Logger from '../../../util/Logger';
+import { Fonts, Style } from './../../../styles';
 import { SHeader } from './../../common/SHeader';
 import { icons } from './../../../assets';
 import { SButton } from './../../common/SButton';
@@ -24,13 +24,14 @@ import { showAlert } from './../../../actions/alert';
 import { strings } from '../../../../locales/i18n';
 import { generateUniversalLinkAddress } from '../../../util/payment-link-generator';
 import { ChooseCurrencyModal } from './ChooseCurrencyModal';
-import { useDisclosure } from '@dwarvesf/react-hooks';
 import { UserToken } from './../../../types';
+import { useTheme } from './../../../util/theme';
 
 export const ReceiveScreen = () => {
   const chooseCurrencyModal = useDisclosure();
   const inputRef = React.useRef<TextInput>();
   const dispatch = useDispatch();
+  const { colors } = useTheme();
   const [tokenSelected, setToken] = React.useState<UserToken | undefined>();
 
   const { chainId } = useSelector(
@@ -85,9 +86,8 @@ export const ReceiveScreen = () => {
   }, []);
 
   return (
-    <SafeAreaView style={Style.s({ flex: 1, bg: Colors.grayscale[100] })}>
+    <SafeAreaView style={Style.s({ flex: 1, bg: colors.background.default })}>
       <SHeader title="Receive" />
-      <StatusBar barStyle="light-content" />
       <KeyboardAwareScrollView
         enableOnAndroid
         extraHeight={160}
@@ -96,7 +96,7 @@ export const ReceiveScreen = () => {
         <View
           style={Style.s({
             m: 16,
-            bg: Colors.gray[4],
+            bg: colors.background.alternative,
             pt: 12,
             pb: 16,
             px: 16,
@@ -108,7 +108,7 @@ export const ReceiveScreen = () => {
             onPress={chooseCurrencyModal.onOpen}
             style={Style.s({ direc: 'row', items: 'center' })}
           >
-            <Text style={Fonts.t({ s: 14, w: '500', c: Colors.white[1] })}>
+            <Text style={Fonts.t({ s: 14, w: '500', c: colors.text.default })}>
               {`${tokenSelected?.symbol ?? ''} (BEP2)`}
             </Text>
             <FastImage
@@ -119,7 +119,7 @@ export const ReceiveScreen = () => {
           <View
             style={Style.s({
               p: 8,
-              bg: Colors.white[1],
+              bg: colors.background.default,
               cen: true,
               bor: 8,
               mt: 16,
@@ -134,7 +134,7 @@ export const ReceiveScreen = () => {
             style={[
               Fonts.t({
                 s: 12,
-                c: Colors.grayscale[60],
+                c: colors.text.alternative,
                 t: 16,
                 text: 'center',
               }),
@@ -144,7 +144,7 @@ export const ReceiveScreen = () => {
           </Text>
         </View>
         <View style={Style.s({ px: 16, mt: 8 })}>
-          <Text style={[Fonts.t({ s: 14, c: Colors.white[1] })]}>
+          <Text style={[Fonts.t({ s: 14, c: colors.text.default })]}>
             {'Request Payment'}
           </Text>
           <TouchableOpacity
@@ -158,14 +158,14 @@ export const ReceiveScreen = () => {
                 direc: 'row',
                 items: 'center',
               }),
-              Style.b({ color: Colors.grayscale[80], bor: 8, width: 1 }),
+              Style.b({ color: colors.border.default, bor: 8, width: 1 }),
             ]}
           >
             <View style={Style.s({ flex: 1 })}>
               <View style={Style.s({ direc: 'row', items: 'center' })}>
                 <Text
                   style={[
-                    Fonts.t({ s: 18, w: '500', c: Colors.white[1], r: 4 }),
+                    Fonts.t({ s: 18, w: '500', c: colors.text.default, r: 4 }),
                   ]}
                 >
                   {'$'}
@@ -174,23 +174,28 @@ export const ReceiveScreen = () => {
                   ref={inputRef as any}
                   style={[
                     Style.s({ minW: 42 }),
-                    Fonts.t({ s: 18, w: '500', c: Colors.white[1] }),
+                    Fonts.t({ s: 18, w: '500', c: colors.text.default }),
                   ]}
                   placeholder="0.00"
                   keyboardType="numeric"
-                  placeholderTextColor={Colors.grayscale[60]}
+                  placeholderTextColor={colors.text.muted}
                   maxLength={16}
                 />
                 <Text
                   style={[
-                    Fonts.t({ s: 18, w: '500', c: Colors.white[1], l: 4 }),
+                    Fonts.t({ s: 18, w: '500', c: colors.text.default, l: 4 }),
                   ]}
                 >
                   {'BNB'}
                 </Text>
               </View>
               <Text
-                style={Fonts.t({ s: 12, c: Colors.white[1], t: 6, w: '500' })}
+                style={Fonts.t({
+                  s: 12,
+                  c: colors.text.default,
+                  t: 6,
+                  w: '500',
+                })}
               >
                 {'0 USD'}
               </Text>
@@ -207,7 +212,7 @@ export const ReceiveScreen = () => {
             style={Fonts.t({
               s: 14,
               w: '600',
-              c: Colors.red[1],
+              c: colors.error.default,
               t: 8,
               self: 'flex-end',
             })}
@@ -234,7 +239,7 @@ export const ReceiveScreen = () => {
         <SButton
           onPress={handleCopyAddress}
           title="Copy address"
-          style={Style.s({ flex: 1, bg: Colors.white[2], ml: 8 })}
+          style={Style.s({ flex: 1, bg: colors.box.default, ml: 8 })}
         />
       </View>
       <ChooseCurrencyModal
