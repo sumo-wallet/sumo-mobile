@@ -10,6 +10,7 @@ import {
   HandlerSearchDappRequest,
   HandlerPopularSearchResponse,
   HandlerWalletHomeConfigResponse,
+  HandlerNotificationResponse,
 } from './../types';
 
 /* eslint-disable prefer-destructuring */
@@ -120,6 +121,14 @@ class Client {
   public getWalletHome() {
     return fetcher<HandlerWalletHomeConfigResponse>(
       `${this.baseUrl}/api/v1/wallet/home`,
+      {
+        headers: this.headers,
+      },
+    );
+  }
+  public getNotification() {
+    return fetcher<HandlerNotificationResponse>(
+      `${this.baseUrl}/api/v1/notification`,
       {
         headers: this.headers,
       },

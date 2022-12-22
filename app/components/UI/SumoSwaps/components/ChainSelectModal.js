@@ -152,14 +152,14 @@ function ChainSelectModal({
 
   const excludedAddresses = useMemo(
     () =>
-      excludeAddresses.filter(Boolean).map((address) => address.toLowerCase()),
+      excludeAddresses.filter(Boolean).map((id) => id),
     [excludeAddresses],
   );
 
   const filteredTokens = useMemo(
     () =>
       tokens?.filter(
-        (token) => !excludedAddresses.includes(token.address?.toLowerCase()),
+        (token) => !excludedAddresses.includes(token.id),
       ),
     [tokens, excludedAddresses],
   );
@@ -202,42 +202,8 @@ function ChainSelectModal({
     [excludedAddresses, searchString, tokenSearchResults.length],
   );
 
-  const [loadingTokenMetadata, tokenMetadata] = useFetchTokenMetadata(
-    shouldFetchToken ? searchString : null,
-    chainId,
-  );
-
   const renderItem = useCallback(
     ({ item }) => {
-      const itemAddress = safeToChecksumAddress(item.address);
-
-      let balance, balanceFiat;
-      if (isSwapsNativeAsset(item)) {
-        balance = renderFromWei(
-          accounts[selectedAddress] && accounts[selectedAddress].balance,
-        );
-        balanceFiat = weiToFiat(
-          hexToBN(accounts[selectedAddress].balance),
-          conversionRate,
-          currentCurrency,
-        );
-      } else {
-        const exchangeRate =
-          itemAddress in tokenExchangeRates
-            ? tokenExchangeRates[itemAddress]
-            : undefined;
-        balance =
-          itemAddress in balances
-            ? renderFromTokenMinimalUnit(balances[itemAddress], item.decimals)
-            : 0;
-        balanceFiat = balanceToFiat(
-          balance,
-          conversionRate,
-          exchangeRate,
-          currentCurrency,
-        );
-      }
-
       return (
         <TouchableOpacity
           style={styles.resultRow}
@@ -252,102 +218,19 @@ function ChainSelectModal({
                 <ListItem.Title>{item.symbol}</ListItem.Title>
                 {item.name && <Text>{item.name}</Text>}
               </ListItem.Body>
-              <ListItem.Amounts>
-                <ListItem.Amount>{balance}</ListItem.Amount>
-                {balanceFiat && (
-                  <ListItem.FiatAmount>{balanceFiat}</ListItem.FiatAmount>
-                )}
-              </ListItem.Amounts>
             </ListItem.Content>
           </ListItem>
         </TouchableOpacity>
       );
     },
     [
-      balances,
-      accounts,
       selectedAddress,
-      conversionRate,
-      currentCurrency,
-      tokenExchangeRates,
       onItemPress,
       styles,
     ],
   );
 
   const handleSearchPress = () => searchInput?.current?.focus();
-
-  const handleShowImportToken = useCallback(() => {
-    searchInput?.current?.blur();
-    showTokenImportModal();
-  }, [showTokenImportModal]);
-
-  const handlePressImportToken = useCallback(
-    (item) => {
-      const { address, symbol } = item;
-      InteractionManager.runAfterInteractions(() => {
-        Analytics.trackEventWithParameters(
-          ANALYTICS_EVENT_OPTS.CUSTOM_TOKEN_IMPORTED,
-          { address, symbol, chain_id: chainId },
-          true,
-        );
-      });
-      hideTokenImportModal();
-      onItemPress(item);
-    },
-    [chainId, hideTokenImportModal, onItemPress],
-  );
-
-  const handleBlockExplorerPress = useCallback(() => {
-    navigation.navigate('Webview', {
-      screen: 'SimpleWebview',
-      params: {
-        url: shouldFetchToken
-          ? explorer.token(searchString)
-          : explorer.token('').replace('token/', 'tokens/'),
-        title: strings(
-          shouldFetchToken ? 'swaps.verify' : 'swaps.find_token_address',
-        ),
-      },
-    });
-    dismiss();
-  }, [dismiss, explorer, navigation, searchString, shouldFetchToken]);
-
-  const renderFooter = useMemo(
-    () => (
-      <TouchableWithoutFeedback>
-        <Alert
-          renderIcon={() => (
-            <FAIcon
-              name="info-circle"
-              style={styles.footerIcon}
-              color={colors.primary.default}
-              size={15}
-            />
-          )}
-        >
-          {(textStyle) => (
-            <Text style={textStyle}>
-              <Text reset bold>
-                {strings('swaps.cant_find_token')}
-              </Text>
-              {` ${strings('swaps.manually_pasting')}`}
-              {explorer.isValid && (
-                <Text reset>
-                  {` ${strings('swaps.token_address_can_be_found')} `}
-                  <Text reset link underline onPress={handleBlockExplorerPress}>
-                    {explorer.name}
-                  </Text>
-                  .
-                </Text>
-              )}
-            </Text>
-          )}
-        </Alert>
-      </TouchableWithoutFeedback>
-    ),
-    [explorer.isValid, explorer.name, handleBlockExplorerPress, styles, colors],
-  );
 
   const renderEmptyList = useMemo(
     () => (
@@ -410,93 +293,16 @@ function ChainSelectModal({
             )}
           </View>
         </TouchableWithoutFeedback>
-        {shouldFetchToken ? (
-          <View style={styles.resultsView}>
-            {loadingTokenMetadata ? (
-              <View style={styles.loadingTokenView}>
-                <ActivityIndicator style={styles.loadingIndicator} />
-                <Text>{strings('swaps.gathering_token_details')}</Text>
-              </View>
-            ) : tokenMetadata.error ? (
-              <View style={styles.emptyList}>
-                <Text>{strings('swaps.error_gathering_token_details')}</Text>
-              </View>
-            ) : tokenMetadata.valid ? (
-              <View style={styles.resultRow}>
-                <ListItem>
-                  <ListItem.Content>
-                    <ListItem.Icon>
-                      <TokenIcon
-                        medium
-                        icon={tokenMetadata.metadata.iconUrl}
-                        symbol={tokenMetadata.metadata.symbol}
-                      />
-                    </ListItem.Icon>
-                    <ListItem.Body>
-                      <ListItem.Title>
-                        {tokenMetadata.metadata.symbol}
-                      </ListItem.Title>
-                      {tokenMetadata.metadata.name && (
-                        <Text>{tokenMetadata.metadata.name}</Text>
-                      )}
-                    </ListItem.Body>
-                    <ListItem.Amounts>
-                      <TouchableOpacity
-                        style={styles.importButton}
-                        onPress={handleShowImportToken}
-                      >
-                        <Text small style={styles.importButtonText}>
-                          {strings('swaps.Import')}
-                        </Text>
-                      </TouchableOpacity>
-                    </ListItem.Amounts>
-                  </ListItem.Content>
-                </ListItem>
-                <TokenImportModal
-                  isVisible={isTokenImportVisible}
-                  dismiss={hideTokenImportModal}
-                  token={tokenMetadata.metadata}
-                  onPressImport={() =>
-                    handlePressImportToken(tokenMetadata.metadata)
-                  }
-                />
-              </View>
-            ) : (
-              <View style={styles.emptyList}>
-                <Text>
-                  {strings('swaps.invalid_token_contract_address')}
-                  {explorer.isValid && (
-                    <Text reset>
-                      {` ${strings('swaps.please_verify_on_explorer')} `}
-                      <Text
-                        reset
-                        link
-                        underline
-                        onPress={handleBlockExplorerPress}
-                      >
-                        {explorer.name}
-                      </Text>
-                      .
-                    </Text>
-                  )}
-                </Text>
-              </View>
-            )}
-          </View>
-        ) : (
-          <FlatList
-            ref={list}
-            style={styles.resultsView}
-            keyboardDismissMode="none"
-            keyboardShouldPersistTaps="always"
-            data={tokenSearchResults}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.address}
-            ListEmptyComponent={renderEmptyList}
-            ListFooterComponent={renderFooter}
-            ListFooterComponentStyle={[styles.resultRow, styles.footer]}
-          />
-        )}
+        <FlatList
+          ref={list}
+          style={styles.resultsView}
+          keyboardDismissMode="none"
+          keyboardShouldPersistTaps="always"
+          data={tokenSearchResults}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.address}
+          ListEmptyComponent={renderEmptyList}
+        />
       </SafeAreaView>
     </Modal>
   );

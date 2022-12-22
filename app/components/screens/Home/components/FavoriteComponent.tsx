@@ -37,7 +37,6 @@ const createStyles = (colors: any) =>
       height: 40,
       marginRight: 8,
       borderRadius: 10,
-      backgroundColor: 'red',
     },
     containerItem: {
       flexDirection: 'row',

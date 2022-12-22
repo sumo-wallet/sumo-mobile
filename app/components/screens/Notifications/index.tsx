@@ -1,12 +1,23 @@
-import React from 'react';
-import { View, SafeAreaView, Text, StatusBar, StyleSheet, Image } from 'react-native';
+import React, { useCallback } from 'react';
+import {
+  View,
+  SafeAreaView,
+  Text,
+  StatusBar,
+  StyleSheet,
+  Image,
+  RefreshControl,
+} from 'react-native';
 import { SHeader } from './../../common/SHeader';
-import { Colors, Fonts, Style } from './../../../styles';
-import { fontStyles, baseStyles, colors } from '../../../styles/common';
+import { fontStyles } from '../../../styles/common';
 import { strings } from '../../../../locales/i18n';
-const notification = require('../../../images/notification.png'); // eslint-disable-line import/no-commonjs
+import { useGetNotification } from '../../../components/hooks/useGetNotification';
+import { useTheme } from '../../../util/theme';
+import { FlatList } from 'react-native-gesture-handler';
+import { ModelNotification } from 'app/types';
+const notificationIcon = require('../../../images/notification.png'); // eslint-disable-line import/no-commonjs
 
-const createStyles = () =>
+const createStyles = (colors: any) =>
   StyleSheet.create({
     wrapper: {
       flex: 1,
@@ -38,19 +49,19 @@ const createStyles = () =>
     iconQR: {
       width: 24,
       height: 24,
-      tintColor: colors.white,
+      tintColor: colors.text.default,
       marginLeft: 12,
     },
     title: {
       fontSize: 16,
       fontWeight: '600',
-      color: colors.gray5,
+      color: colors.text.default,
       ...(fontStyles.normal as any),
     },
     subTitle: {
       fontSize: 14,
       fontWeight: '100',
-      color: colors.gray5,
+      color: colors.text.muted,
       marginTop: 10,
       ...(fontStyles.small as any),
     },
@@ -64,24 +75,66 @@ const createStyles = () =>
       alignSelf: 'center',
       marginTop: 60,
     },
+    viewItem: {
+      justifyContent: 'center',
+      alignItems: 'center',
+      flexDirection: 'row',
+    },
+    viewContentItem: {
+      justifyContent: 'flex-start',
+      alignItems: 'center',
+      flexDirection: 'column',
+    },
   });
 
 export const NotificationsScreen = () => {
-  
-  const styles = createStyles();
-  
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
+
+  const { notifications, isGetList, hasMore } = useGetNotification();
+
+  const onRefresh = useCallback(async () => { }, []);
+
   return (
     <SafeAreaView style={styles.wrapper}>
       <SHeader title={strings('notifications.notifications')} />
       <StatusBar barStyle="light-content" />
       <View />
-      <View style={styles.viewEmpty}>
-        <Image source={notification} style={styles.frame} />
-        <Text style={styles.title}>{strings('notifications.empty')}</Text>
-        <Text style={styles.subTitle}>
-          {strings('notifications.description')}
-        </Text>
-      </View>
+      <FlatList
+        data={notifications}
+        renderItem={({ item }: { item: ModelNotification }) => {
+          return (
+            <View>
+              <View style={styles.viewItem}>
+                <Image source={notificationIcon} style={styles.icon} />
+                <View style={styles.viewContentItem}>
+                  <Text style={styles.title}>{item.title}</Text>
+                  <Text style={styles.subTitle}>{item.created_at}</Text>
+                </View>
+              </View>
+            </View>
+          );
+        }}
+        ListEmptyComponent={() => {
+          return (
+            <View style={styles.viewEmpty}>
+              <Image source={notificationIcon} style={styles.frame} />
+              <Text style={styles.title}>{strings('notifications.empty')}</Text>
+              <Text style={styles.subTitle}>
+                {strings('notifications.description')}
+              </Text>
+            </View>
+          );
+        }}
+        refreshControl={
+          <RefreshControl
+            colors={[colors.primary.default]}
+            tintColor={colors.primary.default}
+            refreshing={isGetList}
+            onRefresh={onRefresh}
+          />
+        }
+      />
     </SafeAreaView>
   );
 };
