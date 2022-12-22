@@ -1,6 +1,14 @@
 import CollectionNFT from '../../UI/CollectionNFT';
 import React from 'react';
-import { View, SafeAreaView, Text, StyleSheet, FlatList, StatusBar } from 'react-native';
+import {
+  View,
+  SafeAreaView,
+  Text,
+  StyleSheet,
+  FlatList,
+  StatusBar,
+  TouchableOpacity,
+} from 'react-native';
 import { strings } from '../../../../locales/i18n';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../../../util/theme';
@@ -8,6 +16,12 @@ import { fontStyles } from '../../../styles/common';
 import FastImage from 'react-native-fast-image';
 import { images } from '../../../assets';
 import { SHeader } from '../../../components/common';
+import { useNavigatorParams } from '../../../components/hooks';
+import CollectibleMedia from '../../UI/CollectibleMedia';
+import Device from '../../../util/device';
+
+const DEVICE_WIDTH = Device.getDeviceWidth();
+const COLLECTIBLE_WIDTH = (DEVICE_WIDTH - 30 - 16) / 2;
 
 const createStyles = (colors: any) =>
   StyleSheet.create({
@@ -126,16 +140,42 @@ const createStyles = (colors: any) =>
       borderLeftWidth: StyleSheet.hairlineWidth,
       borderColor: colors.border.default,
     },
+    nftItemContainer: {
+      height: COLLECTIBLE_WIDTH + 40,
+      width: COLLECTIBLE_WIDTH,
+      margin: 10,
+      marginHorizontal: 10,
+      paddingHorizontal: 10,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    collectibleIcon: {
+      width: COLLECTIBLE_WIDTH,
+      height: COLLECTIBLE_WIDTH,
+    },
+    nftTitle: {
+      width: '100%',
+      paddingHorizontal: 10,
+      marginTop: 10,
+      color: colors.text.default,
+    },
+    nftTitleContent: {
+      color: colors.text.default,
+    },
   });
 export const NftCollectionScreen = React.memo(() => {
   const navigation = useNavigation();
   const { colors } = useTheme();
   const styles = createStyles(colors);
 
+  const {
+    collectible,
+    contractName,
+  }: { collectible: any[]; contractName: string } = useNavigatorParams();
+
   const collectionHeader = () => (
     <View style={styles.headerContainer}>
-      <SHeader title={strings('wallet.collectibles')} />
-      <StatusBar barStyle="light-content" />
+
       <FastImage
         style={styles.collectionThumbnail}
         source={{
@@ -151,26 +191,26 @@ export const NftCollectionScreen = React.memo(() => {
           }}
         />
         <View style={styles.nameContainer}>
-          <Text style={styles.collectionNameTitle}>{'NFT Collection'}</Text>
+          <Text style={styles.collectionNameTitle}>{contractName}</Text>
         </View>
         <View style={styles.collectionPropertyContainer}>
           <View style={styles.collectionItemContainer}>
-            <Text style={styles.collectionNameTitle}>{'1K'}</Text>
+            <Text style={styles.collectionNameTitle}>{'-'}</Text>
             <Text style={styles.collectionSubTitle}>{'Items'}</Text>
           </View>
           <View style={styles.collectionPropertyLine} />
           <View style={styles.collectionItemContainer}>
-            <Text style={styles.collectionNameTitle}>{'1K'}</Text>
+            <Text style={styles.collectionNameTitle}>{'-'}</Text>
             <Text style={styles.collectionSubTitle}>{'Owner'}</Text>
           </View>
           <View style={styles.collectionPropertyLine} />
           <View style={styles.collectionItemContainer}>
-            <Text style={styles.collectionNameTitle}>{'1K'}</Text>
+            <Text style={styles.collectionNameTitle}>{'-'}</Text>
             <Text style={styles.collectionSubTitle}>{'Floor'}</Text>
           </View>
           <View style={styles.collectionPropertyLine} />
           <View style={styles.collectionItemContainer}>
-            <Text style={styles.collectionNameTitle}>{'1K'}</Text>
+            <Text style={styles.collectionNameTitle}>{'-'}</Text>
             <Text style={styles.collectionSubTitle}>{'Vol'}</Text>
           </View>
         </View>
@@ -191,14 +231,36 @@ export const NftCollectionScreen = React.memo(() => {
 
   return (
     <SafeAreaView style={styles.wrapper}>
+      <SHeader title={contractName} />
+      <StatusBar barStyle="light-content" />
       <FlatList
         style={styles.flatlistContainer}
-        data={[]}
-        renderItem={() => {
+        data={collectible || []}
+        renderItem={({ item }) => {
           return (
-            <View></View>
-          )
+            <TouchableOpacity
+              style={styles.nftItemContainer}
+              onPress={() => {
+                // onItemPress(contractCollectibles, name);
+                navigation.navigate('NFTDetailView', {
+                  collectible: item,
+                  contractName,
+                });
+              }}
+            >
+              <CollectibleMedia
+                style={styles.collectibleIcon}
+                collectible={{ ...item, name: contractName }}
+              />
+              <View style={styles.nftTitle}>
+                <Text
+                  style={styles.nftTitleContent}
+                >{`# ${item.tokenId}`}</Text>
+              </View>
+            </TouchableOpacity>
+          );
         }}
+        numColumns={2}
         ListHeaderComponent={collectionHeader()}
         ListEmptyComponent={emptyView()}
       />
