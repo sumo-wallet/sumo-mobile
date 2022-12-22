@@ -12,18 +12,17 @@ import {
 } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useDispatch } from 'react-redux';
 
 import { Style, Fonts } from './../../../styles';
 import { icons, images } from './../../../assets';
 import { useNavigator, useDebounce } from './../../hooks';
-import { dummyDAppPageData } from './../../../data';
-import { Dapp } from './../../../types';
+import { ModelDApp } from './../../../types';
 import { keyExtractor } from './../../../util';
 import { useTheme } from './../../../util/theme';
-
 import { ROUTES } from './../../../navigation/routes';
-import { useDispatch } from 'react-redux';
 import { createNewTab, openDapp } from './../../../actions/browser';
+import { useFetchDappSearch } from './../../../services/dapp/useFetchDappSearch';
 
 const DAPP_SEARCH_HISTORY_KEY = 'DAPP_SEARCH_HISTORY_KEY';
 
@@ -50,14 +49,15 @@ export const DappSearch = React.memo(() => {
   const nav = useNavigator();
   const dispatch = useDispatch();
   const { colors } = useTheme();
+  const inputRef = React.useRef<TextInput>();
 
   React.useEffect(() => {
     pushToHistory('Pancake');
   }, [colors]);
 
   const [textSearch, setTextSearch] = React.useState<string>('');
-  const inputRef = React.useRef<TextInput>();
-  const [searchResults, setSearchResults] = React.useState<Dapp[]>([]);
+  const { dapps: dappsResultSearch } = useFetchDappSearch({ text: textSearch });
+
   const handleClearSearchHistory = React.useCallback(() => {
     console.log('handleClearSearchHistory: ');
   }, []);
@@ -68,27 +68,12 @@ export const DappSearch = React.memo(() => {
   const isSearching = textSearch?.length > 0;
 
   const handleSearch = React.useCallback((keyword: string) => {
-    const keywordValid = keyword.toLowerCase().replace(/ /g, '');
-    const results: Dapp[] = [];
-    dummyDAppPageData.forEach((page) => {
-      page.groups.forEach((group) => {
-        group.apps.forEach((app) => {
-          if (app.name.toLowerCase().replace(/ /g, '').includes(keywordValid)) {
-            results.push(app);
-          }
-        });
-      });
-    });
-    setSearchResults(results);
+    setTextSearch(keyword);
   }, []);
 
-  const handleSelectPopular = React.useCallback(
-    (keyword: string) => {
-      handleSearch(keyword);
-      setTextSearch(keyword);
-    },
-    [handleSearch],
-  );
+  const handleSelectPopular = React.useCallback((keyword: string) => {
+    setTextSearch(keyword);
+  }, []);
 
   const debounceSearchRequest = useDebounce(handleSearch, 500);
 
@@ -196,7 +181,7 @@ export const DappSearch = React.memo(() => {
   ]);
 
   const handlePressDapp = React.useCallback(
-    (dapp: Dapp) => {
+    (dapp: ModelDApp) => {
       pushToHistory(textSearch);
       if (dapp.website) {
         dispatch(createNewTab(dapp?.website));
@@ -208,25 +193,30 @@ export const DappSearch = React.memo(() => {
   );
 
   const renderItemResult = React.useCallback(
-    ({ item }: { item: Dapp }) => {
+    ({ item }: { item: ModelDApp }) => {
       return (
         <TouchableOpacity
           onPress={() => handlePressDapp(item)}
           style={Style.s({ direc: 'row', items: 'center' })}
         >
-          <FastImage style={Style.s({ size: 40 })} source={item.image} />
+          <FastImage
+            style={Style.s({ size: 40 })}
+            source={{ uri: item?.logo }}
+          />
           <View style={Style.s({ ml: 12 })}>
             <Text style={Fonts.t({ s: 14, c: colors.text.default })}>
               {item?.name}
             </Text>
-            <Text style={Fonts.t({ s: 14, c: colors.text.default })}>
-              {item?.description}
-            </Text>
+            {item?.description ? (
+              <Text style={Fonts.t({ s: 14, c: colors.text.muted })}>
+                {item?.description}
+              </Text>
+            ) : null}
           </View>
         </TouchableOpacity>
       );
     },
-    [colors.text.default, handlePressDapp],
+    [colors.text.default, colors.text.muted, handlePressDapp],
   );
 
   const renderItemSeparator = React.useCallback(() => {
@@ -264,7 +254,7 @@ export const DappSearch = React.memo(() => {
       <FlatList
         style={Style.s({})}
         contentContainerStyle={Style.s({ px: 16, py: 24 })}
-        data={searchResults}
+        data={dappsResultSearch}
         renderItem={renderItemResult}
         ItemSeparatorComponent={renderItemSeparator}
         keyExtractor={keyExtractor}
@@ -276,7 +266,7 @@ export const DappSearch = React.memo(() => {
     renderEmptyComponent,
     renderItemResult,
     renderItemSeparator,
-    searchResults,
+    dappsResultSearch,
   ]);
 
   return (
@@ -289,7 +279,7 @@ export const DappSearch = React.memo(() => {
             direc: 'row',
             items: 'center',
             bor: 8,
-            bg: colors.background.defaultHover,
+            bg: colors.background.alternative,
             px: 16,
             py: 8,
           })}

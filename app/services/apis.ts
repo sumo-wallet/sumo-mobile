@@ -1,9 +1,14 @@
+/* eslint-disable import/no-named-as-default-member */
 // destructuring env keys might not work in old node versions
-// import Config from 'react-native-config';
 // import { glo } from './../types/coingecko/schema';
 // import qs from 'query-string';
+import qs from 'query-string';
 import fetcher from './fetcher';
-import { HandlerDappHomeResponse } from './../types';
+import {
+  HandlerDappHomeResponse,
+  HandlerSearchDappResponse,
+  HandlerSearchDappRequest,
+} from './../types';
 
 /* eslint-disable prefer-destructuring */
 export const COINGECKO_BASE_URL = 'https://api.coingecko.com/api/v3/';
@@ -90,6 +95,15 @@ class Client {
       `${this.baseUrl}/api/v1/dapp/home`,
       {
         headers: this.headers,
+      },
+    );
+  }
+  public getDappSearch(request: HandlerSearchDappRequest) {
+    return fetcher<HandlerSearchDappResponse>(
+      `${this.baseUrl}/api/v1/dapp/search?${qs.stringify(request)}`,
+      {
+        headers: this.headers,
+        method: 'GET',
       },
     );
   }

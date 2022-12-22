@@ -70,7 +70,8 @@ export const DappsScreen = React.memo(() => {
     (dapp: ModelDApp) => {
       if (dapp.website) {
         dispatch(createNewTab(dapp?.website));
-        nav.navigate(ROUTES.DappDetails, { dapp });
+        dispatch(openDapp({ dapp }));
+        nav.navigate(ROUTES.BrowserTabHome, { dapp });
       }
     },
     [nav, dispatch],

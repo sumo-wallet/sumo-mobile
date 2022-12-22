@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/prefer-optional-chain */
+import { icons } from './../../../assets';
 import React from 'react';
 import {
   View,
@@ -32,8 +33,9 @@ export const SearchRecent = ({
       return (
         <TouchableOpacity onPress={() => onSelect && onSelect(item)}>
           <FastImage
-            style={Style.s({ size: 40 })}
+            style={Style.s({ size: 40, bor: 12 })}
             source={{ uri: item?.logo }}
+            defaultSource={icons.iconDapps}
           />
         </TouchableOpacity>
       );
@@ -42,7 +44,7 @@ export const SearchRecent = ({
   );
   return (
     <View style={[style]}>
-      <Text style={Fonts.t({ s: 12, c: colors.text.default })}>{title}</Text>
+      <Text style={Fonts.t({ s: 8, c: colors.text.default })}>{title}</Text>
       <FlatList
         style={Style.s({ mt: 8 })}
         horizontal
