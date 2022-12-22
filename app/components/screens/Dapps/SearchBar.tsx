@@ -35,7 +35,7 @@ export const SearchBar = ({ style, placeholder }: SearchBarProps) => {
           direc: 'row',
           items: 'center',
           bor: 8,
-          bg: colors.background.defaultHover,
+          bg: colors.background.alternative,
           minH: 32,
         })}
       >

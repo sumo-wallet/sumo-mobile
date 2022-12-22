@@ -74,7 +74,7 @@ export const NowTrending = ({
           {'Top Dapps all \nover the world'}
         </Text>
       </View>
-      <View style={Style.s({ mt: 18 })}>
+      <View style={Style.s({ mt: 18, pb: 16 })}>
         {dappByRow.map((row, index) => {
           return (
             <FlatList

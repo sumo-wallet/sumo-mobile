@@ -9,6 +9,7 @@ import {
   Text,
   ScrollView,
   FlatList,
+  ActivityIndicator,
 } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -23,6 +24,7 @@ import { ROUTES } from './../../../navigation/routes';
 import { createNewTab, openDapp } from './../../../actions/browser';
 import { useFetchDappSearch } from './../../../services/dapp/useFetchDappSearch';
 import { useFetchDappPopularSearch } from './../../../services/dapp/useFetchDappPopularSearch';
+import { SearchResultCell } from './SearchResultCell';
 
 const DAPP_SEARCH_HISTORY_KEY = 'DAPP_SEARCH_HISTORY_KEY';
 
@@ -48,6 +50,7 @@ export const DappSearch = React.memo(() => {
   const { colors } = useTheme();
   const inputRef = React.useRef<TextInput>();
 
+  const [inputValue, setInputValue] = React.useState<string>('');
   const [textSearch, setTextSearch] = React.useState<string>('');
   const {
     dapps: dappsResultSearch,
@@ -68,10 +71,12 @@ export const DappSearch = React.memo(() => {
 
   const handleSearch = React.useCallback((keyword: string) => {
     setTextSearch(keyword);
+    setInputValue(keyword);
   }, []);
 
   const handleSelectPopular = React.useCallback((keyword: string) => {
     setTextSearch(keyword);
+    setInputValue(keyword);
   }, []);
 
   const debounceSearchRequest = useDebounce(handleSearch, 500);
@@ -95,7 +100,7 @@ export const DappSearch = React.memo(() => {
               return (
                 <TouchableOpacity
                   onPress={() => handleSelectPopular(search_text)}
-                  key={searchHistory.id}
+                  key={`renderRecommend.TouchableOpacity.${searchHistory?.id}`}
                   style={[
                     Style.s({ px: 16, py: 6, cen: true, mb: 12, mr: 12 }),
                     Style.b({
@@ -196,29 +201,9 @@ export const DappSearch = React.memo(() => {
 
   const renderItemResult = React.useCallback(
     ({ item }: { item: ModelDApp }) => {
-      return (
-        <TouchableOpacity
-          onPress={() => handlePressDapp(item)}
-          style={Style.s({ direc: 'row', items: 'center' })}
-        >
-          <FastImage
-            style={Style.s({ size: 40 })}
-            source={{ uri: item?.logo }}
-          />
-          <View style={Style.s({ ml: 12 })}>
-            <Text style={Fonts.t({ s: 14, c: colors.text.default })}>
-              {item?.name}
-            </Text>
-            {item?.description ? (
-              <Text style={Fonts.t({ s: 14, c: colors.text.muted })}>
-                {item?.description}
-              </Text>
-            ) : null}
-          </View>
-        </TouchableOpacity>
-      );
+      return <SearchResultCell item={item} onPress={handlePressDapp} />;
     },
-    [colors.text.default, colors.text.muted, handlePressDapp],
+    [handlePressDapp],
   );
 
   const renderItemSeparator = React.useCallback(() => {
@@ -248,14 +233,13 @@ export const DappSearch = React.memo(() => {
     );
   }, [colors.text.alternative, colors.text.default]);
 
-  const keyEx = React.useCallback((i: ModelDApp) => `${i?.id}`, []);
+  const keyEx = React.useCallback((i: ModelDApp) => `${i}`, []);
   const renderSearchResults = React.useCallback(() => {
     if (textSearch?.length === 0) {
       return null;
     }
     return (
       <FlatList
-        style={Style.s({})}
         contentContainerStyle={Style.s({ px: 16, py: 24 })}
         data={dappsResultSearch}
         renderItem={renderItemResult}
@@ -300,12 +284,15 @@ export const DappSearch = React.memo(() => {
             placeholderTextColor={colors.text.muted}
             placeholder="Search..."
             onChangeText={(text: string) => {
-              setTextSearch(text);
+              setInputValue(text);
               debounceSearchRequest(text);
             }}
-            value={textSearch}
+            value={inputValue}
             clearButtonMode="always"
           />
+          {isLoading ? (
+            <ActivityIndicator size="small" color={colors.primary.default} />
+          ) : null}
         </View>
         <TouchableOpacity
           onPress={nav.goBack}

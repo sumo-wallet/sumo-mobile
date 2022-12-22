@@ -8,30 +8,32 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { Style, Colors, Fonts } from '../../../styles';
-import { ModelCategory, ModelDApps } from 'app/types';
+import { ModelCategory, ModelDApps } from './../../../types';
 import { useTheme } from './../../..//util/theme';
 
 export interface CategoryHeaderProps {
   style?: StyleProp<ViewStyle>;
   categories?: ModelCategory[];
   dappByCate?: ModelDApps[];
+  setPageIndex: (tabIndex: number) => void;
+  pageIndex: number;
 }
 
 export const CategoryHeader = ({
   style,
   categories = [],
+  setPageIndex,
+  pageIndex,
 }: CategoryHeaderProps) => {
-  const [curPage, setPage] = React.useState<ModelCategory>();
   const { colors } = useTheme();
-
   const renderItem = React.useCallback(
-    ({ item }: { item: ModelCategory }) => {
-      const isCurPage = curPage?.id === item?.id;
+    ({ item, index }: { item: ModelCategory; index: number }) => {
+      const isCurPage = index === pageIndex;
       const titleColor = isCurPage ? colors.text.default : colors.text.muted;
       const bgColor = isCurPage ? colors.primary.default : Colors.tran;
       return (
         <TouchableOpacity
-          onPress={() => setPage(item)}
+          onPress={() => setPageIndex(index)}
           style={[
             Style.s({
               minH: 32,
@@ -54,17 +56,18 @@ export const CategoryHeader = ({
       colors.primary.default,
       colors.text.default,
       colors.text.muted,
-      curPage?.id,
+      pageIndex,
+      setPageIndex,
     ],
   );
   const separator = React.useCallback(() => {
     return <View style={Style.s({ w: 8 })} />;
   }, []);
   return (
-    <View style={[Style.s({ pt: 8, bg: colors.background.default }), style]}>
+    <View style={[Style.s({ bg: colors.background.default }), style]}>
       <FlatList
         data={categories}
-        contentContainerStyle={Style.s({ px: 16, py: 16 })}
+        contentContainerStyle={Style.s({ px: 16, pt: 8, pb: 16 })}
         horizontal
         renderItem={renderItem}
         ItemSeparatorComponent={separator}

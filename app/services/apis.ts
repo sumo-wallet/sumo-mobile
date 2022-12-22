@@ -116,6 +116,14 @@ class Client {
       },
     );
   }
+  public getDappByCategory(categoryId: string | number) {
+    return fetcher<HandlerSearchDappResponse>(
+      `${this.baseUrl}/api/v1/dapp/category/${categoryId}`,
+      {
+        headers: this.headers,
+      },
+    );
+  }
 }
 
 const client = new Client();

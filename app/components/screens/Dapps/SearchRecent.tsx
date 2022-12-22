@@ -44,7 +44,7 @@ export const SearchRecent = ({
   );
   return (
     <View style={[style]}>
-      <Text style={Fonts.t({ s: 8, c: colors.text.default })}>{title}</Text>
+      <Text style={Fonts.t({ s: 18, c: colors.text.default })}>{title}</Text>
       <FlatList
         style={Style.s({ mt: 8 })}
         horizontal

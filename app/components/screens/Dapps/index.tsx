@@ -1,22 +1,16 @@
 /* eslint-disable @typescript-eslint/prefer-optional-chain */
 import React from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  RefreshControl,
-  ActivityIndicator,
-} from 'react-native';
+import { StatusBar, ActivityIndicator } from 'react-native';
 import { useDisclosure } from '@dwarvesf/react-hooks';
 import { useDispatch } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import PagerView from 'react-native-pager-view';
 
 import { useNavigator } from './../../hooks';
 import { Style } from './../../../styles';
 import { SearchBar } from './SearchBar';
-import { NowTrending } from './NowTrending';
-import { AppGroupPager } from './AppGroupPager';
-import { SearchRecent } from './SearchRecent';
+import { DappListByCategory } from './DappListByCategory';
 import { SecurityWarningModal } from './SecurityWarningModal';
 import { ModelDApp } from './../../../types';
 import { CategoryHeader } from './CategoryHeader';
@@ -26,6 +20,7 @@ import { createNewTab, openDapp } from './../../../actions/browser';
 import { useTheme } from './../../../util/theme';
 import { useFetchDappHome } from './../../../services/dapp/useFetchDappHome';
 import { useFetchDappRecent } from './../../../services/dapp/useFetchDappRecent';
+import { AllDappList } from './AllDappList';
 
 export const DappsScreen = React.memo(() => {
   const nav = useNavigator();
@@ -34,13 +29,15 @@ export const DappsScreen = React.memo(() => {
   const securityWarningModal = useDisclosure();
   const [curDapp, setDapp] = React.useState<ModelDApp>();
   const mounted = React.useRef<boolean>(false);
+  const [pageIndex, setPageIndex] = React.useState(0);
+  const pagerViewRef = React.useRef<PagerView>();
 
   const {
     hotDapp,
     homeList,
-    category,
+    category = [],
     mutate: mutateDappHome,
-    isLoading,
+    // isLoading,
     // isValidating,
     isFirstLoading,
   } = useFetchDappHome();
@@ -69,20 +66,25 @@ export const DappsScreen = React.memo(() => {
     securityWarningModal.onClose();
   }, [curDapp, dispatch, nav, securityWarningModal]);
 
-  const handleOpenTrending = React.useCallback(
-    (dapp: ModelDApp) => {
-      if (dapp.website) {
-        dispatch(createNewTab(dapp?.website));
-        dispatch(openDapp({ dapp }));
-        nav.navigate(ROUTES.BrowserTabHome, { dapp });
-      }
-    },
-    [nav, dispatch],
-  );
+  const onTabChanged = (newIndex: number) => {
+    setPageIndex(newIndex);
+    if (pagerViewRef) {
+      pagerViewRef.current?.setPage(newIndex);
+    }
+  };
+
   return (
-    <SafeAreaView style={Style.s({ flex: 1, bg: colors.background.default })}>
+    <SafeAreaView
+      edges={['top']}
+      style={Style.s({ flex: 1, bg: colors.background.default })}
+    >
       <StatusBar barStyle="light-content" />
       <SearchBar placeholder="Search DApp or enter a link" />
+      <CategoryHeader
+        pageIndex={pageIndex}
+        categories={category}
+        setPageIndex={onTabChanged}
+      />
       {isFirstLoading ? (
         <ActivityIndicator
           size="large"
@@ -90,36 +92,31 @@ export const DappsScreen = React.memo(() => {
           style={Style.s({ self: 'center' })}
         />
       ) : null}
-      <ScrollView
-        refreshControl={
-          <RefreshControl
-            colors={[colors.primary.default, colors.primary.default]}
-            tintColor={colors.primary.default}
-            refreshing={isLoading}
-            onRefresh={handleRefreshData}
-          />
-        }
-        stickyHeaderIndices={[2]}
+      <PagerView
+        ref={pagerViewRef as any}
+        onPageSelected={(event) => {
+          setPageIndex(event.nativeEvent.position);
+        }}
         style={Style.s({ flex: 1 })}
-        contentContainerStyle={Style.s({ px: 0 })}
       >
-        <SearchRecent
-          title="Recent"
-          data={recent}
-          style={Style.s({ mx: 16 })}
+        <AllDappList
+          dappByCate={homeList}
+          hotDapp={hotDapp}
+          recent={recent}
           onSelect={(dapp: ModelDApp) => {
             setDapp(dapp);
             securityWarningModal.onOpen();
           }}
         />
-        <NowTrending
-          style={Style.s({ mx: 16 })}
-          onSelect={handleOpenTrending}
-          hotDapps={hotDapp}
-        />
-        <CategoryHeader categories={category} />
-        <AppGroupPager dappByCate={homeList} />
-      </ScrollView>
+        {category.map((cate) => {
+          return (
+            <DappListByCategory
+              key={`DappListByCategory.${cate.id}`}
+              category={cate}
+            />
+          );
+        })}
+      </PagerView>
       <SecurityWarningModal
         isOpen={securityWarningModal.isOpen}
         onClose={securityWarningModal.onClose}
