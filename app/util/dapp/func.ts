@@ -11,6 +11,8 @@ export const getDappRecent = async () => {
   return [];
 };
 
+export const MAX_APP_RECENT = 5;
+
 export const pushToDappRecent = async (dapp: ModelDApp) => {
   const recent = await AsyncStorage.getItem(DAPP_RECENT);
   if (!recent) {
@@ -22,6 +24,9 @@ export const pushToDappRecent = async (dapp: ModelDApp) => {
     const filterDup = parsedArr.filter(
       (item: ModelDApp) => item?.id !== dapp.id,
     );
+    if (filterDup.length === MAX_APP_RECENT) {
+      filterDup.pop();
+    }
     await AsyncStorage.setItem(
       DAPP_RECENT,
       JSON.stringify([dapp, ...filterDup]),

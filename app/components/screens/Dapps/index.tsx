@@ -5,6 +5,7 @@ import {
   ScrollView,
   StatusBar,
   RefreshControl,
+  ActivityIndicator,
 } from 'react-native';
 import { useDisclosure } from '@dwarvesf/react-hooks';
 import { useDispatch } from 'react-redux';
@@ -40,8 +41,8 @@ export const DappsScreen = React.memo(() => {
     category,
     mutate: mutateDappHome,
     isLoading,
+    // isValidating,
     isFirstLoading,
-    isValidating,
   } = useFetchDappHome();
   const { recent, mutate: mutateRecent } = useFetchDappRecent();
 
@@ -82,12 +83,19 @@ export const DappsScreen = React.memo(() => {
     <SafeAreaView style={Style.s({ flex: 1, bg: colors.background.default })}>
       <StatusBar barStyle="light-content" />
       <SearchBar placeholder="Search DApp or enter a link" />
+      {isFirstLoading ? (
+        <ActivityIndicator
+          size="large"
+          color={colors.primary.default}
+          style={Style.s({ self: 'center' })}
+        />
+      ) : null}
       <ScrollView
         refreshControl={
           <RefreshControl
             colors={[colors.primary.default, colors.primary.default]}
             tintColor={colors.primary.default}
-            refreshing={isLoading || isFirstLoading || isValidating}
+            refreshing={isLoading}
             onRefresh={handleRefreshData}
           />
         }

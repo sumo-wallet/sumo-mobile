@@ -51,6 +51,7 @@ export const SearchRecent = ({
         data={data}
         renderItem={renderItem}
         ItemSeparatorComponent={() => <View style={Style.s({ w: 16 })} />}
+        showsHorizontalScrollIndicator={false}
       />
     </View>
   );

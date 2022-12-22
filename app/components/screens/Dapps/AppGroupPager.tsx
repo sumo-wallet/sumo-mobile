@@ -16,12 +16,12 @@ export const AppGroupPager = ({
   return (
     <View style={[Style.s({ pb: 8 }), style]}>
       <View style={Style.s({ mt: 8 })}>
-        {dappByCate.map((page: ModelDApps) => {
+        {dappByCate.map((page: ModelDApps, index) => {
           return (
             <AppGroupCard
               title={page?.category?.name}
               dapps={page?.app}
-              key={`AppGroupCard-${page?.category?.name}`}
+              key={`AppGroupCard.${page?.category?.id}.${index}`}
             />
           );
         })}
