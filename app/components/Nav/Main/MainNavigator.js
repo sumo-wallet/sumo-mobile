@@ -54,7 +54,7 @@ import TransakWebView from '../../UI/FiatOrders/TransakWebView';
 import MoonPayWebView from '../../UI/FiatOrders/MoonPayWebView';
 import ActivityView from '../../Views/ActivityView';
 import SwapsAmountView from '../../UI/Swaps';
-import SwapsQuotesView from '../../UI/Swaps/QuotesView';
+// import SwapsQuotesView from '../../UI/Swaps/QuotesView';
 import GasEducationCarousel from '../../Views/GasEducationCarousel';
 import CollectiblesDetails from '../../UI/CollectibleModal';
 import OptinMetrics from '../../UI/OptinMetrics';
@@ -75,11 +75,13 @@ import Routes from '../../../constants/navigation/Routes';
 // import { HomeScreen } from './../../screens/Home';
 import { DappsScreen } from './../../screens/Dapps';
 // import { SwapScreen } from './../../screens/Swap';
-import { NftScreen } from './../../screens/Nft';
+// import { NftScreen } from './../../screens/Nft';
+import { NftMarketplaceScreen } from './../../screens/NftMarketplace';
 import { NotificationsScreen } from './../../screens/Notifications';
 import { AddWalletScreen } from './../../screens/AddWallet';
 import { WalletDetailScreen } from './../../screens/WalletDetail';
 import { NewsScreen } from './../../screens/News';
+import SwapsQuotesView from '../../UI/SumoSwaps/QuotesView';
 
 // import { WalletScreen } from './../../screens/Wallet';
 import { Style } from './../../../styles';
@@ -294,6 +296,37 @@ export const SwapTabModalFlow2 = () => (
   </Stack.Navigator>
 );
 
+const NFTMarketplaceTabStackFlow = () => (
+  <Stack.Navigator initialRouteName={'NftMarketplaceView'}>
+    <Stack.Screen
+      name="NftMarketplaceView"
+      component={NftMarketplaceScreen}
+      options={{ headerShown: false }}
+    />
+    <Stack.Screen
+      name="SwapsAmountView"
+      component={SwapsAmountView}
+      options={SwapsAmountView.navigationOptions}
+    />
+    <Stack.Screen
+      name="SwapsQuotesView"
+      component={SwapsQuotesView}
+      options={SwapsQuotesView.navigationOptions}
+    />
+    <Stack.Screen name={'WalletTabStackFlow'} component={WalletTabStackFlow} />
+    <Stack.Screen
+      name={'AssetHideConfirmation'}
+      component={AssetHideConfirmation}
+    />
+  </Stack.Navigator>
+);
+
+export const NFTMarketplaceTabModalFlow = () => (
+  <Stack.Navigator mode={'modal'} screenOptions={clearStackNavigatorOptions}>
+    <Stack.Screen name={'NFTMarketplaceTabStackFlow'} component={NFTMarketplaceTabStackFlow} />
+  </Stack.Navigator>
+);
+
 const BrowserFlow = () => (
   <Stack.Navigator
     initialRouteName={Routes.BROWSER_VIEW}
@@ -416,7 +449,7 @@ export const BottomTabContainer = () => {
       />
       <Tab.Screen
         name={ROUTES.NftScreen}
-        component={NftScreen}
+        component={NFTMarketplaceTabModalFlow}
         options={{
           title: 'Nft',
           tabBarIcon: ({ color }) => {

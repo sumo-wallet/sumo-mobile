@@ -330,14 +330,14 @@ function SwapsAmountView({
   const [isSourceSet, setIsSourceSet] = useState(() =>
     Boolean(
       swapsTokens?.find((token) =>
-        toLowerCaseEquals(token.address, initialSource),
+        toLowerCaseEquals(token?.address, initialSource),
       ),
     ),
   );
 
   const [sourceToken, setSourceToken] = useState(() =>
     swapsTokens?.find((token) =>
-      toLowerCaseEquals(token.address, initialSource),
+      toLowerCaseEquals(token?.address, initialSource),
     ),
   );
   const [destinationToken, setDestinationToken] = useState(null);

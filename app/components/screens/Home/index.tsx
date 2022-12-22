@@ -12,11 +12,9 @@ import {
 import { colors } from '../../../styles/common';
 import { icons, images } from '../../../assets';
 import { RawFeatureInterface } from './types';
-import {
-  Hot24hComponent,
-} from './components/Hot24hComponent';
+import { Hot24hComponent } from './components/Hot24hComponent';
 import FastImage from 'react-native-fast-image';
-import { FavouriteComponent } from './components/FavouriteComponent';
+import { FavoriteComponent } from './components/FavoriteComponent';
 import { DataNewsInterface, News } from './components/News';
 import { strings } from '../../../../locales/i18n';
 import { importAccountFromPrivateKey } from '../../../util/address';
@@ -42,6 +40,7 @@ import { useGetNews } from '../../hooks/useGetNews';
 import { useGetTickers } from '../../hooks/useGetTickers';
 import { Ticker } from 'app/types';
 import { ROUTES } from '../../../navigation/routes';
+import { useGetWalletHome } from '../../../components/hooks/useGetWalletHome';
 
 const createStyles = (colors: any) =>
   StyleSheet.create({
@@ -130,38 +129,39 @@ export const HomeScreen = memo(() => {
   const [refreshing, setRefreshing] = useState(false);
   const { colors } = useTheme();
   const styles = createStyles(colors);
-  const featureData = useMemo((): RawFeatureInterface[] => {
-    return [
-      {
-        title: 'Pool',
-        icon: icons.iconCoin,
-        url: 'https://pancakeswap.finance/pools',
-      },
-      {
-        title: 'Farm',
-        icon: icons.iconBagCoin,
-        url: 'https://pancakeswap.finance/farms',
-      },
-      {
-        title: 'Lottery',
-        icon: icons.iconInvoice,
-        url: 'https://pancakeswap.finance/lottery',
-      },
-      {
-        title: 'Prediction',
-        icon: icons.iconTarget,
-        url: 'https://pancakeswap.finance/prediction',
-      },
-      {
-        title: 'Loan',
-        icon: icons.iconBagCoin,
-        url: 'https://app.compound.finance/markets?market=1_USDC_0xc3d688B66703497DAA19211EEdff47f25384cdc3',
-      },
-    ];
-  }, []);
+  const walletHomeConfig = useGetWalletHome();
+  // const featureData = useMemo((): RawFeatureInterface[] => {
+  //   return [
+  //     {
+  //       title: 'Pool',
+  //       icon: icons.iconCoin,
+  //       url: 'https://pancakeswap.finance/pools',
+  //     },
+  //     {
+  //       title: 'Farm',
+  //       icon: icons.iconBagCoin,
+  //       url: 'https://pancakeswap.finance/farms',
+  //     },
+  //     {
+  //       title: 'Lottery',
+  //       icon: icons.iconInvoice,
+  //       url: 'https://pancakeswap.finance/lottery',
+  //     },
+  //     {
+  //       title: 'Prediction',
+  //       icon: icons.iconTarget,
+  //       url: 'https://pancakeswap.finance/prediction',
+  //     },
+  //     {
+  //       title: 'Loan',
+  //       icon: icons.iconBagCoin,
+  //       url: 'https://app.compound.finance/markets?market=1_USDC_0xc3d688B66703497DAA19211EEdff47f25384cdc3',
+  //     },
+  //   ];
+  // }, []);
 
   const { news } = useGetNews();
-  const { tickers } = useGetTickers('BTC,ETH,XRP,BCH,BNB');
+  const { tickers } = useGetTickers(walletHomeConfig.homeConfig?.hotToken);
 
   const onScanSuccess = useCallback(
     (data: any, content?: string | undefined) => {
@@ -374,16 +374,17 @@ export const HomeScreen = memo(() => {
         {renderWalletBalance()}
         <Text style={styles.title}>{'Features'}</Text>
         <View style={styles.containerFeature}>
-          {featureData.map((item, index) => {
+          {walletHomeConfig.homeConfig && walletHomeConfig.homeConfig.hotFeature.map((item, index) => {
             return (
               <TouchableOpacity
                 key={index}
                 style={styles.particularFeature}
                 onPress={() => {
                   openUrl(item.url);
-                }}>
-                <Image source={item.icon} style={styles.iconFeature} />
-                <Text style={styles.subTitleFeature}>{item.title}</Text>
+                }}
+              >
+                <Image source={{ uri: item.logo }} style={styles.iconFeature} />
+                <Text style={styles.subTitleFeature}>{item.name}</Text>
               </TouchableOpacity>
             );
           })}
@@ -405,13 +406,19 @@ export const HomeScreen = memo(() => {
             resizeMode={FastImage.resizeMode.stretch}
           />
         </TouchableOpacity>
-        <FavouriteComponent />
-        <News
-          news={news}
-          onSelect={(item: DataNewsInterface) => {
-            openUrl(item.url);
-          }}
+        <FavoriteComponent
+          title={'FAVORITE'}
+          data={walletHomeConfig.homeConfig?.hotDapp || []}
+          subTitle={'Fast transaction convenient earning.'}
         />
+        {walletHomeConfig.homeConfig?.showNew && (
+          <News
+            news={news}
+            onSelect={(item: DataNewsInterface) => {
+              openUrl(item.url);
+            }}
+          />
+        )}
         <View style={styles.footer}>
           <Text style={styles.titleFooter}>{'That’s all for now'}</Text>
         </View>

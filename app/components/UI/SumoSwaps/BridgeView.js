@@ -111,7 +111,7 @@ const createStyles = (colors) =>
     },
     amount: {
       textAlignVertical: 'center',
-      fontSize: Device.isIphone5() ? 20 : 30,
+      fontSize: Device.isIphone5() ? 16 : 20,
       height: Device.isIphone5() ? 30 : 40,
       maxWidth: '50%',
       color: colors.text.default,
@@ -295,6 +295,18 @@ const SWAPS_NATIVE_ADDRESS = swapsUtils.NATIVE_SWAPS_TOKEN_ADDRESS;
 const TOKEN_MINIMUM_SOURCES = 1;
 const MAX_TOP_ASSETS = 20;
 
+const CHAINS = [
+  {
+    id: 56,
+    name: 'BSC',
+    logo: '',
+  },
+  {
+    id: 1,
+    name: 'ETH',
+    logo: '',
+  }
+]
 function BridgeView({
   swapsTokens,
   swapsControllerTokens,
@@ -319,7 +331,7 @@ function BridgeView({
   const styles = createStyles(colors);
 
   const explorer = useBlockExplorer(provider, frequentRpcList);
-  const initialSource = route.params?.sourceToken ?? SWAPS_NATIVE_ADDRESS;
+  const initialSource = SWAPS_NATIVE_ADDRESS;
   const [amount, setAmount] = useState('0');
   const [slippage, setSlippage] = useState(AppConstants.SWAPS.DEFAULT_SLIPPAGE);
   const [isInitialLoadingTokens, setInitialLoadingTokens] = useState(false);
@@ -341,13 +353,13 @@ function BridgeView({
   const [sourceChain, setSourceChain] = useState(null);
   const [destinationChain, setDestinationChain] = useState(null);
 
-  const [hasDismissedTokenAlert, setHasDismissedTokenAlert] = useState(true);
   const [contractBalance, setContractBalance] = useState(null);
   const [contractBalanceAsUnits, setContractBalanceAsUnits] = useState(
     safeNumberToBN(0),
   );
   const [isDirectWrapping, setIsDirectWrapping] = useState(false);
 
+  const [isTokenModalVisible, toggleTokenModal] = useModalHandler(false);
   const [isSourceModalVisible, toggleSourceModal] = useModalHandler(false);
   const [isDestinationModalVisible, toggleDestinationModal] =
     useModalHandler(false);
@@ -407,8 +419,6 @@ function BridgeView({
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialSource, chainId, navigation, setLiveness]);
-
-  const keypadViewRef = useRef(null);
 
   useEffect(() => {
     (async () => {
@@ -474,10 +484,6 @@ function BridgeView({
     swapsControllerTokens,
     swapsTokens,
   ]);
-
-  useEffect(() => {
-    setHasDismissedTokenAlert(false);
-  }, [destinationToken]);
 
   const isTokenInBalances =
     sourceToken && !isSwapsNativeAsset(sourceToken)
@@ -602,13 +608,6 @@ function BridgeView({
     tokenExchangeRates,
   ]);
 
-  const destinationTokenHasEnoughOcurrances = useMemo(() => {
-    if (!destinationToken || isSwapsNativeAsset(destinationToken)) {
-      return true;
-    }
-    return destinationToken?.occurrences > TOKEN_MINIMUM_SOURCES;
-  }, [destinationToken]);
-
   /* Navigation handler */
   const handleGetQuotesPress = useCallback(async () => {
     if (hasInvalidDecimals) {
@@ -635,7 +634,6 @@ function BridgeView({
     );
   }, [
     amount,
-    destinationToken,
     hasInvalidDecimals,
     isTokenInBalances,
     navigation,
@@ -644,17 +642,6 @@ function BridgeView({
     isBalanceZero,
   ]);
 
-  /* Keypad Handlers */
-  const handleKeypadChange = useCallback(
-    ({ value }) => {
-      if (value === amount) {
-        return;
-      }
-
-      setAmount(value);
-    },
-    [amount],
-  );
 
   const setSlippageAfterTokenPress = useCallback(
     (sourceTokenAddress, destinationTokenAddress) => {
@@ -674,22 +661,28 @@ function BridgeView({
     [setSlippage, chainId, isDirectWrapping],
   );
 
-  const handleSourceTokenPress = useCallback(
+  const handleTokenPress = useCallback(
     (item) => {
-      toggleSourceModal();
+      toggleTokenModal();
       setSourceToken(item);
-      setSlippageAfterTokenPress(item.address, destinationToken?.address);
     },
-    [toggleSourceModal, setSlippageAfterTokenPress, destinationToken],
+    [toggleTokenModal, sourceToken],
   );
 
-  const handleDestinationTokenPress = useCallback(
+  const handleSourceChainPress = useCallback(
+    (item) => {
+      toggleSourceModal();
+      setSourceChain(item);
+    },
+    [toggleSourceModal, destinationChain],
+  );
+
+  const handleDestinationChainPress = useCallback(
     (item) => {
       toggleDestinationModal();
-      setDestinationToken(item);
-      setSlippageAfterTokenPress(sourceToken?.address, item.address);
+      setDestinationChain(item);
     },
-    [toggleDestinationModal, setSlippageAfterTokenPress, sourceToken],
+    [toggleDestinationModal, sourceChain],
   );
 
   const handleUseMax = useCallback(() => {
@@ -715,14 +708,6 @@ function BridgeView({
     );
   }, [balanceAsUnits, sourceToken]);
 
-  const handleSlippageChange = useCallback((value) => {
-    setSlippage(value);
-  }, []);
-
-  const handleDimissTokenAlert = useCallback(() => {
-    setHasDismissedTokenAlert(true);
-  }, []);
-
   const handleVerifyPress = useCallback(() => {
     if (!destinationToken) {
       return;
@@ -737,18 +722,10 @@ function BridgeView({
     });
   }, [explorer, destinationToken, hideTokenVerificationModal, navigation]);
 
-  const handleAmountPress = useCallback(
-    () => keypadViewRef?.current?.shake?.(),
-    [],
-  );
-
   const handleFlipTokens = useCallback(() => {
-    setSourceToken(destinationToken);
-    setDestinationToken(sourceToken);
-  }, [destinationToken, sourceToken]);
-
-  const disabledView =
-    !destinationTokenHasEnoughOcurrances && !hasDismissedTokenAlert;
+    setSourceChain(destinationChain);
+    setDestinationChain(sourceChain);
+  }, [destinationChain, sourceChain]);
 
   if (!userHasOnboarded) {
     return (
@@ -760,8 +737,6 @@ function BridgeView({
       </ScreenView>
     );
   }
-
-  // const themeAppearance = this.context.themeAppearance || 'light';
 
   return (
     <View style={{ flex: 1 }}>
@@ -779,7 +754,7 @@ function BridgeView({
             <View style={styles.selectTokenView}>
               <TouchableOpacity
                 style={styles.selectTokenContainer}
-                onPress={toggleSourceModal}
+                onPress={toggleTokenModal}
               >
                 <View style={styles.icon}>
                   <TokenIcon
@@ -794,12 +769,19 @@ function BridgeView({
               </TouchableOpacity>
             </View>
           )}
+
+          <TokenSelectModal
+            isVisible={isTokenModalVisible}
+            dismiss={toggleTokenModal}
+            title={strings('swaps.convert_from')}
+            tokens={swapsTokens}
+            initialTokens={tokensWithBalance}
+            onItemPress={handleTokenPress}
+            excludeAddresses={[]}
+          />
           <View
-            style={[
-              styles.tokenButtonContainer,
-              disabledView && styles.disabled,
-            ]}
-            pointerEvents={disabledView ? 'none' : 'auto'}
+            style={[styles.tokenButtonContainer,]}
+            pointerEvents={'auto'}
           >
             {isInitialLoadingTokens ? (
               <ActivityIndicator size="small" />
@@ -819,25 +801,26 @@ function BridgeView({
                     />
                   </View>
                   <Text primary>
-                    {sourceChain?.symbol || 'Select source chain'}
+                    {sourceChain?.name || 'Select source chain'}
                   </Text>
                   <Icon name="caret-down" size={18} style={styles.caretDown} />
                 </TouchableOpacity>
               </View>
             )}
+
             <ChainSelectModal
               isVisible={isSourceModalVisible}
               dismiss={toggleSourceModal}
               title={strings('swaps.convert_from')}
-              tokens={swapsTokens}
-              initialTokens={tokensWithBalance}
-              onItemPress={handleSourceTokenPress}
-              excludeAddresses={[destinationToken?.address]}
+              tokens={CHAINS}
+              initialTokens={[]}
+              onItemPress={handleSourceChainPress}
+              excludeAddresses={[sourceChain?.id]}
             />
           </View>
           <View
-            style={[styles.amountContainer, disabledView && styles.disabled]}
-            pointerEvents={disabledView ? 'none' : 'auto'}
+            style={[styles.amountContainer]}
+            pointerEvents={'auto'}
           >
             {!sourceToken && <Text> </Text>}
           </View>
@@ -859,7 +842,7 @@ function BridgeView({
                   />
                 </View>
                 <Text primary>
-                  {destinationChain?.symbol ||
+                  {destinationChain?.name ||
                     'Select destination chain'}
                 </Text>
                 <Icon name="caret-down" size={18} style={styles.caretDown} />
@@ -868,123 +851,21 @@ function BridgeView({
           </View>
 
           <View style={styles.tokenButtonContainer}>
-            <TokenSelectModal
+            <ChainSelectModal
               isVisible={isDestinationModalVisible}
               dismiss={toggleDestinationModal}
               title={strings('swaps.convert_to')}
-              tokens={swapsTokens}
-              initialTokens={[
-                swapsUtils.getNativeSwapsToken(chainId),
-                ...tokensTopAssets
-                  .slice(0, MAX_TOP_ASSETS)
-                  .filter(
-                    (asset) =>
-                      asset.address !==
-                      swapsUtils.getNativeSwapsToken(chainId).address,
-                  ),
-              ]}
-              onItemPress={handleDestinationTokenPress}
-              excludeAddresses={[sourceToken?.address]}
+              tokens={CHAINS}
+              initialTokens={[]}
+              onItemPress={handleDestinationChainPress}
+              excludeAddresses={[sourceChain?.id]}
             />
           </View>
-          <View>
-            {Boolean(destinationToken) &&
-              !isSwapsNativeAsset(destinationToken) ? (
-              destinationTokenHasEnoughOcurrances ? (
-                <TouchableOpacity
-                  onPress={explorer.isValid ? handleVerifyPress : undefined}
-                  style={styles.verifyToken}
-                >
-                  <Text small centered>
-                    <Text reset bold>
-                      {strings('swaps.verified_on_sources', {
-                        sources: destinationToken.occurrences,
-                      })}
-                    </Text>
-                    {` ${strings('swaps.verify_on')} `}
-                    {explorer.isValid ? (
-                      <Text reset link>
-                        {explorer.name}
-                      </Text>
-                    ) : (
-                      strings('swaps.a_block_explorer')
-                    )}
-                    .
-                  </Text>
-                </TouchableOpacity>
-              ) : (
-                <ActionAlert
-                  type={
-                    !destinationToken.occurances ||
-                      isDynamicToken(destinationToken)
-                      ? AlertType.Error
-                      : AlertType.Warning
-                  }
-                  style={styles.tokenAlert}
-                  action={
-                    hasDismissedTokenAlert ? null : strings('swaps.continue')
-                  }
-                  onPress={handleDimissTokenAlert}
-                  onInfoPress={toggleTokenVerificationModal}
-                >
-                  {(textStyle) => (
-                    <TouchableOpacity
-                      onPress={explorer.isValid ? handleVerifyPress : undefined}
-                    >
-                      <Text style={textStyle} bold centered>
-                        {!destinationToken.occurrences ||
-                          isDynamicToken(destinationToken)
-                          ? strings('swaps.added_manually', {
-                            symbol: destinationToken.symbol,
-                            // eslint-disable-next-line no-mixed-spaces-and-tabs
-                          })
-                          : strings('swaps.only_verified_on', {
-                            symbol: destinationToken.symbol,
-                            occurrences: destinationToken.occurrences,
-                            // eslint-disable-next-line no-mixed-spaces-and-tabs
-                          })}
-                      </Text>
-                      {!destinationToken.occurrences ||
-                        isDynamicToken(destinationToken) ? (
-                        <Text style={textStyle} centered>
-                          {`${strings('swaps.verify_this_token_on')} `}
-                          {explorer.isValid ? (
-                            <Text reset link>
-                              {explorer.name}
-                            </Text>
-                          ) : (
-                            strings('swaps.a_block_explorer')
-                          )}
-                          {` ${strings('swaps.make_sure_trade')}`}
-                        </Text>
-                      ) : (
-                        <Text style={textStyle} centered>
-                          {`${strings('swaps.verify_address_on')} `}
-                          {explorer.isValid ? (
-                            <Text reset link>
-                              {explorer.name}
-                            </Text>
-                          ) : (
-                            strings('swaps.a_block_explorer')
-                          )}
-                          .
-                        </Text>
-                      )}
-                    </TouchableOpacity>
-                  )}
-                </ActionAlert>
-              )
-            ) : (
-              <Text> </Text>
-            )}
-          </View>
-
           <View
             style={[
               styles.horizontalRuleContainer,
-              disabledView && styles.disabled,
             ]}
-            pointerEvents={disabledView ? 'none' : 'auto'}
+            pointerEvents={'auto'}
           >
             <TouchableOpacity
               style={styles.flipButton}
@@ -1017,8 +898,8 @@ function BridgeView({
         )}
 
         <View
-          style={[styles.keypad, disabledView && styles.disabled]}
-          pointerEvents={disabledView ? 'none' : 'auto'}
+          style={[styles.keypad]}
+          pointerEvents={'auto'}
         >
           <View style={styles.ctaContainer}>
             <StyledButton
@@ -1040,55 +921,7 @@ function BridgeView({
             <Text style={styles.swapDetailTitle}>{'Provider'}</Text>
             <Icon name="arrow-right" size={18} style={styles.caretDown}></Icon>
           </View>
-
-          {/* <AnimatableView ref={keypadViewRef}>
-            <Keypad
-              onChange={handleKeypadChange}
-              value={amount}
-              currency="native"
-            />
-          </AnimatableView> */}
-          {/* <View style={styles.buttonsContainer}>
-            <View style={styles.column}>
-              <TouchableOpacity
-                onPress={toggleSlippageModal}
-                hitSlop={{ top: 10, right: 10, bottom: 10, left: 10 }}
-                disabled={isDirectWrapping}
-              >
-                <Text bold link={!isDirectWrapping}>
-                  {strings('swaps.max_slippage_amount', {
-                    slippage: `${slippage}%`,
-                  })}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View> */}
         </View>
-        <InfoModal
-          isVisible={isTokenVerificationModalVisisble}
-          toggleModal={toggleTokenVerificationModal}
-          title={strings('swaps.token_verification')}
-          body={
-            <Text>
-              {strings('swaps.token_multiple')}
-              {` ${strings('swaps.token_check')} `}
-              {explorer.isValid ? (
-                <Text reset link onPress={handleVerifyPress}>
-                  {explorer.name}
-                </Text>
-              ) : (
-                strings('swaps.a_block_explorer')
-              )}
-              {` ${strings('swaps.token_to_verify')}`}
-            </Text>
-          }
-        />
-        <SlippageModal
-          isVisible={isSlippageModalVisible}
-          dismiss={toggleSlippageModal}
-          onChange={handleSlippageChange}
-          slippage={slippage}
-        />
       </ScreenView>
     </View>
   );

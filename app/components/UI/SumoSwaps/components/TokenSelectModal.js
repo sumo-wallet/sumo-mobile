@@ -159,7 +159,7 @@ function TokenSelectModal({
   const filteredTokens = useMemo(
     () =>
       tokens?.filter(
-        (token) => !excludedAddresses.includes(token.address?.toLowerCase()),
+        (token) => !excludedAddresses.includes(token?.address?.toLowerCase()),
       ),
     [tokens, excludedAddresses],
   );
@@ -167,9 +167,9 @@ function TokenSelectModal({
     () =>
       initialTokens?.length > 0
         ? initialTokens.filter(
-            (token) =>
-              !excludedAddresses.includes(token.address?.toLowerCase()),
-          )
+          (token) =>
+            !excludedAddresses.includes(token?.address?.toLowerCase()),
+        )
         : filteredTokens,
     [excludedAddresses, filteredTokens, initialTokens],
   );

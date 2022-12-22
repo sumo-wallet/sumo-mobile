@@ -9,6 +9,8 @@ import {
   HandlerSearchDappResponse,
   HandlerSearchDappRequest,
   HandlerPopularSearchResponse,
+  HandlerWalletHomeConfigResponse,
+  HandlerNotificationResponse,
 } from './../types';
 
 /* eslint-disable prefer-destructuring */
@@ -119,6 +121,22 @@ class Client {
   public getDappByCategory(categoryId: string | number) {
     return fetcher<HandlerSearchDappResponse>(
       `${this.baseUrl}/api/v1/dapp/category/${categoryId}`,
+      {
+        headers: this.headers,
+      },
+    );
+  }
+  public getWalletHome() {
+    return fetcher<HandlerWalletHomeConfigResponse>(
+      `${this.baseUrl}/api/v1/wallet/home`,
+      {
+        headers: this.headers,
+      },
+    );
+  }
+  public getNotification() {
+    return fetcher<HandlerNotificationResponse>(
+      `${this.baseUrl}/api/v1/notification`,
       {
         headers: this.headers,
       },
