@@ -40,6 +40,7 @@ import Routes from '../../../constants/navigation/Routes';
 import { DynamicHeader } from '../../Base/DynamicHeader';
 import { icons } from '../../../assets';
 import { toggleAccountsModal } from '../../../actions/modals';
+import SumoTokens from '../../../components/UI/SumoTokens';
 // import { isDefaultAccountName } from '../../../util/ENSUtils';
 
 const createStyles = (colors: any) =>
@@ -306,12 +307,17 @@ const Wallet = ({ navigation }: any) => {
           // eslint-disable-next-line react/jsx-no-bind
           onChangeTab={onChangeTab}
         >
-          <Tokens
+          <View
+            style={{ height: '100%' }}
             tabLabel={'Token'}
-            key={'tokens-tab'}
-            navigation={navigation}
-            tokens={assets}
-          />
+            key={'tokens-tab'}>
+            <SumoTokens
+              tabLabel={'Token'}
+              key={'tokens-tab'}
+              navigation={navigation}
+              tokens={assets}
+            />
+          </View>
           <CollectionNFT
             tabLabel={strings('wallet.collectibles')}
             key={'nfts-tab'}
@@ -397,7 +403,7 @@ const Wallet = ({ navigation }: any) => {
         </View>
       </DynamicHeader>
       <View style={baseStyles.flexGrow} testID={'wallet-screen'}>
-        <ScrollView
+        {/* <ScrollView
           style={styles.wrapper}
           refreshControl={
             <RefreshControl
@@ -407,9 +413,9 @@ const Wallet = ({ navigation }: any) => {
               onRefresh={onRefresh}
             />
           }
-        >
-          {selectedAddress ? renderContent() : renderLoader()}
-        </ScrollView>
+        > */}
+        {selectedAddress ? renderContent() : renderLoader()}
+        {/* </ScrollView> */}
         {/* {renderOnboardingWizard()} */}
       </View>
     </ErrorBoundary>

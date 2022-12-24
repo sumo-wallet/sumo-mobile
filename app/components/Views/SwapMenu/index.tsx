@@ -312,14 +312,14 @@ const SwapMenu = ({ navigation }: any) => {
           style={{ flexGrow: 1 }}
         >
           <SwapsAmountView
-            tabLabel={'Token'}
+            tabLabel={'Swap'}
             key={'tokens-tab'}
             navigation={navigation}
             tokens={assets}
           />
           <BridgeView
             tabLabel={'Bridge'}
-            key={'nfts-tab'}
+            key={'bridge-tab'}
             navigation={navigation}
           />
           <SumoExchangeView

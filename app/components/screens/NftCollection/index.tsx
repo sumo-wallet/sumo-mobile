@@ -1,4 +1,3 @@
-import CollectionNFT from '../../UI/CollectionNFT';
 import React from 'react';
 import {
   View,
@@ -176,21 +175,28 @@ export const NftCollectionScreen = React.memo(() => {
 
   const collectionHeader = () => (
     <View style={styles.headerContainer}>
-
       <FastImage
         style={styles.collectionThumbnail}
         source={{
-          uri: 'https://i.seadn.io/gae/gYMU9ZpVqOn2XRl3YbO-K3feT-bP09Hw9xFefwEuQ28jZvvEWKNnxhVraJTLu_TKCnQw7Ny6Le58gy-ujKAjE2nqnE18Boqr5XCw5w?auto=format&w=1920',
+          uri: 'https://preview.redd.it/1h0gxywrseh81.jpg?width=640&crop=smart&auto=webp&s=665574e7cb81a0404c0d7f215cf84900c42d8f42',
         }}
         resizeMode={FastImage.resizeMode.cover}
       />
       <View style={styles.collectionInfoContainer}>
-        <FastImage
-          style={styles.collectionAvatar}
-          source={{
-            uri: 'https://i.seadn.io/gae/OMha_ibw2qTvRqXCR1toX78uWoHs5ZQmZy8qPxXjHimrjakRSZBN8d8GARykrH-5YPyRwPLXW-3DtlZ8FLKU0wiYnrmYyCU5C7PZkTU?auto=format&w=256',
-          }}
-        />
+        {collectible.length > 0 ? (
+          <CollectibleMedia
+            style={styles.collectionAvatar}
+            collectible={{ ...collectible[0], name: contractName }}
+          />
+        ) : (
+          <FastImage
+            style={styles.collectionAvatar}
+            source={{
+              uri: 'https://img.freepik.com/free-vector/nft-non-fungible-token-concept-with-neon-light-effect_1017-36944.jpg',
+            }}
+          />
+        )}
+
         <View style={styles.nameContainer}>
           <Text style={styles.collectionNameTitle}>{contractName}</Text>
         </View>
@@ -254,9 +260,9 @@ export const NftCollectionScreen = React.memo(() => {
                 collectible={{ ...item, name: contractName }}
               />
               <View style={styles.nftTitle}>
-                <Text
-                  style={styles.nftTitleContent}
-                >{`# ${renderShortText(item.tokenId)}`}</Text>
+                <Text style={styles.nftTitleContent}>{`# ${renderShortText(
+                  item.tokenId,
+                )}`}</Text>
               </View>
             </TouchableOpacity>
           );

@@ -32,8 +32,8 @@ interface Props {
 const createStyles = (colors: any) =>
   StyleSheet.create({
     logo: {
-      width: 50,
-      height: 50,
+      width: 40,
+      height: 40,
       borderRadius: 25,
       overflow: 'hidden',
     },

@@ -6,6 +6,7 @@ import {
   View,
   InteractionManager,
   Image,
+  SafeAreaView,
 } from 'react-native';
 import { connect } from 'react-redux';
 import { fontStyles } from '../../../styles/common';
@@ -23,7 +24,7 @@ import { removeFavoriteCollectible } from '../../../actions/collectibles';
 import { setNftDetectionDismissed } from '../../../actions/user';
 import Text from '../../Base/Text';
 import AppConstants from '../../../core/AppConstants';
-import { toLowerCaseEquals } from '../../../util/general';
+import { renderShortText, toLowerCaseEquals } from '../../../util/general';
 import { compareTokenIds } from '../../../util/tokens';
 import CollectibleDetectionModal from '../CollectibleDetectionModal';
 import { isMainNet } from '../../../util/networks';
@@ -106,7 +107,7 @@ const createStyles = (colors) =>
       height: 20,
     },
 
-    nftItem: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+    nftItem: { flex: 1 / 2, justifyContent: 'center', alignItems: 'center' },
     nftThumbnail: {
       borderRadius: 10,
       width: COLLECTIBLE_WIDTH,
@@ -144,6 +145,19 @@ const createStyles = (colors) =>
       justifyContent: 'center',
       alignItems: 'center',
     },
+    buttonReceive: {
+      height: 44,
+      backgroundColor: colors.primary.default,
+      borderRadius: 22,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginHorizontal: 10,
+    },
+    buttonReceiveTitle: {
+      color: colors.background.default,
+      fontSize: 16,
+
+    }
   });
 
 /**
@@ -273,7 +287,7 @@ const CollectionNFT = ({
             collectible={{ ...item, name }}
           />
           <View style={styles.nftTitle}>
-            <Text>{item.name}</Text>
+            <Text>{renderShortText(item.name, 6)}</Text>
             <View style={styles.collectionCount}>
               <Text>{contractCollectibles.length}</Text>
             </View>
@@ -339,8 +353,8 @@ const CollectionNFT = ({
   const renderList = useCallback(
     () => (
       <FlatList
-        style={{ flex: 1 }}
-        contentContainerStyle={{ flexGrow: 1 }}
+        style={{ height: '100%' }}
+        // contentContainerStyle={{ flexGrow: 1 }}
         data={collectibleContracts}
         numColumns={2}
         renderItem={({ item, index }) => {
@@ -385,7 +399,7 @@ const CollectionNFT = ({
   );
 
   return (
-    <View style={styles.wrapper} testID={'collectible-contracts'}>
+    <SafeAreaView style={styles.wrapper} testID={'collectible-contracts'}>
       {isMainNet(chainId) &&
         !nftDetectionDismissed &&
         !useCollectibleDetection && (
@@ -397,7 +411,10 @@ const CollectionNFT = ({
           </View>
         )}
       {renderList()}
-    </View>
+      <TouchableOpacity style={styles.buttonReceive}>
+        <Text style={styles.buttonReceiveTitle}>{'Receive'}</Text>
+      </TouchableOpacity>
+    </SafeAreaView>
   );
 };
 

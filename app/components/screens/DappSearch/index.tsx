@@ -234,7 +234,7 @@ export const DappSearch = React.memo(() => {
   }, [colors.text.alternative, colors.text.default]);
 
   const keyEx = React.useCallback((i: ModelDApp) => `${i}`, []);
-  const renderSearchResults = React.useCallback(() => {
+  const renderSearchResults = () => {
     if (textSearch?.length === 0) {
       return null;
     }
@@ -249,15 +249,7 @@ export const DappSearch = React.memo(() => {
         refreshing={isSearching}
       />
     );
-  }, [
-    textSearch?.length,
-    dappsResultSearch,
-    renderItemResult,
-    renderItemSeparator,
-    keyEx,
-    renderEmptyComponent,
-    isSearching,
-  ]);
+  };
 
   return (
     <SafeAreaView style={Style.s({ flex: 1, bg: colors.background.default })}>
