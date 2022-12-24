@@ -70,7 +70,7 @@ const SecurityPasswordModal = ({
           {'Security Password'}
         </Text>
         <SInput
-          style={Style.s({ mt: 24 })}
+          style={Style.s({ mt: 24, c: colors.text.default })}
           placeholder="Enter Security Password"
           secure
           onChange={onPassChanged}

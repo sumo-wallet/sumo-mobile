@@ -49,6 +49,10 @@ export const toLowerCaseEquals = (a, b) => {
   if (!a && !b) return false;
   return tlc(a) === tlc(b);
 };
+export const toLowerCaseIncludes = (a, b) => {
+  if (!a || !b) return false;
+  return tlc(a).includes(tlc(b));
+};
 
 export const shallowEqual = (object1, object2) => {
   const keys1 = Object.keys(object1);

@@ -11,6 +11,10 @@ import { RawFeatureInterface } from '../types';
 import { useTheme } from '../../../../util/theme';
 import { ModelCategoryApp } from 'app/types';
 import FastImage from 'react-native-fast-image';
+import { ROUTES } from '../../../../navigation/routes';
+import { useDispatch } from 'react-redux';
+import { createNewTab, openDapp } from '../../../../actions/browser';
+import { useNavigation } from '@react-navigation/native';
 
 const createStyles = (colors: any) =>
   StyleSheet.create({
@@ -73,10 +77,14 @@ export const FavoriteComponent = function FavoriteComponent({
 }: RawDappInterface) {
   const { colors } = useTheme();
   const styles = createStyles(colors);
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
 
-  const openDappBrowser = (item) => {
-
-  }
+  const openDappBrowser = (item: any) => {
+    dispatch(createNewTab(item?.website));
+    dispatch(openDapp({ dapp: item }));
+    navigation.navigate(ROUTES.BrowserTabHome, { dapp: item });
+  };
 
   return (
     <View style={styles.screenWrapper}>
@@ -88,20 +96,29 @@ export const FavoriteComponent = function FavoriteComponent({
           const dapp = item.dapp;
           if (dapp && dapp.id > 0) {
             return (
-              <TouchableOpacity key={index} style={styles.containerItem} onPress={openDappBrowser}>
-                {item.dapp && <FastImage source={{ uri: item.dapp.logo }} style={styles.icon} resizeMode={FastImage.resizeMode.contain} />}
+              <TouchableOpacity
+                key={index}
+                style={styles.containerItem}
+                onPress={() => { openDappBrowser(dapp) }}
+              >
+                {item.dapp && (
+                  <FastImage
+                    source={{ uri: item.dapp.logo }}
+                    style={styles.icon}
+                    resizeMode={FastImage.resizeMode.contain}
+                  />
+                )}
                 <View style={{ justifyContent: 'center' }}>
                   <Text style={styles.nameDapp}>{item.dapp.name}</Text>
-                  <Text style={styles.subNameDapp}>{item.dapp.description}</Text>
+                  <Text style={styles.subNameDapp}>
+                    {item.dapp.description}
+                  </Text>
                 </View>
               </TouchableOpacity>
             );
           } else {
-            return (
-              <View />
-            )
+            return <View />;
           }
-
         })}
       </View>
     </View>

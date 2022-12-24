@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { PureComponent, useCallback, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   TouchableOpacity,
@@ -26,14 +26,72 @@ import AnalyticsV2 from '../../../util/analyticsV2';
 import NetworkMainAssetLogo from '../NetworkMainAssetLogo';
 import { getTokenList } from '../../../reducers/tokens';
 import { isZero } from '../../../util/lodash';
-import { ThemeContext, mockTheme } from '../../../util/theme';
+import { ThemeContext, mockTheme, useTheme } from '../../../util/theme';
 import Text from '../../Base/Text';
 import NotificationManager from '../../../core/NotificationManager';
 import { getDecimalChainId, isTestNet } from '../../../util/networks';
 import BalanceFrame from '../../screens/Wallet/components/BalanceFrame';
 import { SearchBar } from '../../screens/Dapps/SearchBar';
-import { icons } from '../../../assets';
+import { icons, images } from '../../../assets';
 import { FlatList } from 'react-native-gesture-handler';
+import { useNavigation } from '@react-navigation/native';
+import { toLowerCaseEquals, toLowerCaseIncludes } from '../../../util/general';
+
+interface ISumoTokenProp {
+  /**
+   * Network provider chain id
+   */
+  chainId: PropTypes.string;
+  /**
+   * Array of assets (in this case ERC20 tokens)
+   */
+  tokens: PropTypes.array;
+  /**
+   * Object containing token balances in the format address => balance
+   */
+  tokenBalances: PropTypes.object;
+
+  selectedAddress: PropTypes.number;
+  // identities: PropTypes.object;
+  accounts: PropTypes.object;
+  /**
+   * ETH to current currency conversion rate
+   */
+  conversionRate: PropTypes.number;
+  /**
+   * Currency code of the currently-active currency
+   */
+  currentCurrency: PropTypes.string;
+
+  /**
+   * Object containing token exchange rates in the format address => exchangeRate
+   */
+  tokenExchangeRates: PropTypes.object;
+  /**
+   * Array of transactions
+   */
+  transactions: PropTypes.array;
+  /**
+   * Primary currency, either ETH or Fiat
+   */
+  primaryCurrency: PropTypes.string;
+  /**
+   * A bool that represents if the user wants to hide zero balance token
+   */
+  hideZeroBalanceTokens: PropTypes.bool;
+  /**
+   * List of tokens from TokenListController
+   */
+  tokenList: PropTypes.object;
+  /**
+   * List of detected tokens from TokensController
+   */
+  detectedTokens: PropTypes.array;
+  /**
+   * Boolean that indicates if token detection is enabled
+   */
+  isTokenDetectionEnabled: PropTypes.bool;
+}
 
 const createStyles = (colors: any) =>
   StyleSheet.create({
@@ -49,6 +107,10 @@ const createStyles = (colors: any) =>
       justifyContent: 'center',
       alignItems: 'center',
       marginTop: 50,
+    },
+    emptyImage: {
+      width: 130,
+      height: 130,
     },
     containerSearchBar: {
       flexDirection: 'row',
@@ -149,106 +211,125 @@ const createStyles = (colors: any) =>
       marginRight: 4,
       tintColor: colors.text.alternative,
     },
+    containerList: {
+      flexGrow: 1,
+      backgroundColor: colors.box.default,
+    },
   });
 
 /**
  * View that renders a list of ERC-20 Tokens
  */
-class SumoTokens extends PureComponent {
-  static propTypes = {
-    /**
-     * Navigation object required to push
-     * the Asset detail view
-     */
-    navigation: PropTypes.object,
-    /**
-     * Array of assets (in this case ERC20 tokens)
-     */
-    tokens: PropTypes.array,
-    /**
-     * Network provider chain id
-     */
-    chainId: PropTypes.string,
-    /**
-     * ETH to current currency conversion rate
-     */
-    conversionRate: PropTypes.number,
-    /**
-     * Currency code of the currently-active currency
-     */
-    currentCurrency: PropTypes.string,
-    /**
-     * Object containing token balances in the format address => balance
-     */
-    tokenBalances: PropTypes.object,
-    /**
-     * Object containing token exchange rates in the format address => exchangeRate
-     */
-    tokenExchangeRates: PropTypes.object,
-    /**
-     * Array of transactions
-     */
-    transactions: PropTypes.array,
-    /**
-     * Primary currency, either ETH or Fiat
-     */
-    primaryCurrency: PropTypes.string,
-    /**
-     * A bool that represents if the user wants to hide zero balance token
-     */
-    hideZeroBalanceTokens: PropTypes.bool,
-    /**
-     * List of tokens from TokenListController
-     */
-    tokenList: PropTypes.object,
-    /**
-     * List of detected tokens from TokensController
-     */
-    detectedTokens: PropTypes.array,
-    /**
-     * Boolean that indicates if token detection is enabled
-     */
-    isTokenDetectionEnabled: PropTypes.bool,
-    selectedAddress: PropTypes.number,
-    identities: PropTypes.object,
-    accounts: PropTypes.object,
-  };
+const SumoTokens = ({
+  chainId,
+  tokens,
+  tokenBalances,
+  selectedAddress,
+  // identities,
+  accounts,
+  conversionRate,
+  currentCurrency,
+  tokenExchangeRates,
+  transactions,
+  primaryCurrency,
+  hideZeroBalanceTokens,
+  tokenList,
+  detectedTokens,
+  isTokenDetectionEnabled,
+}: ISumoTokenProp) => {
+  // static propTypes = {
+  //   /**
+  //    * Navigation object required to push
+  //    * the Asset detail view
+  //    */
+  //   navigation: PropTypes.object,
+  //   /**
+  //    * Array of assets (in this case ERC20 tokens)
+  //    */
+  //   tokens: PropTypes.array,
+  //   /**
+  //    * Network provider chain id
+  //    */
+  //   chainId: PropTypes.string,
+  //   /**
+  //    * ETH to current currency conversion rate
+  //    */
+  //   conversionRate: PropTypes.number,
+  //   /**
+  //    * Currency code of the currently-active currency
+  //    */
+  //   currentCurrency: PropTypes.string,
+  //   /**
+  //    * Object containing token balances in the format address => balance
+  //    */
+  //   tokenBalances: PropTypes.object,
+  //   /**
+  //    * Object containing token exchange rates in the format address => exchangeRate
+  //    */
+  //   tokenExchangeRates: PropTypes.object,
+  //   /**
+  //    * Array of transactions
+  //    */
+  //   transactions: PropTypes.array,
+  //   /**
+  //    * Primary currency, either ETH or Fiat
+  //    */
+  //   primaryCurrency: PropTypes.string,
+  //   /**
+  //    * A bool that represents if the user wants to hide zero balance token
+  //    */
+  //   hideZeroBalanceTokens: PropTypes.bool,
+  //   /**
+  //    * List of tokens from TokenListController
+  //    */
+  //   tokenList: PropTypes.object,
+  //   /**
+  //    * List of detected tokens from TokensController
+  //    */
+  //   detectedTokens: PropTypes.array,
+  //   /**
+  //    * Boolean that indicates if token detection is enabled
+  //    */
+  //   isTokenDetectionEnabled: PropTypes.bool,
+  //   selectedAddress: PropTypes.number,
+  //   identities: PropTypes.object,
+  //   accounts: PropTypes.object,
+  // };
 
-  actionSheet = null;
+  const { colors, themeAppearance } = useTheme();
+  const styles = createStyles(colors);
+  const navigation = useNavigation();
 
-  tokenToRemove = null;
+  const actionSheet = useRef(null);
 
-  state = {
-    isAddTokenEnabled: true,
-    refreshing: false,
-  };
+  const [tokenToRemove, setTokenToRemove] = useState(null);
+  const [isAddTokenEnabled, setAddTokenEnabled] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [searchText, setSearchText] = useState('');
 
-  getStyles = () => {
-    const colors = this.context.colors || mockTheme.colors;
-    const styles = createStyles(colors);
-    return styles;
-  };
+  // getStyles = () => {
+  //   const colors = this.context.colors || mockTheme.colors;
+  //   const styles = createStyles(colors);
+  //   return styles;
+  // };
 
-  renderEmpty = () => {
-    const styles = this.getStyles();
-
+  const renderEmpty = () => {
     return (
       <View style={styles.emptyView}>
+        <Image style={styles.emptyImage} source={images.imageEmptyView}></Image>
         <Text style={styles.text}>{strings('wallet.no_tokens')}</Text>
       </View>
     );
   };
 
-  onItemPress = (token) => {
-    this.props.navigation.navigate('Asset', {
+  const onItemPress = (token: any) => {
+    navigation.navigate('Asset', {
       ...token,
-      transactions: this.props.transactions,
+      transactions: transactions,
     });
   };
 
-  renderFooter = () => {
-    const styles = this.getStyles();
-
+  const renderFooter = () => {
     return (
       <View style={styles.footer} key={'tokens-footer'}>
         <Text style={styles.emptyText}>
@@ -256,8 +337,8 @@ class SumoTokens extends PureComponent {
         </Text>
         <TouchableOpacity
           style={styles.add}
-          onPress={this.goToAddToken}
-          disabled={!this.state.isAddTokenEnabled}
+          onPress={goToAddToken}
+          disabled={!isAddTokenEnabled}
           testID={'add-token-button'}
         >
           <Image source={icons.iconSetting} style={styles.iconManageToken} />
@@ -267,18 +348,7 @@ class SumoTokens extends PureComponent {
     );
   };
 
-  renderItem = (asset) => {
-    const {
-      conversionRate,
-      currentCurrency,
-      tokenBalances,
-      tokenExchangeRates,
-      primaryCurrency,
-      tokenList,
-      chainId,
-    } = this.props;
-    const styles = this.getStyles();
-
+  const renderItem = (asset) => {
     const itemAddress = safeToChecksumAddress(asset.address);
     const logo = tokenList?.[itemAddress?.toLowerCase?.()]?.iconUrl;
     const exchangeRate =
@@ -315,8 +385,8 @@ class SumoTokens extends PureComponent {
       <AssetElement
         key={itemAddress || '0x'}
         testID={'asset'}
-        onPress={this.onItemPress}
-        onLongPress={asset.isETH ? null : this.showRemoveMenu}
+        onPress={onItemPress}
+        onLongPress={asset.isETH ? null : showRemoveMenu}
         asset={asset}
       >
         {asset.isETH ? (
@@ -363,24 +433,24 @@ class SumoTokens extends PureComponent {
     );
   };
 
-  goToBuy = () => {
-    this.props.navigation.navigate('FiatOnRampAggregator');
+  const goToBuy = () => {
+    navigation.navigate('FiatOnRampAggregator');
     InteractionManager.runAfterInteractions(() => {
       Analytics.trackEventWithParameters(
         AnalyticsV2.ANALYTICS_EVENTS.BUY_BUTTON_CLICKED,
         {
           text: 'Buy Native Token',
           location: 'Home Screen',
-          chain_id_destination: this.props.chainId,
+          chain_id_destination: chainId,
         },
       );
     });
   };
 
-  showDetectedTokens = () => {
+  const showDetectedTokens = () => {
     const { NetworkController } = Engine.context;
-    const { detectedTokens } = this.props;
-    this.props.navigation.navigate('DetectedTokens');
+    // const { detectedTokens } = this.props;
+    navigation.navigate('DetectedTokens');
     InteractionManager.runAfterInteractions(() => {
       AnalyticsV2.trackEvent(
         AnalyticsV2.ANALYTICS_EVENTS.TOKEN_IMPORT_CLICKED,
@@ -394,14 +464,11 @@ class SumoTokens extends PureComponent {
           ),
         },
       );
-      this.setState({ isAddTokenEnabled: true });
+      setAddTokenEnabled(true);
     });
   };
 
-  renderTokensDetectedSection = () => {
-    const { isTokenDetectionEnabled, detectedTokens } = this.props;
-    const styles = this.getStyles();
-
+  const renderTokensDetectedSection = () => {
     if (!isTokenDetectionEnabled || !detectedTokens?.length) {
       return null;
     }
@@ -410,7 +477,7 @@ class SumoTokens extends PureComponent {
     return (
       <TouchableOpacity
         style={styles.tokensDetectedButton}
-        onPress={this.showDetectedTokens}
+        onPress={showDetectedTokens}
       >
         <Text style={styles.tokensDetectedText}>
           {strings('wallet.tokens_detected_in_account', {
@@ -422,36 +489,32 @@ class SumoTokens extends PureComponent {
     );
   };
 
-  onRefresh = () => {
-    requestAnimationFrame(async () => {
-      this.setState({ refreshing: true });
-      const {
-        TokenDetectionController,
-        CollectibleDetectionController,
-        AccountTrackerController,
-        CurrencyRateController,
-        TokenRatesController,
-      } = Engine.context;
-      const actions = [
-        TokenDetectionController.detectTokens(),
-        CollectibleDetectionController.detectCollectibles(),
-        AccountTrackerController.refresh(),
-        CurrencyRateController.start(),
-        TokenRatesController.poll(),
-      ];
-      await Promise.all(actions);
-      this.setState({ refreshing: false });
-    });
+  const onRefresh = async () => {
+    setRefreshing(true);
+    const {
+      TokenDetectionController,
+      CollectibleDetectionController,
+      AccountTrackerController,
+      CurrencyRateController,
+      TokenRatesController,
+    }: any = Engine.context;
+    const actions = [
+      TokenDetectionController.detectTokens(),
+      CollectibleDetectionController.detectCollectibles(),
+      AccountTrackerController.refresh(),
+      CurrencyRateController.start(),
+      TokenRatesController.poll(),
+    ];
+    await Promise.all(actions);
+    setRefreshing(false);
   };
 
-  renderWallet() {
-    const { selectedAddress, identities, accounts } = this.props;
-    const account = {
-      address: selectedAddress,
-      ...identities[selectedAddress],
-      ...accounts[selectedAddress],
-    };
-    const styles = this.getStyles();
+  const renderWallet = () => {
+    // const account = {
+    //   address: selectedAddress,
+    //   ...identities[selectedAddress],
+    //   ...accounts[selectedAddress],
+    // };
 
     return (
       <View>
@@ -462,9 +525,10 @@ class SumoTokens extends PureComponent {
         />
         <View style={styles.containerSearchBar}>
           <SearchBar
+            value={searchText}
             style={{ width: 280 }}
             placeholder={'Search...'}
-            onInputSubmit={(text) => { }}
+            onInputSubmit={setSearchText}
           />
           <View style={styles.containerSetting}>
             <TouchableOpacity style={styles.containerIcon}>
@@ -474,50 +538,52 @@ class SumoTokens extends PureComponent {
         </View>
       </View>
     );
-  }
+  };
 
-  renderList() {
-    const { tokens, hideZeroBalanceTokens, tokenBalances } = this.props;
+  const renderList = () => {
+    // const { tokens, hideZeroBalanceTokens, tokenBalances } = this.props;
     const tokensToDisplay = hideZeroBalanceTokens
-      ? tokens.filter((token) => {
+      ? tokens.filter((token: any) => {
         const { address, isETH } = token;
         return !isZero(tokenBalances[address]) || isETH;
-        // eslint-disable-next-line no-mixed-spaces-and-tabs
       })
       : tokens;
-    const styles = this.getStyles();
-    const colors = this.context.colors || mockTheme.colors;
+    const filteredTokens =
+      searchText.length > 0
+        ? tokensToDisplay.filter((token: any) => {
+          const { address, symbol } = token;
+          return (
+            toLowerCaseIncludes(symbol, searchText) ||
+            toLowerCaseIncludes(address, searchText)
+          );
+        })
+        : tokensToDisplay;
     return (
-      <View>
-        {/* {this.renderWallet()}
-        <View style={styles.wrapperTokens}>
-          {tokensToDisplay.map((item) => this.renderItem(item))}
-          {this.renderTokensDetectedSection()}
-          {this.renderFooter()}
-        </View> */}
+      <View style={styles.containerList}>
         <FlatList
-          data={tokensToDisplay}
-          renderItem={({ item }) => this.renderItem(item)}
-          ListHeaderComponent={this.renderWallet()}
-          ListFooterComponent={this.renderFooter()}
+          data={filteredTokens}
+          renderItem={({ item }) => renderItem(item)}
+          ListHeaderComponent={renderWallet()}
+          ListFooterComponent={renderFooter()}
           refreshControl={
             <RefreshControl
               colors={[colors.primary.default]}
               tintColor={colors.primary.default}
-              refreshing={this.state.refreshing}
-              onRefresh={this.onRefresh()}
+              refreshing={refreshing}
+              onRefresh={onRefresh}
             />
           }
+          ListEmptyComponent={renderEmpty}
         />
-        {this.renderTokensDetectedSection()}
+        {renderTokensDetectedSection()}
       </View>
     );
-  }
+  };
 
-  goToAddToken = () => {
-    const { NetworkController } = Engine.context;
-    this.setState({ isAddTokenEnabled: false });
-    this.props.navigation.push('AddAsset', { assetType: 'token' });
+  const goToAddToken = () => {
+    const { NetworkController }: any = Engine.context;
+    setAddTokenEnabled(false);
+    navigation.push('AddAsset', { assetType: 'token' });
     InteractionManager.runAfterInteractions(() => {
       AnalyticsV2.trackEvent(
         AnalyticsV2.ANALYTICS_EVENTS.TOKEN_IMPORT_CLICKED,
@@ -528,19 +594,19 @@ class SumoTokens extends PureComponent {
           ),
         },
       );
-      this.setState({ isAddTokenEnabled: true });
+      setAddTokenEnabled(true);
     });
   };
 
-  showRemoveMenu = (token) => {
-    this.tokenToRemove = token;
-    this.actionSheet.show();
+  const showRemoveMenu = (token) => {
+    setTokenToRemove(token);
+    actionSheet?.current.show();
   };
 
-  removeToken = async () => {
-    const { TokensController, NetworkController } = Engine.context;
-    const tokenAddress = this.tokenToRemove?.address;
-    const symbol = this.tokenToRemove?.symbol;
+  const removeToken = async () => {
+    const { TokensController, NetworkController }: any = Engine.context;
+    const tokenAddress = tokenToRemove?.address;
+    const symbol = tokenToRemove?.symbol;
     try {
       await TokensController.ignoreTokens([tokenAddress]);
       NotificationManager.showSimpleNotification({
@@ -567,33 +633,23 @@ class SumoTokens extends PureComponent {
     }
   };
 
-  createActionSheetRef = (ref) => {
-    this.actionSheet = ref;
-  };
+  const onActionSheetPress = (index) => (index === 0 ? removeToken() : null);
 
-  onActionSheetPress = (index) => (index === 0 ? this.removeToken() : null);
-
-  render = () => {
-    const { tokens } = this.props;
-    const styles = this.getStyles();
-    const themeAppearance = this.context.themeAppearance;
-
-    return (
-      <View style={styles.wrapper} testID={'tokens'}>
-        {tokens && tokens.length ? this.renderList() : this.renderEmpty()}
-        <ActionSheet
-          ref={this.createActionSheetRef}
-          title={strings('wallet.remove_token_title')}
-          options={[strings('wallet.remove'), strings('wallet.cancel')]}
-          cancelButtonIndex={1}
-          destructiveButtonIndex={0}
-          onPress={this.onActionSheetPress}
-          theme={themeAppearance}
-        />
-      </View>
-    );
-  };
-}
+  return (
+    <View style={styles.wrapper} testID={'tokens'}>
+      {renderList()}
+      <ActionSheet
+        ref={actionSheet}
+        title={strings('wallet.remove_token_title')}
+        options={[strings('wallet.remove'), strings('wallet.cancel')]}
+        cancelButtonIndex={1}
+        destructiveButtonIndex={0}
+        onPress={onActionSheetPress}
+        theme={themeAppearance}
+      />
+    </View>
+  );
+};
 
 const mapStateToProps = (state) => ({
   chainId: state.engine.backgroundState.NetworkController.provider.chainId,
@@ -613,7 +669,7 @@ const mapStateToProps = (state) => ({
   detectedTokens: state.engine.backgroundState.TokensController.detectedTokens,
   isTokenDetectionEnabled:
     state.engine.backgroundState.PreferencesController.useTokenDetection,
-  identities: state.engine.backgroundState.PreferencesController.identities,
+  // identities: state.engine.backgroundState.PreferencesController.identities,
   accounts: state.engine.backgroundState.AccountTrackerController.accounts,
 });
 

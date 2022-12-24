@@ -307,17 +307,13 @@ const Wallet = ({ navigation }: any) => {
           // eslint-disable-next-line react/jsx-no-bind
           onChangeTab={onChangeTab}
         >
-          <View
-            style={{ height: '100%' }}
+          <SumoTokens
             tabLabel={'Token'}
-            key={'tokens-tab'}>
-            <SumoTokens
-              tabLabel={'Token'}
-              key={'tokens-tab'}
-              navigation={navigation}
-              tokens={assets}
-            />
-          </View>
+            key={'tokens-tab'}
+            navigation={navigation}
+            tokens={assets}
+            selectedAddress={selectedAddress}
+          />
           <CollectionNFT
             tabLabel={strings('wallet.collectibles')}
             key={'nfts-tab'}

@@ -7,6 +7,7 @@ import { renderFiat } from '../../../../util/number';
 import { useSelector } from 'react-redux';
 import Engine from '../../../../core/Engine';
 import { useTheme } from '../../../../util/theme';
+import { BlurView } from '@react-native-community/blur';
 
 export interface InformationFrameInterface {
   address?: string;
@@ -16,8 +17,8 @@ export interface InformationFrameInterface {
 const createStyles = (colors: any) =>
   StyleSheet.create({
     screenWrapper: {
+      height: 200,
       borderRadius: 20,
-      paddingLeft: 16,
       paddingVertical: 20,
       borderWidth: 1,
       borderColor: colors.primary.default,
@@ -28,14 +29,18 @@ const createStyles = (colors: any) =>
       backgroundColor: colors.background.alternative,
     },
     iconLogo: {
-      marginVertical: -20,
+      position: 'absolute',
+      right: 0,
+      bottom: 10,
     },
     address: {
+      marginLeft: 16,
       fontSize: 14,
       fontWeight: '400',
       color: colors.text.default,
     },
     containerBalance: {
+      width: '100%',
       flexDirection: 'column',
     },
     containerAddress: {
@@ -48,17 +53,34 @@ const createStyles = (colors: any) =>
       marginLeft: 4,
     },
     container: {
+      width: '100%',
       justifyContent: 'space-between',
     },
+    containerTotalTitle: {
+      marginTop: 16,
+      flexDirection: 'row',
+    },
     titleTotal: {
+      marginLeft: 16,
       fontSize: 14,
       fontWeight: '400',
-      color: colors.text.default,
+      color: colors.text.muted,
     },
     total: {
+      marginHorizontal: 16,
       fontSize: 32,
-      fontWeight: '400',
+      fontWeight: '500',
       color: colors.text.default,
+    },
+    blurView: {
+      position: 'absolute',
+      width: '100%',
+      height: 100,
+      top: 0,
+      left: 0,
+      bottom: 0,
+      right: 0,
+      opacity: 0.9,
     },
   });
 
@@ -83,6 +105,7 @@ export const InformationFrame = function ({
   return (
     <View style={styles.screenWrapper}>
       <View style={styles.container}>
+        <Image source={icons.iconLogo} style={styles.iconLogo} resizeMode={'contain'} />
         <View style={styles.containerAddress}>
           <EthereumAddress
             address={address}
@@ -93,8 +116,10 @@ export const InformationFrame = function ({
             <Image source={icons.iconClipBoard} style={styles.icon} />
           </TouchableOpacity>
         </View>
+
         <View style={styles.containerBalance}>
-          <View style={baseStyles.flexDirection}>
+          <BlurView blurType={'ultraThinMaterialDark'} blurAmount={5} style={styles.blurView} />
+          <View style={styles.containerTotalTitle}>
             <Text style={styles.titleTotal}>{'Total Balance'}</Text>
             <TouchableOpacity
               onPress={() => {
@@ -110,7 +135,6 @@ export const InformationFrame = function ({
           <Text style={styles.total}>{isHidden ? '******' : fiatBalance}</Text>
         </View>
       </View>
-      <Image source={icons.iconLogo} style={styles.iconLogo} />
     </View>
   );
 };

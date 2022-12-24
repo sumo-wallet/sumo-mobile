@@ -99,8 +99,12 @@ const createStyles = (colors) =>
     },
     containerIcon: {
       padding: 12,
-      backgroundColor: colors.background.alternativeHover,
-      borderRadius: 40,
+      width: 40,
+      height: 40,
+      backgroundColor: colors.box.default,
+      borderRadius: 20,
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     icon: {
       width: 20,
@@ -353,7 +357,7 @@ const CollectionNFT = ({
   const renderList = useCallback(
     () => (
       <FlatList
-        style={{ height: '100%' }}
+        // style={{ height: '100%' }}
         // contentContainerStyle={{ flexGrow: 1 }}
         data={collectibleContracts}
         numColumns={2}
@@ -375,6 +379,7 @@ const CollectionNFT = ({
                   style={{ width: '46%' }}
                   placeholder={'Search...'}
                   onInputSubmit={(text) => { }}
+                // onInputSubmit={setSearchText}
                 />
                 <View style={styles.containerSetting}>
                   <TouchableOpacity style={styles.containerIcon}>
