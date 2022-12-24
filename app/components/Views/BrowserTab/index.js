@@ -145,12 +145,13 @@ const createStyles = (colors, shadows) =>
       marginTop: Device.isAndroid() ? 0 : -5,
     },
     optionText: {
-      fontSize: 16,
+      fontSize: 14,
       lineHeight: 16,
       alignSelf: 'center',
       justifyContent: 'center',
       marginTop: 3,
-      color: colors.primary.default,
+      fontWeight: '400',
+      color: colors.text.default,
       flex: 1,
       ...fontStyles.fontPrimary,
     },
@@ -236,8 +237,9 @@ const createStyles = (colors, shadows) =>
     dragger: {
       width: 48,
       height: 5,
+      marginTop: 4,
       borderRadius: 4,
-      backgroundColor: colors.border.default,
+      backgroundColor: colors.text.default,
       opacity: Device.isAndroid() ? 0.6 : 0.5,
     },
     optionViewBase: {
@@ -266,7 +268,7 @@ const createStyles = (colors, shadows) =>
       borderColor: colors.border.muted,
       flexDirection: 'row',
       backgroundColor: 'transparent',
-      paddingVertical: 5,
+      padding: 16,
     },
   });
 
@@ -1248,15 +1250,22 @@ export const BrowserTab = (props) => {
     if (isHomepage()) return null;
 
     return (
-      <View style={Style.s({})} >
-        <TouchableOpacity style={Style.s({ direc: 'row', items: 'center', justify: 'space-between' })} >
-          <Text>
-            {'Copy web link'}
-          </Text>
-          <FastImage style={Style.s({ size: 24 })} source={icons.iconCopyWebLink} />
+      <View style={Style.s({})}>
+        <TouchableOpacity
+          style={Style.s({
+            direc: 'row',
+            items: 'center',
+            justify: 'space-between',
+          })}
+        >
+          <Text>{'Copy web link'}</Text>
+          <FastImage
+            style={Style.s({ size: 24 })}
+            source={icons.iconCopyWebLink}
+          />
         </TouchableOpacity>
       </View>
-    )
+    );
 
     // return (
     //   <React.Fragment>
@@ -1314,7 +1323,6 @@ export const BrowserTab = (props) => {
     setShowNetwork(true);
     toggleOptionsIfNeeded();
     // toggleNetworkModal();
-    // trackSwitchNetworkEvent({ from: network });
   };
 
   /**
@@ -1371,7 +1379,7 @@ export const BrowserTab = (props) => {
   const openAboutDapp = React.useCallback(() => {
     toggleOptionsIfNeeded();
     nav.navigate(ROUTES.DappDetails, { dapp: props.dapp });
-  }, [toggleOptionsIfNeeded, props.dapp])
+  }, [toggleOptionsIfNeeded, props.dapp]);
 
   const handleCopyWebLink = React.useCallback(() => {
     toggleOptionsIfNeeded();
@@ -1382,7 +1390,7 @@ export const BrowserTab = (props) => {
       content: 'clipboard-alert',
       data: { msg: 'Web link copied to clipboard!' },
     });
-  }, [props.dapp, props.showAlert, toggleOptionsIfNeeded])
+  }, [props.dapp, props.showAlert, toggleOptionsIfNeeded]);
 
   /**
    * Renders the Option modal
@@ -1421,33 +1429,46 @@ export const BrowserTab = (props) => {
       <SafeAreaView style={styles.modalWrapper} testID={'browser-option'}>
         <View style={styles.titleWrapper}>
           <View style={styles.dragger} testID={'option-list-dragger'} />
-          <Text style={Fonts.t({ s: 18, w: '500', c: colors.text.default, y: 10 })} >
+          <Text
+            style={Fonts.t({ s: 18, w: '500', c: colors.text.default, y: 10 })}
+          >
             {props?.dapp?.name ?? 'Dapp'}
           </Text>
         </View>
-        <View style={Style.s({})} >
-          <TouchableOpacity onPress={handleCopyWebLink} style={Style.s({ direc: 'row', items: 'center', justify: 'space-between', p: 16 })} >
-            <Text style={Fonts.t({ c: colors.text.default })} >
-              {'Copy web link'}
-            </Text>
-            <FastImage style={Style.s({ size: 24 })} source={icons.iconCopyWebLink} />
+        <View style={Style.s({})}>
+          <TouchableOpacity onPress={switchNetwork} style={styles.optionButton}>
+            <Text style={styles.optionText}>{strings('browser.switch_network')}</Text>
+            <FastImage
+              style={Style.s({ size: 24 })}
+              source={icons.iconAbout}
+            />
           </TouchableOpacity>
-          <TouchableOpacity onPress={onReloadPress} style={Style.s({ direc: 'row', items: 'center', justify: 'space-between', p: 16 })} >
-            <Text style={Fonts.t({ c: colors.text.default })} >
-              {'Refresh'}
-            </Text>
-            <FastImage style={Style.s({ size: 24 })} source={icons.iconArrowRefresh} />
+          <TouchableOpacity
+            onPress={handleCopyWebLink}
+            style={styles.optionButton}
+          >
+            <Text style={styles.optionText}>{'Copy web link'}</Text>
+            <FastImage
+              style={Style.s({ size: 24 })}
+              source={icons.iconCopyWebLink}
+            />
           </TouchableOpacity>
-          <TouchableOpacity onPress={addBookmark} style={Style.s({ direc: 'row', items: 'center', justify: 'space-between', p: 16 })} >
-            <Text style={Fonts.t({ c: colors.text.default })} >
-              {'Favorites'}
-            </Text>
-            <FastImage style={Style.s({ size: 24 })} source={icons.iconFavorite} />
+          <TouchableOpacity onPress={onReloadPress} style={styles.optionButton}>
+            <Text style={styles.optionText}>{'Refresh'}</Text>
+            <FastImage
+              style={Style.s({ size: 24 })}
+              source={icons.iconArrowRefresh}
+            />
           </TouchableOpacity>
-          <TouchableOpacity onPress={openAboutDapp} style={Style.s({ direc: 'row', items: 'center', justify: 'space-between', p: 16 })} >
-            <Text style={Fonts.t({ c: colors.text.default })} >
-              {'About'}
-            </Text>
+          <TouchableOpacity onPress={addBookmark} style={styles.optionButton}>
+            <Text style={styles.optionText}>{'Favorites'}</Text>
+            <FastImage
+              style={Style.s({ size: 24 })}
+              source={icons.iconFavorite}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={openAboutDapp} style={styles.optionButton}>
+            <Text style={styles.optionText}>{'About'}</Text>
             <FastImage style={Style.s({ size: 24 })} source={icons.iconAbout} />
           </TouchableOpacity>
         </View>

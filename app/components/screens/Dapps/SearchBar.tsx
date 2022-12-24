@@ -6,6 +6,7 @@ import {
   ViewStyle,
   TouchableOpacity,
   TextInput,
+  Text,
 } from 'react-native';
 import { Fonts, Style } from './../../../styles';
 import { icons } from './../../../assets';
@@ -50,15 +51,16 @@ export const SearchBar = ({
           style={Style.s({ size: 20, tin: colors.icon.alternative })}
           source={icons.iconSearch}
         />
-        <TextInput
+        <Text
           style={[
             Style.s({ flex: 1, mx: 12, py: 6, px: 6 }),
             Fonts.t({ c: colors.text.alternative }),
           ]}
-          placeholder={placeholder}
+          // placeholder={placeholder}
           onChangeText={onInputSubmit}
           value={value}
-        />
+          editable={false}
+        >{placeholder}</Text>
         {value?.length > 0 && (
           <TouchableOpacity
             onPress={() => {

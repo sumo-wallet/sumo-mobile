@@ -49,6 +49,7 @@ export const AppGroupCard = ({
     return result;
   }, [dapps]);
 
+  // todo: https://stackoverflow.com/questions/69047058/react-native-flatlist-with-3-cards-paging-layout
   return (
     <View style={[Style.s({ mb: 24 }), style]}>
       <View
@@ -82,12 +83,14 @@ export const AppGroupCard = ({
         </TouchableOpacity>
       </View>
       <FlatList
+        // contentContainerStyle={{ width: 400 }}
         horizontal
-        pagingEnabled
+        // pagingEnabled
+        showsHorizontalScrollIndicator={false}
         data={dappByPageData}
         renderItem={({ item }: { item: DappByPage }) => {
           return (
-            <View style={Style.s({ w: SCREEN_WIDTH, px: 16 })}>
+            <View style={Style.s({ w: SCREEN_WIDTH * 0.7, px: 16 })}>
               {item?.apps?.map((dapp) => (
                 <DappCell key={dapp.id} dapp={dapp} />
               ))}

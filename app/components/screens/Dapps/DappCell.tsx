@@ -40,7 +40,7 @@ export const DappCell = ({ style, dapp }: DappCellProps) => {
   }, [dapp, dispatch, nav]);
 
   return (
-    <View style={[Style.s({ direc: 'row', items: 'center', mt: 16 }), style]}>
+    <TouchableOpacity style={[Style.s({ direc: 'row', items: 'center', mt: 16 }), style]} onPress={handleOpenDapp}>
       <Image
         style={Style.s({ size: 40, bor: 8 })}
         source={{ uri: dapp?.logo }}
@@ -53,17 +53,6 @@ export const DappCell = ({ style, dapp }: DappCellProps) => {
           {dapp?.description}
         </Text>
       </View>
-      <TouchableOpacity
-        onPress={handleOpenDapp}
-        style={[
-          Style.s({ minH: 28, px: 16, py: 6, cen: true, ml: 'auto' }),
-          Style.b({ width: 1, color: colors.border.default, bor: 50 }),
-        ]}
-      >
-        <Text style={Fonts.t({ s: 14, w: '500', c: colors.text.alternative })}>
-          {'Open'}
-        </Text>
-      </TouchableOpacity>
-    </View>
+    </TouchableOpacity>
   );
 };

@@ -69,7 +69,7 @@ export const DappListByCategory = React.memo(
           />
           <View style={Style.s({ mt: 20, items: 'center' })}>
             <Text style={Fonts.t({ s: 18, w: '500', c: colors.text.default })}>
-              {'No search result found!'}
+              {'No result found!'}
             </Text>
             <Text style={Fonts.t({ s: 14, c: colors.text.alternative, t: 8 })}>
               {'All Dapps include the keyword will appear here'}
