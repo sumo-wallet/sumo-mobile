@@ -1511,7 +1511,8 @@
     "qr_code": "QR Code",
     "send_link": "Send Link",
     "request_qr_code": "Payment Request QR Code",
-    "balance": "Balance"
+    "balance": "Balance",
+    "copy_address": "Copy address"
   },
   "receive_request": {
     "title": "Receive",

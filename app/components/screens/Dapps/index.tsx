@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/prefer-optional-chain */
 import React from 'react';
-import { ActivityIndicator } from 'react-native';
+import { ActivityIndicator, View } from 'react-native';
 import { useDisclosure } from '@dwarvesf/react-hooks';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
@@ -22,6 +22,10 @@ import { useFetchDappHome } from './../../../services/dapp/useFetchDappHome';
 import { useFetchDappRecent } from './../../../services/dapp/useFetchDappRecent';
 import { AllDappList } from './AllDappList';
 import { showDappWarningAlert } from './../../../actions/dapp';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { Image } from 'react-native-svg';
+import { images } from '../../../assets';
+import FastImage from 'react-native-fast-image';
 
 export const DappsScreen = React.memo(() => {
   const nav = useNavigator();
@@ -67,10 +71,10 @@ export const DappsScreen = React.memo(() => {
 
   const handleConfirmWarning = React.useCallback(() => {
     if (curDapp && curDapp?.website) {
-      dispatch(showDappWarningAlert());
-      dispatch(createNewTab(curDapp?.website));
-      dispatch(openDapp({ dapp: curDapp }));
-      nav.navigate(ROUTES.BrowserTabHome, { dapp: curDapp });
+      // dispatch(showDappWarningAlert());
+      // dispatch(createNewTab(curDapp?.website));
+      // dispatch(openDapp({ dapp: curDapp }));
+      // nav.navigate(ROUTES.BrowserTabHome, { dapp: curDapp });
     }
     securityWarningModal.onClose();
   }, [curDapp, dispatch, nav, securityWarningModal]);
@@ -100,55 +104,68 @@ export const DappsScreen = React.memo(() => {
       edges={['top']}
       style={Style.s({ flex: 1, bg: colors.background.default })}
     >
-      <SearchBar placeholder="Search DApp or enter a link" />
-      <CategoryHeader
-        pageIndex={pageIndex}
-        categories={category}
-        setPageIndex={onTabChanged}
-      />
-      {isFirstLoading ? (
-        <ActivityIndicator
-          size="large"
-          color={colors.primary.default}
-          style={Style.s({ self: 'center' })}
+
+      <View style={{ flex: 1, zIndex: 999 }}>
+
+        <SearchBar placeholder="Search DApp or enter a link" />
+        <CategoryHeader
+          pageIndex={pageIndex}
+          categories={category}
+          setPageIndex={onTabChanged}
         />
-      ) : null}
-      <PagerView
-        ref={pagerViewRef as any}
-        onPageSelected={(event) => {
-          setPageIndex(event.nativeEvent.position);
-        }}
-        style={Style.s({ flex: 1 })}
-      >
-        <AllDappList
-          dappByCate={homeList}
-          hotDapp={hotDapp}
-          recent={recent}
-          onSelect={(dapp: ModelDApp) => {
-            setDapp(dapp);
-            if (!showWarningAlert) {
-              securityWarningModal.onOpen();
-            } else {
-              handleConfirmWarning();
-            }
+        {isFirstLoading ? (
+          <ActivityIndicator
+            size="large"
+            color={colors.primary.default}
+            style={Style.s({ self: 'center' })}
+          />
+        ) : null}
+        <PagerView
+          ref={pagerViewRef as any}
+          onPageSelected={(event) => {
+            setPageIndex(event.nativeEvent.position);
           }}
-          onSeeMoreCategory={onSeeMoreCategory}
+          style={Style.s({ flex: 1 })}
+        >
+          <AllDappList
+            dappByCate={homeList}
+            hotDapp={hotDapp}
+            recent={recent}
+            onSelect={(dapp: ModelDApp) => {
+              setDapp(dapp);
+              if (!showWarningAlert) {
+                securityWarningModal.onOpen();
+              } else {
+                handleConfirmWarning();
+              }
+            }}
+            onSeeMoreCategory={onSeeMoreCategory}
+          />
+          {category.map((cate) => {
+            return (
+              <DappListByCategory
+                key={`DappListByCategory.${cate.id}`}
+                category={cate}
+              />
+            );
+          })}
+        </PagerView>
+
+
+        <SecurityWarningModal
+          isOpen={securityWarningModal.isOpen}
+          onClose={securityWarningModal.onClose}
+          onConfirm={handleConfirmWarning}
+          onCancel={securityWarningModal.onClose}
         />
-        {category.map((cate) => {
-          return (
-            <DappListByCategory
-              key={`DappListByCategory.${cate.id}`}
-              category={cate}
-            />
-          );
-        })}
-      </PagerView>
-      <SecurityWarningModal
-        isOpen={securityWarningModal.isOpen}
-        onClose={securityWarningModal.onClose}
-        onConfirm={handleConfirmWarning}
-        onCancel={securityWarningModal.onClose}
-      />
+      </View>
+
+      <TouchableOpacity style={{ width: 50, height: 50, backgroundColor: 'red', top: 300, right: 50, zIndex: -1 }}>
+        <FastImage
+          style={Style.s({ size: 24 })}
+          source={images.imageCryptoAsset}
+        />
+      </TouchableOpacity>
     </SafeAreaView>
   );
 });

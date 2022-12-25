@@ -7,42 +7,22 @@ import {
   TouchableOpacity,
   View,
   TouchableWithoutFeedback,
-  ActivityIndicator,
-  InteractionManager,
 } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/Ionicons';
-import FAIcon from 'react-native-vector-icons/FontAwesome5';
 import Fuse from 'fuse.js';
 import { connect } from 'react-redux';
-import { isValidAddress } from 'ethereumjs-util';
-
 import Device from '../../../../util/device';
-import {
-  balanceToFiat,
-  hexToBN,
-  renderFromTokenMinimalUnit,
-  renderFromWei,
-  weiToFiat,
-} from '../../../../util/number';
-import { safeToChecksumAddress } from '../../../../util/address';
-import { isSwapsNativeAsset } from '../utils';
 import { strings } from '../../../../../locales/i18n';
 import { fontStyles } from '../../../../styles/common';
-
 import Text from '../../../Base/Text';
 import ListItem from '../../../Base/ListItem';
 import ModalDragger from '../../../Base/ModalDragger';
 import TokenIcon from './TokenIcon';
-import Alert from '../../../Base/Alert';
 import useBlockExplorer from '../utils/useBlockExplorer';
-import useFetchTokenMetadata from '../utils/useFetchTokenMetadata';
 import useModalHandler from '../../../Base/hooks/useModalHandler';
-import TokenImportModal from './TokenImportModal';
-import Analytics from '../../../../core/Analytics/Analytics';
-import { ANALYTICS_EVENT_OPTS } from '../../../../util/analytics';
 import { useTheme } from '../../../../util/theme';
 
 const createStyles = (colors) =>

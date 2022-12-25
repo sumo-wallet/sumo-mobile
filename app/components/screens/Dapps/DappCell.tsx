@@ -12,9 +12,9 @@ import { useDispatch } from 'react-redux';
 import { Style, Fonts } from '../../../styles';
 import { ModelDApp } from './../../../types';
 import { createNewTab, openDapp } from './../../../actions/browser';
-import { ROUTES } from './../../../navigation/routes';
 import { useNavigator } from './../../hooks';
 import { useTheme } from './../../..//util/theme';
+import Routes from '../../../constants/navigation/Routes';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('screen');
 
@@ -33,9 +33,14 @@ export const DappCell = ({ style, dapp }: DappCellProps) => {
 
   const handleOpenDapp = React.useCallback(() => {
     if (dapp?.website) {
-      dispatch(createNewTab(dapp?.website));
       dispatch(openDapp({ dapp }));
-      nav.navigate(ROUTES.BrowserTabHome, { dapp });
+      nav.navigate(Routes.BROWSER_TAB_HOME, {
+        screen: Routes.BROWSER_VIEW,
+        params: {
+          newTabUrl: dapp.website,
+          timestamp: Date.now(),
+        },
+      });
     }
   }, [dapp, dispatch, nav]);
 

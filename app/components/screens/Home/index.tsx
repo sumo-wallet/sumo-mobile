@@ -221,6 +221,7 @@ export const HomeScreen = memo(() => {
   const onSelectNetworks = useCallback(() => {
     navigation.navigate(ROUTES.ChangeNetwork);
   }, [navigation]);
+
   const currentCurrency = useSelector(
     (state: any) =>
       state.engine.backgroundState.CurrencyRateController.currentCurrency,

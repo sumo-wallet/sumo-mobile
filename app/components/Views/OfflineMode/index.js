@@ -80,7 +80,7 @@ const OfflineMode = ({ navigation, infuraBlocked }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Image source={astronautImage} style={styles.frame} />
+      <Image source={astronautImage} style={styles.frame} resizeMode={'contain'} />
       <View style={styles.content}>
         <View style={baseStyles.flexGrow}>
           <Text bold centered style={styles.title}>

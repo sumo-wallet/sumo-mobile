@@ -27,7 +27,12 @@ import { ChooseCurrencyModal } from './ChooseCurrencyModal';
 import { UserToken } from './../../../types';
 import { useTheme } from './../../../util/theme';
 
-export const ReceiveScreen = () => {
+export interface ReceiveAssetProps {
+  showAsset: boolean;
+  asset: any;
+}
+
+export const ReceiveScreen = ({ showAsset, asset }: ReceiveAssetProps) => {
   const chooseCurrencyModal = useDisclosure();
   const inputRef = React.useRef<TextInput>();
   const dispatch = useDispatch();
@@ -96,7 +101,7 @@ export const ReceiveScreen = () => {
         <View
           style={Style.s({
             m: 16,
-            bg: colors.background.alternative,
+            bg: colors.box.default,
             pt: 12,
             pb: 16,
             px: 16,
@@ -108,7 +113,7 @@ export const ReceiveScreen = () => {
             onPress={chooseCurrencyModal.onOpen}
             style={Style.s({ direc: 'row', items: 'center' })}
           >
-            <Text style={Fonts.t({ s: 14, w: '500', c: colors.text.default })}>
+            <Text style={Fonts.t({ s: 14, w: '700', c: colors.text.default })}>
               {`${tokenSelected?.symbol ?? ''} (BEP2)`}
             </Text>
             <FastImage
@@ -119,7 +124,7 @@ export const ReceiveScreen = () => {
           <View
             style={Style.s({
               p: 8,
-              bg: colors.background.default,
+              bg: colors.text.default,
               cen: true,
               bor: 8,
               mt: 16,
@@ -134,7 +139,7 @@ export const ReceiveScreen = () => {
             style={[
               Fonts.t({
                 s: 12,
-                c: colors.text.alternative,
+                c: colors.text.muted,
                 t: 16,
                 text: 'center',
               }),
@@ -143,83 +148,95 @@ export const ReceiveScreen = () => {
             {selectedAddress}
           </Text>
         </View>
-        <View style={Style.s({ px: 16, mt: 8 })}>
-          <Text style={[Fonts.t({ s: 14, c: colors.text.default })]}>
-            {'Request Payment'}
-          </Text>
-          <TouchableOpacity
-            onPress={() => inputRef?.current?.focus()}
-            style={[
-              Style.s({
-                mt: 8,
-                px: 16,
-                py: 12,
-                minH: 64,
-                direc: 'row',
-                items: 'center',
-              }),
-              Style.b({ color: colors.border.default, bor: 8, width: 1 }),
-            ]}
-          >
-            <View style={Style.s({ flex: 1 })}>
-              <View style={Style.s({ direc: 'row', items: 'center' })}>
+        {showAsset && (
+          <View style={Style.s({ px: 16, mt: 8 })}>
+            <Text style={[Fonts.t({ s: 14, c: colors.text.default })]}>
+              {strings('receive_request.request_payment')}
+            </Text>
+            <TouchableOpacity
+              onPress={() => inputRef?.current?.focus()}
+              style={[
+                Style.s({
+                  mt: 8,
+                  px: 16,
+                  py: 12,
+                  minH: 64,
+                  direc: 'row',
+                  items: 'center',
+                }),
+                Style.b({ color: colors.border.default, bor: 8, width: 1 }),
+              ]}
+            >
+              <View style={Style.s({ flex: 1 })}>
+                <View style={Style.s({ direc: 'row', items: 'center' })}>
+                  <Text
+                    style={[
+                      Fonts.t({
+                        s: 18,
+                        w: '500',
+                        c: colors.text.default,
+                        r: 4,
+                      }),
+                    ]}
+                  >
+                    {'$'}
+                  </Text>
+                  <TextInput
+                    ref={inputRef as any}
+                    style={[
+                      Style.s({ minW: 42 }),
+                      Fonts.t({ s: 18, w: '500', c: colors.text.default }),
+                    ]}
+                    placeholder="0.00"
+                    keyboardType="numeric"
+                    placeholderTextColor={colors.text.muted}
+                    maxLength={16}
+                  />
+                  <Text
+                    style={[
+                      Fonts.t({
+                        s: 18,
+                        w: '500',
+                        c: colors.text.default,
+                        l: 4,
+                      }),
+                    ]}
+                  >
+                    {asset.symbol}
+                  </Text>
+                </View>
                 <Text
-                  style={[
-                    Fonts.t({ s: 18, w: '500', c: colors.text.default, r: 4 }),
-                  ]}
+                  style={Fonts.t({
+                    s: 12,
+                    c: colors.text.default,
+                    t: 6,
+                    w: '500',
+                  })}
                 >
-                  {'$'}
-                </Text>
-                <TextInput
-                  ref={inputRef as any}
-                  style={[
-                    Style.s({ minW: 42 }),
-                    Fonts.t({ s: 18, w: '500', c: colors.text.default }),
-                  ]}
-                  placeholder="0.00"
-                  keyboardType="numeric"
-                  placeholderTextColor={colors.text.muted}
-                  maxLength={16}
-                />
-                <Text
-                  style={[
-                    Fonts.t({ s: 18, w: '500', c: colors.text.default, l: 4 }),
-                  ]}
-                >
-                  {'BNB'}
+                  {'0 USD'}
                 </Text>
               </View>
-              <Text
-                style={Fonts.t({
-                  s: 12,
-                  c: colors.text.default,
-                  t: 6,
-                  w: '500',
-                })}
-              >
-                {'0 USD'}
-              </Text>
-            </View>
-            <TouchableOpacity>
-              <FastImage
-                style={Style.s({ size: 20 })}
-                source={icons.iconSwap2}
-              />
+              <TouchableOpacity>
+                <FastImage
+                  style={Style.s({ size: 20 })}
+                  source={icons.iconSwap2}
+                />
+              </TouchableOpacity>
             </TouchableOpacity>
-          </TouchableOpacity>
-          <Text
-            onPress={handleClearInput}
-            style={Fonts.t({
-              s: 14,
-              w: '600',
-              c: colors.error.default,
-              t: 8,
-              self: 'flex-end',
-            })}
-          >
-            {'Clear'}
-          </Text>
-        </View>
+            <Text
+              onPress={handleClearInput}
+              style={Fonts.t({
+                s: 14,
+                w: '600',
+                c: colors.error.default,
+                t: 8,
+                self: 'flex-end',
+              })}
+            >
+              {'Clear'}
+            </Text>
+          </View>
+        )}
       </KeyboardAwareScrollView>
       <View
         style={Style.s({
@@ -238,8 +255,9 @@ export const ReceiveScreen = () => {
         />
         <SButton
           onPress={handleCopyAddress}
-          title="Copy address"
-          style={Style.s({ flex: 1, bg: colors.box.default, ml: 8 })}
+          title={strings('payment_request.copy_address')}
+          style={Style.s({ flex: 1, bg: colors.text.default, ml: 8 })}
+          titleStyle={{ color: colors.background.default }}
         />
       </View>
       <ChooseCurrencyModal

@@ -25,6 +25,7 @@ import { createNewTab, openDapp } from './../../../actions/browser';
 import { useFetchDappSearch } from './../../../services/dapp/useFetchDappSearch';
 import { useFetchDappPopularSearch } from './../../../services/dapp/useFetchDappPopularSearch';
 import { SearchResultCell } from './SearchResultCell';
+import { strings } from '../../../../locales/i18n';
 
 const DAPP_SEARCH_HISTORY_KEY = 'DAPP_SEARCH_HISTORY_KEY';
 
@@ -215,6 +216,24 @@ export const DappSearch = React.memo(() => {
   }, [colors.border.default]);
 
   const renderEmptyComponent = React.useCallback(() => {
+    if (isSearching) {
+      return (
+        <View style={Style.s({ items: 'center', mt: 180 })}>
+          <FastImage
+            style={Style.s({ w: 140, h: 120 })}
+            source={images.emptyBox}
+          />
+          <View style={Style.s({ mt: 20, items: 'center' })}>
+            <Text style={Fonts.t({ s: 18, w: '500', c: colors.text.default })}>
+              {strings('transaction.loading')}
+            </Text>
+            <Text style={Fonts.t({ s: 14, c: colors.text.alternative, t: 8 })}>
+              {'All Dapps include the keyword will appear here'}
+            </Text>
+          </View>
+        </View>
+      );
+    }
     return (
       <View style={Style.s({ items: 'center', mt: 180 })}>
         <FastImage
@@ -231,7 +250,7 @@ export const DappSearch = React.memo(() => {
         </View>
       </View>
     );
-  }, [colors.text.alternative, colors.text.default]);
+  }, [isSearching, colors.text.alternative, colors.text.default]);
 
   const keyEx = React.useCallback((i: ModelDApp) => `${i}`, []);
   const renderSearchResults = () => {

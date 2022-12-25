@@ -34,6 +34,9 @@ import { SearchBar } from '../../screens/Dapps/SearchBar';
 import { icons } from '../../../assets';
 import Device from '../../../util/device';
 import CollectibleMedia from '../CollectibleMedia';
+import { ROUTES } from '../../../navigation/routes';
+import IonicIcon from 'react-native-vector-icons/Ionicons';
+import Routes from '../../../constants/navigation/Routes';
 
 const DEVICE_WIDTH = Device.getDeviceWidth();
 const COLLECTIBLE_WIDTH = (DEVICE_WIDTH - 30 - 16) / 2;
@@ -151,6 +154,7 @@ const createStyles = (colors) =>
     },
     buttonReceive: {
       height: 44,
+      flexDirection: 'row',
       backgroundColor: colors.primary.default,
       borderRadius: 22,
       justifyContent: 'center',
@@ -160,7 +164,8 @@ const createStyles = (colors) =>
     buttonReceiveTitle: {
       color: colors.background.default,
       fontSize: 16,
-
+      marginLeft: 8,
+      ...fontStyles.bold,
     }
   });
 
@@ -382,7 +387,9 @@ const CollectionNFT = ({
                 // onInputSubmit={setSearchText}
                 />
                 <View style={styles.containerSetting}>
-                  <TouchableOpacity style={styles.containerIcon}>
+                  <TouchableOpacity style={styles.containerIcon} onPress={() => {
+                    navigation.navigate(Routes.NFT.NFT_MANAGEMENT);
+                  }}>
                     <Image source={icons.iconSetting} style={styles.icon} />
                   </TouchableOpacity>
                 </View>
@@ -416,7 +423,14 @@ const CollectionNFT = ({
           </View>
         )}
       {renderList()}
-      <TouchableOpacity style={styles.buttonReceive}>
+      <TouchableOpacity style={styles.buttonReceive} onPress={() => {
+        navigation.navigate(ROUTES.Receive);
+      }}>
+        <IonicIcon
+          name={'ios-arrow-round-down'}
+          size={24}
+          color={colors.background.default}
+        />
         <Text style={styles.buttonReceiveTitle}>{'Receive'}</Text>
       </TouchableOpacity>
     </SafeAreaView>

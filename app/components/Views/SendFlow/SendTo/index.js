@@ -35,6 +35,7 @@ import { renderFromWei } from '../../../../util/number';
 import {
   isENS,
   isValidHexAddress,
+  renderShortAddress,
   validateAddressOrENS,
 } from '../../../../util/address';
 import { getTicker, getEther } from '../../../../util/transactions';
@@ -277,8 +278,8 @@ class SendFlow extends PureComponent {
     return networkAddressBook[checksummedAddress]
       ? networkAddressBook[checksummedAddress].name
       : identities[checksummedAddress]
-      ? identities[checksummedAddress].name
-      : null;
+        ? identities[checksummedAddress].name
+        : null;
   };
 
   isAddressSaved = () => {
@@ -661,7 +662,7 @@ class SendFlow extends PureComponent {
         testID={'send-screen'}
       >
         <StatusBar barStyle="light-content" />
-        <SHeader title="Send to" subTitle="0x36...0B7b" />
+        <SHeader title="Send to" subTitle={renderShortAddress(fromSelectedAddress)} />
         <View style={styles.imputWrapper}>
           <AddressFrom
             onPressIcon={this.toggleFromAccountModal}

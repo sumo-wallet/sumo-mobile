@@ -95,6 +95,7 @@ import { DappDetails } from './../../screens/DappDetails';
 import { DappSearch } from './../../screens/DappSearch';
 import { NftCollectionScreen } from './../../screens/NftCollection';
 import { NftDetailScreen } from './../../screens/NftDetail';
+import { NftManagementScreen } from './../../screens/NftManagement';
 
 import { useTheme } from '../../../util/theme';
 
@@ -234,6 +235,11 @@ const WalletTabStackFlow = () => (
     <Stack.Screen
       name="NFTDetailView"
       component={NftDetailScreen}
+      options={{ headerShown: false }}
+    />
+    <Stack.Screen
+      name="NFTManagementView"
+      component={NftManagementScreen}
       options={{ headerShown: false }}
     />
     <Stack.Screen

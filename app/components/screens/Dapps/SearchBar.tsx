@@ -19,6 +19,7 @@ export interface SearchBarProps {
   style?: StyleProp<ViewStyle>;
   placeholder?: string;
   onInputSubmit: (value: string) => {};
+  onPress: (value: string) => {};
 }
 
 export const SearchBar = ({
@@ -51,16 +52,16 @@ export const SearchBar = ({
           style={Style.s({ size: 20, tin: colors.icon.alternative })}
           source={icons.iconSearch}
         />
-        <Text
+        <TextInput
           style={[
             Style.s({ flex: 1, mx: 12, py: 6, px: 6 }),
             Fonts.t({ c: colors.text.alternative }),
           ]}
-          // placeholder={placeholder}
+          placeholder={placeholder}
           onChangeText={onInputSubmit}
           value={value}
-          editable={false}
-        >{placeholder}</Text>
+          placeholderTextColor={colors.text.muted}
+        />
         {value?.length > 0 && (
           <TouchableOpacity
             onPress={() => {

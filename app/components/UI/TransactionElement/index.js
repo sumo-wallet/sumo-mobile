@@ -13,7 +13,10 @@ import FAIcon from 'react-native-vector-icons/FontAwesome';
 import { strings } from '../../../../locales/i18n';
 import { toDateFormat } from '../../../util/date';
 import TransactionDetails from './TransactionDetails';
-import { safeToChecksumAddress } from '../../../util/address';
+import {
+  renderShortAddress,
+  safeToChecksumAddress,
+} from '../../../util/address';
 import { connect } from 'react-redux';
 import StyledButton from '../StyledButton';
 import Modal from 'react-native-modal';
@@ -25,9 +28,10 @@ import DetailsModal from '../../Base/DetailsModal';
 // import { isMainNet } from '../../../util/networks';
 import { WalletDevice, util } from '@metamask/controllers/';
 import { ThemeContext, mockTheme } from '../../../util/theme';
-import { Colors, Style, Fonts } from './../../../styles';
-import FastImage from 'react-native-fast-image';
+import { Style } from './../../../styles';
 import { icons } from './../../../assets';
+import { isMainNet } from '../../../util/networks';
+import StatusText from '../../../components/Base/StatusText';
 const { weiHexToGweiDec, isEIP1559Transaction } = util;
 
 const createStyles = (colors) =>
@@ -37,6 +41,7 @@ const createStyles = (colors) =>
       flex: 1,
       // borderBottomWidth: StyleSheet.hairlineWidth,
       // borderColor: colors.border.muted,
+      borderRadius: 10,
     },
     actionContainerStyle: {
       height: 25,
@@ -51,8 +56,8 @@ const createStyles = (colors) =>
       paddingHorizontal: 10,
     },
     icon: {
-      width: 28,
-      height: 28,
+      width: 24,
+      height: 24,
     },
     summaryWrapper: {
       padding: 15,
@@ -71,8 +76,81 @@ const createStyles = (colors) =>
     },
     importRowBody: {
       alignItems: 'center',
-      backgroundColor: colors.background.alternative,
+      backgroundColor: colors.box.default,
       paddingTop: 10,
+    },
+    itemContainer: {
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+      marginBottom: 8,
+      marginHorizontal: 8,
+      flexDirection: 'column',
+      borderRadius: 10,
+      backgroundColor: colors.box.default,
+    },
+    iconContainer: {
+      width: 44,
+      height: 44,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 22,
+      borderWidth: 1,
+      borderColor: colors.border.muted,
+      backgroundColor: colors.box.default,
+    },
+    iconStatus: {
+      width: 16,
+      height: 16,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 10,
+      backgroundColor: 'green',
+      position: 'absolute',
+      bottom: 0,
+      right: 0,
+    },
+    iconImage: {
+      width: 10,
+      height: 10,
+    },
+    itemContent: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    titleText: {
+      color: colors.text.default,
+      fontSize: 14,
+      fontWeight: '500',
+      ...fontStyles.bold,
+      alignContent: 'center',
+    },
+    dateText: {
+      color: colors.text.muted,
+      fontSize: 10,
+      ...fontStyles.normal,
+      alignContent: 'center',
+    },
+    descriptionText: {
+      color: colors.text.muted,
+      fontSize: 10,
+      ...fontStyles.normal,
+      alignContent: 'center',
+    },
+    amountContainer: {
+      flexDirection: 'row',
+      // flex: 0.6,
+      alignItems: 'flex-start',
+    },
+    amountText: {
+      color: colors.text.default,
+      fontSize: 14,
+      fontWeight: '400',
+      ...fontStyles.bold,
+    },
+    amountUSDText: {
+      color: colors.text.default,
+      fontSize: 12,
+      ...fontStyles.bold,
     },
   });
 
@@ -269,6 +347,23 @@ class TransactionElement extends PureComponent {
     }
     return <Image source={icon} style={styles.icon} resizeMode="stretch" />;
   };
+  renderStatusIcon = (transactionElement, status) => {
+    const colors = this.context.colors || mockTheme.colors;
+    const styles = createStyles(colors);
+
+    const isFailedTransaction = status === 'cancelled' || status === 'failed';
+    let icon;
+    if (isFailedTransaction) {
+      icon = icons.iconQuestion;
+    } else {
+      icon = icons.iconChecked;
+    }
+    return (
+      <View style={styles.iconStatus}>
+        <Image style={styles.iconImage} source={icon} resizeMode="stretch" />
+      </View>
+    );
+  };
 
   /**
    * Renders an horizontal bar with basic tx information
@@ -283,66 +378,61 @@ class TransactionElement extends PureComponent {
       isQRHardwareAccount,
       tx: { time, status },
     } = this.props;
-    const { value, fiatValue = false, actionKey } = transactionElement;
+    const {
+      value,
+      fiatValue = false,
+      actionKey,
+      renderTo,
+    } = transactionElement;
     const renderNormalActions =
       status === 'submitted' || (status === 'approved' && !isQRHardwareAccount);
     const renderUnsignedQRActions =
       status === 'approved' && isQRHardwareAccount;
     const accountImportTime = identities[selectedAddress]?.importTime;
+    const colors = this.context.colors || mockTheme.colors;
+    const styles = createStyles(colors);
     return (
       <>
         {accountImportTime > time && this.renderImportTime()}
-        <TouchableOpacity style={Style.s({ px: 16, py: 6 })}>
-          <View
-            style={Style.s({
-              bg: Colors.gray[4],
-              direc: 'row',
-              items: 'center',
-              px: 16,
-              py: 12,
-            })}
-          >
-            <View
-              style={[
-                Style.s({ size: 40, cen: true }),
-                Style.b({ color: Colors.divider[1], width: 1, bor: 40 }),
-              ]}
-            >
-              <FastImage
-                style={Style.s({ size: 20 })}
-                source={icons.iconReceive}
-              />
-              {/* {this.renderTxElementIcon(transactionElement, status)} */}
+        <View style={styles.itemContainer}>
+          {/* <Text style={styles.descriptionText}>
+            {JSON.stringify(transactionElement)}
+          </Text> */}
+          <View style={styles.itemContent}>
+            <View style={styles.iconContainer}>
+              {this.renderTxElementIcon(transactionElement, status)}
+              {this.renderStatusIcon(transactionElement, status)}
             </View>
-            <View style={Style.s({ ml: 16, flex: 1 })}>
+            <View style={Style.s({ ml: 16, flex: 2, backdropColor: 'red' })}>
               <View style={Style.s({ direc: 'row', items: 'center' })}>
-                <Text style={Fonts.t({ s: 14, w: '500', c: Colors.white[3] })}>
-                  {'Receive'}
-                </Text>
-                <Text
-                  style={Fonts.t({
-                    s: 14,
-                    w: '500',
-                    c: Colors.grayscale[40],
-                    l: 4,
-                  })}
-                >
-                  {this.renderTxTime()}
-                </Text>
+                <Text style={styles.titleText}>{actionKey}</Text>
               </View>
-              <Text
-                style={Fonts.t({
-                  s: 10,
-                  h: 15,
-                  w: '500',
-                  c: Colors.grayscale[60],
-                })}
-              >
-                {'Lorem ipsum dolor sit amet consectetur. Morbi accums'}
+              <Text style={styles.dateText}>{this.renderTxTime()}</Text>
+              <Text style={styles.descriptionText}>{status}</Text>
+              <Text style={styles.descriptionText}>
+                {renderShortAddress(renderTo)}
               </Text>
             </View>
+            <View style={styles.amountContainer}>
+              <Text style={styles.amountText}>{value}</Text>
+              {isMainNet(chainId) && (
+                <Text style={styles.amountText}>{fiatValue}</Text>
+              )}
+            </View>
           </View>
-        </TouchableOpacity>
+          {renderNormalActions && (
+            <ListItem.Actions>
+              {this.renderSpeedUpButton()}
+              {this.renderCancelButton()}
+            </ListItem.Actions>
+          )}
+          {renderUnsignedQRActions && (
+            <ListItem.Actions>
+              {this.renderQRSignButton()}
+              {this.renderCancelUnsignedButton()}
+            </ListItem.Actions>
+          )}
+        </View>
         {/* <ListItem>
           <ListItem.Date>{this.renderTxTime()}</ListItem.Date>
           <ListItem.Content>
@@ -375,7 +465,7 @@ class TransactionElement extends PureComponent {
             </ListItem.Actions>
           )}
         </ListItem> */}
-        {/* {accountImportTime <= time && this.renderImportTime()} */}
+        {accountImportTime <= time && this.renderImportTime()}
       </>
     );
   };
@@ -450,9 +540,6 @@ class TransactionElement extends PureComponent {
   };
 
   renderSpeedUpButton = () => {
-    const colors = this.context.colors || mockTheme.colors;
-    const styles = createStyles(colors);
-
     return (
       <StyledButton
         type={'normal'}

@@ -1,20 +1,17 @@
 import React, { memo, useCallback, useMemo } from 'react';
 import {
-  FlatList,
-  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import { RawFeatureInterface } from '../types';
 import { useTheme } from '../../../../util/theme';
 import { ModelCategoryApp } from 'app/types';
 import FastImage from 'react-native-fast-image';
-import { ROUTES } from '../../../../navigation/routes';
 import { useDispatch } from 'react-redux';
 import { createNewTab, openDapp } from '../../../../actions/browser';
 import { useNavigation } from '@react-navigation/native';
+import Routes from '../../../../constants/navigation/Routes';
 
 const createStyles = (colors: any) =>
   StyleSheet.create({
@@ -83,7 +80,13 @@ export const FavoriteComponent = function FavoriteComponent({
   const openDappBrowser = (item: any) => {
     dispatch(createNewTab(item?.website));
     dispatch(openDapp({ dapp: item }));
-    navigation.navigate(ROUTES.BrowserTabHome, { dapp: item });
+    navigation.navigate(Routes.BROWSER_TAB_HOME, {
+      screen: Routes.BROWSER_VIEW,
+      params: {
+        newTabUrl: item.website,
+        timestamp: Date.now(),
+      },
+    });
   };
 
   return (

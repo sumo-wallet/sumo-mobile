@@ -39,6 +39,11 @@ const Routes = {
     NOTIFICATIONS: 'NotificationsView',
   },
   NEWS: 'NewsView',
+  NFT: {
+    NFT_COLLECTION: 'NFTCollectionView',
+    NFT_DETAIL: 'NFTDetailView',
+    NFT_MANAGEMENT: 'NFTManagementView',
+  },
 };
 
 export default Routes;

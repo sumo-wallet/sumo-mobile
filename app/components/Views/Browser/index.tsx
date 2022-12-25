@@ -19,8 +19,6 @@ import AppConstants from '../../../core/AppConstants';
 import { baseStyles } from '../../../styles/common';
 import { DrawerContext } from '../../Nav/Main/MainNavigator';
 import { useTheme } from '../../../util/theme';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Style, Colors, Fonts } from './../../../styles';
 // import { useNavigator, useNavigatorParams } from '../../hooks';
 // import { Dapp } from './../../../types';
 
