@@ -18,26 +18,27 @@ export interface SearchBarProps {
   value?: string;
   style?: StyleProp<ViewStyle>;
   placeholder?: string;
-  onInputSubmit: (value: string) => {};
-  onPress: (value: string) => {};
+  onInputSubmit: (value: string) => void;
+  onPressEnter: (value: string) => void;
 }
 
 export const SearchBar = ({
   value,
   style,
   placeholder,
+  onPressEnter,
   onInputSubmit,
 }: SearchBarProps) => {
-  const nav = useNavigator();
+  // const nav = useNavigator();
   const { colors } = useTheme();
-  const handleOpenSearchScreen = React.useCallback(() => {
-    nav.navigate(ROUTES.DappSearch);
-  }, [nav]);
+  // const handleOpenSearchScreen = React.useCallback(() => {
+  //   nav.navigate(ROUTES.DappSearch);
+  // }, [nav]);
   return (
     <View style={[Style.s({ px: 16, py: 8 }), style]}>
       <TouchableOpacity
         activeOpacity={0.8}
-        onPress={handleOpenSearchScreen}
+        onPress={onPressEnter}
         style={Style.s({
           px: 16,
           py: 6,
@@ -61,6 +62,10 @@ export const SearchBar = ({
           onChangeText={onInputSubmit}
           value={value}
           placeholderTextColor={colors.text.muted}
+          returnKeyType='search'
+          clearButtonMode="while-editing"
+          autoFocus={true}
+          onSubmitEditing={onPressEnter}
         />
         {value?.length > 0 && (
           <TouchableOpacity

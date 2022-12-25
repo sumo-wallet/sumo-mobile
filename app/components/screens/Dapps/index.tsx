@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/prefer-optional-chain */
-import React from 'react';
+import React, { useState } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 import { useDisclosure } from '@dwarvesf/react-hooks';
 import { useDispatch, useSelector } from 'react-redux';
@@ -26,6 +26,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Image } from 'react-native-svg';
 import { images } from '../../../assets';
 import FastImage from 'react-native-fast-image';
+import Routes from '../../../constants/navigation/Routes';
 
 export const DappsScreen = React.memo(() => {
   const nav = useNavigator();
@@ -36,6 +37,7 @@ export const DappsScreen = React.memo(() => {
   const mounted = React.useRef<boolean>(false);
   const [pageIndex, setPageIndex] = React.useState(0);
   const pagerViewRef = React.useRef<PagerView>();
+  const [searchText, setSearchText] = useState('');
   const showWarningAlert = useSelector(
     (state: any) => state.dapp.showWarningAlert,
   );
@@ -71,10 +73,15 @@ export const DappsScreen = React.memo(() => {
 
   const handleConfirmWarning = React.useCallback(() => {
     if (curDapp && curDapp?.website) {
-      // dispatch(showDappWarningAlert());
-      // dispatch(createNewTab(curDapp?.website));
-      // dispatch(openDapp({ dapp: curDapp }));
-      // nav.navigate(ROUTES.BrowserTabHome, { dapp: curDapp });
+      dispatch(showDappWarningAlert());
+      dispatch(openDapp({ dapp: curDapp }));
+      nav.navigate(Routes.BROWSER_TAB_HOME, {
+        screen: Routes.BROWSER_VIEW,
+        params: {
+          newTabUrl: curDapp.website,
+          timestamp: Date.now(),
+        },
+      });
     }
     securityWarningModal.onClose();
   }, [curDapp, dispatch, nav, securityWarningModal]);
@@ -107,7 +114,15 @@ export const DappsScreen = React.memo(() => {
 
       <View style={{ flex: 1, zIndex: 999 }}>
 
-        <SearchBar placeholder="Search DApp or enter a link" />
+        <SearchBar
+          placeholder="Search DApp or enter a link"
+          value={searchText}
+          onInputSubmit={(value) => {
+            setSearchText(value);
+          }}
+          onPressEnter={() => {
+            nav.navigate(ROUTES.DappSearch, { searchText });
+          }} />
         <CategoryHeader
           pageIndex={pageIndex}
           categories={category}

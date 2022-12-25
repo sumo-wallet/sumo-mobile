@@ -396,6 +396,9 @@ const Wallet = ({ navigation }: any) => {
           <TouchableOpacity onPress={() => { navigation.navigate(Routes.QR_SCANNER); }}>
             <Image source={icons.iconScanQR} style={styles.iconQR} />
           </TouchableOpacity>
+          <TouchableOpacity onPress={() => { navigation.navigate(Routes.SETTINGS.APP_SETTINGS); }}>
+            <Image source={icons.iconSetting} style={styles.iconQR} />
+          </TouchableOpacity>
         </View>
       </DynamicHeader>
       <View style={baseStyles.flexGrow} testID={'wallet-screen'}>

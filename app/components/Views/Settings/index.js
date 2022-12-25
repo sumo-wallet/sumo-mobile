@@ -148,7 +148,7 @@ class Settings extends PureComponent {
           warning={!seedphraseBackedUp}
           icon={'user-secret'}
         />
-        {/* <SettingsDrawer
+        <SettingsDrawer
           description={strings('app_settings.advanced_desc')}
           onPress={this.onPressAdvanced}
           title={strings('app_settings.advanced_title')}
@@ -171,11 +171,11 @@ class Settings extends PureComponent {
           description={strings('app_settings.experimental_desc')}
           onPress={this.onPressExperimental}
           icon={"plug"}
-        /> */}
-        {/* <SettingsDrawer
+        />
+        <SettingsDrawer
           title={strings('app_settings.info_title')}
           onPress={this.onPressInfo}
-        /> */}
+        />
         <SettingsDrawer
           title={strings('app_settings.logout')}
           onPress={this.logout}

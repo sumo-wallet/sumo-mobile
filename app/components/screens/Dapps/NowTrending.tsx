@@ -8,10 +8,37 @@ import {
   FlatList,
   Image,
   TouchableOpacity,
+  StyleSheet,
 } from 'react-native';
 import { Style, Colors, Fonts } from '../../../styles';
 import { ModelDApp } from './../../../types';
 import { useTheme } from '../../../util/theme';
+
+const createStyles = (colors: any) =>
+  StyleSheet.create({
+    wrapper: {
+      flex: 1,
+      marginTop: 24,
+      paddingBottom: 16,
+      borderRadius: 10,
+      backgroundColor: colors.box.default,
+    },
+    mainTitle: {
+      fontSize: 24,
+      marginTop: 4,
+      fontWeight: '800',
+      color: colors.text.default,
+    },
+    title: {
+      fontSize: 12,
+      marginTop: 4,
+      color: colors.text.default,
+    },
+    titleContainer: {
+      paddingHorizontal: 16,
+      paddingTop: 12,
+    },
+  });
 
 export interface NowTrendingProps {
   style?: StyleProp<ViewStyle>;
@@ -34,6 +61,7 @@ export const NowTrending = ({
   hotDapps = [],
 }: NowTrendingProps) => {
   const { colors } = useTheme();
+  const styles = createStyles(colors);
 
   const dappByRow = sliceArrHotApps(hotDapps);
 
@@ -52,27 +80,10 @@ export const NowTrending = ({
   );
 
   return (
-    <View
-      style={[
-        Style.s({ bg: colors.background.default, mt: 24, pb: 16 }),
-        Style.shadow(Colors.shadow[1], 2, 4, 16),
-        style,
-      ]}
-    >
-      <View
-        style={Style.s({
-          px: 16,
-          pt: 12,
-        })}
-      >
-        <Text style={Fonts.t({ s: 12, c: colors.text.default })}>
-          {'NOW TRENDING'}
-        </Text>
-        <Text
-          style={Fonts.t({ s: 24, w: '700', c: colors.text.default, t: 4 })}
-        >
-          {'Top Dapps all \nover the world'}
-        </Text>
+    <View style={[styles.wrapper, style]}>
+      <View style={styles.titleContainer}>
+        <Text style={styles.title}>{'NOW TRENDING'}</Text>
+        <Text style={styles.mainTitle}>{'Top Dapps all \nover the world'}</Text>
       </View>
       <View style={Style.s({ mt: 18, pb: 16 })}>
         {dappByRow.map((row, index) => {

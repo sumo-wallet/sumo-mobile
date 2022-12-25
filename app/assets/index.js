@@ -57,6 +57,7 @@ import iconAbout from './icons/iconAbout.png';
 import iconHistory from './icons/iconHistory.png';
 import iconChart from './icons/iconChart.png';
 import iconSlippage from './icons/iconSlippage.png';
+import logoFacebook from './icons/logoFacebook.png';
 
 import imageBanner from './images/imageBanner.png';
 import imageNew1 from './images/imageNew1.png';
@@ -66,6 +67,7 @@ import imageNew4 from './images/imageNew4.png';
 import emptyBox from './images/emptyBox.png';
 import imageEmptyView from './images/imageEmptyView.png';
 import imageCryptoAsset from './images/crypto-asset.png';
+
 
 export const icons = {
   iconEyeClose,
@@ -127,6 +129,7 @@ export const icons = {
   iconHistory,
   iconChart,
   iconSlippage,
+  logoFacebook,
 };
 
 export const images = {

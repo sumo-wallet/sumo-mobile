@@ -15,6 +15,8 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { icons } from '../../assets';
 import Identicon from '../UI/Identicon';
 import { useTheme } from '../../util/theme';
+import Routes from '../../constants/navigation/Routes';
+// import { colors } from '@thanhpn1990/design-tokens';
 interface DynamicHeaderProps extends ViewProps {
   title: string;
   titleStyle?: TextStyle;
@@ -29,35 +31,38 @@ interface DynamicHeaderProps extends ViewProps {
   address?: string;
 }
 
-const styles = StyleSheet.create({
-  title: {
-    fontSize: 16,
-    paddingHorizontal: 16,
-    textAlign: 'center',
-  },
-  wrapper: {
-    paddingHorizontal: 16,
-    justifyContent: 'space-around',
-  },
-  container: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    height: 48,
-    alignItems: 'center',
-  },
-  leftAction: {},
-  headerIconWrapper: {
-    minWidth: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  icon: {
-    width: 20,
-    height: 20,
-  },
-  rightAction: {},
-});
+const createStyles = (colors: any) =>
+  StyleSheet.create({
+    title: {
+      fontSize: 16,
+      fontWeight: '600',
+      paddingHorizontal: 16,
+      textAlign: 'center',
+    },
+    wrapper: {
+      paddingHorizontal: 16,
+      justifyContent: 'space-around',
+    },
+    container: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      height: 48,
+      alignItems: 'center',
+    },
+    leftAction: {},
+    headerIconWrapper: {
+      minWidth: 40,
+      height: 40,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    icon: {
+      width: 20,
+      height: 20,
+      tintColor: colors.text.default,
+    },
+    rightAction: {},
+  });
 
 export const StatusBarViewIos = () => {
   return <SafeAreaView />;
@@ -84,15 +89,16 @@ export const EmptyHeader = memo(
   }: Omit<DynamicHeaderProps, 'title'>) => {
     const { canGoBack, goBack, navigate } = useNavigation();
     const { colors } = useTheme();
-    useFocusEffect(() => {
-      const entry = StatusBar.pushStackEntry({
-        barStyle: 'light-content',
-      });
+    const styles = createStyles(colors);
+    // const styles = useFocusEffect(() => {
+    //   const entry = StatusBar.pushStackEntry({
+    //     barStyle: 'light-content',
+    //   });
 
-      return () => {
-        StatusBar.popStackEntry(entry);
-      };
-    });
+    //   return () => {
+    //     StatusBar.popStackEntry(entry);
+    //   };
+    // });
 
     const onClose = useCallback(() => {
       onGoBack?.();
@@ -159,6 +165,7 @@ export const DynamicHeader = memo(
   }: DynamicHeaderProps) => {
     const { canGoBack } = useNavigation();
     const { colors } = useTheme();
+    const styles = createStyles(colors);
     return (
       <EmptyHeader onGoBack={onGoBack} {...props}>
         {!isHiddenTitle ? (

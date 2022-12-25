@@ -74,8 +74,7 @@ import Routes from '../../../constants/navigation/Routes';
 // import Login from './../../Views/Login';
 // import { HomeScreen } from './../../screens/Home';
 import { DappsScreen } from './../../screens/Dapps';
-// import { SwapScreen } from './../../screens/Swap';
-// import { NftScreen } from './../../screens/Nft';
+
 import { NftMarketplaceScreen } from './../../screens/NftMarketplace';
 import { NotificationsScreen } from './../../screens/Notifications';
 import { AddWalletScreen } from './../../screens/AddWallet';
@@ -96,6 +95,7 @@ import { DappSearch } from './../../screens/DappSearch';
 import { NftCollectionScreen } from './../../screens/NftCollection';
 import { NftDetailScreen } from './../../screens/NftDetail';
 import { NftManagementScreen } from './../../screens/NftManagement';
+import { AppSettingsScreen } from './../../screens/AppSettings';
 
 import { useTheme } from '../../../util/theme';
 
@@ -578,6 +578,11 @@ const Webview = () => (
 const SettingsFlow = () => (
   <Stack.Navigator initialRouteName={'Settings'}>
     <Stack.Screen
+      name="AppSettings"
+      component={AppSettingsScreen}
+      options={{ tabBarVisible: false }}
+    />
+    <Stack.Screen
       name="Settings"
       component={Settings}
       options={Settings.navigationOptions}
@@ -954,6 +959,11 @@ const MainNavigator = () => (
     />
     <Stack.Screen name="NotificationsView" component={NotificationsScreen} />
     <Stack.Screen name="NewsView" component={NewsScreen} />
+    <Stack.Screen
+      name="AppSettings"
+      component={AppSettingsScreen}
+      options={{ tabBarVisible: false }}
+    />
   </Stack.Navigator>
 );
 

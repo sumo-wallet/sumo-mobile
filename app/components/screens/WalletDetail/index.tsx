@@ -1,5 +1,14 @@
 import React from 'react';
-import { View, SafeAreaView, Text, StatusBar, StyleSheet, Image, ScrollView, Alert } from 'react-native';
+import {
+  View,
+  SafeAreaView,
+  Text,
+  StatusBar,
+  StyleSheet,
+  Image,
+  ScrollView,
+  Alert,
+} from 'react-native';
 import { SHeader } from './../../common/SHeader';
 import { Style } from './../../../styles';
 import { strings } from '../../../../locales/i18n';
@@ -63,8 +72,13 @@ const createStyles = (colors: any) =>
     },
   });
 
-const onLongPress = (address: string, selectedAddress: string, index: int, orderedAccounts: any, navigation: any) => {
-
+const onLongPress = (
+  address: string,
+  selectedAddress: string,
+  index: number,
+  orderedAccounts: any,
+  navigation: any,
+) => {
   Alert.alert(
     strings('accounts.remove_account_title'),
     strings('accounts.remove_account_message'),
@@ -85,7 +99,8 @@ const onLongPress = (address: string, selectedAddress: string, index: int, order
 
           // TODO - Refactor logic. onAccountChange is only used for refreshing latest orderedAccounts after account removal. Duplicate call for PreferencesController.setSelectedAddress exists.
           // Set fallback address before removing account if removing current account
-          isRemovingCurrentAddress && orderedAccounts.length > 0 &&
+          isRemovingCurrentAddress &&
+            orderedAccounts.length > 0 &&
             PreferencesController.setSelectedAddress(fallbackAccountAddress);
           await Engine.context.KeyringController.removeAccount(address);
           // Default to the previous account in the list if removing current account
@@ -104,7 +119,6 @@ const onLongPress = (address: string, selectedAddress: string, index: int, order
           setTimeout(() => {
             navigation.goBack();
           }, 6000);
-
         },
       },
     ],
@@ -115,7 +129,17 @@ const onLongPress = (address: string, selectedAddress: string, index: int, order
 export const WalletDetailScreen = () => {
   const { colors } = useTheme();
   const styles = createStyles(colors);
-  const { address, selectedAddress, index, orderedAccounts }: { address: string, selectedAddress: string, index: int, orderedAccounts: array } = useNavigatorParams();
+  const {
+    address,
+    selectedAddress,
+    index,
+    orderedAccounts,
+  }: {
+    address: string;
+    selectedAddress: string;
+    index: number;
+    orderedAccounts: any[];
+  } = useNavigatorParams();
   const navigation = useNavigation();
   return (
     <SafeAreaView style={styles.wrapper}>
@@ -126,7 +150,10 @@ export const WalletDetailScreen = () => {
       >
         <View style={styles.containerHeader}>
           <Image source={icons.iconWalletDetail} style={styles.icon} />
-          <Text style={styles.nameWallet}>{'Wallet address\n'}{address}</Text>
+          <Text style={styles.nameWallet}>
+            {'Wallet address\n'}
+            {address}
+          </Text>
         </View>
         <View style={styles.containerDescription}>
           <WalletItem title={'Created by'} description={'Mnemonic Phrase'} />
@@ -166,7 +193,15 @@ export const WalletDetailScreen = () => {
       </ScrollView>
       <SButton
         title={'Remove wallet'}
-        onPress={() => { onLongPress(address, selectedAddress, index, orderedAccounts, navigation) }}
+        onPress={() => {
+          onLongPress(
+            address,
+            selectedAddress,
+            index,
+            orderedAccounts,
+            navigation,
+          );
+        }}
         type="danger"
         style={Style.s({ mx: 16 })}
       />

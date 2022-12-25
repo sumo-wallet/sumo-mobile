@@ -61,7 +61,7 @@ export const AppGroupCard = ({
         })}
       >
         {title ? (
-          <Text style={Fonts.t({ s: 18, w: '500', c: colors.text.default })}>
+          <Text style={Fonts.t({ s: 18, w: '600', c: colors.text.default })}>
             {title}
           </Text>
         ) : null}
@@ -74,12 +74,8 @@ export const AppGroupCard = ({
               r: 8,
             })}
           >
-            {'More'}
+            {'See all'}
           </Text>
-          <Image
-            style={Style.s({ size: 14 })}
-            source={icons.iconChevronRight}
-          />
         </TouchableOpacity>
       </View>
       <FlatList

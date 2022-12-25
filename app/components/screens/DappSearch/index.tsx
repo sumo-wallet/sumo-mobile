@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-empty-function */
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   View,
   SafeAreaView,
@@ -17,7 +17,7 @@ import { useDispatch } from 'react-redux';
 
 import { Style, Fonts } from './../../../styles';
 import { icons, images } from './../../../assets';
-import { useNavigator, useDebounce } from './../../hooks';
+import { useNavigator, useDebounce, useNavigatorParams } from './../../hooks';
 import { ModelDApp, ModelSearchHistory } from './../../../types';
 import { useTheme } from './../../../util/theme';
 import { ROUTES } from './../../../navigation/routes';
@@ -51,13 +51,15 @@ export const DappSearch = React.memo(() => {
   const { colors } = useTheme();
   const inputRef = React.useRef<TextInput>();
 
+  const { searchText }: { searchText: string } = useNavigatorParams();
+
   const [inputValue, setInputValue] = React.useState<string>('');
   const [textSearch, setTextSearch] = React.useState<string>('');
   const {
     dapps: dappsResultSearch,
     isValidating,
     isLoading,
-  } = useFetchDappSearch({ text: textSearch });
+  } = useFetchDappSearch({ text: searchText });
   const { data: dataPopularSearch = [] } = useFetchDappPopularSearch();
 
   const handleClearSearchHistory = React.useCallback(() => {
@@ -69,6 +71,10 @@ export const DappSearch = React.memo(() => {
   }, []);
 
   const isSearching = textSearch?.length > 0 && isValidating && isLoading;
+
+  useEffect(() => {
+    if (searchText) setTextSearch(searchText);
+  }, [searchText]);
 
   const handleSearch = React.useCallback((keyword: string) => {
     setTextSearch(keyword);

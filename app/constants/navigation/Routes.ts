@@ -34,6 +34,7 @@ const Routes = {
   },
   SETTINGS: {
     CONTACT_FORM: 'ContactForm',
+    APP_SETTINGS: 'AppSettings',
   },
   NOTIFICATIONS: {
     NOTIFICATIONS: 'NotificationsView',
