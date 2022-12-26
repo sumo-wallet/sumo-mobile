@@ -120,27 +120,19 @@ function ChainSelectModal({
   frequentRpcList,
   balances,
 }) {
-  const navigation = useNavigation();
   const searchInput = useRef(null);
   const list = useRef();
   const [searchString, setSearchString] = useState('');
-  const explorer = useBlockExplorer(provider, frequentRpcList);
-  const [isTokenImportVisible, , showTokenImportModal, hideTokenImportModal] =
-    useModalHandler(false);
   const { colors, themeAppearance } = useTheme();
   const styles = createStyles(colors);
 
   const excludedAddresses = useMemo(
-    () =>
-      excludeAddresses.filter(Boolean).map((id) => id),
+    () => excludeAddresses.filter(Boolean).map((id) => id),
     [excludeAddresses],
   );
 
   const filteredTokens = useMemo(
-    () =>
-      tokens?.filter(
-        (token) => !excludedAddresses.includes(token.id),
-      ),
+    () => tokens?.filter((token) => !excludedAddresses.includes(token.id)),
     [tokens, excludedAddresses],
   );
   const filteredInitialTokens = useMemo(
@@ -203,11 +195,7 @@ function ChainSelectModal({
         </TouchableOpacity>
       );
     },
-    [
-      selectedAddress,
-      onItemPress,
-      styles,
-    ],
+    [selectedAddress, onItemPress, styles],
   );
 
   const handleSearchPress = () => searchInput?.current?.focus();

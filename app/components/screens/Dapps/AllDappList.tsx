@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/prefer-optional-chain */
-import React from 'react';
+import React, { useState } from 'react';
 import { FlatList } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -11,6 +11,8 @@ import { ModelDApp, ModelDApps, ModelCategory } from './../../../types';
 import { ROUTES } from './../../../navigation/routes';
 import { createNewTab, openDapp } from './../../../actions/browser';
 import { AppGroupCard } from './AppGroupCard';
+import { NowTrendingModal } from './NowTrendingModal';
+import { strings } from '../../../../locales/i18n';
 
 interface AllDappListProps {
   dappByCate?: ModelDApps[];
@@ -30,17 +32,23 @@ export const AllDappList = React.memo(
   }: AllDappListProps) => {
     const nav = useNavigator();
     const dispatch = useDispatch();
+    const [isNowTrendingModelVisible, setNowTrendingModelVisible] = useState(false);
 
     const handleOpenTrending = React.useCallback(
       (dapp: ModelDApp) => {
-        if (dapp.website) {
-          dispatch(createNewTab(dapp?.website));
-          dispatch(openDapp({ dapp }));
-          nav.navigate(ROUTES.BrowserTabHome, { dapp });
-        }
+        // if (dapp.website) {
+        //   dispatch(createNewTab(dapp?.website));
+        //   dispatch(openDapp({ dapp }));
+        //   nav.navigate(ROUTES.BrowserTabHome, { dapp });
+        // }
+        setNowTrendingModelVisible(true);
       },
       [nav, dispatch],
     );
+
+    const toggleSourceModal = () => {
+      setNowTrendingModelVisible(!isNowTrendingModelVisible);
+    };
 
     return (
       <FlatList
@@ -60,6 +68,14 @@ export const AllDappList = React.memo(
                 style={Style.s({ mx: 16, mb: 24 })}
                 onSelect={handleOpenTrending}
                 hotDapps={hotDapp}
+              />
+              <NowTrendingModal
+                isVisible={isNowTrendingModelVisible}
+                dismiss={toggleSourceModal}
+                title={'NOW TRENDING'}
+                dapps={hotDapp}
+                onItemPress={toggleSourceModal}
+                onToggleModal={toggleSourceModal}
               />
             </>
           );

@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   View,
   StyleProp,
@@ -11,7 +12,7 @@ import {
 import { useDispatch } from 'react-redux';
 import { Style, Fonts } from '../../../styles';
 import { ModelDApp } from './../../../types';
-import { createNewTab, openDapp } from './../../../actions/browser';
+import { openDapp } from './../../../actions/browser';
 import { useNavigator } from './../../hooks';
 import { useTheme } from './../../..//util/theme';
 import Routes from '../../../constants/navigation/Routes';
@@ -23,9 +24,10 @@ export { SCREEN_WIDTH, SCREEN_HEIGHT };
 export interface DappCellProps {
   style?: StyleProp<ViewStyle>;
   dapp?: ModelDApp;
+  onPress?: PropTypes.func;
 }
 
-export const DappCell = ({ style, dapp }: DappCellProps) => {
+export const DappCell = ({ style, dapp, onPress }: DappCellProps) => {
   const dispatch = useDispatch();
   const nav = useNavigator();
 
@@ -42,6 +44,7 @@ export const DappCell = ({ style, dapp }: DappCellProps) => {
         },
       });
     }
+    onPress();
   }, [dapp, dispatch, nav]);
 
   return (

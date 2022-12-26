@@ -13,6 +13,7 @@ import {
 import { Style, Colors, Fonts } from '../../../styles';
 import { ModelDApp } from './../../../types';
 import { useTheme } from '../../../util/theme';
+import FlatMarquee from './FlatMarquee/FlatMarquee';
 
 const createStyles = (colors: any) =>
   StyleSheet.create({
@@ -79,8 +80,20 @@ export const NowTrending = ({
     [onSelect],
   );
 
+  // const renderItem =
+  //   ({ item }: { item: ModelDApp; index: number }) => {
+  //     return (
+  //       <TouchableOpacity onPress={() => onSelect && onSelect(item)}>
+  //         <Image
+  //           style={Style.s({ size: 64, bor: 8 })}
+  //           source={{ uri: parseLogoUrl(item?.logo) }}
+  //         />
+  //       </TouchableOpacity>
+  //     );
+  //   };
+
   return (
-    <View style={[styles.wrapper, style]}>
+    <TouchableOpacity style={[styles.wrapper, style]} onPress={onSelect}>
       <View style={styles.titleContainer}>
         <Text style={styles.title}>{'NOW TRENDING'}</Text>
         <Text style={styles.mainTitle}>{'Top Dapps all \nover the world'}</Text>
@@ -98,9 +111,12 @@ export const NowTrending = ({
               showsHorizontalScrollIndicator={false}
               ItemSeparatorComponent={() => <View style={Style.s({ w: 8 })} />}
             />
+            // <FlatMarquee
+            //   data={hotDapps}
+            //   renderItem={renderItem} />
           );
         })}
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };

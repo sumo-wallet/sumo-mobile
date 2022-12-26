@@ -42,7 +42,7 @@ class StockMarquee extends Component {
   }
 
   startScroll() {
-    this.activeInterval = setInterval(this.scrolling, 3000);
+    this.activeInterval = setInterval(this.scrolling, 100);
   }
 
   clearScrolling() {
@@ -61,7 +61,7 @@ class StockMarquee extends Component {
     }
     if (data?.length > 5) {
       // Increment position with each new interval
-      const position = currentPosition + 60;
+      const position = currentPosition + 1;
       this.ticker.scrollToOffset({ offset: position, animated: true });
       // After position passes this value, snaps back to beginning
       const maxOffset = data?.length * itemWidth;
