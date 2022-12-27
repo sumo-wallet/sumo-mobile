@@ -44,7 +44,7 @@ export const DappCell = ({ style, dapp, onPress }: DappCellProps) => {
         },
       });
     }
-    onPress();
+    !!onPress && onPress();
   }, [dapp, dispatch, nav]);
 
   return (

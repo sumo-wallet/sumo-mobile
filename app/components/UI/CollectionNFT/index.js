@@ -31,7 +31,7 @@ import { isMainNet } from '../../../util/networks';
 import { useTheme } from '../../../util/theme';
 import { FlatList } from 'react-native-gesture-handler';
 import { SearchBar } from '../../screens/Dapps/SearchBar';
-import { icons } from '../../../assets';
+import { icons, images } from '../../../assets';
 import Device from '../../../util/device';
 import CollectibleMedia from '../CollectibleMedia';
 import { ROUTES } from '../../../navigation/routes';
@@ -80,7 +80,6 @@ const createStyles = (colors) =>
       height: 76,
       marginTop: 30,
       marginBottom: 12,
-      tintColor: colors.icon.muted,
     },
     emptyTitleText: {
       fontSize: 24,
@@ -344,7 +343,7 @@ const CollectionNFT = ({
         <View style={styles.emptyContainer}>
           <Image
             style={styles.emptyImageContainer}
-            source={require('../../../images/no-nfts-placeholder.png')}
+            source={images.imageEmptyView}
             resizeMode={'contain'}
           />
           <Text center style={styles.emptyTitleText} bold>

@@ -64,7 +64,6 @@ export const SearchBar = ({
           placeholderTextColor={colors.text.muted}
           returnKeyType='search'
           clearButtonMode="while-editing"
-          autoFocus={true}
           onSubmitEditing={onPressEnter}
         />
         {value?.length > 0 && (

@@ -23,7 +23,6 @@ import { useFetchDappRecent } from './../../../services/dapp/useFetchDappRecent'
 import { AllDappList } from './AllDappList';
 import { showDappWarningAlert } from './../../../actions/dapp';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { Image } from 'react-native-svg';
 import { images } from '../../../assets';
 import FastImage from 'react-native-fast-image';
 import Routes from '../../../constants/navigation/Routes';
@@ -106,14 +105,26 @@ export const DappsScreen = React.memo(() => {
     [category],
   );
 
+  const onSubmitSearch = (text: string) => {
+    if (text.startsWith('http')) {
+      nav.navigate(Routes.BROWSER_TAB_HOME, {
+        screen: Routes.BROWSER_VIEW,
+        params: {
+          newTabUrl: text,
+          timestamp: Date.now(),
+        },
+      });
+    } else {
+      nav.navigate(ROUTES.DappSearch, { text });
+    }
+  };
+
   return (
     <SafeAreaView
       edges={['top']}
       style={Style.s({ flex: 1, bg: colors.background.default })}
     >
-
       <View style={{ flex: 1, zIndex: 999 }}>
-
         <SearchBar
           placeholder="Search DApp or enter a link"
           value={searchText}
@@ -121,8 +132,9 @@ export const DappsScreen = React.memo(() => {
             setSearchText(value);
           }}
           onPressEnter={() => {
-            nav.navigate(ROUTES.DappSearch, { searchText });
-          }} />
+            onSubmitSearch(searchText);
+          }}
+        />
         <CategoryHeader
           pageIndex={pageIndex}
           categories={category}
@@ -166,7 +178,6 @@ export const DappsScreen = React.memo(() => {
           })}
         </PagerView>
 
-
         <SecurityWarningModal
           isOpen={securityWarningModal.isOpen}
           onClose={securityWarningModal.onClose}
@@ -175,7 +186,16 @@ export const DappsScreen = React.memo(() => {
         />
       </View>
 
-      <TouchableOpacity style={{ width: 50, height: 50, backgroundColor: 'red', top: 300, right: 50, zIndex: -1 }}>
+      <TouchableOpacity
+        style={{
+          width: 50,
+          height: 50,
+          backgroundColor: 'red',
+          top: 300,
+          right: 50,
+          zIndex: -1,
+        }}
+      >
         <FastImage
           style={Style.s({ size: 24 })}
           source={images.imageCryptoAsset}

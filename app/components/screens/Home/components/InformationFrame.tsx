@@ -8,6 +8,8 @@ import { useSelector } from 'react-redux';
 import Engine from '../../../../core/Engine';
 import { useTheme } from '../../../../util/theme';
 import { BlurView } from '@react-native-community/blur';
+import { useNavigation } from '@react-navigation/core';
+import { ROUTES } from '../../../../navigation/routes';
 
 export interface InformationFrameInterface {
   address?: string;
@@ -82,12 +84,27 @@ const createStyles = (colors: any) =>
       right: 0,
       opacity: 0.9,
     },
+    manageContainer: {
+      flexDirection: 'row',
+      position: 'absolute',
+      justifyContent: 'center',
+      alignItems: 'center',
+      bottom: 0,
+      right: 10,
+    },
+    manageTitle: {
+      marginHorizontal: 8,
+      fontSize: 16,
+      fontWeight: '500',
+      color: colors.text.default,
+    },
   });
 
 export const InformationFrame = function ({
   address,
   onManage,
 }: InformationFrameInterface) {
+  const navigation = useNavigation();
   const [isHidden, setIsHidden] = useState<boolean>(false);
   const currentCurrency = useSelector(
     (state: any) =>
@@ -105,7 +122,11 @@ export const InformationFrame = function ({
   return (
     <View style={styles.screenWrapper}>
       <View style={styles.container}>
-        <Image source={icons.iconLogo} style={styles.iconLogo} resizeMode={'contain'} />
+        <Image
+          source={icons.iconLogo}
+          style={styles.iconLogo}
+          resizeMode={'contain'}
+        />
         <View style={styles.containerAddress}>
           <EthereumAddress
             address={address}
@@ -118,7 +139,11 @@ export const InformationFrame = function ({
         </View>
 
         <View style={styles.containerBalance}>
-          <BlurView blurType={'ultraThinMaterialDark'} blurAmount={5} style={styles.blurView} />
+          <BlurView
+            blurType={'ultraThinMaterialDark'}
+            blurAmount={10}
+            style={styles.blurView}
+          />
           <View style={styles.containerTotalTitle}>
             <Text style={styles.titleTotal}>{'Total Balance'}</Text>
             <TouchableOpacity
@@ -133,6 +158,15 @@ export const InformationFrame = function ({
             </TouchableOpacity>
           </View>
           <Text style={styles.total}>{isHidden ? '******' : fiatBalance}</Text>
+          <TouchableOpacity
+            style={styles.manageContainer}
+            onPress={() => {
+              navigation.navigate(ROUTES.WalletScreen);
+            }}
+          >
+            <Text style={styles.manageTitle}>{'Manage'}</Text>
+            <Image source={icons.iconArrowRight} />
+          </TouchableOpacity>
         </View>
       </View>
     </View>

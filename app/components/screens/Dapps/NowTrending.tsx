@@ -71,7 +71,7 @@ export const NowTrending = ({
       return (
         <TouchableOpacity onPress={() => onSelect && onSelect(item)}>
           <Image
-            style={Style.s({ size: 64, bor: 8 })}
+            style={Style.s({ size: 64, bor: 8, bg: colors.background.default })}
             source={{ uri: parseLogoUrl(item?.logo) }}
           />
         </TouchableOpacity>

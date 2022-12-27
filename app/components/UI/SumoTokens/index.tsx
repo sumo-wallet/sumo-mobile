@@ -167,7 +167,7 @@ const createStyles = (colors: any) =>
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
-      borderBottomWidth: 1,
+      borderBottomWidth: 0.4,
       borderBottomColor: colors.border.default,
     },
     balanceSymbol: {
@@ -178,6 +178,7 @@ const createStyles = (colors: any) =>
       ...fontStyles.normal,
       textTransform: 'uppercase',
       color: colors.text.default,
+      fontWeight: '500',
     },
     testNetBalance: {
       fontSize: 16,
@@ -189,6 +190,7 @@ const createStyles = (colors: any) =>
       ...fontStyles.normal,
       textTransform: 'uppercase',
       color: colors.text.default,
+      fontWeight: '500',
     },
     balanceFiatTokenError: {
       textTransform: 'capitalize',
