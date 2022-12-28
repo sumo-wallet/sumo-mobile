@@ -115,7 +115,7 @@ export const DappsScreen = React.memo(() => {
         },
       });
     } else {
-      nav.navigate(ROUTES.DappSearch, { text });
+      nav.navigate(ROUTES.DappSearch, { searchText: text });
     }
   };
 
