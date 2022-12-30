@@ -94,6 +94,7 @@ class Client {
     });
   }
   public getDappHome() {
+    console.log('****** getDappHome ******');
     return fetcher<HandlerDappHomeResponse>(
       `${this.baseUrl}/api/v1/dapp/home`,
       {

@@ -26,6 +26,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { images } from '../../../assets';
 import FastImage from 'react-native-fast-image';
 import Routes from '../../../constants/navigation/Routes';
+import { useGetDappHome } from '../../../components/hooks/useGetDappHome';
 
 export const DappsScreen = React.memo(() => {
   const nav = useNavigator();
@@ -45,30 +46,38 @@ export const DappsScreen = React.memo(() => {
     console.log('showWarningAlert: ', showWarningAlert);
   }, [showWarningAlert]);
 
+  // const {
+  //   hotDapp,
+  //   homeList,
+  //   category = [],
+  //   mutate: mutateDappHome,
+  //   // isLoading,
+  //   // isValidating,
+  //   isFirstLoading,
+  // } = useFetchDappHome();
+
   const {
     hotDapp,
     homeList,
     category = [],
-    mutate: mutateDappHome,
-    // isLoading,
-    // isValidating,
-    isFirstLoading,
-  } = useFetchDappHome();
+    isLoading: isFirstLoading,
+  } = useGetDappHome();
+
   const { recent, mutate: mutateRecent } = useFetchDappRecent();
 
-  const handleRefreshData = React.useCallback(() => {
-    mutateRecent();
-    mutateDappHome();
-  }, [mutateDappHome, mutateRecent]);
+  // const handleRefreshData = React.useCallback(() => {
+  //   mutateRecent();
+  //   mutateDappHome();
+  // }, [mutateDappHome, mutateRecent]);
 
-  useFocusEffect(
-    React.useCallback(() => {
-      if (mounted?.current) {
-        handleRefreshData();
-      }
-      mounted.current = true;
-    }, [mounted, handleRefreshData]),
-  );
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     if (mounted?.current) {
+  //       handleRefreshData();
+  //     }
+  //     mounted.current = true;
+  //   }, [mounted, handleRefreshData]),
+  // );
 
   const handleConfirmWarning = React.useCallback(() => {
     if (curDapp && curDapp?.website) {
