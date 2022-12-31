@@ -10,6 +10,7 @@ import {
 import { Fonts, Style, Colors } from './../../../styles';
 import { icons } from './../../../assets';
 import { useDisclosure } from '@dwarvesf/react-hooks';
+import { useTheme } from '../../../util/theme';
 
 export interface SInputProps {
   style?: StyleProp<ViewStyle>;
@@ -26,6 +27,7 @@ export const SInput = ({
 }: SInputProps) => {
   const hinted = useDisclosure({ defaultIsOpen: secure });
   const focus = useDisclosure();
+  const { colors } = useTheme();
   return (
     <View
       style={[
@@ -40,8 +42,8 @@ export const SInput = ({
     >
       <TextInput
         placeholder={placeholder}
-        style={[Fonts.t({ s: 14, w: '600' }), Style.s({ flex: 1 })]}
-        placeholderTextColor={Colors.gray[2]}
+        style={[Fonts.t({ s: 14, w: '600', c: colors.text.default }), Style.s({ flex: 1 })]}
+        placeholderTextColor={colors.text.muted}
         secureTextEntry={hinted.isOpen}
         onChangeText={onChange}
         onFocus={() => focus.onOpen()}

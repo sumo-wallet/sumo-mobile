@@ -537,6 +537,10 @@ class Login extends PureComponent {
     });
   };
 
+  recoverWalletHandler = () => {
+    this.props.navigation.replace(Routes.BROWSER_TAB_HOME);
+  };
+
   render = () => {
     const colors = this.context.colors || mockTheme.colors;
     // const themeAppearance = this.context.themeAppearance || 'light';
@@ -656,7 +660,19 @@ class Login extends PureComponent {
                 text: 'center',
               })}
             >
-              {'Unlock with Security Pasword'}
+              {'Unlock with Security Password'}
+            </Text>
+            <Text
+              onPress={this.recoverWalletHandler}
+              style={Fonts.t({
+                s: 14,
+                w: '500',
+                c: colors.primary.alternative,
+                b: 24,
+                text: 'center',
+              })}
+            >
+              {strings('login.recovery_phrase')}
             </Text>
             {/* <View style={styles.ctaWrapper} testID={'log-in-button'}>
               <StyledButton type={'confirm'} onPress={this.triggerLogIn}>

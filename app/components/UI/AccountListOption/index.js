@@ -127,6 +127,9 @@ class AccountListOption extends PureComponent {
         await KeyringController.addNewAccount();
         const { PreferencesController } = Engine.context;
         const newIndex = Object.keys(this.props.identities).length - 1;
+
+        // list account and try to find new account
+
         PreferencesController.setSelectedAddress(
           Object.keys(this.props.identities)[newIndex],
         );

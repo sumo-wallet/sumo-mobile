@@ -7,6 +7,7 @@ import { Fonts, Style } from './../../../styles';
 import { SInput } from './../../common/SInput';
 import { SButton } from './../../common/SButton';
 import { useTheme } from '../../../util/theme';
+import { strings } from '../../../../locales/i18n';
 
 if (Device.isAndroid() && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -67,11 +68,11 @@ const SecurityPasswordModal = ({
             text: 'center',
           })}
         >
-          {'Security Password'}
+          {strings('login.password')}
         </Text>
         <SInput
-          style={Style.s({ mt: 24, c: colors.text.default })}
-          placeholder="Enter Security Password"
+          style={Style.s({ mt: 24 })}
+          placeholder={strings('enter_password.title')}
           secure
           onChange={onPassChanged}
         />
@@ -82,9 +83,10 @@ const SecurityPasswordModal = ({
             {errorMsg}
           </Text>
           <SButton
-            title="Confirm"
+            title={strings('enter_password.confirm_button')}
             onPress={onConfirm}
             style={Style.s({ mt: 20 })}
+            titleStyle={Fonts.t({ c: colors.text.default })}
           />
           <View style={Style.s({ direc: 'row', items: 'center', mt: 24 })}>
             <View style={Style.s({ flex: 1, h: 1, bg: colors.border.muted })} />
@@ -118,7 +120,7 @@ const SecurityPasswordModal = ({
             {'your current wallet and setup a new one'}
           </Text>
           <SButton
-            title="Cancel"
+            title={strings('accounts.cancel')}
             onPress={onClose}
             type="textOnly"
             style={Style.s({ mt: 24 })}

@@ -1,8 +1,7 @@
 import React, { memo } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { colors } from '../../../../styles/common';
-import Colors from '../../../../styles/colors';
 import { icons } from '../../../../assets';
+import { useTheme } from '../../../../util/theme';
 
 interface WalletItemInterface {
   title: string;
@@ -10,36 +9,39 @@ interface WalletItemInterface {
   isDisable?: boolean;
   isHiddenDivider?: boolean;
   isIconWarning?: boolean;
+  onPress: () => void;
 }
 
-const styles = StyleSheet.create({
-  screenWrapper: {
-    flexDirection: 'row',
-    flex: 1,
-    justifyContent: 'space-between',
-    paddingVertical: 12,
-    marginHorizontal: 16,
-  },
-  title: {
-    fontSize: 14,
-    fontWeight: '400',
-    color: colors.gray5,
-  },
-  description: {
-    fontSize: 14,
-    fontWeight: '400',
-    color: Colors.gray[5],
-  },
-  containerTitle: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  icon: {
-    width: 16,
-    height: 16,
-    marginLeft: 8,
-  },
-});
+const createStyles = (colors) =>
+  StyleSheet.create({
+    screenWrapper: {
+      flexDirection: 'row',
+      flex: 1,
+      justifyContent: 'space-between',
+      paddingVertical: 12,
+      marginHorizontal: 16,
+    },
+    title: {
+      fontSize: 14,
+      fontWeight: '400',
+      color: colors.text.default,
+    },
+    description: {
+      fontSize: 14,
+      fontWeight: '400',
+      color: colors.text.muted,
+    },
+    containerTitle: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    icon: {
+      width: 16,
+      height: 16,
+      marginLeft: 8,
+      tintColor: colors.text.muted,
+    },
+  });
 
 export const WalletItem = ({
   title,
@@ -47,17 +49,21 @@ export const WalletItem = ({
   isDisable = true,
   isHiddenDivider,
   isIconWarning,
+  onPress,
 }: WalletItemInterface) => {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   return (
     <TouchableOpacity
       style={[
         styles.screenWrapper,
         {
           borderBottomWidth: isHiddenDivider ? 0 : 0.5,
-          borderBottomColor: isHiddenDivider ? colors.transparent : '#1B2537',
+          borderBottomColor: isHiddenDivider ? 'transparent' : '#1B2537',
         },
       ]}
       disabled={isDisable}
+      onPress={onPress}
     >
       <View style={styles.containerTitle}>
         <Text style={styles.title}>{title}</Text>

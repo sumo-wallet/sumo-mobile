@@ -67,8 +67,6 @@ import {
 import { LoginOptionsSwitch } from '../../UI/LoginOptionsSwitch';
 import { Fonts, Style } from './../../../styles';
 import { icons } from './../../../assets';
-import Colors from './../../../styles/colors';
-import { color } from '@storybook/addon-knobs';
 
 function hasNumber(myString) {
   return /\d/.test(myString);
@@ -87,7 +85,6 @@ function containsSpecialChars(str) {
 
   return result;
 }
-
 
 const MINIMUM_SUPPORTED_CLIPBOARD_VERSION = 9;
 

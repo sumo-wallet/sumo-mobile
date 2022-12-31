@@ -3,7 +3,6 @@ import {
   View,
   SafeAreaView,
   Text,
-  StatusBar,
   StyleSheet,
   Image,
   ScrollView,
@@ -141,6 +140,14 @@ export const WalletDetailScreen = () => {
     orderedAccounts: any[];
   } = useNavigatorParams();
   const navigation = useNavigation();
+
+  const handleExportPrivateKey = () => {
+    navigation.navigate('RevealPrivateCredentialView', {
+      privateCredentialName: 'private_key',
+    });
+  }
+
+
   return (
     <SafeAreaView style={styles.wrapper}>
       <DynamicHeader title={'Wallet Detail'} />
@@ -185,6 +192,7 @@ export const WalletDetailScreen = () => {
             description={''}
             isHiddenDivider
             isDisable={false}
+            onPress={handleExportPrivateKey}
           />
         </View>
         <View style={styles.containerOption}>
