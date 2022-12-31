@@ -408,6 +408,12 @@ const App = ({ userLoggedIn }) => {
               options={{ headerShown: false }}
             />
             <Stack.Screen
+              name="ImportFromSeed"
+              component={ImportFromSeed}
+              // options={ImportFromSeed.navigationOptions}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
               name="OnboardingRootNav"
               component={OnboardingRootNav}
               options={{ headerShown: false }}

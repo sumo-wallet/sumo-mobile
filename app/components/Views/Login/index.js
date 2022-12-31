@@ -538,7 +538,7 @@ class Login extends PureComponent {
   };
 
   recoverWalletHandler = () => {
-    this.props.navigation.replace(Routes.BROWSER_TAB_HOME);
+    this.props.navigation.push('ImportFromSeed');
   };
 
   render = () => {
