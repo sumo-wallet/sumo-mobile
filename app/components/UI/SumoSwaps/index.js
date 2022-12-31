@@ -709,7 +709,7 @@ function SwapsAmountView({
     }
     setAmount(
       fromTokenMinimalUnitString(
-        (balanceAsUnits / 2).toString(10),
+        (Math.floor(balanceAsUnits / 2)).toString(10),
         sourceToken.decimals,
       ),
     );
