@@ -709,7 +709,7 @@ function SwapsAmountView({
     }
     setAmount(
       fromTokenMinimalUnitString(
-        (Math.floor(balanceAsUnits / 2)).toString(10),
+        Math.floor(balanceAsUnits / 2).toString(10),
         sourceToken.decimals,
       ),
     );
@@ -780,7 +780,6 @@ function SwapsAmountView({
             ]}
             pointerEvents={disabledView ? 'none' : 'auto'}
           >
-
             <View style={styles.sendTokenContainer}>
               <View style={styles.sendOptionContainer}>
                 <Text>{'SEND'}</Text>
@@ -1131,7 +1130,7 @@ function SwapsAmountView({
           </View>
           <View style={styles.providerContainer}>
             <Text style={styles.swapDetailTitle}>{'Provider'}</Text>
-            <Icon name="arrow-right" size={18} style={styles.caretDown}></Icon>
+            <Icon name="arrow-right" size={18} style={styles.caretDown} />
           </View>
 
           <TouchableOpacity

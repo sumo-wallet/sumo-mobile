@@ -73,7 +73,6 @@ import sanitizeUrlInput from '../../../util/url/sanitizeUrlInput';
 import { BrowserHeader } from './../Browser/BrowserHeader';
 import { Style, Fonts } from './../../../styles';
 import { icons } from './../../../assets';
-import { useNavigator } from './../../hooks';
 import { ROUTES } from './../../../navigation/routes';
 import ClipboardManager from './../../../core/ClipboardManager';
 import { showAlert } from '../../../actions/alert';
@@ -307,6 +306,7 @@ export const BrowserTab = (props) => {
 
   const { colors, shadows } = useTheme();
   const styles = createStyles(colors, shadows);
+
 
   /**
    * Is the current tab the active tab
@@ -1323,6 +1323,7 @@ export const BrowserTab = (props) => {
     setShowNetwork(true);
     toggleOptionsIfNeeded();
     // toggleNetworkModal();
+    props.navigation.navigate(ROUTES.ChangeNetwork);
   };
 
   /**
@@ -1373,12 +1374,10 @@ export const BrowserTab = (props) => {
   //   }
   // };
 
-  const nav = useNavigator();
-  // const dispatch
 
   const openAboutDapp = React.useCallback(() => {
     toggleOptionsIfNeeded();
-    nav.navigate(ROUTES.DappDetails, { dapp: props.dapp });
+    props.navigation.navigate(ROUTES.DappDetails, { dapp: props.dapp });
   }, [toggleOptionsIfNeeded, props.dapp]);
 
   const handleCopyWebLink = React.useCallback(() => {

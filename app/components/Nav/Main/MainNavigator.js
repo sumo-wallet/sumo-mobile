@@ -333,6 +333,35 @@ export const NFTMarketplaceTabModalFlow = () => (
   </Stack.Navigator>
 );
 
+
+const DappFlow = () => (
+  <Stack.Navigator
+    initialRouteName={ROUTES.DappsScreen}
+    mode={'modal'}
+    screenOptions={{
+      cardStyle: { backgroundColor: importedColors.transparent },
+    }}
+  >
+    <Stack.Screen
+      name={ROUTES.DappsScreen}
+      component={DappsScreen}
+      options={{ animationEnabled: true, headerShown: false }}
+    />
+    <Stack.Screen
+      name={Routes.BROWSER_VIEW}
+      component={Browser}
+      options={{ animationEnabled: true, headerShown: false }}
+    />
+    <Stack.Screen
+      name={Routes.BROWSER_URL_MODAL}
+      component={BrowserUrlModal}
+      options={{ animationEnabled: false, headerShown: false }}
+    />
+    <Stack.Screen name={ROUTES.ChangeNetwork} component={ChangeNetwork} />
+  </Stack.Navigator>
+);
+
+
 const BrowserFlow = () => (
   <Stack.Navigator
     initialRouteName={Routes.BROWSER_VIEW}
@@ -425,7 +454,7 @@ export const BottomTabContainer = () => {
       />
       <Tab.Screen
         name={ROUTES.DappsScreen}
-        component={DappsScreen}
+        component={DappFlow}
         options={{
           title: 'Dapps',
           tabBarIcon: ({ color }) => {

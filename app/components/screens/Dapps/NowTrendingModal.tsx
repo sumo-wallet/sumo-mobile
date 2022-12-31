@@ -34,7 +34,7 @@ const createStyles = (colors) =>
     modalView: {
       flex: 1,
       backgroundColor: colors.background.default,
-      opacity: 0.85,
+      opacity: 0.9,
       borderTopLeftRadius: 10,
       borderTopRightRadius: 10,
     },
@@ -57,6 +57,7 @@ const createStyles = (colors) =>
     resultsView: {
       height: Device.isSmallDevice() ? 200 : 280,
       marginTop: 10,
+      marginHorizontal: 16,
     },
     emptyList: {
       marginVertical: 10,
