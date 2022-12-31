@@ -16,11 +16,11 @@ import { icons } from '../../../../assets';
 const EMPTY = '0x0';
 const BALANCE_KEY = 'balance';
 
-const createStyles = () =>
+const createStyles = (colors) =>
   StyleSheet.create({
     account: {
       borderWidth: 1,
-      backgroundColor: Colors.gray[4],
+      backgroundColor: colors.box.default,
       marginHorizontal: 16,
       marginVertical: 4,
       borderColor: Colors.tran,
@@ -41,7 +41,7 @@ const createStyles = () =>
     },
     accountLabel: {
       fontSize: 14,
-      color: Colors.white[3],
+      color: colors.text.default,
       fontWeight: '500',
       ...fontStyles.normal,
     },
@@ -52,11 +52,11 @@ const createStyles = () =>
     accountBalance: {
       paddingTop: 5,
       fontSize: 12,
-      color: Colors.white[3],
+      color: colors.text.default,
       ...fontStyles.normal,
     },
     accountBalanceError: {
-      // color: colors.error.default,
+      color: colors.error.default,
       marginLeft: 4,
     },
     importedView: {
@@ -73,7 +73,7 @@ const createStyles = () =>
       alignItems: 'flex-end',
     },
     importedText: {
-      // color: colors.text.alternative,
+      color: colors.text.alternative,
       fontSize: 10,
       ...fontStyles.bold,
     },
@@ -82,7 +82,7 @@ const createStyles = () =>
       paddingVertical: 3,
       borderRadius: 10,
       borderWidth: 1,
-      // borderColor: colors.border.default,
+      borderColor: colors.border.default,
     },
     icon: {
       width: 20,
@@ -142,7 +142,7 @@ class AccountElement extends PureComponent {
       isQRHardware,
     } = this.props.item;
     const colors = this.context.colors || mockTheme.colors;
-    const styles = createStyles();
+    const styles = createStyles(colors);
 
     const selected = isSelected ? (
       <Icon name="check-circle" size={30} color={colors.primary.default} />

@@ -34,10 +34,10 @@ import { showAlert } from '../../../actions/alert';
 import { toggleAccountsModal } from '../../../actions/modals';
 import { protectWalletModalVisible } from '../../../actions/user';
 
-const createStyles = () =>
+const createStyles = (colors) =>
   StyleSheet.create({
     wrapper: {
-      backgroundColor: Colors.divider[1],
+      backgroundColor: colors.background.default,
       borderTopLeftRadius: 10,
       borderTopRightRadius: 10,
       minHeight: 600,
@@ -52,7 +52,7 @@ const createStyles = () =>
       width: 48,
       height: 5,
       borderRadius: 4,
-      backgroundColor: Colors.white[1],
+      backgroundColor: colors.text.default,
     },
     accountsWrapper: {
       flex: 1,
@@ -81,21 +81,21 @@ const createStyles = () =>
     titleWallet: {
       fontSize: 18,
       fontWeight: '500',
-      color: Colors.white[3],
+      color: colors.text.default,
       alignSelf: 'center',
       marginVertical: 12,
     },
     titleMain: {
       fontSize: 14,
       fontWeight: '500',
-      color: Colors.white[3],
+      color: colors.text.default,
       paddingHorizontal: 16,
       marginBottom: 8,
     },
     subTitleMain: {
       fontSize: 12,
       fontWeight: '400',
-      color: Colors.gray[5],
+      color: colors.text.default,
     },
     containerMain: {},
     containerBtn: {
@@ -107,7 +107,7 @@ const createStyles = () =>
       marginTop: 24,
     },
     containerModal: {
-      backgroundColor: Colors.divider[1],
+      backgroundColor: colors.background.default,
       borderTopLeftRadius: 10,
       borderTopRightRadius: 10,
       minHeight: 200,
@@ -123,12 +123,12 @@ const createStyles = () =>
       width: 24,
       height: 24,
       marginRight: 16,
-      tintColor: Colors.white[3],
+      tintColor: colors.text.default,
     },
     titleIconModal: {
       fontSize: 14,
       fontWeight: '500',
-      color: Colors.white[3],
+      color: colors.text.default,
     },
   });
 
@@ -483,7 +483,8 @@ class AccountList extends PureComponent {
   render() {
     const { orderedAccounts, accountsENS } = this.state;
     const { ticker } = this.props;
-    const styles = createStyles();
+    const colors = this.context.colors || mockTheme.colors;
+    const styles = createStyles(colors);
     const selectedAccount = orderedAccounts.find((item) => item.isSelected);
 
     return (
