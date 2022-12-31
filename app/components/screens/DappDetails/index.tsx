@@ -12,7 +12,13 @@ import { ROUTES } from './../../../navigation/routes';
 import { createNewTab, openDapp } from './../../../actions/browser';
 import { useTheme } from './../../../util/theme';
 
-export const InfoRow = ({ title, value }: { title: string; value: string }) => {
+export const InfoRow = ({
+  title,
+  value,
+}: {
+  title: string;
+  value: string | undefined;
+}) => {
   const { colors } = useTheme();
   return (
     <View
@@ -27,7 +33,7 @@ export const InfoRow = ({ title, value }: { title: string; value: string }) => {
       <Text style={Fonts.t({ s: 14, c: colors.text.default, t: 2, r: 40 })}>
         {title}
       </Text>
-      <Text style={Fonts.t({ s: 14, c: colors.text.alternative, t: 2 })}>
+      <Text style={Fonts.t({ s: 14, c: colors.text.muted, t: 2, w: '500' })}>
         {value}
       </Text>
     </View>
@@ -68,6 +74,7 @@ export const DappDetails = React.memo(() => {
         >
           <SButton
             style={Style.s({ flex: 1, mr: 8 })}
+            titleStyle={Fonts.t({ s: 16, w: '500', c: colors.text.default })}
             type="border"
             title="Favorite"
           >
@@ -80,6 +87,7 @@ export const DappDetails = React.memo(() => {
           <SButton
             onPress={handleOpenDapp}
             style={Style.s({ flex: 1, ml: 8 })}
+            titleStyle={Fonts.t({ s: 16, w: '500', c: colors.text.default })}
             type="border"
             title="Open"
           />
@@ -100,25 +108,22 @@ export const DappDetails = React.memo(() => {
             {'Introduction'}
           </Text>
           <Text style={Fonts.t({ s: 14, c: colors.text.alternative, t: 2 })}>
-            {'AMM DEX'}
+            {dapp.description}
           </Text>
           <View
             style={Style.s({
               mt: 12,
               bor: 8,
-              bg: colors.background.alternative,
+              bg: colors.box.default,
               px: 16,
               py: 4,
             })}
           >
-            <InfoRow title="Running on" value="Binance Smart Chain" />
-            <View style={Style.s({ bg: colors.border.default, h: 1 })} />
-            <InfoRow title="Provider" value="PancakeSwap" />
-            <View style={Style.s({ bg: colors.border.default, h: 1 })} />
-            <InfoRow
-              title="Website"
-              value="http://exchange.pancakeswap.finance"
-            />
+            <InfoRow title="Running on" value={dapp.chain_id} />
+            <View style={Style.s({ bg: colors.border.default, h: 0.5 })} />
+            <InfoRow title="Provider" value={dapp.name} />
+            <View style={Style.s({ bg: colors.border.default, h: 0.5 })} />
+            <InfoRow title="Website" value={dapp.website} />
           </View>
         </View>
       </ScrollView>

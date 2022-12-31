@@ -600,7 +600,7 @@
       "khôi phục bí mật (SRP)",
       " cấp ",
       "toàn quyền truy cập vào ví, tiền và tài khoản của bạn.\n\n",
-      "MetaMask là một",
+      "SUMO là một",
       "ví không giám hộ",
       ". Nghĩa là,",
       "bạn là chủ sở hữu SRP của bạn."
@@ -869,7 +869,7 @@
     "change_url": "Thay đổi URL",
     "switch_network": "Chuyển mạng",
     "dapp_browser": "TRÌNH DUYỆT DAPP",
-    "dapp_browser_message": "MetaMask là ví và trình duyệt của bạn cho trang web phi tập trung. Hãy xem thử!",
+    "dapp_browser_message": "SUMO là ví và trình duyệt của bạn cho trang web phi tập trung. Hãy xem thử!",
     "featured_dapps": "DAPP NỔI BẬT",
     "my_favorites": "ƯA THÍCH",
     "search": "Tìm hoặc gõ URL",

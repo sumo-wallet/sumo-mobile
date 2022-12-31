@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   View,
   Text,
+  Image,
 } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import Modal from 'react-native-modal';
@@ -14,27 +15,27 @@ import { useTheme } from '../../../util/theme';
 import Device from '../../../util/device';
 import { fontStyles } from '../../../styles/common';
 import { strings } from '../../../../locales/i18n';
-import { DappCell } from './DappCell';
+import { icons } from '../../../assets';
 
-export interface NowTrendingProps {
+export interface SelectModalProps {
   isVisible: PropTypes.bool;
   dismiss: PropTypes.func;
   title: PropTypes.string;
-  dapps: array;
-  onItemPress: PropTypes.func;
+  defaultValue: PropTypes.string;
+  selectedValue: PropTypes.string;
+  options: array;
+  onValueChange: PropTypes.func;
+  onValueTitleChange: PropTypes.func;
   onToggleModal: PropTypes.func;
 }
 const createStyles = (colors) =>
   StyleSheet.create({
     modal: {
-      flex: 1,
       margin: 0,
       justifyContent: 'flex-end',
     },
     modalView: {
-      flex: 1,
       backgroundColor: colors.background.default,
-      opacity: 0.85,
       borderTopLeftRadius: 10,
       borderTopRightRadius: 10,
     },
@@ -73,31 +74,67 @@ const createStyles = (colors) =>
       justifyContent: 'space-between',
       alignItems: 'center',
     },
+    itemContainer: {
+      paddingHorizontal: 16,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingVertical: 10,
+    },
+    itemTitle: {
+      color: colors.text.default,
+      fontSize: 20,
+      fontWeight: '700',
+    },
+    icon: {
+      width: 24,
+      height: 24,
+      tintColor: colors.primary.default,
+    },
   });
 
-export const NowTrendingModal = ({
+export const SelectModal = ({
   isVisible,
   dismiss,
   title,
-  dapps,
-  onItemPress,
+  options,
+  onValueChange,
+  onValueTitleChange,
   onToggleModal,
-}: NowTrendingProps) => {
+  selectedValue,
+  defaultValue,
+}: SelectModalProps) => {
   const [searchString, setSearchString] = useState('');
   const { colors } = useTheme();
   const styles = createStyles(colors);
 
   const renderItem = useCallback(
     ({ item }) => {
-      return <DappCell key={item.id} dapp={item} onPress={onItemPress} />;
+      return (
+        <TouchableOpacity
+          style={styles.itemContainer}
+          onPress={() => {
+            !!onValueChange && onValueChange(item.value);
+            !!onValueTitleChange && onValueTitleChange(item.label);
+            !!onToggleModal && onToggleModal();
+          }}
+        >
+          <Text style={styles.itemTitle}>{item.label}</Text>
+          {selectedValue === item.value ? (
+            <Image source={icons.iconChecked} style={styles.icon} />
+          ) : null}
+        </TouchableOpacity>
+      );
     },
-    [onItemPress, styles],
+    [onValueChange, styles],
   );
 
   const renderEmptyList = useMemo(
     () => (
       <View style={styles.emptyList}>
-        <Text>{strings('swaps.no_tokens_result', { searchString })}</Text>
+        <Text style={styles.itemTitle}>
+          {strings('swaps.no_tokens_result', { searchString })}
+        </Text>
       </View>
     ),
     [searchString, styles],
@@ -127,7 +164,7 @@ export const NowTrendingModal = ({
           style={styles.resultsView}
           keyboardDismissMode="none"
           keyboardShouldPersistTaps="always"
-          data={dapps}
+          data={options}
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
           ListEmptyComponent={renderEmptyList}

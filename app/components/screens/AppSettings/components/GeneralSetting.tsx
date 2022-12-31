@@ -1,4 +1,4 @@
-import React, { memo, useCallback } from 'react';
+import React, { memo, useCallback, useEffect, useState } from 'react';
 import {
   FlatList,
   Image,
@@ -7,65 +7,39 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { baseStyles, fontStyles } from '../../../../styles/common';
+import { fontStyles } from '../../../../styles/common';
 import { icons } from '../../../../assets';
 import { useTheme } from '../../../..//util/theme';
 import { Ticker } from 'app/types';
-import I18n, { strings } from '../../../../../locales/i18n';
-import SelectComponent from '../../../../components/UI/SelectComponent';
+import I18n, {
+  setLocale,
+  getLanguages,
+  strings,
+} from '../../../../../locales/i18n';
 import { useDispatch, useSelector } from 'react-redux';
-import { setLockTime } from '../../../../actions/settings';
 import { useNavigator } from '../../../../components/hooks';
 import { AppThemeKey } from '../../../../util/theme/models';
-
-const autolockOptions = [
-  {
-    value: '0',
-    label: strings('app_settings.autolock_immediately'),
-    key: '0',
-  },
-  {
-    value: '5000',
-    label: strings('app_settings.autolock_after', { time: 5 }),
-    key: '5000',
-  },
-  {
-    value: '15000',
-    label: strings('app_settings.autolock_after', { time: 15 }),
-    key: '15000',
-  },
-  {
-    value: '30000',
-    label: strings('app_settings.autolock_after', { time: 30 }),
-    key: '30000',
-  },
-  {
-    value: '60000',
-    label: strings('app_settings.autolock_after', { time: 60 }),
-    key: '60000',
-  },
-  {
-    value: '300000',
-    label: strings('app_settings.autolock_after_minutes', { time: 5 }),
-    key: '300000',
-  },
-  {
-    value: '600000',
-    label: strings('app_settings.autolock_after_minutes', { time: 10 }),
-    key: '600000',
-  },
-  {
-    value: '-1',
-    label: strings('app_settings.autolock_never'),
-    key: '-1',
-  },
-];
-
+import { SelectModal } from '../../../../components/UI/SelectModal';
+import Engine from '../../../../core/Engine';
+import infuraCurrencies from '../../../../util/infura-conversion.json';
 export interface RawHot24hInterface {
   data: Ticker[];
   onSelected?: (item: Ticker) => void;
 }
 
+const sortedCurrencies = infuraCurrencies.objects.sort((a, b) =>
+  a.quote.code
+    .toLocaleLowerCase()
+    .localeCompare(b.quote.code.toLocaleLowerCase()),
+);
+
+const infuraCurrencyOptions = sortedCurrencies.map(
+  ({ quote: { code, name } }) => ({
+    label: `${code.toUpperCase()} - ${name}`,
+    key: code,
+    value: code,
+  }),
+);
 const createStyles = (colors: any) =>
   StyleSheet.create({
     container: {
@@ -106,8 +80,8 @@ const createStyles = (colors: any) =>
       marginBottom: 24,
     },
     icon: {
-      width: 24,
-      height: 24,
+      width: 22,
+      height: 22,
       tintColor: colors.text.muted,
     },
     settingTitle: {
@@ -143,29 +117,79 @@ const createStyles = (colors: any) =>
     },
   });
 
-export const GeneralSetting = function GeneralSetting({
-  data,
-  onSelected,
-}: RawHot24hInterface) {
+export const GeneralSetting = function GeneralSetting() {
   const { colors } = useTheme();
   const styles = createStyles(colors);
-  const dispatch = useDispatch();
   const navigation = useNavigator();
+  const [languageOptions, setLanguageOptions] = useState([]);
+  const [isShowLanguageModal, setShowLanguageModal] = useState(false);
+  const [isShowCurrencyModal, setShowCurrencyModal] = useState(false);
+  const [currentLanguage, setCurrentLanguage] = useState(
+    I18n.locale.substr(0, 2),
+  );
+  const [currentLanguageTitle, setCurrentLanguageTitle] = useState('');
+  const [currentCurrencyTitle, setCurrentCurrencyTitle] = useState('');
 
-  const currentCurrency: number = useSelector((state) => state.engine.backgroundState.CurrencyRateController.currentCurrency);
+  const currentCurrency: number = useSelector(
+    (state) =>
+      state.engine.backgroundState.CurrencyRateController.currentCurrency,
+  );
   const appTheme: number = useSelector((state) => state.user.appTheme);
-  const currentLanguage = I18n.locale.substr(0, 2);
 
-  const selectLockTime = (lockTime) => {
-    dispatch(setLockTime(parseInt(lockTime, 10)));
+  useEffect(() => {
+    const languages = getLanguages();
+    const vlanguageOptions = Object.keys(languages).map((key) => ({
+      value: key,
+      label: languages[key],
+      key,
+    }));
+    setLanguageOptions(vlanguageOptions);
+    setCurrentLanguageTitle(languages[currentLanguage]);
+    setCurrentCurrencyTitle(infuraCurrencyOptions.find((item) => item.value === currentCurrency).label);
+
+  }, []);
+
+  const selectLanguage = (language) => {
+    if (language === currentLanguage) return;
+    setLocale(language);
+    setCurrentLanguage(language);
+    setTimeout(() => navigation.navigate('Home'), 100);
   };
+
+  const selectCurrency = async (currency) => {
+    const { CurrencyRateController } = Engine.context;
+    CurrencyRateController.setCurrentCurrency(currency);
+  };
+
+  const toggleLanguageTimeModal = () => {
+    setShowLanguageModal(!isShowLanguageModal);
+  };
+  const toggleCurrencyModal = () => {
+    setShowCurrencyModal(!isShowCurrencyModal);
+  };
+
   const renderLanguage = () => {
     return (
-      <TouchableOpacity style={[styles.containerItem, { borderBottomWidth: 0.4 }]}>
-        <Text style={styles.settingTitle}>{strings('app_settings.current_language')}</Text>
+      <TouchableOpacity
+        style={[styles.containerItem, { borderBottomWidth: 0.4 }]}
+        onPress={toggleLanguageTimeModal}
+      >
+        <Text style={styles.settingTitle}>
+          {strings('app_settings.current_language')}
+        </Text>
         <View style={styles.containerValue}>
-          <Text style={styles.settingSubTitle}>{currentLanguage}</Text>
+          <Text style={styles.settingSubTitle}>{currentLanguageTitle}</Text>
           <Image source={icons.iconArrowRight} style={styles.icon} />
+          {languageOptions && (
+            <SelectModal
+              isVisible={isShowLanguageModal}
+              selectedValue={currentLanguage}
+              onValueChange={selectLanguage}
+              title={strings('app_settings.current_language')}
+              options={languageOptions}
+              onToggleModal={toggleLanguageTimeModal}
+            />
+          )}
         </View>
       </TouchableOpacity>
     );
@@ -173,35 +197,92 @@ export const GeneralSetting = function GeneralSetting({
   const renderCurrency = () => {
     return (
       <>
-        <View style={[styles.containerItem, { borderBottomWidth: 0.4 }]}>
+        <TouchableOpacity
+          style={[styles.containerItem, { borderBottomWidth: 0.4 }]}
+          onPress={toggleCurrencyModal}
+        >
           <Text style={styles.settingTitle}>
-            {strings('app_settings.auto_lock')}
+            {strings('app_settings.conversion_title')}
           </Text>
           <View style={styles.containerValue}>
             <Text style={styles.settingSubTitle}>{currentCurrency}</Text>
             <Image source={icons.iconArrowRight} style={styles.icon} />
+            {languageOptions && (
+              <SelectModal
+                isVisible={isShowCurrencyModal}
+                selectedValue={currentCurrency}
+                onValueChange={selectCurrency}
+                title={strings('app_settings.conversion_title')}
+                options={infuraCurrencyOptions}
+                onToggleModal={toggleCurrencyModal}
+              />
+            )}
           </View>
-        </View>
+        </TouchableOpacity>
       </>
     );
   };
   const renderTheme = () => {
     return (
-      <TouchableOpacity style={[styles.containerItem, { borderBottomWidth: 0.4 }]}>
+      <TouchableOpacity
+        style={[styles.containerItem, { borderBottomWidth: 0.4 }]}
+        onPress={() => {
+          navigation.navigate('ThemeSettings');
+        }}
+      >
         <Text style={styles.settingTitle}>{'Theme'}</Text>
         <View style={styles.containerValue}>
-          <Text style={styles.settingSubTitle}>{strings(`app_settings.theme_${AppThemeKey[appTheme]}`)}</Text>
+          <Text style={styles.settingSubTitle}>
+            {strings(`app_settings.theme_${AppThemeKey[appTheme]}`)}
+          </Text>
           <Image source={icons.iconArrowRight} style={styles.icon} />
-
         </View>
       </TouchableOpacity>
     );
   };
   const renderAdvance = () => {
     return (
-      <TouchableOpacity style={styles.containerItem} onPress={() => {
-      }}>
-        <Text style={styles.settingTitle}>{'Advance Security'}</Text>
+      <TouchableOpacity
+        style={styles.containerItem}
+        onPress={() => {
+          navigation.navigate('GeneralSettings');
+        }}
+      >
+        <Text style={styles.settingTitle}>{'More'}</Text>
+        <View style={styles.containerValue}>
+          <Image source={icons.iconArrowRight} style={styles.icon} />
+        </View>
+      </TouchableOpacity>
+    );
+  };
+  const renderContact = () => {
+    return (
+      <TouchableOpacity
+        style={[styles.containerItem, { borderBottomWidth: 0.4 }]}
+        onPress={() => {
+          navigation.navigate('ContactsSettings');
+        }}
+      >
+        <Text style={styles.settingTitle}>
+          {strings(`app_settings.contacts_title`)}
+        </Text>
+        <View style={styles.containerValue}>
+          <Image source={icons.iconArrowRight} style={styles.icon} />
+        </View>
+      </TouchableOpacity>
+    );
+  };
+  const renderNetworks = () => {
+    return (
+      <TouchableOpacity
+        style={[styles.containerItem, { borderBottomWidth: 0.4 }]}
+        onPress={() => {
+          navigation.navigate('NetworksSettings');
+        }}
+      >
+        <Text style={styles.settingTitle}>
+          {strings(`app_settings.networks_title`)}
+        </Text>
         <View style={styles.containerValue}>
           <Image source={icons.iconArrowRight} style={styles.icon} />
         </View>
@@ -214,18 +295,13 @@ export const GeneralSetting = function GeneralSetting({
         <Text style={styles.title}>{'GENERAL'}</Text>
       </View>
       <View style={styles.containerBox}>
+        {renderContact()}
+        {renderNetworks()}
         {renderCurrency()}
         {renderLanguage()}
         {renderTheme()}
         {renderAdvance()}
       </View>
-      {/* <FlatList
-        data={data}
-        renderItem={renderItem}
-        horizontal
-        style={styles.containerFlatList}
-        showsHorizontalScrollIndicator={false}
-      /> */}
     </View>
   );
 };

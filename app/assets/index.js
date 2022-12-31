@@ -58,6 +58,9 @@ import iconHistory from './icons/iconHistory.png';
 import iconChart from './icons/iconChart.png';
 import iconSlippage from './icons/iconSlippage.png';
 import logoFacebook from './icons/logoFacebook.png';
+import logoTwitter from './icons/logoTwitter.png';
+import logoDiscord from './icons/logoDiscord.png';
+
 
 import imageBanner from './images/imageBanner.png';
 import imageNew1 from './images/imageNew1.png';
@@ -130,6 +133,8 @@ export const icons = {
   iconChart,
   iconSlippage,
   logoFacebook,
+  logoTwitter,
+  logoDiscord
 };
 
 export const images = {

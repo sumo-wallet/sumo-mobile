@@ -576,11 +576,11 @@ const Webview = () => (
 );
 
 const SettingsFlow = () => (
-  <Stack.Navigator initialRouteName={'Settings'}>
+  <Stack.Navigator initialRouteName={'AppSettings'}>
     <Stack.Screen
       name="AppSettings"
       component={AppSettingsScreen}
-      options={{ tabBarVisible: false }}
+      options={Settings.navigationOptions}
     />
     <Stack.Screen
       name="Settings"
