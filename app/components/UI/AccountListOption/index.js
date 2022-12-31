@@ -40,11 +40,11 @@ const createStyles = (colors: any) =>
       width: 48,
       height: 5,
       borderRadius: 4,
-      backgroundColor: Colors.white[1],
+      backgroundColor: colors.text.default,
     },
 
     containerBtn: {
-      backgroundColor: Colors.white[3],
+      backgroundColor: colors.background.default,
       marginTop: 20,
       marginHorizontal: 16,
     },
@@ -132,7 +132,7 @@ class AccountListOption extends PureComponent {
         );
         setTimeout(() => {
           this.mounted && this.setState({ loading: false });
-          // this.props.navigation && this.props.navigation.goBack();
+          this.props.navigation && this.props.navigation.goBack();
           // TODO: open new account detail screen
           NotificationManager.showSimpleNotification({
             status: `simple_notification`,

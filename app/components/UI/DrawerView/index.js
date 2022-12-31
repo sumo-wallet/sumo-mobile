@@ -644,7 +644,7 @@ class DrawerView extends PureComponent {
         this.animatingAddAccountsModal = false;
       }, 500);
     }
-    !this.props.accountsModalVisible &&
+    !this.props.addAccountsModalVisible &&
       this.trackEvent(ANALYTICS_EVENT_OPTS.NAVIGATION_TAPS_ACCOUNT_NAME);
   };
 
