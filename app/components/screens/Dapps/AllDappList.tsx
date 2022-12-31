@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/prefer-optional-chain */
 import React, { useState } from 'react';
-import { FlatList } from 'react-native';
+import { FlatList, RefreshControl } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { useNavigator } from './../../hooks';
@@ -8,11 +8,11 @@ import { Style } from './../../../styles';
 import { NowTrending } from './NowTrending';
 import { SearchRecent } from './SearchRecent';
 import { ModelDApp, ModelDApps, ModelCategory } from './../../../types';
-import { ROUTES } from './../../../navigation/routes';
-import { createNewTab, openDapp } from './../../../actions/browser';
 import { AppGroupCard } from './AppGroupCard';
 import { NowTrendingModal } from './NowTrendingModal';
 import { strings } from '../../../../locales/i18n';
+import { useTheme } from '../../../util/theme';
+import { useGetDappHome } from '../../../components/hooks/useGetDappHome';
 
 interface AllDappListProps {
   dappByCate?: ModelDApps[];
@@ -31,16 +31,15 @@ export const AllDappList = React.memo(
     onSeeMoreCategory,
   }: AllDappListProps) => {
     const nav = useNavigator();
+    const { colors } = useTheme();
     const dispatch = useDispatch();
-    const [isNowTrendingModelVisible, setNowTrendingModelVisible] = useState(false);
+    const [isNowTrendingModelVisible, setNowTrendingModelVisible] =
+      useState(false);
+
+    const { isLoading, getDAppHome } = useGetDappHome();
 
     const handleOpenTrending = React.useCallback(
       (dapp: ModelDApp) => {
-        // if (dapp.website) {
-        //   dispatch(createNewTab(dapp?.website));
-        //   dispatch(openDapp({ dapp }));
-        //   nav.navigate(ROUTES.BrowserTabHome, { dapp });
-        // }
         setNowTrendingModelVisible(true);
       },
       [nav, dispatch],
@@ -48,6 +47,10 @@ export const AllDappList = React.memo(
 
     const toggleSourceModal = () => {
       setNowTrendingModelVisible(!isNowTrendingModelVisible);
+    };
+
+    const onRefresh = () => {
+      getDAppHome();
     };
 
     return (
@@ -94,6 +97,14 @@ export const AllDappList = React.memo(
             />
           );
         }}
+        refreshControl={
+          <RefreshControl
+            colors={[colors.primary.default]}
+            tintColor={colors.primary.default}
+            refreshing={isLoading}
+            onRefresh={onRefresh}
+          />
+        }
       />
     );
   },

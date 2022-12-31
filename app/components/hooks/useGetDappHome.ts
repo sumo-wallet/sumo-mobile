@@ -14,6 +14,7 @@ interface DappHomeConfig {
   category?: ModelCategory[];
   homeList?: ModelDApps[];
   hotDapp?: ModelDApp[];
+  getDAppHome: () => void;
 }
 
 export function useGetDappHome(): DappHomeConfig {
@@ -24,7 +25,7 @@ export function useGetDappHome(): DappHomeConfig {
   const [hotDapp, setHotDapp] = useState<ModelDApp[]>();
   const errorHandler = useErrorHandler();
 
-  const getListNews = useCallback(async () => {
+  const getDAppHome = useCallback(async () => {
     try {
       setLoading(true);
       const res = await client.getDappHome();
@@ -42,8 +43,8 @@ export function useGetDappHome(): DappHomeConfig {
   }, [errorHandler]);
 
   useEffect(() => {
-    getListNews().then();
-  }, [getListNews]);
+    getDAppHome().then();
+  }, [getDAppHome]);
 
-  return { isLoading, banner, category, homeList, hotDapp };
+  return { isLoading, banner, category, homeList, hotDapp, getDAppHome };
 }

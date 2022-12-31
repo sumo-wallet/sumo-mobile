@@ -109,7 +109,7 @@ export const ReceiveScreen = ({ showAsset, asset }: ReceiveAssetProps) => {
             bor: 8,
           })}
         >
-          <TouchableOpacity
+          {/* <TouchableOpacity
             onPress={chooseCurrencyModal.onOpen}
             style={Style.s({ direc: 'row', items: 'center' })}
           >
@@ -120,7 +120,7 @@ export const ReceiveScreen = ({ showAsset, asset }: ReceiveAssetProps) => {
               style={Style.s({ size: 16, l: 8 })}
               source={icons.iconChevronDown}
             />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <View
             style={Style.s({
               p: 8,

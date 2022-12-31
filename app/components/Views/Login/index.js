@@ -579,7 +579,7 @@ class Login extends PureComponent {
                   t: 12,
                 })}
               >
-                {'Unlock iCrossWallet with Face ID'}
+                {'Unlock Sumo with Face ID'}
               </Text>
             </View>
             <View style={Style.s({ flex: 1, cen: true })}>
