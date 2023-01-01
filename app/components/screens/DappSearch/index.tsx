@@ -69,6 +69,11 @@ const createStyles = (colors: any) =>
       color: colors.text.default,
       marginHorizontal: 8,
     },
+    searchValue: {
+      fontSize: 12,
+      color: colors.primary.default,
+      marginHorizontal: 8,
+    },
     titleContainer: {
       flexDirection: 'row',
       paddingHorizontal: 16,
@@ -315,7 +320,11 @@ export const DappSearch = React.memo(() => {
       >
         <View style={styles.titleContainer}>
           <FastImage style={Style.s({ size: 16 })} source={icons.iconSearch} />
-          <Text style={styles.title}>{'Search on web'}</Text>
+          <Text style={styles.title}>
+            {'Search '}
+            <Text style={styles.searchValue}>{inputValue}</Text>
+            {' on web'}
+          </Text>
         </View>
         <FastImage
           style={Style.s({ size: 16 })}

@@ -17,6 +17,7 @@ import I18n, {
 } from '../../../../../locales/i18n';
 import { useDispatch } from 'react-redux';
 import { useNavigator } from '../../../../components/hooks';
+import deviceInfoModule from 'react-native-device-info';
 
 const createStyles = (colors: any) =>
   StyleSheet.create({
@@ -116,6 +117,21 @@ export const OtherSetting = function OtherSetting() {
       </TouchableOpacity>
     );
   };
+  const renderWalletConnect = () => {
+    return (
+      <TouchableOpacity
+        style={[styles.containerItem, { borderBottomWidth: 0.4 }]}
+        onPress={() => {
+          navigation.navigate('WalletConnectSessionsView');
+        }}
+      >
+        <Text style={styles.settingTitle}>{strings('experimental_settings.wallet_connect_dapps')}</Text>
+        <View style={styles.containerValue}>
+          <Image source={icons.iconArrowRight} style={styles.icon} />
+        </View>
+      </TouchableOpacity>
+    );
+  };
   const renderHelpCenter = () => {
     return (
       <TouchableOpacity
@@ -136,11 +152,12 @@ export const OtherSetting = function OtherSetting() {
       <TouchableOpacity
         style={styles.containerItem}
         onPress={() => {
-          navigation.navigate('GeneralSettings');
+          navigation.navigate('AppDetail');
         }}
       >
         <Text style={styles.settingTitle}>{'About'}</Text>
         <View style={styles.containerValue}>
+          <Text style={styles.settingSubTitle}>{deviceInfoModule.getVersion()}</Text>
           <Image source={icons.iconArrowRight} style={styles.icon} />
         </View>
       </TouchableOpacity>
@@ -152,6 +169,7 @@ export const OtherSetting = function OtherSetting() {
         <Text style={styles.title}>{'OTHERS'}</Text>
       </View>
       <View style={styles.containerBox}>
+        {renderWalletConnect()}
         {renderHelpCenter()}
         {renderTermService()}
         {renderAbout()}

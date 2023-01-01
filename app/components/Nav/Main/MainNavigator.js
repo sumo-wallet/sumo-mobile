@@ -95,6 +95,7 @@ import { NftCollectionScreen } from './../../screens/NftCollection';
 import { NftDetailScreen } from './../../screens/NftDetail';
 import { NftManagementScreen } from './../../screens/NftManagement';
 import { AppSettingsScreen } from './../../screens/AppSettings';
+import { AppDetailScreen } from './../../screens/AppDetail';
 
 import { useTheme } from '../../../util/theme';
 
@@ -610,6 +611,12 @@ const SettingsFlow = () => (
       component={AppSettingsScreen}
       options={Settings.navigationOptions}
     />
+    <Stack.Screen
+      name="AppDetail"
+      component={AppDetailScreen}
+      options={{ tabBarVisible: false }}
+    />
+
     <Stack.Screen
       name="Settings"
       component={Settings}

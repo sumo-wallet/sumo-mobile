@@ -46,20 +46,11 @@ export const DappsScreen = React.memo(() => {
     console.log('showWarningAlert: ', showWarningAlert);
   }, [showWarningAlert]);
 
-  // const {
-  //   hotDapp,
-  //   homeList,
-  //   category = [],
-  //   mutate: mutateDappHome,
-  //   // isLoading,
-  //   // isValidating,
-  //   isFirstLoading,
-  // } = useFetchDappHome();
-
   const {
     hotDapp,
     homeList,
     category = [],
+    categoryTab = [],
     isLoading: isFirstLoading,
   } = useGetDappHome();
 
@@ -103,7 +94,7 @@ export const DappsScreen = React.memo(() => {
 
   const onSeeMoreCategory = React.useCallback(
     (item: ModelCategory) => {
-      const matchedIndex = category.findIndex((cat) => cat.id === item?.id);
+      const matchedIndex = categoryTab.findIndex((cat) => cat.id === item?.id);
       if (matchedIndex > 0) {
         setPageIndex(matchedIndex);
         if (pagerViewRef) {
@@ -146,7 +137,7 @@ export const DappsScreen = React.memo(() => {
         />
         <CategoryHeader
           pageIndex={pageIndex}
-          categories={category}
+          categories={categoryTab}
           setPageIndex={onTabChanged}
         />
         {isFirstLoading ? (
@@ -164,7 +155,7 @@ export const DappsScreen = React.memo(() => {
           style={Style.s({ flex: 1 })}
         >
           <AllDappList
-            dappByCate={homeList}
+            dappByCate={homeList?.slice(1)}
             hotDapp={hotDapp}
             recent={recent}
             onSelect={(dapp: ModelDApp) => {
@@ -177,7 +168,7 @@ export const DappsScreen = React.memo(() => {
             }}
             onSeeMoreCategory={onSeeMoreCategory}
           />
-          {category.map((cate) => {
+          {categoryTab.slice(1).map((cate) => {
             return (
               <DappListByCategory
                 key={`DappListByCategory.${cate.id}`}

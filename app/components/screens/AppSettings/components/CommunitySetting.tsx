@@ -40,6 +40,7 @@ const createStyles = (colors: any) =>
     imageLogo: {
       width: 44,
       height: 44,
+      tintColor: colors.text.default,
     },
   });
 
