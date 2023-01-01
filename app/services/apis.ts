@@ -13,6 +13,8 @@ import {
   HandlerNotificationResponse,
   HandlerTrackingUsageRequest,
   HandlerResponseData,
+  HandlerWalletConfigResponse,
+  HandlerChainResponse,
 } from './../types';
 
 /* eslint-disable prefer-destructuring */
@@ -152,6 +154,22 @@ class Client {
         headers: this.headers,
         method: 'POST',
         body: JSON.stringify(body),
+      },
+    );
+  }
+  public getChain() {
+    return fetcher<HandlerChainResponse>(
+      `${this.baseUrl}/api/v1/system/chain`,
+      {
+        headers: this.headers,
+      },
+    );
+  }
+  public getConfig() {
+    return fetcher<HandlerWalletConfigResponse>(
+      `${this.baseUrl}/api/v1/system/config`,
+      {
+        headers: this.headers,
       },
     );
   }

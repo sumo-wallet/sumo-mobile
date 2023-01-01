@@ -140,13 +140,13 @@ export const DappsScreen = React.memo(() => {
           categories={categoryTab}
           setPageIndex={onTabChanged}
         />
-        {isFirstLoading ? (
+        {/* {isFirstLoading ? (
           <ActivityIndicator
             size="large"
             color={colors.primary.default}
             style={Style.s({ self: 'center' })}
           />
-        ) : null}
+        ) : null} */}
         <PagerView
           ref={pagerViewRef as any}
           onPageSelected={(event) => {

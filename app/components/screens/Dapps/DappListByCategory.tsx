@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, StyleProp, ViewStyle, FlatList, Text } from 'react-native';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import FastImage from 'react-native-fast-image';
 
@@ -31,8 +31,17 @@ export const DappListByCategory = React.memo(
       isValidating,
       mutate,
     } = useFetchDappByCategory({
-      categoryId: category?.id ?? '',
+      categoryId: category?.id !== 1000000 ? category?.id ?? '0' : '0',
     });
+
+    const favorites: ModelDApp[] = useSelector(
+      (state: any) => state.dapp.favorites,
+    );
+
+    // useEffect(() => {
+    //   if (category?.id === 1000000) {
+    //   }
+    // }, [category, dapps]);
 
     const handlePressDapp = React.useCallback(
       (dapp: ModelDApp) => {
@@ -85,7 +94,7 @@ export const DappListByCategory = React.memo(
     return (
       <View style={[Style.s({ flex: 1 }), style]}>
         <FlatList
-          data={dapps}
+          data={category.id === 1000000 ? favorites : dapps}
           contentContainerStyle={Style.s({ px: 16, py: 12 })}
           renderItem={renderItemResult}
           ItemSeparatorComponent={renderItemSeparator}

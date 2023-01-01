@@ -80,9 +80,9 @@ const createStyles = (colors: any) =>
       flexWrap: 'wrap',
     },
     particularFeature: {
+      width: '25%',
       justifyContent: 'center',
       alignItems: 'center',
-      marginHorizontal: 12,
       marginVertical: 16,
     },
     subTitleFeature: {

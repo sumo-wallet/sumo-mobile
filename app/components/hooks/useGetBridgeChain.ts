@@ -1,17 +1,17 @@
-import { ModelNotification } from 'app/types';
+import { ModelChain, ModelNotification } from 'app/types';
 import { useCallback, useState, useEffect } from 'react';
 import { client } from '../../services/apis';
 import useErrorHandler from './useErrorHandler.hook';
 
-interface SystemNotification {
+interface BridgeChain {
   isGetList: boolean;
-  notifications: ModelNotification[];
+  bridgeChains: ModelChain[];
   hasMore: boolean;
 }
 
-export function useGetNotification(): SystemNotification {
+export function useGetBridgeChain(): BridgeChain {
   const [isGetList, setGetList] = useState<boolean>(false);
-  const [notifications, setNotifications] = useState<ModelNotification[]>([]);
+  const [bridgeChains, setBridgeChains] = useState<ModelNotification[]>([]);
   const [hasMore, setHasMore] = useState<boolean>(false);
   const errorHandler = useErrorHandler();
 
@@ -20,7 +20,7 @@ export function useGetNotification(): SystemNotification {
       setGetList(true);
       const res = await client.getNotification();
       if (res.data && res.data?.length > 0) {
-        setNotifications(res.data);
+        setBridgeChains(res.data);
       } else {
         setHasMore(true);
       }
@@ -35,5 +35,5 @@ export function useGetNotification(): SystemNotification {
     getListNews().then();
   }, [getListNews]);
 
-  return { isGetList, notifications, hasMore };
+  return { isGetList, bridgeChains, hasMore };
 }

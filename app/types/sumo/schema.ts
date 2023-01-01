@@ -32,6 +32,10 @@ export interface HandlerFeature {
   url?: string;
 }
 
+export interface HandlerChainResponse {
+  data?: ModelChain[];
+}
+
 export interface HandlerCreateReferralRequest {
   walletAddress?: string;
 }
@@ -88,6 +92,12 @@ export interface HandlerTrackingUsageRequest {
 
 export interface HandlerUpsertWalletResponse {
   data?: HandlerResponseData;
+}
+
+export interface HandlerWalletConfigResponse {
+  build?: number;
+  support_url?: string;
+  version?: string;
 }
 
 export interface HandlerWalletHomeConfigResponse {
