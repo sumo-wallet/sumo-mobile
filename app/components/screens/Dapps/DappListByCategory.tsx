@@ -12,6 +12,7 @@ import { SearchResultCell } from './../DappSearch/SearchResultCell';
 import { createNewTab, openDapp } from './../../../actions/browser';
 import { ROUTES } from './../../../navigation/routes';
 import { images } from './../../../assets';
+import { useTrackingDAppUsage } from '../../../components/hooks/useTrackingDAppUsage';
 
 export interface DappListByCategoryProps {
   style?: StyleProp<ViewStyle>;
@@ -23,6 +24,7 @@ export const DappListByCategory = React.memo(
     const { colors } = useTheme();
     const dispatch = useDispatch();
     const nav = useNavigation();
+    const { trackingUsage } = useTrackingDAppUsage();
 
     const {
       dapps = [],
@@ -38,9 +40,10 @@ export const DappListByCategory = React.memo(
           dispatch(createNewTab(dapp?.website));
           dispatch(openDapp({ dapp }));
           nav.navigate(ROUTES.BrowserTabHome, { dapp });
+          trackingUsage(dapp.id || 0, 'dapp');
         }
       },
-      [dispatch, nav],
+      [dispatch, nav, trackingUsage],
     );
 
     const renderItemResult = React.useCallback(

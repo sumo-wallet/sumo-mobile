@@ -32,6 +32,10 @@ export interface HandlerFeature {
   url?: string;
 }
 
+export interface HandlerCreateReferralRequest {
+  walletAddress?: string;
+}
+
 export interface HandlerGetChallengeResponse {
   data?: HandlerChallengeData;
 }
@@ -42,6 +46,10 @@ export interface HandlerGetSystemConfigResponse {
 
 export interface HandlerListReferralResponse {
   data?: ModelReferralData[];
+}
+
+export interface HandlerMarketResponse {
+  data?: ModelNotification[];
 }
 
 export interface HandlerMyProfileResponse {
@@ -71,6 +79,11 @@ export interface HandlerResponseData {
 
 export interface HandlerSearchDappResponse {
   d_app?: ModelDApp[];
+}
+
+export interface HandlerTrackingUsageRequest {
+  dapp_id?: number;
+  from?: string;
 }
 
 export interface HandlerUpsertWalletResponse {
@@ -107,6 +120,7 @@ export interface ModelBanner {
 }
 
 export interface ModelCategory {
+  chain_id?: number;
   created_at?: string;
   id?: number;
   name?: string;
@@ -152,6 +166,7 @@ export interface ModelDApp {
   status?: string;
   thumbnail?: string;
   updated_at?: string;
+  usage_count?: number;
   website?: string;
 }
 
@@ -253,11 +268,35 @@ export interface V1AuthUpsertWalletCreateParams {
   walletAddress: string;
 }
 
-export interface V1DappSearchListParams {
+export interface V1BridgeChainListParams {
   /** query value */
-  categoryId?: number;
+  text?: string;
+}
+
+export interface V1DappCategoryIdListParams {
   /** pageNumber */
   pageNumber?: string;
   /** pageSize */
   pageSize?: string;
+  /** id */
+  id: number;
+}
+
+export interface V1DappSearchListParams {
+  /** query value */
+  text?: string;
+  /** pageNumber */
+  pageNumber?: string;
+  /** pageSize */
+  pageSize?: string;
+}
+
+export interface V1MarketSearchListParams {
+  /** query value */
+  text?: string;
+}
+
+export interface V1MarketplaceSearchListParams {
+  /** query value */
+  text?: string;
 }

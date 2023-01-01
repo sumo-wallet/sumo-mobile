@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, SafeAreaView, Text, ScrollView } from 'react-native';
 import FastImage from 'react-native-fast-image';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { Style, Fonts } from './../../../styles';
 import { SHeader, SButton } from './../../common';
@@ -11,6 +11,8 @@ import { icons } from './../../../assets';
 import { ROUTES } from './../../../navigation/routes';
 import { createNewTab, openDapp } from './../../../actions/browser';
 import { useTheme } from './../../../util/theme';
+import { addFavoriteDApp, removeFavoriteDApp } from '../../../actions/dapp';
+import { useTrackingDAppUsage } from '../../../components/hooks/useTrackingDAppUsage';
 
 export const InfoRow = ({
   title,
@@ -45,14 +47,41 @@ export const DappDetails = React.memo(() => {
   const dispatch = useDispatch();
   const nav = useNavigator();
   const { colors } = useTheme();
+  const { trackingUsage } = useTrackingDAppUsage();
+
+  const favorites: ModelDApp[] = useSelector(
+    (state: any) => state.dapp.favorites,
+  );
+  const [isFavorited, setFavorited] = useState(false);
+  useEffect(() => {
+    if (favorites)
+      setFavorited(
+        favorites.findIndex((item) => item.website === dapp.website) >= 0,
+      );
+  }, [favorites, dapp.website]);
 
   const handleOpenDapp = React.useCallback(() => {
     if (dapp?.website) {
       dispatch(createNewTab(dapp?.website));
       dispatch(openDapp({ dapp }));
       nav.navigate(ROUTES.BrowserTabHome, { dapp });
+      trackingUsage(dapp.id || 0, 'dapp');
     }
-  }, [dapp, dispatch, nav]);
+  }, [dapp, dispatch, nav, trackingUsage]);
+
+  const handleFavorite = () => {
+    if (favorites) {
+      const matchedIndex = favorites.findIndex(
+        (item) => item.website === dapp.website,
+      );
+      if (matchedIndex < 0) {
+        dispatch(addFavoriteDApp(dapp));
+      } else {
+        dispatch(removeFavoriteDApp(dapp));
+      }
+      // dispatch(addFavoriteDApp(dapp));
+    }
+  };
 
   return (
     <SafeAreaView style={Style.s({ flex: 1, bg: colors.background.default })}>
@@ -77,10 +106,11 @@ export const DappDetails = React.memo(() => {
             titleStyle={Fonts.t({ s: 16, w: '500', c: colors.text.default })}
             type="border"
             title="Favorite"
+            onPress={handleFavorite}
           >
             <FastImage
               style={Style.s({ size: 12, mr: 8 })}
-              source={icons.iconStar}
+              source={isFavorited ? icons.iconStar : icons.iconFavorite}
               tintColor={colors.icon.default}
             />
           </SButton>

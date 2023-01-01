@@ -16,6 +16,7 @@ import { openDapp } from './../../../actions/browser';
 import { useNavigator } from './../../hooks';
 import { useTheme } from './../../..//util/theme';
 import Routes from '../../../constants/navigation/Routes';
+import { useTrackingDAppUsage } from '../../../components/hooks/useTrackingDAppUsage';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('screen');
 
@@ -30,7 +31,7 @@ export interface DappCellProps {
 export const DappCell = ({ style, dapp, onPress }: DappCellProps) => {
   const dispatch = useDispatch();
   const nav = useNavigator();
-
+  const { trackingUsage } = useTrackingDAppUsage();
   const { colors } = useTheme();
 
   const handleOpenDapp = React.useCallback(() => {
@@ -43,9 +44,10 @@ export const DappCell = ({ style, dapp, onPress }: DappCellProps) => {
           timestamp: Date.now(),
         },
       });
+      trackingUsage(dapp.id || 0, 'dapp');
     }
     !!onPress && onPress();
-  }, [dapp, dispatch, nav]);
+  }, [dapp, dispatch, nav, onPress, trackingUsage]);
 
   return (
     <TouchableOpacity style={[Style.s({ direc: 'row', items: 'center', mt: 16 }), style]} onPress={handleOpenDapp}>

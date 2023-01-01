@@ -3,13 +3,13 @@ import { useCallback, useState, useEffect } from 'react';
 import { client } from '../../services/apis';
 import useErrorHandler from './useErrorHandler.hook';
 
-interface UseSessionHistoryValues {
+interface NewsValues {
   isGetList: boolean;
   news: DataNewsInterface[];
   hasMore: boolean;
 }
 
-export function useGetNews(): UseSessionHistoryValues {
+export function useGetNews(): NewsValues {
   const [isGetList, setGetList] = useState<boolean>(false);
   const [news, setNews] = useState<DataNewsInterface[]>([]);
   const [hasMore, setHasMore] = useState<boolean>(false);

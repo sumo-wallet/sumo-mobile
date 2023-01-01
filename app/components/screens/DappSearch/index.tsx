@@ -11,6 +11,7 @@ import {
   FlatList,
   ActivityIndicator,
   StyleSheet,
+  RefreshControl,
 } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -29,6 +30,7 @@ import { SearchResultCell } from './SearchResultCell';
 import { strings } from '../../../../locales/i18n';
 import Routes from '../../../../app/constants/navigation/Routes';
 import onUrlSubmit from '../../../util/browser';
+import { useTrackingDAppUsage } from '../../../components/hooks/useTrackingDAppUsage';
 
 const DAPP_SEARCH_HISTORY_KEY = 'DAPP_SEARCH_HISTORY_KEY';
 
@@ -86,6 +88,7 @@ export const DappSearch = React.memo(() => {
   const { colors } = useTheme();
   const styles = createStyles(colors);
   const inputRef = React.useRef<TextInput>();
+  const { trackingUsage } = useTrackingDAppUsage();
 
   const { searchText }: { searchText: string } = useNavigatorParams();
   const [inputValue, setInputValue] = React.useState<string>('');
@@ -241,9 +244,10 @@ export const DappSearch = React.memo(() => {
         dispatch(createNewTab(dapp?.website));
         dispatch(openDapp({ dapp }));
         nav.navigate(ROUTES.BrowserTabHome, { dapp });
+        trackingUsage(dapp.id || 0, 'dapp-search');
       }
     },
-    [dispatch, nav, textSearch],
+    [dispatch, nav, textSearch, trackingUsage],
   );
 
   const handleSearchOnWeb = (text: string) => {
@@ -349,6 +353,14 @@ export const DappSearch = React.memo(() => {
         ListEmptyComponent={renderEmptyComponent}
         ListHeaderComponent={listHeaderComponent}
         refreshing={isSearching}
+        refreshControl={
+          <RefreshControl
+            colors={[colors.primary.default]}
+            tintColor={colors.primary.default}
+            refreshing={isSearching}
+            onRefresh={handleSearch}
+          />
+        }
       />
     );
   };

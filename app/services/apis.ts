@@ -11,6 +11,8 @@ import {
   HandlerPopularSearchResponse,
   HandlerWalletHomeConfigResponse,
   HandlerNotificationResponse,
+  HandlerTrackingUsageRequest,
+  HandlerResponseData,
 } from './../types';
 
 /* eslint-disable prefer-destructuring */
@@ -140,6 +142,16 @@ class Client {
       `${this.baseUrl}/api/v1/notification`,
       {
         headers: this.headers,
+      },
+    );
+  }
+  public trackingDAppUsage(body: Required<HandlerTrackingUsageRequest>) {
+    return fetcher<HandlerResponseData>(
+      `${this.baseUrl}/api/v1/dapp/tracking`,
+      {
+        headers: this.headers,
+        method: 'POST',
+        body: JSON.stringify(body),
       },
     );
   }

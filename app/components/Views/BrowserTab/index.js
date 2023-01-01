@@ -76,6 +76,7 @@ import { icons } from './../../../assets';
 import { ROUTES } from './../../../navigation/routes';
 import ClipboardManager from './../../../core/ClipboardManager';
 import { showAlert } from '../../../actions/alert';
+import { addFavoriteDApp } from '../../../actions/dapp';
 
 const { HOMEPAGE_URL, USER_AGENT, NOTIFICATION_NAMES } = AppConstants;
 const HOMEPAGE_HOST = new URL(HOMEPAGE_URL)?.hostname;
@@ -1762,6 +1763,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   approveHost: (hostname) => dispatch(approveHost(hostname)),
   addBookmark: (bookmark) => dispatch(addBookmark(bookmark)),
+  addFavoriteDApp: (dapp) => dispatch(addFavoriteDApp(dapp)),
   addToBrowserHistory: ({ url, name }) => dispatch(addToHistory({ url, name })),
   addToWhitelist: (url) => dispatch(addToWhitelist(url)),
   toggleNetworkModal: () => dispatch(toggleNetworkModal()),
