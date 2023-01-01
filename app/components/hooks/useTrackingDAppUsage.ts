@@ -1,5 +1,5 @@
 import { HandlerTrackingUsageRequest } from 'app/types';
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback } from 'react';
 import { client } from '../../services/apis';
 import useErrorHandler from './useErrorHandler.hook';
 

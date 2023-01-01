@@ -13,6 +13,7 @@ import { createNewTab, openDapp } from './../../../actions/browser';
 import { useTheme } from './../../../util/theme';
 import { addFavoriteDApp, removeFavoriteDApp } from '../../../actions/dapp';
 import { useTrackingDAppUsage } from '../../../components/hooks/useTrackingDAppUsage';
+import { useGetChain } from '../../../components/hooks/useGetChain';
 
 export const InfoRow = ({
   title,
@@ -48,6 +49,11 @@ export const DappDetails = React.memo(() => {
   const nav = useNavigator();
   const { colors } = useTheme();
   const { trackingUsage } = useTrackingDAppUsage();
+  const { chains, hasMore, isLoading } = useGetChain();
+
+  const chainName = chains
+    ? chains.find((chain) => chain.id === dapp.chain_id)
+    : dapp.chain_id;
 
   const favorites: ModelDApp[] = useSelector(
     (state: any) => state.dapp.favorites,
@@ -85,7 +91,7 @@ export const DappDetails = React.memo(() => {
 
   return (
     <SafeAreaView style={Style.s({ flex: 1, bg: colors.background.default })}>
-      <SHeader title="PancakeSwap" />
+      <SHeader title={dapp.name} />
       <ScrollView style={Style.s({ flex: 1 })}>
         <View style={Style.s({ items: 'center', self: 'center', mt: 20 })}>
           <FastImage
@@ -149,7 +155,10 @@ export const DappDetails = React.memo(() => {
               py: 4,
             })}
           >
-            <InfoRow title="Running on" value={dapp.chain_id} />
+            <InfoRow
+              title="Running on"
+              value={dapp.chain_id && chains ? chainName : ''}
+            />
             <View style={Style.s({ bg: colors.border.default, h: 0.5 })} />
             <InfoRow title="Provider" value={dapp.name} />
             <View style={Style.s({ bg: colors.border.default, h: 0.5 })} />

@@ -36,7 +36,8 @@ export const BrowserHeader = ({
     nav.goBack();
   }, [nav])
   const handleCloseTab = React.useCallback(() => {
-    // dispatch(closeTab(activeTabId))
+    dispatch(closeTab(activeTabId));
+    nav.goBack();
   }, [])
   return (
     <View

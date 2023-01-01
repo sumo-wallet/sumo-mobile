@@ -14,10 +14,8 @@ export default async function fetcher<JSON = any>(
   }
 
   const json = await res.json();
-  // console.log('json : ' + JSON.stringify(json));
   const error = new Error(json?.message || res.statusText) as FetcherError;
   error.response = res;
-  // console.log('json?.message: ' + json?.message);
   error.message = json?.message;
   emitter.emit(EVENTS.API_ERROR, {
     input,

@@ -46,8 +46,8 @@ export const createStyles = (colors: any) =>
     },
     searchSuggestion: {
       flexDirection: 'column',
-      flex: 1,
-      height: 500,
+      // flex: 1,
+      // height: 500,
     },
     popularSearchArea: {
       flexDirection: 'column',
@@ -89,15 +89,16 @@ export const createStyles = (colors: any) =>
       flexDirection: 'column',
       alignItems: 'flex-start',
       justifyContent: 'flex-start',
-      flex: 2,
+      // flex: 2,
     },
     clearHistoryButton: { paddingHorizontal: 10, justifyContent: 'center' },
     history: {
-      flex: 1,
-      width: '100%',
+      // flex: 1,
+      // width: '100%',
+      // paddingHorizontal: 10,
     },
     historyItem: {
-      width: '100%',
+      width: '80%',
       height: 54,
       paddingLeft: 10,
       flexDirection: 'row',

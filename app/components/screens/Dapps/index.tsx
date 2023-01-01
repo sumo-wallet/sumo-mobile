@@ -185,22 +185,6 @@ export const DappsScreen = React.memo(() => {
           onCancel={securityWarningModal.onClose}
         />
       </View>
-
-      <TouchableOpacity
-        style={{
-          width: 50,
-          height: 50,
-          backgroundColor: 'red',
-          top: 300,
-          right: 50,
-          zIndex: -1,
-        }}
-      >
-        <FastImage
-          style={Style.s({ size: 24 })}
-          source={images.imageCryptoAsset}
-        />
-      </TouchableOpacity>
     </SafeAreaView>
   );
 });

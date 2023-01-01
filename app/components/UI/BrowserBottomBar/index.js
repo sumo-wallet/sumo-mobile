@@ -164,11 +164,11 @@ export default class BrowserBottomBar extends PureComponent {
         elevation={11}
         style={[styles.bottomBar, Style.s({ px: 24, pb: 34 })]}
       >
-        <View style={Style.s({ flex: 1 })}>
+        <TouchableOpacity style={Style.s({ flex: 1 })} onPress={onSearchPress}>
           <Text style={Fonts.t({ s: 16, w: '500', c: colors.text.default })}>
             {dapp?.name ?? url}
           </Text>
-        </View>
+        </TouchableOpacity>
         {/* <TouchableOpacity
           onPress={onBackPress}
           style={styles.iconButton}

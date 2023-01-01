@@ -22,20 +22,20 @@ import {
 } from '../../../util/navigation/navUtils';
 import Routes from '../../../constants/navigation/Routes';
 import Device from '../../../util/device';
+import { useSelector } from 'react-redux';
 // import ListItem from '../../Base/ListItem';
 
 export interface BrowserUrlParams {
   onUrlInputSubmit: (inputValue: string | undefined) => void;
   onClearHistory: () => void;
   url: string | undefined;
-  history: any;
 }
 
 export const createBrowserUrlModalNavDetails =
   createNavigationDetails<BrowserUrlParams>(Routes.BROWSER_URL_MODAL);
 
 const BrowserUrlModal = () => {
-  const { onUrlInputSubmit, onClearHistory, url, history } =
+  const { onUrlInputSubmit, onClearHistory, url } =
     useParams<BrowserUrlParams>();
   const modalRef = useRef<ReusableModalRef | null>(null);
   const { colors, themeAppearance } = useTheme();
@@ -48,6 +48,8 @@ const BrowserUrlModal = () => {
     (callback?: () => void) => modalRef?.current?.dismissModal(callback),
     [],
   );
+
+  const history = useSelector((state: any) => state.browser.history);
 
   /** Clear search input and focus */
   const clearSearchInput = useCallback(() => {
@@ -117,15 +119,6 @@ const BrowserUrlModal = () => {
       </View>
       {!autocompleteValue && (
         <SafeAreaView style={styles.searchSuggestion}>
-          <View style={styles.popularSearchArea}>
-            <Text style={styles.searchHistoryText}>{'Popular search'}</Text>
-            <View style={styles.popularSearch}>
-              <View style={styles.popularSearchItem}>
-                <Text>{'Pancake'}</Text>
-              </View>
-            </View>
-          </View>
-
           <View style={styles.searchHistory}>
             <View style={styles.searchHistoryTitle}>
               <Text style={styles.searchHistoryText}>{'Search History'}</Text>
@@ -137,7 +130,8 @@ const BrowserUrlModal = () => {
               </TouchableOpacity>
             </View>
             <FlatList
-              style={styles.history}
+              // style={styles.history}
+              contentContainerStyle={{ flexGrow: 1 }}
               data={history}
               renderItem={({ item }) => (
                 <TouchableOpacity
@@ -147,8 +141,8 @@ const BrowserUrlModal = () => {
                 >
                   <View style={styles.historyItem}>
                     <View style={styles.historyItemBody}>
-                      <Text style={styles.historyItemTitle}>{item.name}</Text>
-                      <Text style={styles.historyItemUrl}>{item.url}</Text>
+                      <Text style={styles.historyItemTitle} numberOfLines={1}>{item.name}</Text>
+                      <Text style={styles.historyItemUrl} numberOfLines={1}>{item.url}</Text>
                     </View>
                     <TouchableOpacity
                       onPress={clearSearchInput}
