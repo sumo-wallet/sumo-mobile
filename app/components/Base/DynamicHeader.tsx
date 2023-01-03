@@ -29,6 +29,8 @@ interface DynamicHeaderProps extends ViewProps {
   isHiddenBackground?: boolean;
   isShowAvatar?: boolean;
   address?: string;
+  networkName?: string;
+  onPressNetwork?: () => void;
 }
 
 const createStyles = (colors: any) =>
@@ -62,6 +64,29 @@ const createStyles = (colors: any) =>
       tintColor: colors.text.default,
     },
     rightAction: {},
+    networkContainer: {
+      justifyContent: 'flex-start',
+      flexDirection: 'column',
+    },
+    networkTitleContainer: {
+      justifyContent: 'flex-start',
+      alignItems: 'center',
+      flexDirection: 'row',
+    },
+    titleNetwork: {
+      color: colors.text.muted,
+      fontSize: 13,
+    },
+    titleNetworkValue: {
+      color: colors.text.default,
+      fontSize: 16,
+    },
+    iconDropdown: {
+      width: 15,
+      height: 15,
+      margin: 2,
+      tintColor: colors.text.default,
+    },
   });
 
 export const StatusBarViewIos = () => {
@@ -85,20 +110,13 @@ export const EmptyHeader = memo(
     isHiddenBackground,
     isShowAvatar,
     address,
+    networkName,
+    onPressNetwork,
     ...props
   }: Omit<DynamicHeaderProps, 'title'>) => {
     const { canGoBack, goBack, navigate } = useNavigation();
     const { colors } = useTheme();
     const styles = createStyles(colors);
-    // const styles = useFocusEffect(() => {
-    //   const entry = StatusBar.pushStackEntry({
-    //     barStyle: 'light-content',
-    //   });
-
-    //   return () => {
-    //     StatusBar.popStackEntry(entry);
-    //   };
-    // });
 
     const onClose = useCallback(() => {
       onGoBack?.();
@@ -132,7 +150,21 @@ export const EmptyHeader = memo(
                     <Identicon address={address || ''} diameter={36} />
                   </TouchableOpacity>
                 ) : (
-                  <View style={styles.headerIconWrapper} />
+                  <View style={styles.networkContainer}>
+                    <Text style={styles.titleNetwork}>{'Network'}</Text>
+                    <TouchableOpacity
+                      style={styles.networkTitleContainer}
+                      onPress={onPressNetwork}
+                    >
+                      <Text style={styles.titleNetworkValue}>
+                        {networkName}
+                      </Text>
+                      <Image
+                        source={icons.iconChevronDown}
+                        style={styles.iconDropdown}
+                      />
+                    </TouchableOpacity>
+                  </View>
                 )
               ) : (
                 <TouchableOpacity

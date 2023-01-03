@@ -38,9 +38,10 @@ import Routes from '../../../constants/navigation/Routes';
 import { useTheme } from '../../../util/theme';
 import { useGetNews } from '../../hooks/useGetNews';
 import { useGetTickers } from '../../hooks/useGetTickers';
-import { Ticker } from 'app/types';
+import { ModelChain, Ticker } from 'app/types';
 import { ROUTES } from '../../../navigation/routes';
 import { useGetWalletHome } from '../../../components/hooks/useGetWalletHome';
+import { useGetChain } from '../../../components/hooks/useGetChain';
 
 const createStyles = (colors: any) =>
   StyleSheet.create({
@@ -130,6 +131,7 @@ export const HomeScreen = memo(() => {
   const { colors } = useTheme();
   const styles = createStyles(colors);
   const walletHomeConfig = useGetWalletHome();
+  const { chains } = useGetChain();
   // const featureData = useMemo((): RawFeatureInterface[] => {
   //   return [
   //     {
@@ -268,6 +270,16 @@ export const HomeScreen = memo(() => {
     (state: any) =>
       state.engine.backgroundState.CurrencyRateController.conversionRate,
   );
+
+  const provider = useSelector(
+    (state) => state.engine.backgroundState.NetworkController.provider,
+  );
+
+  const frequentRpcList = useSelector(
+    (state) =>
+      state.engine.backgroundState.PreferencesController.frequentRpcList,
+  );
+
   const fiatBalance = useMemo(() => {
     return `${renderFiat(
       Engine.getTotalFiatAccountBalance(),
@@ -337,6 +349,14 @@ export const HomeScreen = memo(() => {
     styles,
   ]);
 
+  const getNetworkName = () => {
+    const currentChain = chains.find(
+      (chain: ModelChain) => chain.id?.toString() === provider.chainId,
+    );
+    if (currentChain) return currentChain.name;
+    return provider.chainId;
+  };
+
   return (
     <View style={styles.wrapper}>
       <DynamicHeader
@@ -344,8 +364,12 @@ export const HomeScreen = memo(() => {
         isHiddenTitle
         hideGoBack
         style={styles.containerHeader}
-        isShowAvatar
+        isShowAvatar={false}
+        networkName={getNetworkName()}
         address={selectedAddress}
+        onPressNetwork={() => {
+          navigation.navigate('ChangeNetwork');
+        }}
       >
         <View style={styles.containerRight}>
           <TouchableOpacity onPress={onSelectNetworks}>
@@ -375,20 +399,24 @@ export const HomeScreen = memo(() => {
         {renderWalletBalance()}
         <Text style={styles.title}>{'Features'}</Text>
         <View style={styles.containerFeature}>
-          {walletHomeConfig.homeConfig && walletHomeConfig.homeConfig.hotFeature.map((item, index) => {
-            return (
-              <TouchableOpacity
-                key={index}
-                style={styles.particularFeature}
-                onPress={() => {
-                  openUrl(item.url);
-                }}
-              >
-                <Image source={{ uri: item.logo }} style={styles.iconFeature} />
-                <Text style={styles.subTitleFeature}>{item.name}</Text>
-              </TouchableOpacity>
-            );
-          })}
+          {walletHomeConfig.homeConfig &&
+            walletHomeConfig.homeConfig.hotFeature.map((item, index) => {
+              return (
+                <TouchableOpacity
+                  key={index}
+                  style={styles.particularFeature}
+                  onPress={() => {
+                    openUrl(item.url);
+                  }}
+                >
+                  <Image
+                    source={{ uri: item.logo }}
+                    style={styles.iconFeature}
+                  />
+                  <Text style={styles.subTitleFeature}>{item.name}</Text>
+                </TouchableOpacity>
+              );
+            })}
         </View>
         <Hot24hComponent
           data={tickers}
