@@ -211,7 +211,6 @@ const createStyles = (colors: any) =>
     iconQR: {
       width: 14,
       height: 14,
-      tintColor: colors.text.default,
       marginLeft: 12,
       tintColor: colors.primary.default,
     },

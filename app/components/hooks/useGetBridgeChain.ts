@@ -7,15 +7,24 @@ interface BridgeChain {
   isGetList: boolean;
   bridgeChains: ModelChain[];
   hasMore: boolean;
+
+  getDestinationChain: () => void;
+  isGetDestinationChain: boolean;
+  destinationChain: ModelChain[];
 }
 
 export function useGetBridgeChain(): BridgeChain {
   const [isGetList, setGetList] = useState<boolean>(false);
   const [bridgeChains, setBridgeChains] = useState<ModelNotification[]>([]);
+  const [destinationChain, setDestinationChain] = useState<ModelNotification[]>(
+    [],
+  );
+  const [isGetDestinationChain, setGetDestinationChain] =
+    useState<boolean>(false);
   const [hasMore, setHasMore] = useState<boolean>(false);
   const errorHandler = useErrorHandler();
 
-  const getListNews = useCallback(async () => {
+  const getAllChain = useCallback(async () => {
     try {
       setGetList(true);
       const res = await client.getNotification();
@@ -31,9 +40,35 @@ export function useGetBridgeChain(): BridgeChain {
     }
   }, [errorHandler]);
 
-  useEffect(() => {
-    getListNews().then();
-  }, [getListNews]);
+  const getDestinationChain = useCallback(
+    async (token: string, sourceChain: string) => {
+      try {
+        setGetDestinationChain(true);
+        const res = await client.getNotification();
+        if (res.data && res.data?.length > 0) {
+          setDestinationChain(res.data);
+        } else {
+          setHasMore(true);
+        }
+      } catch (error) {
+        await errorHandler(error);
+      } finally {
+        setGetDestinationChain(false);
+      }
+    },
+    [errorHandler],
+  );
 
-  return { isGetList, bridgeChains, hasMore };
+  useEffect(() => {
+    getAllChain().then();
+  }, [getAllChain]);
+
+  return {
+    isGetList,
+    bridgeChains,
+    hasMore,
+    getDestinationChain,
+    isGetDestinationChain,
+    destinationChain,
+  };
 }

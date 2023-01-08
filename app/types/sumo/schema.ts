@@ -9,6 +9,26 @@
  * ---------------------------------------------------------------
  */
 
+export interface DappDappHomeResponse {
+  banner?: ModelBanner[];
+  category?: ModelCategory[];
+  home_list?: ModelDApps[];
+  hot_dapp?: ModelDApp[];
+}
+
+export interface DappPopularSearchResponse {
+  data?: ModelSearchHistory[];
+}
+
+export interface DappSearchDappResponse {
+  d_app?: ModelDApp[];
+}
+
+export interface DappTrackingUsageRequest {
+  dapp_id?: number;
+  from?: string;
+}
+
 export interface ErrorsError {
   code?: number;
   message?: string;
@@ -16,13 +36,6 @@ export interface ErrorsError {
 
 export interface HandlerChallengeData {
   challenge?: string;
-}
-
-export interface HandlerDappHomeResponse {
-  banner?: ModelBanner[];
-  category?: ModelCategory[];
-  home_list?: ModelDApps[];
-  hot_dapp?: ModelDApp[];
 }
 
 export interface HandlerFeature {
@@ -73,21 +86,12 @@ export interface HandlerNotificationResponse {
   data?: ModelNotification[];
 }
 
-export interface HandlerPopularSearchResponse {
-  data?: ModelSearchHistory[];
-}
-
 export interface HandlerResponseData {
   message?: string;
 }
 
-export interface HandlerSearchDappResponse {
-  d_app?: ModelDApp[];
-}
-
-export interface HandlerTrackingUsageRequest {
-  dapp_id?: number;
-  from?: string;
+export interface HandlerRpcResponse {
+  data?: ModelRpc[];
 }
 
 export interface HandlerUpsertWalletResponse {
@@ -115,6 +119,45 @@ export interface HandlerWalletInfoResponse {
   canWithdraw?: boolean;
   exchangeDepositPercent?: number;
   exchangeWithdrawPercent?: number;
+}
+
+export interface MarketplaceBuyNFTRequest {
+  contractAddress?: string;
+  itemType?: string;
+  tokenId?: string;
+  txHash?: string;
+}
+
+export interface MarketplaceBuyNFTResponse {
+  data?: MarketplaceResponseData;
+}
+
+export interface MarketplaceCollectionResponse {
+  data?: ModelCollection[];
+  pageNumber?: number;
+  pageSize?: number;
+}
+
+export interface MarketplaceItemListingResponse {
+  data?: ModelMarketItemData[];
+  total?: number;
+}
+
+export interface MarketplaceResponseData {
+  message?: string;
+}
+
+export interface MarketplaceSellNFTRequest {
+  contractAddress?: string;
+  price?: number;
+  sellTokenAddress?: string;
+  tokenId?: string;
+  txHash?: string;
+  type?: number;
+}
+
+export interface MarketplaceSellNFTResponse {
+  data?: ModelMarketplace;
 }
 
 export interface ModelBanner {
@@ -164,6 +207,27 @@ export interface ModelChain {
   updated_at?: string;
 }
 
+export interface ModelCollection {
+  background_color?: string;
+  banner_image_url?: string;
+  created_at?: string;
+  description?: string;
+  editors?: string;
+  external_link?: string;
+  fees?: string;
+  id?: number;
+  image_url?: string;
+  is_rarity_enabled?: boolean;
+  name?: string;
+  payment_tokens?: string;
+  primary_asset_contracts?: string;
+  safelist_request_status?: string;
+  slug?: string;
+  stats?: string;
+  token_id?: number;
+  traits?: string;
+}
+
 export interface ModelDApp {
   chain?: ModelChain;
   chain_id?: number;
@@ -185,6 +249,46 @@ export interface ModelDApps {
   category?: ModelCategory;
 }
 
+export interface ModelMarketItemData {
+  chainId?: number;
+  class?: string;
+  description?: string;
+  id?: string;
+  name?: string;
+  nftAddress?: string;
+  owner_address?: string;
+  paymentAssets?: string;
+  paymentSymbol?: string;
+  price?: number;
+  product_type?: number;
+  slug?: string;
+  static?: string;
+  status?: string;
+  token_id?: string;
+  type?: number;
+}
+
+export interface ModelMarketplace {
+  class?: string;
+  collectionAddress?: string;
+  createdAt?: string;
+  id?: string;
+  item_id?: string;
+  level?: number;
+  mint?: number;
+  ownerAddress?: string;
+  paymentAssets?: string;
+  paymentSymbol?: string;
+  price?: number;
+  productType?: number;
+  saleType?: number;
+  status?: string;
+  tier?: string;
+  token_id?: string;
+  type?: number;
+  updatedAt?: string;
+}
+
 export interface ModelNotification {
   created_at?: string;
   deep_link?: string;
@@ -202,6 +306,14 @@ export interface ModelReferralData {
   bonus_for_referrer?: string;
   referral_date?: string;
   wallet_address?: string;
+}
+
+export interface ModelRpc {
+  chain_id?: number;
+  created_at?: string;
+  id?: number;
+  updated_at?: string;
+  url?: string;
 }
 
 export interface ModelSearchHistory {
@@ -306,7 +418,36 @@ export interface V1MarketSearchListParams {
   text?: string;
 }
 
-export interface V1MarketplaceSearchListParams {
+export interface V1MarketplaceAssetsListParams {
+  /** pageNumber */
+  pageNumber?: string;
+  /** pageSize */
+  pageSize?: string;
+  /** nft type ERC-721, ERC-1155 */
+  type?: string;
+  /** 0 | 32 */
+  priceMin?: number;
+  /** 1 | 32 */
+  priceMax?: number;
+  /** name of collection */
+  collections?: string;
+  /** sell token like usd, eth, sol */
+  symbol?: string;
+  /** chain like avalanche, arbitrum */
+  chains?: string;
+  /** eth, usdt, bnb */
+  paymentAssets?: string;
+  /** price asc | desc | latest */
+  sort?: string;
+  /** price, createAt */
+  sortField?: string;
+}
+
+export interface V1MarketplaceSearchCollectionListParams {
   /** query value */
   text?: string;
+  /** pageNumber */
+  pageNumber?: string;
+  /** pageSize */
+  pageSize?: string;
 }

@@ -296,6 +296,32 @@ class Transactions extends PureComponent {
     }
   };
 
+  openTransactionDetail = (id, index) => {
+    const oldId = this.selectedTx && this.selectedTx.id;
+    const oldIndex = this.selectedTx && this.selectedTx.index;
+
+    if (this.selectedTx && oldId !== id && oldIndex !== index) {
+      this.selectedTx = null;
+      this.toggleDetailsView(oldId, oldIndex);
+      InteractionManager.runAfterInteractions(() => {
+        this.toggleDetailsView(id, index);
+      });
+    } else {
+      this.setState((state) => {
+        const selectedTx = new Map(state.selectedTx);
+        const show = !selectedTx.get(id);
+        selectedTx.set(id, show);
+        if (show && (this.props.headerHeight || index)) {
+          InteractionManager.runAfterInteractions(() => {
+            this.scrollToIndex(index);
+          });
+        }
+        this.selectedTx = show ? { id, index } : null;
+        return { selectedTx };
+      });
+    }
+  };
+
   onRefresh = async () => {
     this.setState({ refreshing: true });
     this.props.thirdPartyApiMode && (await Engine.refreshTransactionHistory());
@@ -347,10 +373,9 @@ class Transactions extends PureComponent {
                 t: 4,
               })}
             >
-              {'All your tracsaction will appear here'}
+              {'All your transaction will appear here'}
             </Text>
           </View>
-          {/* <Text style={styles.text}>{strings('wallet.no_transactions')}</Text> */}
         </View>
       </ScrollView>
     );
@@ -681,7 +706,6 @@ class Transactions extends PureComponent {
         testID={'transactions-screen'}
       >
         <FlatList
-          // style={Style.s({ flex: 1 })}
           ref={this.flatList}
           getItemLayout={this.getItemLayout}
           data={transactions}

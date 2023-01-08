@@ -80,6 +80,7 @@ import { AddWalletScreen } from './../../screens/AddWallet';
 import { WalletDetailScreen } from './../../screens/WalletDetail';
 import { NewsScreen } from './../../screens/News';
 import SwapsQuotesView from '../../UI/SumoSwaps/QuotesView';
+import { SwapHistoryScreen } from './../../screens/SwapHistory';
 
 // import { WalletScreen } from './../../screens/Wallet';
 import { Style } from './../../../styles';
@@ -96,6 +97,7 @@ import { NftDetailScreen } from './../../screens/NftDetail';
 import { NftManagementScreen } from './../../screens/NftManagement';
 import { AppSettingsScreen } from './../../screens/AppSettings';
 import { AppDetailScreen } from './../../screens/AppDetail';
+import { TransactionDetailScreen } from './../../screens/TransactionDetail';
 
 import { useTheme } from '../../../util/theme';
 
@@ -247,6 +249,11 @@ const WalletTabStackFlow = () => (
       component={SendFlowViewContainer}
       options={{ headerShown: false }}
     />
+    <Stack.Screen
+      name="TransactionDetailView"
+      component={TransactionDetailScreen}
+      options={{ headerShown: false }}
+    />
   </Stack.Navigator>
 );
 
@@ -282,6 +289,11 @@ const SwapTabStackFlow = () => (
     <Stack.Screen
       name={'AssetHideConfirmation'}
       component={AssetHideConfirmation}
+    />
+    <Stack.Screen
+      name="SwapHistoryView"
+      component={SwapHistoryScreen}
+      options={SwapsQuotesView.navigationOptions}
     />
   </Stack.Navigator>
 );

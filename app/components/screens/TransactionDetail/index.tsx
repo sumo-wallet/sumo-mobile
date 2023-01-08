@@ -1,19 +1,28 @@
-import React from 'react';
-import { View, SafeAreaView, Text, StatusBar, StyleSheet, Image, ScrollView, Alert } from 'react-native';
-import { SHeader } from './../../common/SHeader';
-import { Style } from './../../../styles';
+import React, { useCallback } from 'react';
+import PropTypes from 'prop-types';
+import {
+  View,
+  SafeAreaView,
+  Text,
+  StyleSheet,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
 import { strings } from '../../../../locales/i18n';
 import { DynamicHeader } from '../../Base/DynamicHeader';
-import { WalletItem } from '../Wallet/components/WalletItem';
-import { SButton } from '../../common/SButton';
 import { useTheme } from '../../../util/theme';
 import { icons } from '../../../assets';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Engine from '../../../core/Engine';
 import { useNavigatorParams } from '../../hooks';
-import NotificationManager from '../../../../app/core/NotificationManager';
 import { useNavigation } from '@react-navigation/native';
-
+import EthereumAddress from '../../../components/UI/EthereumAddress';
+import ClipboardManager from '../../../core/ClipboardManager';
+import { showAlert } from '../../../actions/alert';
+import { toDateFormat } from '../../../util/date';
+import { renderShortText } from '../../../util/general';
+import { TRANSACTION_TYPES } from '../../../util/transactions';
 const createStyles = (colors: any) =>
   StyleSheet.create({
     wrapper: {
@@ -24,16 +33,28 @@ const createStyles = (colors: any) =>
     },
     container: {},
     contentContainer: {
-      alignItems: 'center',
       marginVertical: 20,
       marginHorizontal: 16,
     },
-    containerHeader: {
+    iconContainer: {
+      width: 50,
+      height: 50,
+      justifyContent: 'center',
       alignItems: 'center',
+      borderRadius: 25,
+      borderWidth: 1,
+      borderColor: colors.border.muted,
+      backgroundColor: colors.box.default,
+      marginRight: 10,
+    },
+    containerHeader: {
+      justifyContent: 'flex-start',
+      alignItems: 'center',
+      flexDirection: 'row',
     },
     icon: {
-      width: 72,
-      height: 72,
+      width: 20,
+      height: 20,
     },
     nameWallet: {
       fontSize: 18,
@@ -43,17 +64,39 @@ const createStyles = (colors: any) =>
       textAlign: 'center',
       marginTop: 12,
     },
-    containerDescription: {
-      borderRadius: 8,
-      backgroundColor: colors.background.default,
-      width: '100%',
-      marginTop: 36,
+    containerOptionRight: {
+      flexDirection: 'row',
     },
     containerOption: {
+      justifyContent: 'space-between',
+      flexDirection: 'row',
       borderRadius: 8,
       backgroundColor: colors.background.default,
       width: '100%',
       marginTop: 20,
+      marginBottom: 10,
+    },
+    transactionTitle: {
+      fontSize: 16,
+      fontWeight: '500',
+      marginVertical: 2,
+      color: colors.text.muted,
+    },
+    amountTitle: {
+      fontSize: 16,
+      fontWeight: '600',
+      marginVertical: 2,
+      color: colors.text.default,
+    },
+    leftTitle: {
+      fontSize: 14,
+      fontWeight: '500',
+      color: colors.text.muted,
+    },
+    valueText: {
+      fontSize: 14,
+      fontWeight: '500',
+      color: colors.text.default,
     },
     containerBtn: {
       backgroundColor: 'blue',
@@ -61,115 +104,178 @@ const createStyles = (colors: any) =>
       width: '100%',
       alignSelf: 'flex-end',
     },
+    line: {
+      backgroundColor: colors.text.muted,
+      height: 0.5,
+      marginVertical: 10,
+    },
+    iconQR: {
+      width: 14,
+      height: 14,
+      tintColor: colors.text.default,
+      marginLeft: 12,
+    },
   });
 
-const onLongPress = (address: string, selectedAddress: string, index: int, orderedAccounts: any, navigation: any) => {
+const transactionIconApprove = require('../../../images/transaction-icons/approve.png');
+const transactionIconInteraction = require('../../../images/transaction-icons/interaction.png');
+const transactionIconSent = require('../../../images/transaction-icons/send.png');
+const transactionIconReceived = require('../../../images/transaction-icons/receive.png');
 
-  Alert.alert(
-    strings('accounts.remove_account_title'),
-    strings('accounts.remove_account_message'),
-    [
-      {
-        text: strings('accounts.no'),
-        onPress: () => false,
-        style: 'cancel',
-      },
-      {
-        text: strings('accounts.yes_remove_it'),
-        onPress: async () => {
-          const { PreferencesController } = Engine.context;
-          const isRemovingCurrentAddress = selectedAddress === address;
-          const fallbackAccountIndex = 0; //index - 1;
-          const fallbackAccountAddress =
-            orderedAccounts[fallbackAccountIndex].address;
-
-          // TODO - Refactor logic. onAccountChange is only used for refreshing latest orderedAccounts after account removal. Duplicate call for PreferencesController.setSelectedAddress exists.
-          // Set fallback address before removing account if removing current account
-          isRemovingCurrentAddress && orderedAccounts.length > 0 &&
-            PreferencesController.setSelectedAddress(fallbackAccountAddress);
-          await Engine.context.KeyringController.removeAccount(address);
-          // Default to the previous account in the list if removing current account
-          // this.onAccountChange(
-          //   isRemovingCurrentAddress
-          //     ? fallbackAccountAddress
-          //     : selectedAddress,
-          // );
-
-          NotificationManager.showSimpleNotification({
-            status: `simple_notification`,
-            duration: 5000,
-            title: strings('wallet.delete_wallet'),
-            description: strings('wallet.delete_wallet_completed'),
-          });
-          setTimeout(() => {
-            navigation.goBack();
-          }, 6000);
-
-        },
-      },
-    ],
-    { cancelable: false },
-  );
-};
+const transactionIconApproveFailed = require('../../../images/transaction-icons/approve-failed.png');
+const transactionIconInteractionFailed = require('../../../images/transaction-icons/interaction-failed.png');
+const transactionIconSentFailed = require('../../../images/transaction-icons/send-failed.png');
+const transactionIconReceivedFailed = require('../../../images/transaction-icons/receive-failed.png');
 
 export const TransactionDetailScreen = () => {
   const { colors } = useTheme();
   const styles = createStyles(colors);
-  const { address, selectedAddress, index, orderedAccounts }: { address: string, selectedAddress: string, index: int, orderedAccounts: array } = useNavigatorParams();
+  const {
+    transactionDetails,
+    transactionObject,
+    transactionElement,
+  }: {
+    transactionDetails: PropTypes.object;
+    transactionObject: PropTypes.object;
+    transactionElement: PropTypes.object;
+  } = useNavigatorParams();
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const { status, time, transaction } = transactionObject;
+
+  const onClipBoard = useCallback(async (content) => {
+    await ClipboardManager.setString(content);
+    dispatch(
+      showAlert({
+        isVisible: true,
+        autodismiss: 1500,
+        content: 'clipboard-alert',
+        data: { msg: content },
+      }),
+    );
+  }, []);
+
+  const renderTxElementIcon = (transactionElement, status) => {
+    const { transactionType } = transactionElement;
+
+    const isFailedTransaction = status === 'cancelled' || status === 'failed';
+    let icon;
+    switch (transactionType) {
+      case TRANSACTION_TYPES.SENT_TOKEN:
+      case TRANSACTION_TYPES.SENT_COLLECTIBLE:
+      case TRANSACTION_TYPES.SENT:
+        icon = isFailedTransaction
+          ? transactionIconSentFailed
+          : transactionIconSent;
+        break;
+      case TRANSACTION_TYPES.RECEIVED_TOKEN:
+      case TRANSACTION_TYPES.RECEIVED_COLLECTIBLE:
+      case TRANSACTION_TYPES.RECEIVED:
+        icon = isFailedTransaction
+          ? transactionIconReceivedFailed
+          : transactionIconReceived;
+        break;
+      case TRANSACTION_TYPES.SITE_INTERACTION:
+        icon = isFailedTransaction
+          ? transactionIconInteractionFailed
+          : transactionIconInteraction;
+        break;
+      case TRANSACTION_TYPES.APPROVE:
+        icon = isFailedTransaction
+          ? transactionIconApproveFailed
+          : transactionIconApprove;
+        break;
+    }
+    return <Image source={icon} style={styles.icon} resizeMode="stretch" />;
+  };
+
   return (
     <SafeAreaView style={styles.wrapper}>
-      <DynamicHeader title={'Wallet Detail'} />
+      <DynamicHeader title={'Transaction Detail'} />
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.contentContainer}
       >
         <View style={styles.containerHeader}>
-          <Image source={icons.iconWalletDetail} style={styles.icon} />
-          <Text style={styles.nameWallet}>{'Wallet address\n'}{address}</Text>
-        </View>
-        <View style={styles.containerDescription}>
-          <WalletItem title={'Created by'} description={'Mnemonic Phrase'} />
-          <WalletItem
-            title={'Imported time'}
-            description={'2022-10-18 11:35:09'}
-          />
-          <WalletItem
-            title={'Security Suffix'}
-            description={'5H2'}
-            isHiddenDivider
-            isIconWarning
-          />
+          <View style={styles.iconContainer}>
+            {renderTxElementIcon(transactionElement, status)}
+          </View>
+          <View>
+            <Text style={styles.transactionTitle} numberOfLines={1}>
+              {transactionElement.actionKey}
+            </Text>
+            <Text style={styles.amountTitle}>{transactionElement.value}</Text>
+          </View>
         </View>
         <View style={styles.containerOption}>
-          <WalletItem
-            title={'Mnemonic Phrase'}
-            description={'Mnemonic Phrase'}
-            isDisable={false}
-          />
-          <WalletItem
-            title={'Export Public Key'}
-            description={''}
-            isDisable={false}
-            isIconWarning
-          />
-          <WalletItem
-            title={'Export Private Key'}
-            description={''}
-            isHiddenDivider
-            isDisable={false}
-          />
+          <Text style={styles.leftTitle}>{'Status'}</Text>
+          <Text style={styles.valueText}>{status}</Text>
         </View>
         <View style={styles.containerOption}>
-          <WalletItem title={'Coin'} description={'...'} isHiddenDivider />
+          <Text style={styles.leftTitle}>{'Time'}</Text>
+          <Text style={styles.valueText}>{toDateFormat(time)}</Text>
+        </View>
+        <View style={styles.line} />
+        {!!transaction?.nonce && (
+          <View style={styles.containerOption}>
+            <Text style={styles.leftTitle}>{'Heigh'}</Text>
+            <Text style={styles.valueText}>{`#${parseInt(
+              transaction.nonce.replace(/^#/, ''),
+              16,
+            )}`}</Text>
+          </View>
+        )}
+        <View style={styles.containerOption}>
+          <Text style={styles.leftTitle}>{'Confirm'}</Text>
+          <Text style={styles.valueText}>{'Success'}</Text>
+        </View>
+        <View style={styles.containerOption}>
+          <Text style={styles.leftTitle}>{'Tx'}</Text>
+          <Text style={styles.valueText}>
+            {renderShortText(transactionDetails.transactionHash, 10)}
+
+            <TouchableOpacity
+              onPress={() => {
+                onClipBoard(transactionDetails.transactionHash);
+              }}
+            >
+              <Image source={icons.iconCopy} style={styles.iconQR} />
+            </TouchableOpacity>
+          </Text>
+        </View>
+        <View style={styles.containerOption}>
+          <Text style={styles.leftTitle}>{strings('transactions.from')}</Text>
+          <Text style={styles.valueText}>
+            <EthereumAddress
+              type="short"
+              address={transactionDetails.renderFrom}
+            />
+            <TouchableOpacity
+              onPress={() => {
+                onClipBoard(transactionDetails.renderFrom);
+              }}
+            >
+              <Image source={icons.iconCopy} style={styles.iconQR} />
+            </TouchableOpacity>
+          </Text>
+        </View>
+        <View style={styles.containerOption}>
+          <Text style={styles.leftTitle}>{strings('transactions.to')}</Text>
+          <Text style={styles.valueText}>
+            <EthereumAddress
+              type="short"
+              address={transactionDetails.renderTo}
+            />
+            <TouchableOpacity
+              onPress={() => {
+                onClipBoard(transactionDetails.renderTo);
+              }}
+            >
+              <Image source={icons.iconCopy} style={styles.iconQR} />
+            </TouchableOpacity>
+          </Text>
         </View>
       </ScrollView>
-      <SButton
-        title={'Remove wallet'}
-        onPress={() => { onLongPress(address, selectedAddress, index, orderedAccounts, navigation) }}
-        type="danger"
-        style={Style.s({ mx: 16 })}
-      />
     </SafeAreaView>
   );
 };

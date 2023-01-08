@@ -5,16 +5,16 @@
 import qs from 'query-string';
 import fetcher from './fetcher';
 import {
-  HandlerDappHomeResponse,
-  HandlerSearchDappResponse,
   HandlerSearchDappRequest,
-  HandlerPopularSearchResponse,
   HandlerWalletHomeConfigResponse,
   HandlerNotificationResponse,
-  HandlerTrackingUsageRequest,
   HandlerResponseData,
   HandlerWalletConfigResponse,
   HandlerChainResponse,
+  DappDappHomeResponse,
+  DappSearchDappResponse,
+  DappPopularSearchResponse,
+  DappTrackingUsageRequest,
 } from './../types';
 
 /* eslint-disable prefer-destructuring */
@@ -99,15 +99,12 @@ class Client {
   }
   public getDappHome() {
     console.log('****** getDappHome ******');
-    return fetcher<HandlerDappHomeResponse>(
-      `${this.baseUrl}/api/v1/dapp/home`,
-      {
-        headers: this.headers,
-      },
-    );
+    return fetcher<DappDappHomeResponse>(`${this.baseUrl}/api/v1/dapp/home`, {
+      headers: this.headers,
+    });
   }
   public getDappSearch(request: HandlerSearchDappRequest) {
-    return fetcher<HandlerSearchDappResponse>(
+    return fetcher<DappSearchDappResponse>(
       `${this.baseUrl}/api/v1/dapp/search?${qs.stringify(request)}`,
       {
         headers: this.headers,
@@ -116,7 +113,7 @@ class Client {
     );
   }
   public getDappSearchPopular() {
-    return fetcher<HandlerPopularSearchResponse>(
+    return fetcher<DappPopularSearchResponse>(
       `${this.baseUrl}/api/v1/dapp/popular-search`,
       {
         headers: this.headers,
@@ -124,7 +121,7 @@ class Client {
     );
   }
   public getDappByCategory(categoryId: string | number) {
-    return fetcher<HandlerSearchDappResponse>(
+    return fetcher<DappSearchDappResponse>(
       `${this.baseUrl}/api/v1/dapp/category/${categoryId}`,
       {
         headers: this.headers,
@@ -147,7 +144,7 @@ class Client {
       },
     );
   }
-  public trackingDAppUsage(body: Required<HandlerTrackingUsageRequest>) {
+  public trackingDAppUsage(body: Required<DappTrackingUsageRequest>) {
     return fetcher<HandlerResponseData>(
       `${this.baseUrl}/api/v1/dapp/tracking`,
       {

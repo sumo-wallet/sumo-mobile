@@ -137,9 +137,9 @@ const createStyles = (colors) =>
       alignContent: 'center',
     },
     amountContainer: {
-      flexDirection: 'row',
+      flexDirection: 'column',
       // flex: 0.6,
-      alignItems: 'flex-start',
+      alignItems: 'flex-end',
     },
     amountText: {
       color: colors.text.default,
@@ -148,9 +148,9 @@ const createStyles = (colors) =>
       ...fontStyles.bold,
     },
     amountUSDText: {
-      color: colors.text.default,
+      color: colors.text.muted,
       fontSize: 12,
-      ...fontStyles.bold,
+      ...fontStyles.normal,
     },
   });
 
@@ -209,6 +209,8 @@ class TransactionElement extends PureComponent {
     signQRTransaction: PropTypes.func,
     cancelUnsignedQRTransaction: PropTypes.func,
     isQRHardwareAccount: PropTypes.bool,
+
+    navigation: PropTypes.object,
   };
 
   state = {
@@ -244,9 +246,14 @@ class TransactionElement extends PureComponent {
   }
 
   onPressItem = () => {
-    const { tx, i, onPressItem } = this.props;
-    onPressItem(tx.id, i);
-    this.setState({ detailsModalVisible: true });
+    // const { tx, i, onPressItem } = this.props;
+    // onPressItem(tx.id, i);
+    // this.setState({ detailsModalVisible: true });
+    this.props.navigation.navigate('TransactionDetailView', {
+      transactionDetails: this.state.transactionDetails,
+      transactionObject: this.props.tx,
+      transactionElement: this.state.transactionElement,
+    });
   };
 
   onPressImportWalletTip = () => {
@@ -347,6 +354,7 @@ class TransactionElement extends PureComponent {
     }
     return <Image source={icon} style={styles.icon} resizeMode="stretch" />;
   };
+
   renderStatusIcon = (transactionElement, status) => {
     const colors = this.context.colors || mockTheme.colors;
     const styles = createStyles(colors);
@@ -365,6 +373,7 @@ class TransactionElement extends PureComponent {
     );
   };
 
+  handleCopyAddress = (content) => { };
   /**
    * Renders an horizontal bar with basic tx information
    *
@@ -409,14 +418,19 @@ class TransactionElement extends PureComponent {
               </View>
               <Text style={styles.dateText}>{this.renderTxTime()}</Text>
               <Text style={styles.descriptionText}>{status}</Text>
-              <Text style={styles.descriptionText}>
+              <Text
+                style={styles.descriptionText}
+                onPress={() => {
+                  this.handleCopyAddress(renderTo);
+                }}
+              >
                 {renderShortAddress(renderTo)}
               </Text>
             </View>
             <View style={styles.amountContainer}>
               <Text style={styles.amountText}>{value}</Text>
               {isMainNet(chainId) && (
-                <Text style={styles.amountText}>{fiatValue}</Text>
+                <Text style={styles.amountUSDText}>{fiatValue}</Text>
               )}
             </View>
           </View>
@@ -540,6 +554,8 @@ class TransactionElement extends PureComponent {
   };
 
   renderSpeedUpButton = () => {
+    const colors = this.context.colors || mockTheme.colors;
+    const styles = createStyles(colors);
     return (
       <StyledButton
         type={'normal'}

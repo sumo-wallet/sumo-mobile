@@ -372,9 +372,6 @@ export const HomeScreen = memo(() => {
         }}
       >
         <View style={styles.containerRight}>
-          <TouchableOpacity onPress={onSelectNetworks}>
-            <Image source={icons.iconSetting} style={styles.icon} />
-          </TouchableOpacity>
           <TouchableOpacity onPress={onViewNotifications}>
             <Image source={icons.iconBell} style={styles.icon} />
           </TouchableOpacity>
