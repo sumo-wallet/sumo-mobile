@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   View,
@@ -23,6 +23,16 @@ import { showAlert } from '../../../actions/alert';
 import { toDateFormat } from '../../../util/date';
 import { renderShortText } from '../../../util/general';
 import { TRANSACTION_TYPES } from '../../../util/transactions';
+import { NO_RPC_BLOCK_EXPLORER, RPC } from '../../../constants/network';
+import {
+  findBlockExplorerForRpc,
+  getBlockExplorerName,
+  getNetworkTypeById,
+} from '../../../util/networks';
+import { getEtherscanBaseUrl, getEtherscanTransactionUrl } from '../../../util/etherscan';
+import Logger from '../../../util/Logger';
+import { fontStyles } from '../../../styles/common';
+
 const createStyles = (colors: any) =>
   StyleSheet.create({
     wrapper: {
@@ -115,6 +125,16 @@ const createStyles = (colors: any) =>
       tintColor: colors.text.default,
       marginLeft: 12,
     },
+    touchableViewOnEtherscan: {
+      marginBottom: 24,
+      marginTop: 12,
+    },
+    viewOnEtherscan: {
+      fontSize: 16,
+      color: colors.primary.default,
+      ...fontStyles.normal,
+      textAlign: 'center',
+    },
   });
 
 const transactionIconApprove = require('../../../images/transaction-icons/approve.png');
@@ -142,19 +162,40 @@ export const TransactionDetailScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const { status, time, transaction } = transactionObject;
+  const [rpcBlockExplorer, setRpcBlockExplorer] = useState('');
 
-  const onClipBoard = useCallback(async (content) => {
-    await ClipboardManager.setString(content);
-    dispatch(
-      showAlert({
-        isVisible: true,
-        autodismiss: 1500,
-        content: 'clipboard-alert',
-        data: { msg: content },
-      }),
-    );
-  }, []);
+  const frequentRpcList = useSelector(
+    (state) =>
+      state.engine.backgroundState.PreferencesController.frequentRpcList,
+  );
+  const network = useSelector(
+    (state) => state.engine.backgroundState.NetworkController,
+  );
 
+  const onClipBoard = useCallback(
+    async (content) => {
+      await ClipboardManager.setString(content);
+      dispatch(
+        showAlert({
+          isVisible: true,
+          autodismiss: 1500,
+          content: 'clipboard-alert',
+          data: { msg: content },
+        }),
+      );
+    },
+    [dispatch],
+  );
+
+  useEffect(() => {
+    let blockExplorer;
+    if (network.provider.type === RPC) {
+      blockExplorer =
+        findBlockExplorerForRpc(network.provider.rpcTarget, frequentRpcList) ||
+        NO_RPC_BLOCK_EXPLORER;
+    }
+    setRpcBlockExplorer(blockExplorer);
+  }, [network, frequentRpcList]);
   const renderTxElementIcon = (transactionElement, status) => {
     const { transactionType } = transactionElement;
 
@@ -187,6 +228,49 @@ export const TransactionDetailScreen = () => {
         break;
     }
     return <Image source={icon} style={styles.icon} resizeMode="stretch" />;
+  };
+
+  const viewOnEtherscan = () => {
+    // const {
+    //   navigation,
+    //   transactionObject: { networkID },
+    //   transactionDetails: { transactionHash },
+    //   network: {
+    //     provider: { type },
+    //   },
+    //   close,
+    // } = this.props;
+    // const { rpcBlockExplorer } = this.state;
+    try {
+      if (network.provider.type === RPC) {
+        const url = `${rpcBlockExplorer}/tx/${transactionDetails.transactionHash}`;
+        const title = new URL(rpcBlockExplorer).hostname;
+        navigation.push('Webview', {
+          screen: 'SimpleWebview',
+          params: { url, title },
+        });
+      } else {
+        const network = getNetworkTypeById(transactionObject.networkID);
+        const url = getEtherscanTransactionUrl(network, transactionDetails.transactionHash);
+        const etherscan_url = getEtherscanBaseUrl(network).replace(
+          'https://',
+          '',
+        );
+        navigation.push('Webview', {
+          screen: 'SimpleWebview',
+          params: {
+            url,
+            title: etherscan_url,
+          },
+        });
+      }
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      Logger.error(e, {
+        message: `can't get a block explorer link for network `,
+        networkID,
+      });
+    }
   };
 
   return (
@@ -275,6 +359,23 @@ export const TransactionDetailScreen = () => {
             </TouchableOpacity>
           </Text>
         </View>
+
+        {transactionDetails.transactionHash &&
+          status !== 'cancelled' &&
+          rpcBlockExplorer !== NO_RPC_BLOCK_EXPLORER && (
+            <TouchableOpacity
+              onPress={viewOnEtherscan}
+              style={styles.touchableViewOnEtherscan}
+            >
+              <Text style={styles.viewOnEtherscan}>
+                {(rpcBlockExplorer &&
+                  `${strings('transactions.view_on')} ${getBlockExplorerName(
+                    rpcBlockExplorer,
+                  )}`) ||
+                  strings('transactions.view_on_etherscan')}
+              </Text>
+            </TouchableOpacity>
+          )}
       </ScrollView>
     </SafeAreaView>
   );

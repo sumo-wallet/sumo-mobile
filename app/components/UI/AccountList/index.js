@@ -33,6 +33,16 @@ import ClipboardManager from '../../../core/ClipboardManager';
 import { showAlert } from '../../../actions/alert';
 import { toggleAccountsModal } from '../../../actions/modals';
 import { protectWalletModalVisible } from '../../../actions/user';
+import {
+  findBlockExplorerForRpc,
+  getBlockExplorerName,
+  getNetworkTypeById,
+} from '../../../util/networks';
+import {
+  getEtherscanBaseUrl,
+  getEtherscanTransactionUrl,
+} from '../../../util/etherscan';
+import { NO_RPC_BLOCK_EXPLORER, RPC } from '../../../constants/network';
 
 const createStyles = (colors) =>
   StyleSheet.create({
@@ -197,6 +207,7 @@ class AccountList extends PureComponent {
     accountsENS: {},
     isVisible: false,
     newAddress: '',
+    rpcBlockExplorer: '',
   };
 
   flatList = React.createRef();
@@ -215,6 +226,18 @@ class AccountList extends PureComponent {
       }
     });
     this.mounted && this.setState({ orderedAccounts });
+
+    const {
+      provider: { rpcTarget, type },
+      frequentRpcList,
+    } = this.props;
+    let blockExplorer;
+    if (type === RPC) {
+      blockExplorer =
+        findBlockExplorerForRpc(rpcTarget, frequentRpcList) ||
+        NO_RPC_BLOCK_EXPLORER;
+    }
+    this.setState({ rpcBlockExplorer: blockExplorer });
   }
 
   componentWillUnmount = () => {
@@ -480,6 +503,46 @@ class AccountList extends PureComponent {
     setTimeout(() => this.props.protectWalletModalVisible(), 2000);
   };
 
+  viewOnEtherscan = (address) => {
+    const {
+      navigation,
+      provider: { type, chainId },
+    } = this.props;
+    const { rpcBlockExplorer } = this.state;
+    try {
+      if (type === RPC) {
+        const url = `${rpcBlockExplorer}/address/${address}`;
+        const title = new URL(rpcBlockExplorer).hostname;
+        navigation.push('Webview', {
+          screen: 'SimpleWebview',
+          params: { url, title },
+        });
+      } else {
+        const network = getNetworkTypeById(chainId);
+        const url = getEtherscanTransactionUrl(network, address);
+        const etherscan_url = getEtherscanBaseUrl(network).replace(
+          'https://',
+          '',
+        );
+        navigation.push('Webview', {
+          screen: 'SimpleWebview',
+          params: {
+            url,
+            title: etherscan_url,
+          },
+        });
+      }
+      this.setState({ isVisible: false });
+      this.props.toggleAccountsModal();
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      Logger.error(e, {
+        message: `can't get a block explorer link for network `,
+        chainId,
+      });
+    }
+  };
+
   render() {
     const { orderedAccounts, accountsENS } = this.state;
     const { ticker } = this.props;
@@ -564,6 +627,22 @@ class AccountList extends PureComponent {
               <Image source={icons.iconViewDetail} style={styles.iconModal} />
               <Text style={styles.titleIconModal}>{'View Details'}</Text>
             </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.containerIconModal}
+              onPress={() => {
+                this.viewOnEtherscan(this.state.newAddress);
+              }}
+            >
+              <Image source={icons.iconClipBoard} style={styles.iconModal} />
+              <Text style={styles.titleIconModal}>
+                {(this.state.rpcBlockExplorer &&
+                  `${strings('transactions.view_on')} ${getBlockExplorerName(
+                    this.state.rpcBlockExplorer,
+                  )}`) ||
+                  strings('transactions.view_on_etherscan')}
+              </Text>
+            </TouchableOpacity>
           </View>
         </BaseModal>
         <SButton
@@ -585,6 +664,9 @@ const mapStateToProps = (state) => ({
   keyrings: state.engine.backgroundState.KeyringController.keyrings,
   network: state.engine.backgroundState.NetworkController.network,
   address: state.engine.backgroundState.PreferencesController.selectedAddress,
+  frequentRpcList:
+    state.engine.backgroundState.PreferencesController.frequentRpcList,
+  provider: state.engine.backgroundState.NetworkController.provider,
 });
 
 const mapDispatchToProps = (dispatch) => ({
