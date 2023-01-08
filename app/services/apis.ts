@@ -15,6 +15,11 @@ import {
   DappSearchDappResponse,
   DappPopularSearchResponse,
   DappTrackingUsageRequest,
+  MarketplaceCollectionCategoryResponse,
+  MarketplaceHotAuctionResponse,
+  V1BridgeChainListParams,
+  V1CollectionSearchListParams,
+  BridgeBridgeChainResponse,
 } from './../types';
 
 /* eslint-disable prefer-destructuring */
@@ -165,6 +170,38 @@ class Client {
   public getConfig() {
     return fetcher<HandlerWalletConfigResponse>(
       `${this.baseUrl}/api/v1/system/config`,
+      {
+        headers: this.headers,
+      },
+    );
+  }
+  public getCollectionCategory() {
+    return fetcher<MarketplaceCollectionCategoryResponse>(
+      `${this.baseUrl}/api/v1/collection/category`,
+      {
+        headers: this.headers,
+      },
+    );
+  }
+  public getSearchCollection(searchCollectionParam: V1CollectionSearchListParams) {
+    return fetcher<MarketplaceCollectionCategoryResponse>(
+      `${this.baseUrl}/api/v1/collection/search?${qs.stringify(searchCollectionParam)}`,
+      {
+        headers: this.headers,
+      },
+    );
+  }
+  public getHotAuction() {
+    return fetcher<MarketplaceHotAuctionResponse>(
+      `${this.baseUrl}/api/v1/marketplace/hot-auction`,
+      {
+        headers: this.headers,
+      },
+    );
+  }
+  public getBridgeChain(params: V1BridgeChainListParams) {
+    return fetcher<BridgeBridgeChainResponse>(
+      `${this.baseUrl}/api/v1/bridge/chain?${qs.stringify(params)}`,
       {
         headers: this.headers,
       },

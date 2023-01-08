@@ -1,24 +1,24 @@
-import { MarketplaceCollectionCategory } from 'app/types';
+import { ModelMarketItemData } from 'app/types';
 import { useCallback, useState, useEffect } from 'react';
 import { client } from '../../services/apis';
 import useErrorHandler from './useErrorHandler.hook';
 
 interface SystemNotification {
-  isGetCategory: boolean;
-  categories: MarketplaceCollectionCategory[];
+  isLoadingAuction: boolean;
+  auctions: ModelMarketItemData[];
   hasMore: boolean;
 }
 
-export function useGetCollectionCategory(): SystemNotification {
-  const [isGetCategory, setGetCategory] = useState<boolean>(false);
-  const [categories, setCategories] = useState<MarketplaceCollectionCategory[]>([]);
+export function useGetHotAuction(): SystemNotification {
+  const [isLoadingAuction, setLoadingAuction] = useState<boolean>(false);
+  const [auctions, setCategories] = useState<ModelMarketItemData[]>([]);
   const [hasMore, setHasMore] = useState<boolean>(false);
   const errorHandler = useErrorHandler();
 
   const getListCategory = useCallback(async () => {
     try {
-      setGetCategory(true);
-      const res = await client.getCollectionCategory();
+      setLoadingAuction(true);
+      const res = await client.getHotAuction();
       if (res.data && res.data?.length > 0) {
         setCategories(res.data);
       } else {
@@ -27,7 +27,7 @@ export function useGetCollectionCategory(): SystemNotification {
     } catch (error) {
       await errorHandler(error);
     } finally {
-      setGetCategory(false);
+      setLoadingAuction(false);
     }
   }, [errorHandler]);
 
@@ -35,5 +35,5 @@ export function useGetCollectionCategory(): SystemNotification {
     getListCategory().then();
   }, [getListCategory]);
 
-  return { isGetCategory, categories, hasMore };
+  return { isLoadingAuction, auctions, hasMore };
 }
