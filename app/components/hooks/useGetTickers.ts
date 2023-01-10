@@ -19,7 +19,7 @@ export function useGetTickers(tickerSymbols: string): TickersValues {
   const getListTickers = useCallback(async () => {
     try {
       setGetList(true);
-      const res = await client.getCoindeskTickers(tickerSymbols);
+      const res = await client.getCoindeskTickers();
       Logger.log('getListTickers', JSON.stringify(res));
       const items:
         | ((prevState: Ticker[]) => Ticker[])

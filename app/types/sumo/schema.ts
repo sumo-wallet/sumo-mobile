@@ -10,11 +10,11 @@
  */
 
 export interface BridgeBridgeChainResponse {
-  data?: ModelBridgeChain[];
+  data?: ModelChain[];
 }
 
 export interface BridgeBridgeTokenResponse {
-  data?: ModelBridgeToken[];
+  data?: ModelBridgeChain[];
 }
 
 export interface DappDappHomeResponse {
@@ -196,22 +196,15 @@ export interface ModelBanner {
 }
 
 export interface ModelBridgeChain {
-  chain_id?: number;
   created_at?: string;
+  desChain?: ModelChain;
+  desChainId?: number;
   id?: number;
-  status?: boolean;
-  token?: ModelChain;
-  updated_at?: string;
-}
-
-export interface ModelBridgeToken {
-  address?: string;
-  created_at?: string;
-  destination_chain_id?: number;
-  id?: number;
-  source_chain_id?: number;
-  token?: ModelToken;
-  token_id?: number;
+  scrChainId?: number;
+  srcChain?: ModelChain;
+  srcTokenAddress?: string;
+  status?: string;
+  tokenConfigJson?: string;
   updated_at?: string;
 }
 
@@ -268,7 +261,6 @@ export interface ModelCollection {
   safelist_request_status?: string;
   slug?: string;
   stats?: string;
-  token_id?: number;
   traits?: string;
 }
 
@@ -295,7 +287,6 @@ export interface ModelDApps {
 
 export interface ModelMarketItemData {
   chainId?: number;
-  class?: string;
   description?: string;
   id?: string;
   name?: string;
@@ -306,28 +297,23 @@ export interface ModelMarketItemData {
   price?: number;
   product_type?: number;
   slug?: string;
-  static?: string;
   status?: string;
   token_id?: string;
   type?: string;
 }
 
 export interface ModelMarketplace {
-  class?: string;
+  chainId?: number;
   collectionAddress?: string;
   createdAt?: string;
   id?: string;
-  item_id?: string;
-  level?: number;
-  mint?: number;
+  imageUrl?: string;
   ownerAddress?: string;
   paymentAssets?: string;
   paymentSymbol?: string;
   price?: number;
-  productType?: number;
   saleType?: number;
   status?: string;
-  tier?: string;
   token_id?: string;
   type?: number;
   updatedAt?: string;
@@ -374,50 +360,6 @@ export interface ModelSystemConfig {
   id?: string;
   name?: string;
   updated_at?: string;
-}
-
-export interface ModelToken {
-  address?: string;
-  chain_id?: number;
-  created_at?: string;
-  decimals?: number;
-  description?: string;
-  email?: string;
-  eth_transfers_count?: number;
-  holders?: number;
-  holders_count?: number;
-  id?: number;
-  issuances_count?: number;
-  logo?: string;
-  max_supply_formatted?: number;
-  name?: string;
-  owner?: string;
-  symbol?: string;
-  telegram?: string;
-  token_audit?: ModelTokenAudit;
-  token_audit_id?: number;
-  total_supply?: number;
-  total_supply_formatted?: number;
-  transfers_count?: number;
-  twitter?: string;
-  txs_count?: number;
-  type?: number;
-  updated_at?: string;
-  website?: string;
-}
-
-export interface ModelTokenAudit {
-  code_verified?: boolean;
-  created_at?: string;
-  id?: number;
-  lock_transactions?: boolean;
-  mint?: boolean;
-  proxy?: boolean;
-  status?: string;
-  token_address?: number;
-  unlimited_fees?: boolean;
-  updated_at?: string;
-  version?: number;
 }
 
 export interface ModelUser {
@@ -485,9 +427,16 @@ export interface V1BridgeChainListParams {
   chainId?: number;
 }
 
-export interface V1BridgeTokenListParams {
+export interface V1BridgeSyncListParams {
   /** chain id */
   chainId?: number;
+}
+
+export interface V1BridgeTokenListParams {
+  /** from chain id */
+  fromChainId?: number;
+  /** to chain id */
+  toChainId?: number;
 }
 
 export interface V1CollectionCategoryListParams {

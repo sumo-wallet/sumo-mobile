@@ -106,19 +106,12 @@ function ChainSelectModal({
   isVisible,
   dismiss,
   title,
-  tokens,
+  chains,
   initialTokens,
   onItemPress,
-  excludeAddresses = [],
+  excludeChains = [],
   accounts,
-  selectedAddress,
-  currentCurrency,
-  conversionRate,
-  tokenExchangeRates,
   chainId,
-  provider,
-  frequentRpcList,
-  balances,
 }) {
   const searchInput = useRef(null);
   const list = useRef();
@@ -126,24 +119,24 @@ function ChainSelectModal({
   const { colors, themeAppearance } = useTheme();
   const styles = createStyles(colors);
 
-  const excludedAddresses = useMemo(
-    () => excludeAddresses.filter(Boolean).map((id) => id),
-    [excludeAddresses],
+  const excludedChains = useMemo(
+    () => excludeChains.filter(Boolean).map((id) => id),
+    [excludeChains],
   );
 
   const filteredTokens = useMemo(
-    () => tokens?.filter((token) => !excludedAddresses.includes(token.id)),
-    [tokens, excludedAddresses],
+    () => chains?.filter((chain) => !excludedChains.includes(chain.id)),
+    [chains, excludedChains],
   );
   const filteredInitialTokens = useMemo(
     () =>
       initialTokens?.length > 0
         ? initialTokens.filter(
           (token) =>
-            !excludedAddresses.includes(token.address?.toLowerCase()),
+            !excludedChains.includes(token.address?.toLowerCase()),
         )
         : filteredTokens,
-    [excludedAddresses, filteredTokens, initialTokens],
+    [excludedChains, filteredTokens, initialTokens],
   );
   const tokenFuse = useMemo(
     () =>
@@ -164,14 +157,6 @@ function ChainSelectModal({
         ? tokenFuse.search(searchString)?.slice(0, MAX_TOKENS_RESULTS)
         : filteredInitialTokens,
     [searchString, tokenFuse, filteredInitialTokens],
-  );
-
-  const shouldFetchToken = useMemo(
-    () =>
-      tokenSearchResults.length === 0 &&
-      isValidAddress(searchString) &&
-      !excludedAddresses.includes(searchString?.toLowerCase()),
-    [excludedAddresses, searchString, tokenSearchResults.length],
   );
 
   const renderItem = useCallback(
@@ -195,7 +180,7 @@ function ChainSelectModal({
         </TouchableOpacity>
       );
     },
-    [selectedAddress, onItemPress, styles],
+    [onItemPress, styles],
   );
 
   const handleSearchPress = () => searchInput?.current?.focus();
@@ -280,14 +265,10 @@ ChainSelectModal.propTypes = {
   isVisible: PropTypes.bool,
   dismiss: PropTypes.func,
   title: PropTypes.string,
-  tokens: PropTypes.arrayOf(PropTypes.object),
+  chains: PropTypes.arrayOf(PropTypes.object),
   initialTokens: PropTypes.arrayOf(PropTypes.object),
   onItemPress: PropTypes.func,
-  excludeAddresses: PropTypes.arrayOf(PropTypes.string),
-  /**
-   * ETH to current currency conversion rate
-   */
-  conversionRate: PropTypes.number,
+  excludeChains: PropTypes.arrayOf(PropTypes.string),
   /**
    * Map of accounts to information objects including balances
    */
@@ -296,10 +277,6 @@ ChainSelectModal.propTypes = {
    * Currency code of the currently-active currency
    */
   currentCurrency: PropTypes.string,
-  /**
-   * A string that represents the selected address
-   */
-  selectedAddress: PropTypes.string,
   /**
    * An object containing token balances for current account and network in the format address => balance
    */
@@ -324,12 +301,8 @@ ChainSelectModal.propTypes = {
 
 const mapStateToProps = (state) => ({
   accounts: state.engine.backgroundState.AccountTrackerController.accounts,
-  conversionRate:
-    state.engine.backgroundState.CurrencyRateController.conversionRate,
   currentCurrency:
     state.engine.backgroundState.CurrencyRateController.currentCurrency,
-  selectedAddress:
-    state.engine.backgroundState.PreferencesController.selectedAddress,
   balances:
     state.engine.backgroundState.TokenBalancesController.contractBalances,
   tokenExchangeRates:
