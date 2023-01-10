@@ -17,7 +17,6 @@ import Networks, {
   isSafeChainId,
 } from '../../../util/networks';
 import { connect } from 'react-redux';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import AnalyticsV2 from '../../../util/analyticsV2';
 import StyledButton from '../../UI/StyledButton';
 import { ThemeContext, mockTheme } from '../../../util/theme';
@@ -34,7 +33,6 @@ import { ThemeColors } from '@thanhpn1990/design-tokens/dist/js/themes/types';
 import { Colors, Style } from './../../../styles';
 import FastImage from 'react-native-fast-image';
 import { icons } from './../../../assets';
-import { colors } from '@thanhpn1990/design-tokens';
 
 const createStyles = (colors: ThemeColors) =>
   StyleSheet.create({

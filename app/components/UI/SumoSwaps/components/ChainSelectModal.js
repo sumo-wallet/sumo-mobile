@@ -9,7 +9,6 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import { useNavigation } from '@react-navigation/native';
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Fuse from 'fuse.js';
@@ -21,8 +20,6 @@ import Text from '../../../Base/Text';
 import ListItem from '../../../Base/ListItem';
 import ModalDragger from '../../../Base/ModalDragger';
 import TokenIcon from './TokenIcon';
-import useBlockExplorer from '../utils/useBlockExplorer';
-import useModalHandler from '../../../Base/hooks/useModalHandler';
 import { useTheme } from '../../../../util/theme';
 
 const createStyles = (colors) =>
@@ -101,7 +98,6 @@ const createStyles = (colors) =>
   });
 
 const MAX_TOKENS_RESULTS = 20;
-
 function ChainSelectModal({
   isVisible,
   dismiss,
@@ -110,7 +106,6 @@ function ChainSelectModal({
   initialTokens,
   onItemPress,
   excludeChains = [],
-  accounts,
   chainId,
 }) {
   const searchInput = useRef(null);
@@ -270,10 +265,6 @@ ChainSelectModal.propTypes = {
   onItemPress: PropTypes.func,
   excludeChains: PropTypes.arrayOf(PropTypes.string),
   /**
-   * Map of accounts to information objects including balances
-   */
-  accounts: PropTypes.object,
-  /**
    * Currency code of the currently-active currency
    */
   currentCurrency: PropTypes.string,
@@ -300,7 +291,6 @@ ChainSelectModal.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  accounts: state.engine.backgroundState.AccountTrackerController.accounts,
   currentCurrency:
     state.engine.backgroundState.CurrencyRateController.currentCurrency,
   balances:

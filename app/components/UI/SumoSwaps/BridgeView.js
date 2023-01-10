@@ -75,6 +75,8 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { useGetBridgeChain } from '../../../components/hooks/useGetBridgeChain';
 import { useGetBridgeToken } from '../../../components/hooks/useGetBridgeToken';
 import { useGetMultichainToken } from '../../../components/hooks/useGetMultichainToken';
+import NetworkModal from '../../../components/sumo/NetworkModal';
+import NetworkModals from '../NetworkModal';
 
 const createStyles = (colors) =>
   StyleSheet.create({
@@ -318,7 +320,6 @@ function BridgeView({
   const { colors } = useTheme();
   const styles = createStyles(colors);
 
-  const [destinationToken, setDestinationToken] = useState(null);
   const [sourceChain, setSourceChain] = useState(null);
   const [destinationChain, setDestinationChain] = useState(null);
 
@@ -330,6 +331,7 @@ function BridgeView({
   const initialSource = SWAPS_NATIVE_ADDRESS;
   const [amount, setAmount] = useState('0');
   const [slippage, setSlippage] = useState(AppConstants.SWAPS.DEFAULT_SLIPPAGE);
+  const [showAddNetwork, setShowAddNetwork] = useState(true);
   const [isInitialLoadingTokens, setInitialLoadingTokens] = useState(false);
   const [, setLoadingTokens] = useState(false);
   const [isSourceSet, setIsSourceSet] = useState(() =>
@@ -352,6 +354,12 @@ function BridgeView({
       destinationChain ? destinationChain.id : 1,
     );
   }, [sourceChain, destinationChain, getBridgeTokenByChain]);
+
+  // useEffect(() => {
+  //   if (sourceChain && sourceChain.id === 1 && !showAddNetwork) {
+  //     setShowAddNetwork(true);
+  //   }
+  // }, [sourceChain, showAddNetwork]);
 
   useEffect(() => {
     if (bridgeTokens && bridgeTokens.length > 0) {
@@ -627,23 +635,22 @@ function BridgeView({
       const { address, symbol, decimals } = sourceToken;
       await TokensController.addToken(address, symbol, decimals);
     }
-    return navigation.navigate(
-      'SwapsQuotesView',
-      setQuotesNavigationsParams(
-        sourceToken?.address,
-        destinationToken?.address,
-        toTokenMinimalUnit(amount, sourceToken?.decimals).toString(10),
-        slippage,
-        [sourceToken, destinationToken],
-      ),
-    );
+    // return navigation.navigate(
+    //   'SwapsQuotesView',
+    //   setQuotesNavigationsParams(
+    //     sourceToken?.address,
+    //     destinationToken?.address,
+    //     toTokenMinimalUnit(amount, sourceToken?.decimals).toString(10),
+    //     slippage,
+    //     [sourceToken, destinationToken],
+    //   ),
+    // );
   }, [
     hasInvalidDecimals,
     sourceToken,
     isTokenInBalances,
     isBalanceZero,
     navigation,
-    destinationToken,
     amount,
     slippage,
   ]);
@@ -660,8 +667,12 @@ function BridgeView({
     (item) => {
       toggleSourceModal();
       setSourceChain(item);
+      const rpc = frequentRpcList.find((rpc) => rpc.chainId === item.id + '');
+      // if (rpc) {
+      //   setShowAddNetwork(true);
+      // }
     },
-    [toggleSourceModal],
+    [frequentRpcList, toggleSourceModal],
   );
 
   const handleDestinationChainPress = useCallback(
@@ -669,7 +680,7 @@ function BridgeView({
       toggleDestinationModal();
       setDestinationChain(item);
     },
-    [toggleDestinationModal, sourceChain],
+    [toggleDestinationModal],
   );
 
   const handleFlipTokens = useCallback(() => {
@@ -791,7 +802,6 @@ function BridgeView({
               </TouchableOpacity>
             )}
           </View>
-
           <View style={styles.tokenButtonContainer}>
             <ChainSelectModal
               isVisible={isDestinationModalVisible}
@@ -817,7 +827,10 @@ function BridgeView({
           <ActivityIndicator size="small" />
         ) : (
           <View style={styles.amountInputView}>
-            <Text>{'Amount'}</Text>
+            <View>
+              <Text>{'Amount'}</Text>
+              <Text>{contractBalance}</Text>
+            </View>
             <TextInput
               style={styles.amount}
               numberOfLines={1}
@@ -843,7 +856,6 @@ function BridgeView({
               disabled={
                 isInitialLoadingTokens ||
                 !sourceToken ||
-                !destinationToken ||
                 hasInvalidDecimals ||
                 isAmountZero
               }
@@ -853,9 +865,53 @@ function BridgeView({
           </View>
           <View style={styles.providerContainer}>
             <Text style={styles.swapDetailTitle}>{'Provider'}</Text>
-            <Icon name="arrow-right" size={18} style={styles.caretDown} />
+            <Text style={styles.swapDetailTitle}>{'Multichain'}</Text>
           </View>
         </View>
+        {showAddNetwork && (
+          <NetworkModal
+            navigation={navigation}
+            isVisible={showAddNetwork}
+            network={{
+              name: sourceChain.name,
+              shortName: sourceChain.name,
+              networkId: sourceChain.id,
+              chainId: sourceChain.id,
+              hexChainId: '0x1',
+              color: '#3cc29e',
+              networkType: 'mainnet',
+              formattedRpcUrl: sourceChain.rpc,
+              rpcPrefs: {
+                blockExplorerUrl: sourceChain.explore_url,
+                imageUrl: sourceChain.logo,
+              },
+            }}
+            onClose={() => {
+              setShowAddNetwork(false);
+            }}
+          />
+        )}
+        {/* <NetworkModals
+          isVisible={showAddNetwork}
+          onClose={() => {
+            setShowAddNetwork(!showAddNetwork);
+          }}
+          network={{
+            name: 'Ethereum Main Network',
+            shortName: 'Ethereum',
+            networkId: 1,
+            chainId: 1,
+            hexChainId: '0x1',
+            color: '#3cc29e',
+            networkType: 'mainnet',
+            formattedRpcUrl: '',
+            rpcPrefs: {
+              blockExplorerUrl: '',
+              imageUrl: '',
+            },
+          }}
+          navigation={navigation}
+        /> */}
       </ScreenView>
     </View>
   );

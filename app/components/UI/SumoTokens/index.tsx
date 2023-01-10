@@ -512,12 +512,6 @@ const SumoTokens = ({
   };
 
   const renderWallet = () => {
-    // const account = {
-    //   address: selectedAddress,
-    //   ...identities[selectedAddress],
-    //   ...accounts[selectedAddress],
-    // };
-
     return (
       <View>
         <BalanceFrame
