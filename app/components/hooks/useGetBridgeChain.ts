@@ -1,37 +1,33 @@
-import {
-  ModelBridgeChain,
-  V1BridgeChainListParams,
-} from 'app/types';
+import { ModelChain, V1BridgeChainListParams } from 'app/types';
 import { useCallback, useState, useEffect } from 'react';
 import { client } from '../../services/apis';
 import useErrorHandler from './useErrorHandler.hook';
 
 interface BridgeChain {
   isGetList: boolean;
-  bridgeChains: ModelBridgeChain[];
+  bridgeChains: ModelChain[];
   hasMore: boolean;
+  resp: string;
 
   getDestinationChain: (tokenAddress: string, chainId: number) => void;
   isGetDestinationChain: boolean;
-  destinationChain: ModelBridgeChain[];
+  destinationChain: ModelChain[];
 }
 
 export function useGetBridgeChain(): BridgeChain {
   const [isGetList, setGetList] = useState<boolean>(false);
-  const [bridgeChains, setBridgeChains] = useState<ModelBridgeChain[]>([]);
-  const [destinationChain, setDestinationChain] = useState<ModelBridgeChain[]>(
-    [],
-  );
+  const [bridgeChains, setBridgeChains] = useState<ModelChain[]>([]);
+  const [destinationChain, setDestinationChain] = useState<ModelChain[]>([]);
   const [isGetDestinationChain, setGetDestinationChain] =
     useState<boolean>(false);
   const [hasMore, setHasMore] = useState<boolean>(false);
+  const [resp, setResp] = useState<string>('');
   const errorHandler = useErrorHandler();
 
   const getAllChain = useCallback(async () => {
     try {
       const param: V1BridgeChainListParams = {
         tokenAddress: '',
-        chainId: 0,
       };
 
       setGetList(true);
@@ -79,6 +75,7 @@ export function useGetBridgeChain(): BridgeChain {
     isGetList,
     bridgeChains,
     hasMore,
+    resp,
     getDestinationChain,
     isGetDestinationChain,
     destinationChain,

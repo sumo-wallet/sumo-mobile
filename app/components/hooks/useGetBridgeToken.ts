@@ -1,9 +1,5 @@
-import {
-  ModelBridgeChain,
-  ModelBridgeToken,
-  V1BridgeTokenListParams,
-} from 'app/types';
-import { useCallback, useState } from 'react';
+import { ModelBridgeToken, V1BridgeTokenListParams } from 'app/types';
+import { useCallback, useEffect, useState } from 'react';
 import { client } from '../../services/apis';
 import useErrorHandler from './useErrorHandler.hook';
 
@@ -11,24 +7,25 @@ interface BridgeChain {
   isGetList: boolean;
   bridgeTokens: ModelBridgeToken[];
   hasMore: boolean;
-  getBridgeTokenByChain: (chainId: number) => void;
+  getBridgeTokenByChain: (fromChainId: number, toChainId: number) => void;
 }
 
 export function useGetBridgeToken(): BridgeChain {
   const [isGetList, setGetList] = useState<boolean>(false);
-  const [bridgeTokens, setBridgeTokens] = useState<ModelBridgeChain[]>([]);
+  const [bridgeTokens, setBridgeTokens] = useState<ModelBridgeToken[]>([]);
   const [hasMore, setHasMore] = useState<boolean>(false);
   const errorHandler = useErrorHandler();
 
   const getBridgeTokenByChain = useCallback(
-    async (chainId: number) => {
+    async (fromChainId: number, toChainId: number) => {
       try {
         const param: V1BridgeTokenListParams = {
-          chainId,
+          fromChainId,
+          toChainId,
         };
 
         setGetList(true);
-        const res = await client.getBridgeChain(param);
+        const res = await client.getBridgeToken(param);
         if (res.data && res.data?.length > 0) {
           setBridgeTokens(res.data);
         } else {
@@ -42,7 +39,9 @@ export function useGetBridgeToken(): BridgeChain {
     },
     [errorHandler],
   );
-
+  // useEffect(() => {
+  //   getBridgeTokenByChain(1, 1).then();
+  // }, [getBridgeTokenByChain]);
   return {
     isGetList,
     bridgeTokens,

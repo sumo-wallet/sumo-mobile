@@ -72,6 +72,9 @@ import { isZero, gte } from '../../../util/lodash';
 import { useTheme } from '../../../util/theme';
 import TokenIcon from './components/TokenIcon';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { useGetBridgeChain } from '../../../components/hooks/useGetBridgeChain';
+import { useGetBridgeToken } from '../../../components/hooks/useGetBridgeToken';
+import { useGetMultichainToken } from '../../../components/hooks/useGetMultichainToken';
 
 const createStyles = (colors) =>
   StyleSheet.create({
@@ -292,21 +295,6 @@ const createStyles = (colors) =>
   });
 
 const SWAPS_NATIVE_ADDRESS = swapsUtils.NATIVE_SWAPS_TOKEN_ADDRESS;
-const TOKEN_MINIMUM_SOURCES = 1;
-const MAX_TOP_ASSETS = 20;
-
-const CHAINS = [
-  {
-    id: 56,
-    name: 'BSC',
-    logo: '',
-  },
-  {
-    id: 1,
-    name: 'ETH',
-    logo: '',
-  }
-]
 function BridgeView({
   swapsTokens,
   swapsControllerTokens,
@@ -330,6 +318,14 @@ function BridgeView({
   const { colors } = useTheme();
   const styles = createStyles(colors);
 
+  const [destinationToken, setDestinationToken] = useState(null);
+  const [sourceChain, setSourceChain] = useState(null);
+  const [destinationChain, setDestinationChain] = useState(null);
+
+  const { isGetList, bridgeChains } = useGetBridgeChain();
+  const { bridgeTokens, getBridgeTokenByChain } = useGetBridgeToken();
+  const { multiChainTokens, getTokenByChain } = useGetMultichainToken();
+
   const explorer = useBlockExplorer(provider, frequentRpcList);
   const initialSource = SWAPS_NATIVE_ADDRESS;
   const [amount, setAmount] = useState('0');
@@ -349,27 +345,36 @@ function BridgeView({
       toLowerCaseEquals(token.address, initialSource),
     ),
   );
-  const [destinationToken, setDestinationToken] = useState(null);
-  const [sourceChain, setSourceChain] = useState(null);
-  const [destinationChain, setDestinationChain] = useState(null);
+
+  useEffect(() => {
+    getBridgeTokenByChain(
+      sourceChain ? sourceChain.id : 1,
+      destinationChain ? destinationChain.id : 1,
+    );
+  }, [sourceChain, destinationChain, getBridgeTokenByChain]);
+
+  useEffect(() => {
+    if (bridgeTokens && bridgeTokens.length > 0) {
+      const tokens = [
+        // '0x55af5865807b196bd0197e0902746f31fbccfa58',
+        // '0x4e15361fd6b4bb609fa63c81a2be19d873717870',
+      ];
+      bridgeTokens.forEach((item) => {
+        tokens.push(item.srcTokenAddress);
+      });
+      getTokenByChain(sourceChain ? sourceChain.id : 1, tokens);
+    }
+  }, [sourceChain, getTokenByChain, bridgeTokens]);
 
   const [contractBalance, setContractBalance] = useState(null);
   const [contractBalanceAsUnits, setContractBalanceAsUnits] = useState(
     safeNumberToBN(0),
   );
-  const [isDirectWrapping, setIsDirectWrapping] = useState(false);
 
   const [isTokenModalVisible, toggleTokenModal] = useModalHandler(false);
   const [isSourceModalVisible, toggleSourceModal] = useModalHandler(false);
   const [isDestinationModalVisible, toggleDestinationModal] =
     useModalHandler(false);
-  const [isSlippageModalVisible, toggleSlippageModal] = useModalHandler(false);
-  const [
-    isTokenVerificationModalVisisble,
-    toggleTokenVerificationModal,
-    ,
-    hideTokenVerificationModal,
-  ] = useModalHandler(false);
 
   useEffect(() => {
     navigation.setOptions(getSwapsAmountNavbar(navigation, route, colors));
@@ -633,33 +638,15 @@ function BridgeView({
       ),
     );
   }, [
-    amount,
     hasInvalidDecimals,
-    isTokenInBalances,
-    navigation,
-    slippage,
     sourceToken,
+    isTokenInBalances,
     isBalanceZero,
+    navigation,
+    destinationToken,
+    amount,
+    slippage,
   ]);
-
-
-  const setSlippageAfterTokenPress = useCallback(
-    (sourceTokenAddress, destinationTokenAddress) => {
-      const enableDirectWrapping = swapsUtils.shouldEnableDirectWrapping(
-        chainId,
-        sourceTokenAddress,
-        destinationTokenAddress,
-      );
-      if (enableDirectWrapping && !isDirectWrapping) {
-        setSlippage(0);
-        setIsDirectWrapping(true);
-      } else if (isDirectWrapping && !enableDirectWrapping) {
-        setSlippage(AppConstants.SWAPS.DEFAULT_SLIPPAGE);
-        setIsDirectWrapping(false);
-      }
-    },
-    [setSlippage, chainId, isDirectWrapping],
-  );
 
   const handleTokenPress = useCallback(
     (item) => {
@@ -674,7 +661,7 @@ function BridgeView({
       toggleSourceModal();
       setSourceChain(item);
     },
-    [toggleSourceModal, destinationChain],
+    [toggleSourceModal],
   );
 
   const handleDestinationChainPress = useCallback(
@@ -684,43 +671,6 @@ function BridgeView({
     },
     [toggleDestinationModal, sourceChain],
   );
-
-  const handleUseMax = useCallback(() => {
-    if (!sourceToken || !balanceAsUnits) {
-      return;
-    }
-    setAmount(
-      fromTokenMinimalUnitString(
-        balanceAsUnits.toString(10),
-        sourceToken.decimals,
-      ),
-    );
-  }, [balanceAsUnits, sourceToken]);
-  const handleUse50Max = useCallback(() => {
-    if (!sourceToken || !balanceAsUnits) {
-      return;
-    }
-    setAmount(
-      fromTokenMinimalUnitString(
-        (balanceAsUnits / 2).toString(10),
-        sourceToken.decimals,
-      ),
-    );
-  }, [balanceAsUnits, sourceToken]);
-
-  const handleVerifyPress = useCallback(() => {
-    if (!destinationToken) {
-      return;
-    }
-    hideTokenVerificationModal();
-    navigation.navigate('Webview', {
-      screen: 'SimpleWebview',
-      params: {
-        url: explorer.token(destinationToken.address),
-        title: strings('swaps.verify'),
-      },
-    });
-  }, [explorer, destinationToken, hideTokenVerificationModal, navigation]);
 
   const handleFlipTokens = useCallback(() => {
     setSourceChain(destinationChain);
@@ -774,15 +724,12 @@ function BridgeView({
             isVisible={isTokenModalVisible}
             dismiss={toggleTokenModal}
             title={strings('swaps.convert_from')}
-            tokens={swapsTokens}
-            initialTokens={tokensWithBalance}
+            tokens={multiChainTokens}
+            initialTokens={multiChainTokens}
             onItemPress={handleTokenPress}
             excludeAddresses={[]}
           />
-          <View
-            style={[styles.tokenButtonContainer,]}
-            pointerEvents={'auto'}
-          >
+          <View style={[styles.tokenButtonContainer]} pointerEvents={'auto'}>
             {isInitialLoadingTokens ? (
               <ActivityIndicator size="small" />
             ) : (
@@ -807,21 +754,17 @@ function BridgeView({
                 </TouchableOpacity>
               </View>
             )}
-
             <ChainSelectModal
               isVisible={isSourceModalVisible}
               dismiss={toggleSourceModal}
               title={strings('swaps.convert_from')}
-              tokens={CHAINS}
+              chains={bridgeChains}
               initialTokens={[]}
               onItemPress={handleSourceChainPress}
-              excludeAddresses={[sourceChain?.id]}
+              excludeChains={[sourceChain?.id]}
             />
           </View>
-          <View
-            style={[styles.amountContainer]}
-            pointerEvents={'auto'}
-          >
+          <View style={[styles.amountContainer]} pointerEvents={'auto'}>
             {!sourceToken && <Text> </Text>}
           </View>
           <View style={styles.sendTokenContainer}>
@@ -842,8 +785,7 @@ function BridgeView({
                   />
                 </View>
                 <Text primary>
-                  {destinationChain?.name ||
-                    'Select destination chain'}
+                  {destinationChain?.name || 'Select destination chain'}
                 </Text>
                 <Icon name="caret-down" size={18} style={styles.caretDown} />
               </TouchableOpacity>
@@ -855,18 +797,13 @@ function BridgeView({
               isVisible={isDestinationModalVisible}
               dismiss={toggleDestinationModal}
               title={strings('swaps.convert_to')}
-              tokens={CHAINS}
+              chains={bridgeChains}
               initialTokens={[]}
               onItemPress={handleDestinationChainPress}
-              excludeAddresses={[sourceChain?.id]}
+              excludeChains={[sourceChain?.id]}
             />
           </View>
-          <View
-            style={[
-              styles.horizontalRuleContainer,
-            ]}
-            pointerEvents={'auto'}
-          >
+          <View style={[styles.horizontalRuleContainer]} pointerEvents={'auto'}>
             <TouchableOpacity
               style={styles.flipButton}
               onPress={handleFlipTokens}
@@ -897,10 +834,7 @@ function BridgeView({
           </View>
         )}
 
-        <View
-          style={[styles.keypad]}
-          pointerEvents={'auto'}
-        >
+        <View style={[styles.keypad]} pointerEvents={'auto'}>
           <View style={styles.ctaContainer}>
             <StyledButton
               type="blue"
@@ -919,7 +853,7 @@ function BridgeView({
           </View>
           <View style={styles.providerContainer}>
             <Text style={styles.swapDetailTitle}>{'Provider'}</Text>
-            <Icon name="arrow-right" size={18} style={styles.caretDown}></Icon>
+            <Icon name="arrow-right" size={18} style={styles.caretDown} />
           </View>
         </View>
       </ScreenView>
