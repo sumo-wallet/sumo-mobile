@@ -10,7 +10,6 @@ import { SearchRecent } from './SearchRecent';
 import { ModelDApp, ModelDApps, ModelCategory } from './../../../types';
 import { AppGroupCard } from './AppGroupCard';
 import { NowTrendingModal } from './NowTrendingModal';
-import { strings } from '../../../../locales/i18n';
 import { useTheme } from '../../../util/theme';
 import { useGetDappHome } from '../../../components/hooks/useGetDappHome';
 
@@ -39,10 +38,10 @@ export const AllDappList = React.memo(
     const { isLoading, getDAppHome } = useGetDappHome();
 
     const handleOpenTrending = React.useCallback(
-      (dapp: ModelDApp) => {
+      (_: ModelDApp) => {
         setNowTrendingModelVisible(true);
       },
-      [nav, dispatch],
+      [],
     );
 
     const toggleSourceModal = () => {

@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {
   View,
   StyleProp,
@@ -17,6 +16,7 @@ import { useNavigator } from './../../hooks';
 import { useTheme } from './../../..//util/theme';
 import Routes from '../../../constants/navigation/Routes';
 import { useTrackingDAppUsage } from '../../../components/hooks/useTrackingDAppUsage';
+import { icons } from './../../../assets';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('screen');
 
@@ -25,7 +25,7 @@ export { SCREEN_WIDTH, SCREEN_HEIGHT };
 export interface DappCellProps {
   style?: StyleProp<ViewStyle>;
   dapp?: ModelDApp;
-  onPress?: PropTypes.func;
+  onPress?: () => void;
 }
 
 export const DappCell = ({ style, dapp, onPress }: DappCellProps) => {
@@ -50,10 +50,14 @@ export const DappCell = ({ style, dapp, onPress }: DappCellProps) => {
   }, [dapp, dispatch, nav, onPress, trackingUsage]);
 
   return (
-    <TouchableOpacity style={[Style.s({ direc: 'row', items: 'center', mt: 16 }), style]} onPress={handleOpenDapp}>
+    <TouchableOpacity
+      style={[Style.s({ direc: 'row', items: 'center', mt: 16 }), style]}
+      onPress={handleOpenDapp}
+    >
       <Image
         style={Style.s({ size: 40, bor: 8 })}
         source={{ uri: dapp?.logo }}
+        defaultSource={icons.iconDapps}
       />
       <View style={Style.s({ ml: 12 })}>
         <Text style={Fonts.t({ s: 14, c: colors.text.default })}>
