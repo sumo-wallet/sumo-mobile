@@ -62,7 +62,6 @@ import logoFacebook from './icons/logoFacebook.png';
 import logoTwitter from './icons/logoTwitter.png';
 import logoDiscord from './icons/logoDiscord.png';
 
-
 import imageBanner from './images/imageBanner.png';
 import imageNew1 from './images/imageNew1.png';
 import imageNew2 from './images/imageNew2.png';
