@@ -17,11 +17,30 @@ const dappReducer = (state = initialState, action) => {
           (item) => item.website === action.dapp.website,
         );
         if (index <= 0) {
-          return { ...state, favorites: favorites.push(action.dapp) };
+          return {
+            ...state,
+            favorites: [
+              {
+                website: action.dapp.website,
+                name: action.dapp.name,
+                ...action.dapp,
+              },
+              ...favorites,
+            ],
+          };
         }
         return state;
       }
-      return { ...state, favorites: [action.dapp] };
+      return {
+        ...state,
+        favorites: [
+          {
+            website: action.dapp.website,
+            name: action.dapp.name,
+            ...action.dapp,
+          },
+        ],
+      };
     }
     case 'REMOVE_FAVORITE_DAPP': {
       return {

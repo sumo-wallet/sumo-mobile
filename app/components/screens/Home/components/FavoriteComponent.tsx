@@ -78,7 +78,7 @@ export const FavoriteComponent = function FavoriteComponent({
   const dispatch = useDispatch();
 
   const openDappBrowser = (item: any) => {
-    dispatch(createNewTab(item?.website));
+    dispatch(createNewTab(item?.website, item));
     dispatch(openDapp({ dapp: item }));
     navigation.navigate(Routes.BROWSER_TAB_HOME, {
       screen: Routes.BROWSER_VIEW,

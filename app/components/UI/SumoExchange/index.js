@@ -15,9 +15,7 @@ import { View as AnimatableView } from 'react-native-animatable';
 import {
   setSwapsLiveness,
 } from '../../../reducers/swaps';
-import Device from '../../../util/device';
 import Text from '../../Base/Text';
-import ScreenView from '../FiatOrders/components/ScreenView';
 import { useTheme } from '../../../util/theme';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import FastImage from 'react-native-fast-image';
@@ -121,7 +119,7 @@ function SumoExchangeView({
   const styles = createStyles(colors);
 
   const openDappBrowser = (dapp) => {
-    dispatch(createNewTab(dapp?.url));
+    dispatch(createNewTab(dapp?.url, dapp));
     dispatch(openDapp({ dapp }));
     navigation.navigate(ROUTES.BrowserTabHome, { dapp });
   };

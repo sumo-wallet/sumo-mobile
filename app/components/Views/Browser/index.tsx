@@ -57,8 +57,8 @@ const Browser = (props) => {
     [navigation, route, colors],
   );
 
-  const newTab = (url) => {
-    createNewTab(url || AppConstants.HOMEPAGE_URL);
+  const newTab = (url: string) => {
+    createNewTab(url || AppConstants.HOMEPAGE_URL, null);
   };
 
   const updateTabInfo = (url, tabID) =>
@@ -278,7 +278,7 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-  createNewTab: (url: string) => dispatch(createNewTab(url)),
+  createNewTab: (url: string, dapp: any) => dispatch(createNewTab(url, dapp)),
   closeAllTabs: () => dispatch(closeAllTabs()),
   closeTab: (id: number) => dispatch(closeTab(id)),
   setActiveTab: (id: number) => dispatch(setActiveTab(id)),

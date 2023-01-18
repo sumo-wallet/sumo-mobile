@@ -58,17 +58,18 @@ export const DappDetails = React.memo(() => {
   const favorites: ModelDApp[] = useSelector(
     (state: any) => state.dapp.favorites,
   );
-  const [isFavorited, setFavorited] = useState(false);
+  const [isFavourited, setFavourited] = useState(false);
+
   useEffect(() => {
     if (favorites)
-      setFavorited(
+      setFavourited(
         favorites.findIndex((item) => item.website === dapp.website) >= 0,
       );
   }, [favorites, dapp.website]);
 
   const handleOpenDapp = React.useCallback(() => {
     if (dapp?.website) {
-      dispatch(createNewTab(dapp?.website));
+      dispatch(createNewTab(dapp?.website, dapp));
       dispatch(openDapp({ dapp }));
       nav.navigate(ROUTES.BrowserTabHome, { dapp });
       trackingUsage(dapp.id || 0, 'dapp');
@@ -76,16 +77,10 @@ export const DappDetails = React.memo(() => {
   }, [dapp, dispatch, nav, trackingUsage]);
 
   const handleFavorite = () => {
-    if (favorites) {
-      const matchedIndex = favorites.findIndex(
-        (item) => item.website === dapp.website,
-      );
-      if (matchedIndex < 0) {
-        dispatch(addFavoriteDApp(dapp));
-      } else {
-        dispatch(removeFavoriteDApp(dapp));
-      }
-      // dispatch(addFavoriteDApp(dapp));
+    if (isFavourited) {
+      dispatch(removeFavoriteDApp(dapp));
+    } else {
+      dispatch(addFavoriteDApp(dapp));
     }
   };
 
@@ -116,7 +111,7 @@ export const DappDetails = React.memo(() => {
           >
             <FastImage
               style={Style.s({ size: 12, mr: 8 })}
-              source={isFavorited ? icons.iconStar : icons.iconFavorite}
+              source={isFavourited ? icons.iconStar : icons.iconFavorite}
               tintColor={colors.icon.default}
             />
           </SButton>

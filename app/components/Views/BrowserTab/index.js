@@ -76,7 +76,7 @@ import { icons } from './../../../assets';
 import { ROUTES } from './../../../navigation/routes';
 import ClipboardManager from './../../../core/ClipboardManager';
 import { showAlert } from '../../../actions/alert';
-import { addFavoriteDApp } from '../../../actions/dapp';
+import { addFavoriteDApp, removeFavoriteDApp } from '../../../actions/dapp';
 
 const { HOMEPAGE_URL, USER_AGENT, NOTIFICATION_NAMES } = AppConstants;
 const HOMEPAGE_HOST = new URL(HOMEPAGE_URL)?.hostname;
@@ -150,7 +150,7 @@ const createStyles = (colors, shadows) =>
       alignSelf: 'center',
       justifyContent: 'center',
       marginTop: 3,
-      fontWeight: '400',
+      fontWeight: '500',
       color: colors.text.default,
       flex: 1,
       ...fontStyles.fontPrimary,
@@ -307,7 +307,7 @@ export const BrowserTab = (props) => {
 
   const { colors, shadows } = useTheme();
   const styles = createStyles(colors, shadows);
-
+  const [isFavoriteDApp, setFavoriteDApp] = useState(true);
 
   /**
    * Is the current tab the active tab
@@ -363,6 +363,10 @@ export const BrowserTab = (props) => {
     }
     return false;
   };
+
+  useCallback(() => {
+    setFavoriteDApp(true);
+  }, [props.favoritesDApp]);
 
   /**
    * Checks if a given url or the current url is the homepage
@@ -1181,8 +1185,12 @@ export const BrowserTab = (props) => {
       params: {
         title: title.current || '',
         url: getMaskedUrl(url.current),
+        logo: Device.isIos()
+          ? icon.current || `https://api.faviconkit.com/${getHost(url)}/256`
+          : '',
         onAddBookmark: async ({ name, url }) => {
           props.addBookmark({ name, url });
+          props.addFavoriteDApp({ name, url });
           if (Device.isIos()) {
             const item = {
               uniqueIdentifier: url,
@@ -1375,7 +1383,6 @@ export const BrowserTab = (props) => {
   //   }
   // };
 
-
   const openAboutDapp = React.useCallback(() => {
     toggleOptionsIfNeeded();
     props.navigation.navigate(ROUTES.DappDetails, { dapp: props.dapp });
@@ -1391,6 +1398,21 @@ export const BrowserTab = (props) => {
       data: { msg: 'Web link copied to clipboard!' },
     });
   }, [props.dapp, props.showAlert, toggleOptionsIfNeeded]);
+
+  /**
+   * Add favorite dapp
+   */
+  const addFavoriteDapp = () => {
+    const { dapp } = props;
+    toggleOptionsIfNeeded();
+    if (dapp) {
+      if (isFavoriteDApp) {
+        props.removeFavoriteDApp(dapp);
+      } else {
+        props.addFavoriteDApp(dapp);
+      }
+    }
+  };
 
   /**
    * Renders the Option modal
@@ -1437,11 +1459,10 @@ export const BrowserTab = (props) => {
         </View>
         <View style={Style.s({})}>
           <TouchableOpacity onPress={switchNetwork} style={styles.optionButton}>
-            <Text style={styles.optionText}>{strings('browser.switch_network')}</Text>
-            <FastImage
-              style={Style.s({ size: 24 })}
-              source={icons.iconAbout}
-            />
+            <Text style={styles.optionText}>
+              {strings('browser.switch_network')}
+            </Text>
+            <FastImage style={Style.s({ size: 24 })} source={icons.iconAbout} />
           </TouchableOpacity>
           <TouchableOpacity
             onPress={handleCopyWebLink}
@@ -1460,11 +1481,16 @@ export const BrowserTab = (props) => {
               source={icons.iconArrowRefresh}
             />
           </TouchableOpacity>
-          <TouchableOpacity onPress={addBookmark} style={styles.optionButton}>
-            <Text style={styles.optionText}>{'Favorites'}</Text>
+          <TouchableOpacity
+            onPress={addFavoriteDapp}
+            style={styles.optionButton}
+          >
+            <Text style={styles.optionText}>
+              {isFavoriteDApp ? 'Favorited' : 'Favorites'}
+            </Text>
             <FastImage
               style={Style.s({ size: 24 })}
-              source={icons.iconFavorite}
+              source={isFavoriteDApp ? icons.iconFavorited : icons.iconFavorite}
             />
           </TouchableOpacity>
           <TouchableOpacity onPress={openAboutDapp} style={styles.optionButton}>
@@ -1738,6 +1764,22 @@ BrowserTab.propTypes = {
    * the current version of the app
    */
   app_version: PropTypes.string,
+  /**
+   * Function to add favorite dapp
+   */
+  addFavoriteDApp: PropTypes.func,
+  /**
+   * Function to remove favorite dapp
+   */
+  removeFavoriteDApp: PropTypes.func,
+  /**
+   * dapp object
+   */
+  dapp: PropTypes.object,
+  /**
+   * favorites dapp object
+   */
+  favoritesDApp: PropTypes.array,
 };
 
 BrowserTab.defaultProps = {
@@ -1758,12 +1800,14 @@ const mapStateToProps = (state) => ({
   history: state.browser.history,
   wizardStep: state.wizard.step,
   dapp: state.browser.dapp,
+  favoritesDApp: state.dapp.favorites,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   approveHost: (hostname) => dispatch(approveHost(hostname)),
   addBookmark: (bookmark) => dispatch(addBookmark(bookmark)),
   addFavoriteDApp: (dapp) => dispatch(addFavoriteDApp(dapp)),
+  removeFavoriteDApp: (dapp) => dispatch(removeFavoriteDApp(dapp)),
   addToBrowserHistory: ({ url, name }) => dispatch(addToHistory({ url, name })),
   addToWhitelist: (url) => dispatch(addToWhitelist(url)),
   toggleNetworkModal: () => dispatch(toggleNetworkModal()),

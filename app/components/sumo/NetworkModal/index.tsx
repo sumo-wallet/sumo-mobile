@@ -1,7 +1,7 @@
 import React from 'react';
 import Engine from '../../../core/Engine';
 import PropTypes from 'prop-types';
-import { StyleSheet, View, SafeAreaView } from 'react-native';
+import { StyleSheet, View, SafeAreaView, Linking } from 'react-native';
 import { fontStyles } from '../../../styles/common';
 import Modal from 'react-native-modal';
 import { strings } from '../../../../locales/i18n';

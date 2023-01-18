@@ -50,12 +50,14 @@ export function closeAllTabs() {
  * Creates a new tab
  *
  * @param {string} url - The website's url
+ * @param {object} dapp - The dapp object, available when open from dapp screen
  */
-export function createNewTab(url) {
+export function createNewTab(url, dapp) {
   return {
     type: 'CREATE_NEW_TAB',
     url,
     id: Date.now(),
+    dapp,
   };
 }
 

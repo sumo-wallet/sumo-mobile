@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/prefer-optional-chain */
 import React, { useState } from 'react';
-import { ActivityIndicator, View } from 'react-native';
+import { View } from 'react-native';
 import { useDisclosure } from '@dwarvesf/react-hooks';
 import { useDispatch, useSelector } from 'react-redux';
-import { useFocusEffect } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import PagerView from 'react-native-pager-view';
 
@@ -16,15 +15,12 @@ import { ModelDApp, ModelCategory } from './../../../types';
 import { CategoryHeader } from './CategoryHeader';
 
 import { ROUTES } from './../../../navigation/routes';
-import { createNewTab, openDapp } from './../../../actions/browser';
+import { openDapp } from './../../../actions/browser';
 import { useTheme } from './../../../util/theme';
 import { useFetchDappHome } from './../../../services/dapp/useFetchDappHome';
 import { useFetchDappRecent } from './../../../services/dapp/useFetchDappRecent';
 import { AllDappList } from './AllDappList';
 import { showDappWarningAlert } from './../../../actions/dapp';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import { images } from '../../../assets';
-import FastImage from 'react-native-fast-image';
 import Routes from '../../../constants/navigation/Routes';
 import { useGetDappHome } from '../../../components/hooks/useGetDappHome';
 

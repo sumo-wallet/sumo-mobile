@@ -11,7 +11,7 @@ const bridgeReducer = (state = initialState, action) => {
         ...state,
         showWarningAlert: true,
       };
-    case 'ADD_FAVORITE_DAPP': {
+    case 'ADD_BRIDGE_TRANSACTION': {
       if (favorites && favorites.length > 0) {
         const index = favorites.findIndex(
           (item) => item.website === action.dapp.website,
@@ -23,7 +23,7 @@ const bridgeReducer = (state = initialState, action) => {
       }
       return { ...state, favorites: [action.dapp] };
     }
-    case 'REMOVE_FAVORITE_DAPP': {
+    case 'REMOVE_BRIDGE_TRANSACTION': {
       return {
         ...state,
         favorites: favorites.filter((item) => item.id !== action.dapp.id),

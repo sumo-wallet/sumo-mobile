@@ -42,6 +42,7 @@ export const DappCell = ({ style, dapp, onPress }: DappCellProps) => {
         params: {
           newTabUrl: dapp.website,
           timestamp: Date.now(),
+          dapp,
         },
       });
       trackingUsage(dapp.id || 0, 'dapp');

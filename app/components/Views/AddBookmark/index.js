@@ -41,6 +41,7 @@ export default class AddBookmark extends PureComponent {
   state = {
     title: '',
     url: '',
+    logo: '',
   };
 
   static propTypes = {
@@ -86,9 +87,9 @@ export default class AddBookmark extends PureComponent {
   }
 
   addBookmark = () => {
-    const { title, url } = this.state;
+    const { title, url, logo } = this.state;
     if (title === '' || url === '') return false;
-    this.props.route.params.onAddBookmark({ name: title, url });
+    this.props.route.params.onAddBookmark({ name: title, url, logo });
     this.props.navigation.pop();
   };
 

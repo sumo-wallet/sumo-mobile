@@ -9,10 +9,10 @@ import { ModelCategory, ModelDApp } from './../../../types';
 import { useFetchDappByCategory } from './../../../services/dapp/useFetchDappByCategory';
 import { useTheme } from './../../../util/theme';
 import { SearchResultCell } from './../DappSearch/SearchResultCell';
-import { createNewTab, openDapp } from './../../../actions/browser';
-import { ROUTES } from './../../../navigation/routes';
+import { openDapp } from './../../../actions/browser';
 import { images } from './../../../assets';
 import { useTrackingDAppUsage } from '../../../components/hooks/useTrackingDAppUsage';
+import Routes from '../../../constants/navigation/Routes';
 
 export interface DappListByCategoryProps {
   style?: StyleProp<ViewStyle>;
@@ -46,9 +46,15 @@ export const DappListByCategory = React.memo(
     const handlePressDapp = React.useCallback(
       (dapp: ModelDApp) => {
         if (dapp.website) {
-          dispatch(createNewTab(dapp?.website));
           dispatch(openDapp({ dapp }));
-          nav.navigate(ROUTES.BrowserTabHome, { dapp });
+          nav.navigate(Routes.BROWSER_TAB_HOME, {
+            screen: Routes.BROWSER_VIEW,
+            params: {
+              newTabUrl: dapp.website,
+              timestamp: Date.now(),
+              dapp,
+            },
+          });
           trackingUsage(dapp.id || 0, 'dapp');
         }
       },

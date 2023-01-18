@@ -51,6 +51,7 @@ import iconMenu2 from './icons/iconMenu2.png';
 import iconNext from './icons/iconNext.png';
 import iconPrevious from './icons/iconPrevious.png';
 import iconFavorite from './icons/iconFavorite.png';
+import iconFavorited from './icons/iconFavorited.png';
 import iconArrowRefresh from './icons/iconArrowRefresh.png';
 import iconCopyWebLink from './icons/iconCopyWebLink.png';
 import iconAbout from './icons/iconAbout.png';
@@ -126,6 +127,7 @@ export const icons = {
   iconNext,
   iconPrevious,
   iconFavorite,
+  iconFavorited,
   iconArrowRefresh,
   iconCopyWebLink,
   iconAbout,
