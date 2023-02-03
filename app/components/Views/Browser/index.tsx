@@ -19,8 +19,6 @@ import AppConstants from '../../../core/AppConstants';
 import { baseStyles } from '../../../styles/common';
 import { DrawerContext } from '../../Nav/Main/MainNavigator';
 import { useTheme } from '../../../util/theme';
-// import { useNavigator, useNavigatorParams } from '../../hooks';
-// import { Dapp } from './../../../types';
 
 const margin = 16;
 const THUMB_WIDTH = Dimensions.get('window').width / 2 - margin * 2;
