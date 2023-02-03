@@ -38,11 +38,6 @@ export const DappListByCategory = React.memo(
       (state: any) => state.dapp.favorites,
     );
 
-    // useEffect(() => {
-    //   if (category?.id === 1000000) {
-    //   }
-    // }, [category, dapps]);
-
     const handlePressDapp = React.useCallback(
       (dapp: ModelDApp) => {
         if (dapp.website) {
