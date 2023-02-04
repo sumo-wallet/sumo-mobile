@@ -17,6 +17,46 @@ export interface BridgeBridgeTokenResponse {
   data?: ModelBridgeChain[];
 }
 
+export interface BridgeBridgeTransaction {
+  amount?: number;
+  contractAddress?: string;
+  fromChainId?: number;
+  fromTxHash?: string;
+  id?: number;
+  receiverAddress?: string;
+  toChainId?: number;
+  toTxHash?: string;
+  tokenAddress?: string;
+  walletAddress?: string;
+}
+
+export interface BridgeNewBridgeTransactionRequest {
+  amount?: number;
+  contractAddress?: string;
+  fromChainId?: number;
+  toChainId?: number;
+  tokenAddress?: string;
+  txHash?: string;
+  walletAddress?: string;
+}
+
+export interface BridgeNewBridgeTransactionResponse {
+  data?: BridgeBridgeTransaction;
+}
+
+export interface BridgeUpdateBridgeTransactionRequest {
+  bridgeStatus?: string;
+  fromChainId?: number;
+  fromTxHash?: string;
+  receivedAmount?: number;
+  toStatus?: string;
+  transactionId?: number;
+}
+
+export interface BridgeUpdateBridgeTransactionResponse {
+  data?: BridgeBridgeTransaction;
+}
+
 export interface DappDappHomeResponse {
   banner?: ModelBanner[];
   category?: ModelCategory[];
@@ -246,7 +286,6 @@ export interface ModelChain {
 export interface ModelCollection {
   background_color?: string;
   banner_image_url?: string;
-  collectionStatisticId?: number;
   created_at?: string;
   description?: string;
   editors?: string;
@@ -259,9 +298,50 @@ export interface ModelCollection {
   payment_tokens?: string;
   primary_asset_contracts?: string;
   safelist_request_status?: string;
+  /** Traits                string    `json:"traits"` */
   slug?: string;
-  stats?: string;
-  traits?: string;
+  stats?: ModelCollectionStats;
+  stats_id?: number;
+}
+
+export interface ModelCollectionStats {
+  average_price?: number;
+  count?: number;
+  floor_price?: number;
+  id?: number;
+  market_cap?: number;
+  num_owners?: number;
+  num_reports?: number;
+  one_day_average_price?: number;
+  one_day_change?: number;
+  one_day_difference?: number;
+  one_day_sales?: number;
+  one_day_sales_change?: number;
+  one_day_volume?: number;
+  one_hour_average_price?: number;
+  one_hour_change?: number;
+  one_hour_difference?: number;
+  one_hour_sales?: number;
+  one_hour_sales_change?: number;
+  one_hour_volume?: number;
+  seven_day_average_price?: number;
+  seven_day_change?: number;
+  seven_day_difference?: number;
+  seven_day_sales?: number;
+  seven_day_volume?: number;
+  six_hour_average_price?: number;
+  six_hour_change?: number;
+  six_hour_difference?: number;
+  six_hour_sales?: number;
+  six_hour_sales_change?: number;
+  thirty_day_average_price?: number;
+  thirty_day_change?: number;
+  thirty_day_difference?: number;
+  thirty_day_sales?: number;
+  thirty_day_volume?: number;
+  total_sales?: number;
+  total_supply?: number;
+  total_volume?: number;
 }
 
 export interface ModelDApp {
@@ -439,6 +519,11 @@ export interface V1BridgeTokenListParams {
   toChainId?: number;
 }
 
+export interface V1BridgeTransactionsListParams {
+  /** wallet address */
+  walletAddress?: string;
+}
+
 export interface V1CollectionCategoryListParams {
   /** query value */
   language?: string;
@@ -501,16 +586,23 @@ export interface V1MarketplaceAssetsListParams {
   sortField?: string;
 }
 
-export interface V1MarketplaceHotAuctionListParams {
-  /** query value */
-  language?: string;
-}
-
-export interface V1MarketplaceTrendingCollectionListParams {
+export interface V1MarketplaceCollectionTopListParams {
   /** query value */
   text?: string;
   /** pageNumber */
   pageNumber?: string;
   /** pageSize */
   pageSize?: string;
+}
+
+export interface V1MarketplaceCollectionTrendingListParams {
+  /** pageNumber */
+  pageNumber?: string;
+  /** pageSize */
+  pageSize?: string;
+}
+
+export interface V1MarketplaceHotAuctionListParams {
+  /** query value */
+  language?: string;
 }

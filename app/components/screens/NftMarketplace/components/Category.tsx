@@ -3,7 +3,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useTheme } from '../../../../util/theme';
 import { ModelCategory, ModelCategoryApp } from 'app/types';
 import FastImage from 'react-native-fast-image';
-import { useGetCollectionCategory } from '../../../../components/hooks/useGetCollectionCategory';
+import { useGetCollectionCategory } from '../../../hooks/Collection/useGetCollectionCategory';
 
 const createStyles = (colors: any) =>
   StyleSheet.create({
@@ -85,7 +85,7 @@ export const Category = function Category({
                 }}
               >
                 <FastImage
-                  source={{ uri: item?.order || '' }}
+                  source={{ uri: item?.imageUrl || '' }}
                   style={styles.icon}
                   resizeMode={FastImage.resizeMode.contain}
                 />

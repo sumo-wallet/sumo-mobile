@@ -22,7 +22,7 @@ import { useFetchDappRecent } from './../../../services/dapp/useFetchDappRecent'
 import { AllDappList } from './AllDappList';
 import { showDappWarningAlert } from './../../../actions/dapp';
 import Routes from '../../../constants/navigation/Routes';
-import { useGetDappHome } from '../../../components/hooks/useGetDappHome';
+import { useGetDappHome } from '../../hooks/DApp/useGetDappHome';
 
 export const DappsScreen = React.memo(() => {
   const nav = useNavigator();

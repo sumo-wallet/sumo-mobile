@@ -4,7 +4,7 @@ set -e
 set -u
 set -o pipefail
 
-readonly URL='https://github.com/MetaMask/metamask-mobile'
+readonly URL='https://github.com/sumo-wallet/sumo-mobile'
 
 git fetch --tags
 

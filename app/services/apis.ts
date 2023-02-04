@@ -21,6 +21,9 @@ import {
   V1CollectionSearchListParams,
   BridgeBridgeChainResponse,
   V1BridgeTokenListParams,
+  MarketplaceCollectionResponse,
+  V1MarketplaceCollectionTopListParams,
+  V1MarketplaceCollectionTrendingListParams,
 } from './../types';
 
 /* eslint-disable prefer-destructuring */
@@ -199,6 +202,38 @@ class Client {
   public getHotAuction() {
     return fetcher<MarketplaceHotAuctionResponse>(
       `${this.baseUrl}/api/v1/marketplace/hot-auction`,
+      {
+        headers: this.headers,
+      },
+    );
+  }
+  public getMarketplaceTrendingCollection(
+    request: V1MarketplaceCollectionTrendingListParams,
+  ) {
+    return fetcher<MarketplaceCollectionResponse>(
+      `${this.baseUrl}/api/v1/marketplace/collection/trending?${qs.stringify(
+        request,
+      )}`,
+      {
+        headers: this.headers,
+      },
+    );
+  }
+  public getMarketplaceTopCollection(
+    request: V1MarketplaceCollectionTopListParams,
+  ) {
+    return fetcher<MarketplaceCollectionResponse>(
+      `${this.baseUrl}/api/v1/marketplace/collection/top?${qs.stringify(
+        request,
+      )}`,
+      {
+        headers: this.headers,
+      },
+    );
+  }
+  public getCollectionDetail(collectionName: string) {
+    return fetcher<MarketplaceHotAuctionResponse>(
+      `${this.baseUrl}/api/v1/marketplace/collection/${collectionName}`,
       {
         headers: this.headers,
       },
