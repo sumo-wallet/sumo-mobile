@@ -11,7 +11,7 @@ import { ModelDApp, ModelDApps, ModelCategory } from './../../../types';
 import { AppGroupCard } from './AppGroupCard';
 import { NowTrendingModal } from './NowTrendingModal';
 import { useTheme } from '../../../util/theme';
-import { useGetDappHome } from '../../../components/hooks/useGetDappHome';
+import { useGetDappHome } from '../../hooks/DApp/useGetDappHome';
 
 interface AllDappListProps {
   dappByCate?: ModelDApps[];

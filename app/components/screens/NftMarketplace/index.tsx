@@ -5,6 +5,7 @@ import { strings } from '../../../../locales/i18n';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../../../util/theme';
 import { fontStyles } from '../../../styles/common';
+import { Category } from './components/Category';
 
 const createStyles = (colors) =>
   StyleSheet.create({
@@ -63,6 +64,9 @@ export const NftMarketplaceScreen = React.memo(() => {
   return (
     <SafeAreaView style={styles.wrapper}>
       <View style={styles.wrapper}>
+        <Category
+          title='category'
+          subTitle='' />
         {/* <CollectibleContracts
           key={'nfts-tab'}
           navigation={navigation}
