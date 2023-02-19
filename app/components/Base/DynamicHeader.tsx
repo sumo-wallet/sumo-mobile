@@ -11,12 +11,10 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from 'react-native';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { icons } from '../../assets';
 import Identicon from '../UI/Identicon';
 import { useTheme } from '../../util/theme';
-import Routes from '../../constants/navigation/Routes';
-// import { colors } from '@thanhpn1990/design-tokens';
 interface DynamicHeaderProps extends ViewProps {
   title: string;
   titleStyle?: TextStyle;
@@ -28,8 +26,10 @@ interface DynamicHeaderProps extends ViewProps {
   isHiddenSafeArea?: boolean;
   isHiddenBackground?: boolean;
   isShowAvatar?: boolean;
+  isShowNetwork?: boolean;
   address?: string;
   networkName?: string;
+  backgroundColor?: string;
   onPressNetwork?: () => void;
 }
 
@@ -109,9 +109,11 @@ export const EmptyHeader = memo(
     onGoBack,
     isHiddenBackground,
     isShowAvatar,
+    isShowNetwork,
     address,
     networkName,
     onPressNetwork,
+    backgroundColor,
     ...props
   }: Omit<DynamicHeaderProps, 'title'>) => {
     const { canGoBack, goBack, navigate } = useNavigation();
@@ -131,7 +133,7 @@ export const EmptyHeader = memo(
           {
             backgroundColor: isHiddenBackground
               ? 'transparent'
-              : colors.background.default,
+              : backgroundColor ? backgroundColor : colors.background.default,
           },
         ]}
       >
@@ -150,21 +152,7 @@ export const EmptyHeader = memo(
                     <Identicon address={address || ''} diameter={36} />
                   </TouchableOpacity>
                 ) : (
-                  <View style={styles.networkContainer}>
-                    <Text style={styles.titleNetwork}>{'Network'}</Text>
-                    <TouchableOpacity
-                      style={styles.networkTitleContainer}
-                      onPress={onPressNetwork}
-                    >
-                      <Text style={styles.titleNetworkValue}>
-                        {networkName}
-                      </Text>
-                      <Image
-                        source={icons.iconChevronDown}
-                        style={styles.iconDropdown}
-                      />
-                    </TouchableOpacity>
-                  </View>
+                  <></>
                 )
               ) : (
                 <TouchableOpacity
@@ -175,6 +163,22 @@ export const EmptyHeader = memo(
                 </TouchableOpacity>
               )
             ) : null}
+
+            {isShowNetwork && (
+              <View style={styles.networkContainer}>
+                <Text style={styles.titleNetwork}>{'Network'}</Text>
+                <TouchableOpacity
+                  style={styles.networkTitleContainer}
+                  onPress={onPressNetwork}
+                >
+                  <Text style={styles.titleNetworkValue}>{networkName}</Text>
+                  <Image
+                    source={icons.iconChevronDown}
+                    style={styles.iconDropdown}
+                  />
+                </TouchableOpacity>
+              </View>
+            )}
           </View>
           {children}
         </View>

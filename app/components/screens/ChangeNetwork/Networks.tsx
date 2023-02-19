@@ -407,6 +407,11 @@ export class NetworkList extends PureComponent {
     });
   };
 
+  goBack = () => {
+    this.props.onClose(false);
+    this.props.navigation.goBack();
+  };
+
   render = () => {
     const styles = this.getStyles();
     return (
@@ -424,6 +429,14 @@ export class NetworkList extends PureComponent {
           {this.renderOtherNetworks()}
         </ScrollView>
         <View style={styles.footer}>
+          <StyledButton
+            type="cancel"
+            onPress={this.goBack}
+            containerStyle={styles.footerButton}
+            testID={'done-network-button'}
+          >
+            {strings('select.done')}
+          </StyledButton>
           <StyledButton
             type="confirm"
             onPress={this.goToNetworkSettings}

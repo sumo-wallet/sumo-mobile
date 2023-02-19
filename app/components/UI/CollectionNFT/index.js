@@ -100,6 +100,7 @@ const createStyles = (colors) =>
       flexDirection: 'row',
       justifyContent: 'space-between',
       backgroundColor: colors.background.walletBody,
+      marginTop: 8,
     },
     containerSetting: {
       justifyContent: 'center',
@@ -109,10 +110,10 @@ const createStyles = (colors) =>
       padding: 12,
       width: 40,
       height: 40,
-      backgroundColor: colors.box.default,
       borderRadius: 20,
       justifyContent: 'center',
       alignItems: 'center',
+      backgroundColor: colors.search.default,
     },
     icon: {
       width: 20,

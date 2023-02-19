@@ -9,9 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { colors } from '../../../styles/common';
 import { icons, images } from '../../../assets';
-import { RawFeatureInterface } from './types';
 import { Hot24hComponent } from './components/Hot24hComponent';
 import FastImage from 'react-native-fast-image';
 import { FavoriteComponent } from './components/FavoriteComponent';
@@ -88,7 +86,7 @@ const createStyles = (colors: any) =>
     },
     subTitleFeature: {
       fontSize: 12,
-      fontWeight: '400',
+      fontWeight: '500',
       color: colors.text.default,
     },
     iconFeature: {
@@ -132,36 +130,6 @@ export const HomeScreen = memo(() => {
   const styles = createStyles(colors);
   const walletHomeConfig = useGetWalletHome();
   const { chains } = useGetChain();
-  // const featureData = useMemo((): RawFeatureInterface[] => {
-  //   return [
-  //     {
-  //       title: 'Pool',
-  //       icon: icons.iconCoin,
-  //       url: 'https://pancakeswap.finance/pools',
-  //     },
-  //     {
-  //       title: 'Farm',
-  //       icon: icons.iconBagCoin,
-  //       url: 'https://pancakeswap.finance/farms',
-  //     },
-  //     {
-  //       title: 'Lottery',
-  //       icon: icons.iconInvoice,
-  //       url: 'https://pancakeswap.finance/lottery',
-  //     },
-  //     {
-  //       title: 'Prediction',
-  //       icon: icons.iconTarget,
-  //       url: 'https://pancakeswap.finance/prediction',
-  //     },
-  //     {
-  //       title: 'Loan',
-  //       icon: icons.iconBagCoin,
-  //       url: 'https://app.compound.finance/markets?market=1_USDC_0xc3d688B66703497DAA19211EEdff47f25384cdc3',
-  //     },
-  //   ];
-  // }, []);
-
   const { news } = useGetNews();
   const { tickers } = useGetTickers(walletHomeConfig.homeConfig?.hotToken);
 
@@ -297,7 +265,11 @@ export const HomeScreen = memo(() => {
         data: { msg: strings('account_details.account_copied_to_clipboard') },
       }),
     );
-  }, []);
+  }, [dispatch, selectedAddress]);
+
+  const onShowQRAddress = useCallback(async () => {
+    navigation.navigate(ROUTES.Receive);
+  }, [navigation]);
 
   const onRefresh = useCallback(async () => {
     requestAnimationFrame(async () => {
@@ -333,21 +305,13 @@ export const HomeScreen = memo(() => {
 
   const renderWalletBalance = useCallback(() => {
     return (
-      <View>
-        <InformationFrame address={selectedAddress} onManage={onClipBoard} />
-      </View>
+      <InformationFrame
+        address={selectedAddress}
+        onManage={onClipBoard}
+        onShowQR={onShowQRAddress}
+      />
     );
-  }, [
-    accounts,
-    conversionRate,
-    currentCurrency,
-    identities,
-    navigation,
-    selectedAddress,
-    ticker,
-    tokens,
-    styles,
-  ]);
+  }, [selectedAddress, onClipBoard, onShowQRAddress]);
 
   const getNetworkName = () => {
     const currentChain = chains.find(
@@ -363,6 +327,7 @@ export const HomeScreen = memo(() => {
         title={''}
         isHiddenTitle
         hideGoBack
+        isShowNetwork
         style={styles.containerHeader}
         isShowAvatar={false}
         networkName={getNetworkName()}

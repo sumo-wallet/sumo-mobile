@@ -10,7 +10,7 @@ const createStyles = (colors) =>
       flexDirection: 'row',
       paddingHorizontal: 16,
       paddingVertical: 16,
-      backgroundColor: colors.box.default,
+      backgroundColor: colors.background.walletBody,
     },
     arrow: {
       flex: 1,

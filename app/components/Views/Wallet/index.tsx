@@ -20,8 +20,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import ScrollableTabView from 'react-native-scrollable-tab-view';
 import DefaultTabBar from 'react-native-scrollable-tab-view/DefaultTabBar';
 import { fontStyles, baseStyles } from '../../../styles/common';
-import AccountOverview from '../../UI/AccountOverview';
-import Tokens from '../../UI/Tokens';
 import { getWalletNavbarOptions } from '../../UI/Navbar';
 import { strings } from '../../../../locales/i18n';
 import { renderFromWei, weiToFiat, hexToBN } from '../../../util/number';
@@ -47,7 +45,7 @@ const createStyles = (colors: any) =>
   StyleSheet.create({
     wrapper: {
       flex: 1,
-      backgroundColor: colors.background.walletBody,
+      backgroundColor: colors.background.walletHeader,
     },
     tabUnderlineStyle: {
       height: 2,
@@ -94,6 +92,7 @@ const createStyles = (colors: any) =>
     title: {
       fontSize: 16,
       fontWeight: '600',
+      marginLeft: 10,
       color: colors.text.default,
     },
     iconArrow: {
@@ -249,7 +248,7 @@ const Wallet = ({ navigation }: any) => {
         underlineStyle={styles.tabUnderlineStyle}
         activeTextColor={colors.text.default}
         inactiveTextColor={colors.text.muted}
-        backgroundColor={colors.background.default}
+        backgroundColor={colors.background.walletHeader}
         tabStyle={styles.tabStyle}
         textStyle={styles.textStyle}
         style={styles.tabBar}
@@ -383,6 +382,7 @@ const Wallet = ({ navigation }: any) => {
         hideGoBack
         isShowAvatar
         address={selectedAddress}
+        backgroundColor={colors.background.walletHeader}
         centerComponent={
           <TouchableOpacity
             style={styles.containerHeader}

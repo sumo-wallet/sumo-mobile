@@ -12,9 +12,10 @@ const createStyles = (colors: any) =>
     wrapper: {
       padding: 16,
       borderBottomWidth: 4,
+      borderBottomColor: colors.background.walletHeader,
+      backgroundColor: colors.background.walletBody,
       borderTopLeftRadius: 20,
       borderTopRightRadius: 20,
-      backgroundColor: colors.background.walletBody,
     },
     title: {
       fontSize: 14,
@@ -34,6 +35,7 @@ const createStyles = (colors: any) =>
       width: 14,
       height: 14,
       marginHorizontal: 4,
+      tintColor: colors.text.default,
     },
     containerTotal: {
       flexDirection: 'row',
@@ -41,7 +43,7 @@ const createStyles = (colors: any) =>
       paddingBottom: 12,
       alignItems: 'center',
       justifyContent: 'space-between',
-      borderBottomWidth: 1,
+      borderBottomWidth: 0.6,
       borderBottomColor: colors.border.muted,
     },
     titleAmount: {
@@ -56,7 +58,8 @@ const createStyles = (colors: any) =>
     },
     containerWallet: {
       flexDirection: 'row',
-      marginTop: 12,
+      marginTop: 14,
+      marginBottom: 2,
       alignItems: 'center',
     },
     titleWallet: {
