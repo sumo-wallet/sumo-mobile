@@ -1,17 +1,15 @@
 import React, { memo, useCallback, useMemo } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useTheme } from '../../../../util/theme';
-import { ModelCategory, ModelCategoryApp } from 'app/types';
+import { MarketplaceCollectionCategory, ModelCategory, ModelCategoryApp } from 'app/types';
 import FastImage from 'react-native-fast-image';
 import { useGetCollectionCategory } from '../../../hooks/Collection/useGetCollectionCategory';
+import { FlatList } from 'react-native-gesture-handler';
 
 const createStyles = (colors: any) =>
   StyleSheet.create({
     screenWrapper: {
       backgroundColor: colors.background.default,
-      padding: 16,
-      marginVertical: 16,
-      marginHorizontal: -16,
     },
     titleHeader: {
       fontSize: 12,
@@ -33,10 +31,12 @@ const createStyles = (colors: any) =>
     containerItem: {
       flexDirection: 'row',
       marginVertical: 22,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginHorizontal: 6,
     },
     containerFlatList: {
       flexDirection: 'row',
-      flexWrap: 'wrap',
     },
     nameDapp: {
       fontSize: 14,
@@ -51,50 +51,38 @@ const createStyles = (colors: any) =>
     },
   });
 
-export interface RawDappInterface {
-  title: string;
-  subTitle: string;
-}
 
-export const Category = function Category({
-  title,
-  subTitle,
-}: RawDappInterface) {
+export const Category = function Category() {
   const { colors } = useTheme();
   const styles = createStyles(colors);
   // const navigation = useNavigation();
   // const dispatch = useDispatch();
   const { categories } = useGetCollectionCategory();
 
-  const handleCategoryDetail = (item: ModelCategory) => { };
+  const handleCategoryDetail = (item: MarketplaceCollectionCategory) => { };
+  const renderItem = ({ item }: { item: MarketplaceCollectionCategory }) => {
+    return (
+      <TouchableOpacity
+        key={item.name}
+        style={[styles.containerItem, { backgroundColor: item?.color }]}
+        onPress={() => {
+          handleCategoryDetail(item);
+        }}
+      >
+        <FastImage
+          source={{ uri: item?.imageUrl || '' }}
+          style={styles.icon}
+          resizeMode={FastImage.resizeMode.contain}
+        />
+        <Text style={styles.nameDapp}>{item.name}</Text>
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <View style={styles.screenWrapper}>
-      <Text style={styles.titleHeader}>{title}</Text>
-      <Text style={styles.title}>{subTitle}</Text>
-      {/* <Text style={styles.title}>{JSON.stringify(data)}</Text> */}
       <View style={styles.containerFlatList}>
-        {categories.map((item, index) => {
-          if (item) {
-            return (
-              <TouchableOpacity
-                key={index}
-                style={[styles.containerItem, { backgroundColor: item?.name }]}
-                onPress={() => {
-                  handleCategoryDetail(item);
-                }}
-              >
-                <FastImage
-                  source={{ uri: item?.imageUrl || '' }}
-                  style={styles.icon}
-                  resizeMode={FastImage.resizeMode.contain}
-                />
-                <Text style={styles.nameDapp}>{item.name}</Text>
-              </TouchableOpacity>
-            );
-          }
-          return <View />;
-        })}
+        <FlatList data={categories} renderItem={renderItem} horizontal showsHorizontalScrollIndicator={false} />
       </View>
     </View>
   );
