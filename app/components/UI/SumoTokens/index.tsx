@@ -97,7 +97,9 @@ const createStyles = (colors: any) =>
   StyleSheet.create({
     wrapper: {
       flex: 1,
-      minHeight: 600,
+      backgroundColor: colors.background.walletBody,
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
     },
     wrapperTokens: {
       flex: 1,
@@ -115,7 +117,6 @@ const createStyles = (colors: any) =>
     containerSearchBar: {
       flexDirection: 'row',
       justifyContent: 'space-between',
-      backgroundColor: colors.box.default,
       marginTop: 8,
     },
     containerSetting: {
@@ -130,6 +131,7 @@ const createStyles = (colors: any) =>
     icon: {
       width: 20,
       height: 20,
+      tintColor: colors.text.default,
     },
     text: {
       fontSize: 20,
@@ -218,7 +220,6 @@ const createStyles = (colors: any) =>
     },
     containerList: {
       flexGrow: 1,
-      backgroundColor: colors.background.walletHeader,
     },
   });
 
@@ -242,65 +243,6 @@ const SumoTokens = ({
   detectedTokens,
   isTokenDetectionEnabled,
 }: ISumoTokenProp) => {
-  // static propTypes = {
-  //   /**
-  //    * Navigation object required to push
-  //    * the Asset detail view
-  //    */
-  //   navigation: PropTypes.object,
-  //   /**
-  //    * Array of assets (in this case ERC20 tokens)
-  //    */
-  //   tokens: PropTypes.array,
-  //   /**
-  //    * Network provider chain id
-  //    */
-  //   chainId: PropTypes.string,
-  //   /**
-  //    * ETH to current currency conversion rate
-  //    */
-  //   conversionRate: PropTypes.number,
-  //   /**
-  //    * Currency code of the currently-active currency
-  //    */
-  //   currentCurrency: PropTypes.string,
-  //   /**
-  //    * Object containing token balances in the format address => balance
-  //    */
-  //   tokenBalances: PropTypes.object,
-  //   /**
-  //    * Object containing token exchange rates in the format address => exchangeRate
-  //    */
-  //   tokenExchangeRates: PropTypes.object,
-  //   /**
-  //    * Array of transactions
-  //    */
-  //   transactions: PropTypes.array,
-  //   /**
-  //    * Primary currency, either ETH or Fiat
-  //    */
-  //   primaryCurrency: PropTypes.string,
-  //   /**
-  //    * A bool that represents if the user wants to hide zero balance token
-  //    */
-  //   hideZeroBalanceTokens: PropTypes.bool,
-  //   /**
-  //    * List of tokens from TokenListController
-  //    */
-  //   tokenList: PropTypes.object,
-  //   /**
-  //    * List of detected tokens from TokensController
-  //    */
-  //   detectedTokens: PropTypes.array,
-  //   /**
-  //    * Boolean that indicates if token detection is enabled
-  //    */
-  //   isTokenDetectionEnabled: PropTypes.bool,
-  //   selectedAddress: PropTypes.number,
-  //   identities: PropTypes.object,
-  //   accounts: PropTypes.object,
-  // };
-
   const { colors, themeAppearance } = useTheme();
   const styles = createStyles(colors);
   const navigation = useNavigation();
@@ -349,7 +291,6 @@ const SumoTokens = ({
           <Image source={icons.iconSetting} style={styles.iconManageToken} />
           <Text style={styles.addText}>{strings('wallet.add_tokens')}</Text>
         </TouchableOpacity>
-        <View style={{ height: 600 }}></View>
       </View>
     );
   };

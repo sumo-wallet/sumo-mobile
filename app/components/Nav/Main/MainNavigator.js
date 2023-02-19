@@ -498,7 +498,7 @@ export const BottomTabContainer = () => {
         name={ROUTES.NftScreen}
         component={NFTMarketplaceTabModalFlow}
         options={{
-          title: 'Nft',
+          title: 'Collection',
           tabBarIcon: ({ color }) => {
             return (
               <Image

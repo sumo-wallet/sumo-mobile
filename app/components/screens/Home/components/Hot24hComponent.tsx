@@ -21,6 +21,7 @@ const createStyles = (colors: any) =>
   StyleSheet.create({
     container: {
       flex: 1,
+      marginTop: 6,
     },
     title: {
       fontSize: 18,
@@ -65,7 +66,7 @@ const createStyles = (colors: any) =>
     },
     titlePercent: {
       fontSize: 18,
-      fontWeight: '500',
+      fontWeight: '700',
     },
     titleAmount: {
       fontSize: 12,
@@ -98,7 +99,7 @@ export const Hot24hComponent = function Hot24hComponent({
           {/* <Image source={item.icon} style={styles.icon} /> */}
           <Text style={styles.nameCoin}>
             {item.iso}
-            <Text style={styles.subNameCoin}>{' / USD'}</Text>
+            <Text style={styles.subNameCoin}>{' /USD'}</Text>
           </Text>
           <View style={styles.containerPercent}>
             <Text
