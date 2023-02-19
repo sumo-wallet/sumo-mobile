@@ -130,6 +130,11 @@ export const DappsScreen = React.memo(() => {
           onPressEnter={() => {
             onSubmitSearch(searchText);
           }}
+          onOpenBrowser={() => {
+            nav.navigate(Routes.BROWSER_TAB_HOME, {
+              screen: Routes.BROWSER_VIEW,
+            });
+          }}
         />
         <CategoryHeader
           pageIndex={pageIndex}
