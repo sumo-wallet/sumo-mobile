@@ -6,8 +6,10 @@ import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../../../util/theme';
 import { fontStyles } from '../../../styles/common';
 import { Category } from './components/Category';
+import Auction from './components/Auction';
+import Collection from './components/Collection';
 
-const createStyles = (colors) =>
+const createStyles = (colors: any) =>
   StyleSheet.create({
     wrapper: {
       backgroundColor: colors.background.default,
@@ -58,15 +60,16 @@ const createStyles = (colors) =>
     },
   });
 export const NftMarketplaceScreen = React.memo(() => {
-  const navigation = useNavigation();
+  // const navigation = useNavigation();
   const { colors } = useTheme();
   const styles = createStyles(colors);
   return (
     <SafeAreaView style={styles.wrapper}>
       <View style={styles.wrapper}>
-        <Category
-          title='category'
-          subTitle='' />
+        <Category />
+        <Auction
+          title='Hot Bids' />
+        <Collection />
         {/* <CollectibleContracts
           key={'nfts-tab'}
           navigation={navigation}

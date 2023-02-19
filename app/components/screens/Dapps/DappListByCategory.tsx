@@ -58,7 +58,13 @@ export const DappListByCategory = React.memo(
 
     const renderItemResult = React.useCallback(
       ({ item }: { item: ModelDApp }) => {
-        return <SearchResultCell item={item} onPress={handlePressDapp} />;
+        return (
+          <SearchResultCell
+            item={item}
+            onPress={handlePressDapp}
+            key={item.id}
+          />
+        );
       },
       [handlePressDapp],
     );
@@ -71,7 +77,10 @@ export const DappListByCategory = React.memo(
       );
     }, [colors.border.muted]);
 
-    const keyEx = React.useCallback((i: ModelDApp) => `${i}`, []);
+    const keyEx = React.useCallback(
+      (i: ModelDApp) => `category-${category.id}-dapp.id-${i.name}`,
+      [category.id],
+    );
 
     const renderEmptyComponent = React.useCallback(() => {
       return (

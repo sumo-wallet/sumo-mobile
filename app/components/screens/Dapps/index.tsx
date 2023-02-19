@@ -98,7 +98,7 @@ export const DappsScreen = React.memo(() => {
         }
       }
     },
-    [category],
+    [categoryTab],
   );
 
   const onSubmitSearch = (text: string) => {

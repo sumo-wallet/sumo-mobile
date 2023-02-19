@@ -6,13 +6,13 @@ import { useCallback, useState, useEffect } from 'react';
 import { client } from '../../../services/apis';
 import useErrorHandler from '../useErrorHandler.hook';
 
-interface SystemNotification {
+interface TrendingCollection {
   isLoadingTrendingCollection: boolean;
   trendingCollections: ModelCollection[];
   hasMore: boolean;
 }
 
-export function useGetHotAuction(): SystemNotification {
+export function useGetTrendingCollection(): TrendingCollection {
   const [isLoadingTrendingCollection, setLoadingTrendingCollection] =
     useState<boolean>(false);
   const [trendingCollections, setTrendingCollections] = useState<
