@@ -47,7 +47,7 @@ const createStyles = (colors: any) =>
   StyleSheet.create({
     wrapper: {
       flex: 1,
-      backgroundColor: colors.background.default,
+      backgroundColor: colors.background.walletBody,
     },
     tabUnderlineStyle: {
       height: 2,
@@ -60,6 +60,7 @@ const createStyles = (colors: any) =>
     },
     tabBar: {
       borderColor: colors.border.muted,
+      borderWidth: 0.01,
     },
     textStyle: {
       fontSize: 16,

@@ -3928,10 +3928,10 @@
     "@testing-library/dom" "^8.5.0"
     "@types/react-dom" "^18.0.0"
 
-"@thanhpn1990/design-tokens@^1.11.3":
-  version "1.11.3"
-  resolved "https://registry.yarnpkg.com/@thanhpn1990/design-tokens/-/design-tokens-1.11.3.tgz#3b8596326b941ed415ebeb1424eff8600742504d"
-  integrity sha512-zMlv0DTWPiTfA3Ig2e7QprZlnPkC8KKjULgVO6PLpPINRmYQUDcV5wVSUZA16jD553DQWdPvKmT4dxvDCZ6DpQ==
+"@thanhpn1990/design-tokens@^1.11.4":
+  version "1.11.4"
+  resolved "https://registry.yarnpkg.com/@thanhpn1990/design-tokens/-/design-tokens-1.11.4.tgz#b8946b140d2588c0ab98a23ada3b11755ef349f4"
+  integrity sha512-4SwiwlwwpKDNGoBu++BcnamuDtyq2pRtfctyhueS2JzTvcN3zTxr6RbcQ6LPxGBToYWZCDmswx2Qlf05AqoHLA==
 
 "@tootallnate/once@1":
   version "1.1.2"

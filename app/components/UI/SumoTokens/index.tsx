@@ -116,6 +116,7 @@ const createStyles = (colors: any) =>
       flexDirection: 'row',
       justifyContent: 'space-between',
       backgroundColor: colors.box.default,
+      marginTop: 8,
     },
     containerSetting: {
       justifyContent: 'center',
@@ -123,7 +124,7 @@ const createStyles = (colors: any) =>
     },
     containerIcon: {
       padding: 12,
-      backgroundColor: colors.background.alternativeHover,
+      backgroundColor: colors.search.default,
       borderRadius: 40,
     },
     icon: {
@@ -136,6 +137,7 @@ const createStyles = (colors: any) =>
       ...fontStyles.normal,
     },
     add: {
+      marginTop: 2,
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
@@ -160,7 +162,7 @@ const createStyles = (colors: any) =>
       flex: 1,
       paddingBottom: 30,
       alignItems: 'center',
-      marginTop: 24,
+      backgroundColor: colors.background.walletBody,
     },
     balances: {
       flex: 1,
@@ -204,6 +206,7 @@ const createStyles = (colors: any) =>
     },
     emptyText: {
       marginBottom: 8,
+      marginTop: 8,
       fontSize: 14,
       color: colors.text.alternative,
     },
@@ -215,7 +218,7 @@ const createStyles = (colors: any) =>
     },
     containerList: {
       flexGrow: 1,
-      backgroundColor: colors.box.default,
+      backgroundColor: colors.background.walletHeader,
     },
   });
 
@@ -346,6 +349,7 @@ const SumoTokens = ({
           <Image source={icons.iconSetting} style={styles.iconManageToken} />
           <Text style={styles.addText}>{strings('wallet.add_tokens')}</Text>
         </TouchableOpacity>
+        <View style={{ height: 600 }}></View>
       </View>
     );
   };

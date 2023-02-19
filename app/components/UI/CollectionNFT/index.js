@@ -44,14 +44,19 @@ const COLLECTIBLE_WIDTH = (DEVICE_WIDTH - 30 - 16) / 2;
 const createStyles = (colors) =>
   StyleSheet.create({
     wrapper: {
-      backgroundColor: colors.background.default,
+      backgroundColor: colors.background.walletHeader,
       flex: 1,
-      marginTop: 16,
     },
     emptyView: {
       justifyContent: 'center',
       alignItems: 'center',
       marginTop: 10,
+    },
+    listContainer: {
+      backgroundColor: colors.background.walletBody,
+      flex: 1,
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
     },
     add: {
       flexDirection: 'row',
@@ -94,6 +99,7 @@ const createStyles = (colors) =>
     containerSearchBar: {
       flexDirection: 'row',
       justifyContent: 'space-between',
+      backgroundColor: colors.background.walletBody,
     },
     containerSetting: {
       justifyContent: 'center',
@@ -165,7 +171,11 @@ const createStyles = (colors) =>
       fontSize: 16,
       marginLeft: 8,
       ...fontStyles.bold,
-    }
+    },
+    buttonReceiveContainer: {
+      backgroundColor: colors.background.walletBody,
+      paddingBottom: 8,
+    },
   });
 
 /**
@@ -360,10 +370,10 @@ const CollectionNFT = ({
 
   const renderList = useCallback(
     () => (
+
       <FlatList
-        // style={{ height: '100%' }}
-        // contentContainerStyle={{ flexGrow: 1 }}
         data={collectibleContracts}
+        style={styles.listContainer}
         numColumns={2}
         renderItem={({ item, index }) => {
           return (
@@ -386,9 +396,12 @@ const CollectionNFT = ({
                 // onInputSubmit={setSearchText}
                 />
                 <View style={styles.containerSetting}>
-                  <TouchableOpacity style={styles.containerIcon} onPress={() => {
-                    navigation.navigate(Routes.NFT.NFT_MANAGEMENT);
-                  }}>
+                  <TouchableOpacity
+                    style={styles.containerIcon}
+                    onPress={() => {
+                      navigation.navigate(Routes.NFT.NFT_MANAGEMENT);
+                    }}
+                  >
                     <Image source={icons.iconSetting} style={styles.icon} />
                   </TouchableOpacity>
                 </View>
@@ -404,8 +417,16 @@ const CollectionNFT = ({
     ),
     [
       collectibleContracts,
-      renderFavoriteCollectibles,
+      styles.nftItem,
+      styles.containerSearchBar,
+      styles.containerSetting,
+      styles.containerIcon,
+      styles.icon,
       renderCollectibleContract,
+      renderEmpty,
+      renderFavoriteCollectibles,
+      navigation,
+      renderFooter,
     ],
   );
 
@@ -422,16 +443,21 @@ const CollectionNFT = ({
           </View>
         )}
       {renderList()}
-      <TouchableOpacity style={styles.buttonReceive} onPress={() => {
-        navigation.navigate(ROUTES.Receive);
-      }}>
-        <IonicIcon
-          name={'ios-arrow-round-down'}
-          size={24}
-          color={colors.background.default}
-        />
-        <Text style={styles.buttonReceiveTitle}>{'Receive'}</Text>
-      </TouchableOpacity>
+      <View style={styles.buttonReceiveContainer}>
+        <TouchableOpacity
+          style={styles.buttonReceive}
+          onPress={() => {
+            navigation.navigate(ROUTES.Receive);
+          }}
+        >
+          <IonicIcon
+            name={'ios-arrow-round-down'}
+            size={24}
+            color={colors.background.default}
+          />
+          <Text style={styles.buttonReceiveTitle}>{'Receive'}</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };
