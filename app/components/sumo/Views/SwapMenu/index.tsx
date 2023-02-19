@@ -6,8 +6,6 @@ import React, {
   useContext,
 } from 'react';
 import {
-  RefreshControl,
-  ScrollView,
   InteractionManager,
   ActivityIndicator,
   StyleSheet,
@@ -19,32 +17,32 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import ScrollableTabView from 'react-native-scrollable-tab-view';
 import DefaultTabBar from 'react-native-scrollable-tab-view/DefaultTabBar';
-import { fontStyles, baseStyles } from '../../../styles/common';
-import AccountOverview from '../../UI/AccountOverview';
-import Tokens from '../../UI/Tokens';
+import { fontStyles, baseStyles } from '../../../../styles/common';
+// import AccountOverview from '../../../UI/AccountOverview';
+// import Tokens from '../../UI/Tokens';
 import SwapsAmountView from '../../UI/SumoSwaps';
-import SumoExchangeView from '../../UI/SumoExchange';
+import SumoExchangeView from '../../../UI/SumoExchange';
 import BridgeView from '../../UI/SumoSwaps/BridgeView';
 
-import { getWalletNavbarOptions } from '../../UI/Navbar';
-import { strings } from '../../../../locales/i18n';
-import { renderFromWei, weiToFiat, hexToBN } from '../../../util/number';
-import Engine from '../../../core/Engine';
-import CollectibleContracts from '../../UI/CollectibleContracts';
-import Analytics from '../../../core/Analytics/Analytics';
-import { ANALYTICS_EVENT_OPTS } from '../../../util/analytics';
-import { getTicker } from '../../../util/transactions';
-import OnboardingWizard from '../../UI/OnboardingWizard';
-import ErrorBoundary from '../ErrorBoundary';
-import { DrawerContext } from '../../Nav/Main/MainNavigator';
-import { useTheme } from '../../../util/theme';
-import { shouldShowWhatsNewModal } from '../../../util/onboarding';
-import Logger from '../../../util/Logger';
-import Routes from '../../../constants/navigation/Routes';
-import { DynamicHeader } from '../../Base/DynamicHeader';
-import { icons } from '../../../assets';
-import { toggleAccountsModal } from '../../../actions/modals';
-// import { isDefaultAccountName } from '../../../util/ENSUtils';
+import { getWalletNavbarOptions } from '../../../UI/Navbar';
+import { strings } from '../../../../../locales/i18n';
+import { renderFromWei, weiToFiat, hexToBN } from '../../../../util/number';
+import Engine from '../../../../core/Engine';
+// import CollectibleContracts from '../../../UI/CollectibleContracts';
+import Analytics from '../../../../core/Analytics/Analytics';
+import { ANALYTICS_EVENT_OPTS } from '../../../../util/analytics';
+import { getTicker } from '../../../../util/transactions';
+import OnboardingWizard from '../../../UI/OnboardingWizard';
+import ErrorBoundary from '../../../Views/ErrorBoundary';
+import { DrawerContext } from '../../../Nav/Main/MainNavigator';
+import { useTheme } from '../../../../util/theme';
+import { shouldShowWhatsNewModal } from '../../../../util/onboarding';
+import Logger from '../../../../util/Logger';
+import Routes from '../../../../constants/navigation/Routes';
+import { DynamicHeader } from '../../../Base/DynamicHeader';
+import { icons } from '../../../../assets';
+import { toggleAccountsModal } from '../../../../actions/modals';
+// import { isDefaultAccountName } from '../../../../util/ENSUtils';
 
 const createStyles = (colors: any) =>
   StyleSheet.create({

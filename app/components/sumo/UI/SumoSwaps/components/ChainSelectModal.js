@@ -13,14 +13,14 @@ import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Fuse from 'fuse.js';
 import { connect } from 'react-redux';
-import Device from '../../../../util/device';
-import { strings } from '../../../../../locales/i18n';
-import { fontStyles } from '../../../../styles/common';
-import Text from '../../../Base/Text';
-import ListItem from '../../../Base/ListItem';
-import ModalDragger from '../../../Base/ModalDragger';
+import Device from '../../../../../util/device';
+import { strings } from '../../../../../../locales/i18n';
+import { fontStyles } from '../../../../../styles/common';
+import Text from '../../../../Base/Text';
+import ListItem from '../../../../Base/ListItem';
+import ModalDragger from '../../../../Base/ModalDragger';
 import TokenIcon from './TokenIcon';
-import { useTheme } from '../../../../util/theme';
+import { useTheme } from '../../../../../util/theme';
 
 const createStyles = (colors) =>
   StyleSheet.create({

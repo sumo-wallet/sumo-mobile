@@ -16,9 +16,9 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { View as AnimatableView } from 'react-native-animatable';
+// import { View as AnimatableView } from 'react-native-animatable';
 import IonicIcon from 'react-native-vector-icons/Ionicons';
-import Logger from '../../../util/Logger';
+import Logger from '../../../../util/Logger';
 import {
   balanceToFiat,
   fromTokenMinimalUnitString,
@@ -26,10 +26,10 @@ import {
   toTokenMinimalUnit,
   weiToFiat,
   safeNumberToBN,
-} from '../../../util/number';
-import { safeToChecksumAddress } from '../../../util/address';
+} from '../../../../util/number';
+import { safeToChecksumAddress } from '../../../../util/address';
 import { swapsUtils } from '@metamask/swaps-controller';
-import { ANALYTICS_EVENT_OPTS } from '../../../util/analytics';
+import { ANALYTICS_EVENT_OPTS } from '../../../../util/analytics';
 
 import {
   setSwapsHasOnboarded,
@@ -39,39 +39,38 @@ import {
   swapsTokensSelector,
   swapsTokensWithBalanceSelector,
   swapsTopAssetsSelector,
-} from '../../../reducers/swaps';
-import Analytics from '../../../core/Analytics/Analytics';
-import Device from '../../../util/device';
-import Engine from '../../../core/Engine';
-import AppConstants from '../../../core/AppConstants';
+} from '../../../../reducers/swaps';
+import Analytics from '../../../../core/Analytics/Analytics';
+import Device from '../../../../util/device';
+import Engine from '../../../../core/Engine';
+import AppConstants from '../../../../core/AppConstants';
 
-import { strings } from '../../../../locales/i18n';
+import { strings } from '../../../../../locales/i18n';
 import {
   setQuotesNavigationsParams,
   isSwapsNativeAsset,
   isDynamicToken,
 } from './utils';
-import { getSwapsAmountNavbar } from '../Navbar';
+import { getSwapsAmountNavbar } from '../../../UI/Navbar';
 
 import Onboarding from './components/Onboarding';
-import useModalHandler from '../../Base/hooks/useModalHandler';
-import Text from '../../Base/Text';
-import Keypad from '../../Base/Keypad';
-import StyledButton from '../StyledButton';
-import ScreenView from '../FiatOrders/components/ScreenView';
+import useModalHandler from '../../../Base/hooks/useModalHandler';
+import Text from '../../../Base/Text';
+// import Keypad from '../../../Base/Keypad';
+import StyledButton from '../../../UI/StyledButton';
+import ScreenView from '../../../UI/FiatOrders/components/ScreenView';
 import ActionAlert from './components/ActionAlert';
 import TokenSelectModal from './components/TokenSelectModal';
 import SlippageModal from './components/SlippageModal';
 import useBalance from './utils/useBalance';
 import useBlockExplorer from './utils/useBlockExplorer';
 import InfoModal from './components/InfoModal';
-import { toLowerCaseEquals } from '../../../util/general';
-import { AlertType } from '../../Base/Alert';
-import { isZero, gte } from '../../../util/lodash';
-import { useTheme } from '../../../util/theme';
+import { toLowerCaseEquals } from '../../../../util/general';
+import { AlertType } from '../../../Base/Alert';
+import { isZero, gte } from '../../../../util/lodash';
+import { useTheme } from '../../../../util/theme';
 import TokenIcon from './components/TokenIcon';
 import Icon from 'react-native-vector-icons/FontAwesome';
-// import TokenIcon from './../../../TokenIcon';
 
 const createStyles = (colors) =>
   StyleSheet.create({
