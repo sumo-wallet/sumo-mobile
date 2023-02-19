@@ -19,31 +19,31 @@ import Fuse from 'fuse.js';
 import { connect } from 'react-redux';
 import { isValidAddress } from 'ethereumjs-util';
 
-import Device from '../../../../util/device';
+import Device from '../../../../../util/device';
 import {
   balanceToFiat,
   hexToBN,
   renderFromTokenMinimalUnit,
   renderFromWei,
   weiToFiat,
-} from '../../../../util/number';
-import { safeToChecksumAddress } from '../../../../util/address';
+} from '../../../../../util/number';
+import { safeToChecksumAddress } from '../../../../../util/address';
 import { isSwapsNativeAsset } from '../utils';
-import { strings } from '../../../../../locales/i18n';
-import { fontStyles } from '../../../../styles/common';
+import { strings } from '../../../../../../locales/i18n';
+import { fontStyles } from '../../../../../styles/common';
 
-import Text from '../../../Base/Text';
-import ListItem from '../../../Base/ListItem';
-import ModalDragger from '../../../Base/ModalDragger';
+import Text from '../../../../Base/Text';
+import ListItem from '../../../../Base/ListItem';
+import ModalDragger from '../../../../Base/ModalDragger';
 import TokenIcon from './TokenIcon';
-import Alert from '../../../Base/Alert';
+import Alert from '../../../../Base/Alert';
 import useBlockExplorer from '../utils/useBlockExplorer';
 import useFetchTokenMetadata from '../utils/useFetchTokenMetadata';
-import useModalHandler from '../../../Base/hooks/useModalHandler';
+import useModalHandler from '../../../../Base/hooks/useModalHandler';
 import TokenImportModal from './TokenImportModal';
-import Analytics from '../../../../core/Analytics/Analytics';
-import { ANALYTICS_EVENT_OPTS } from '../../../../util/analytics';
-import { useTheme } from '../../../../util/theme';
+import Analytics from '../../../../../core/Analytics/Analytics';
+import { ANALYTICS_EVENT_OPTS } from '../../../../../util/analytics';
+import { useTheme } from '../../../../../util/theme';
 
 const createStyles = (colors) =>
   StyleSheet.create({

@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 import FA5Icon from 'react-native-vector-icons/FontAwesome5';
 import { useRatio } from '../utils';
-import Text from '../../../Base/Text';
-import { useTheme } from '../../../../util/theme';
+import Text from '../../../../Base/Text';
+import { useTheme } from '../../../../../util/theme';
 
 const createStyles = (colors) =>
   StyleSheet.create({

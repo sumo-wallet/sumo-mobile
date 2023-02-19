@@ -7,18 +7,18 @@ import { GAS_ESTIMATE_TYPES } from '@metamask/controllers';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { connect } from 'react-redux';
 
-import Text from '../../../Base/Text';
+import Text from '../../../../Base/Text';
 import InfoModal from './InfoModal';
-import EditGasFeeLegacy from '../../EditGasFeeLegacy';
-import EditGasFee1559 from '../../EditGasFee1559';
+import EditGasFeeLegacy from '../../../../UI/EditGasFeeLegacy';
+import EditGasFee1559 from '../../../../UI/EditGasFee1559';
 import {
   parseTransactionEIP1559,
   parseTransactionLegacy,
-} from '../../../../util/transactions';
-import useModalHandler from '../../../Base/hooks/useModalHandler';
-import { strings } from '../../../../../locales/i18n';
-import AppConstants from '../../../../core/AppConstants';
-import { useTheme } from '../../../../util/theme';
+} from '../../../../../util/transactions';
+import useModalHandler from '../../../../Base/hooks/useModalHandler';
+import { strings } from '../../../../../../locales/i18n';
+import AppConstants from '../../../../../core/AppConstants';
+import { useTheme } from '../../../../../util/theme';
 
 const GAS_OPTIONS = AppConstants.GAS_OPTIONS;
 
@@ -65,8 +65,8 @@ function GasEditModal({
     customGasFee
       ? customGasFee.selected ?? null
       : gasEstimateType === GAS_ESTIMATE_TYPES.FEE_MARKET
-      ? defaultGasFeeOptionFeeMarket
-      : defaultGasFeeOptionLegacy,
+        ? defaultGasFeeOptionFeeMarket
+        : defaultGasFeeOptionLegacy,
   );
   const [stopUpdateGas, setStopUpdateGas] = useState(false);
   const [hasEnoughEthBalance, setHasEnoughEthBalance] = useState(true);
@@ -305,8 +305,8 @@ function GasEditModal({
       customGasFee
         ? customGasFee.selected ?? null
         : gasEstimateType === GAS_ESTIMATE_TYPES.FEE_MARKET
-        ? GAS_OPTIONS.HIGH
-        : GAS_OPTIONS.MEDIUM,
+          ? GAS_OPTIONS.HIGH
+          : GAS_OPTIONS.MEDIUM,
     );
     dismiss();
   }, [customGasFee, dismiss, gasEstimateType]);

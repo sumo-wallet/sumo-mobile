@@ -30,28 +30,28 @@ import {
   renderFromWei,
   toWei,
   weiToFiat,
-} from '../../../util/number';
-import { isMainnetByChainId } from '../../../util/networks';
+} from '../../../../util/number';
+import { isMainnetByChainId } from '../../../../util/networks';
 import {
   getErrorMessage,
   getFetchParams,
   getQuotesNavigationsParams,
   isSwapsNativeAsset,
 } from './utils';
-import { strings } from '../../../../locales/i18n';
+import { strings } from '../../../../../locales/i18n';
 
-import Engine from '../../../core/Engine';
-import AppConstants from '../../../core/AppConstants';
-import Analytics from '../../../core/Analytics/Analytics';
-import Device from '../../../util/device';
-import { ANALYTICS_EVENT_OPTS } from '../../../util/analytics';
+import Engine from '../../../../core/Engine';
+import AppConstants from '../../../../core/AppConstants';
+import Analytics from '../../../../core/Analytics/Analytics';
+import Device from '../../../../util/device';
+import { ANALYTICS_EVENT_OPTS } from '../../../../util/analytics';
 
-import { getSwapsQuotesNavbar } from '../Navbar';
-import ScreenView from '../FiatOrders/components/ScreenView';
-import Text from '../../Base/Text';
-import Alert, { AlertType } from '../../Base/Alert';
-import StyledButton from '../StyledButton';
-import SliderButton from '../SliderButton';
+import { getSwapsQuotesNavbar } from '../../../UI/Navbar';
+import ScreenView from '../../../UI/FiatOrders/components/ScreenView';
+import Text from '../../../Base/Text';
+import Alert, { AlertType } from '../../../Base/Alert';
+import StyledButton from '../../../UI/StyledButton';
+// import SliderButton from '../SliderButton';
 
 import LoadingAnimation from './components/LoadingAnimation';
 import TokenIcon from './components/TokenIcon';
@@ -62,17 +62,17 @@ import ActionAlert from './components/ActionAlert';
 import ApprovalTransactionEditionModal from './components/ApprovalTransactionEditionModal';
 import GasEditModal from './components/GasEditModal';
 import InfoModal from './components/InfoModal';
-import useModalHandler from '../../Base/hooks/useModalHandler';
+import useModalHandler from '../../../Base/hooks/useModalHandler';
 import useBalance from './utils/useBalance';
-import { trackErrorAsAnalytics } from '../../../util/analyticsV2';
-import { decodeApproveData, getTicker } from '../../../util/transactions';
-import { toLowerCaseEquals } from '../../../util/general';
-import { swapsTokensSelector } from '../../../reducers/swaps';
-import { decGWEIToHexWEI } from '../../../util/conversions';
-import FadeAnimationView from '../FadeAnimationView';
-import Logger from '../../../util/Logger';
-import { useTheme } from '../../../util/theme';
-import { isQRHardwareAccount } from '../../../util/address';
+import { trackErrorAsAnalytics } from '../../../../util/analyticsV2';
+import { decodeApproveData, getTicker } from '../../../../util/transactions';
+import { toLowerCaseEquals } from '../../../../util/general';
+import { swapsTokensSelector } from '../../../../reducers/swaps';
+import { decGWEIToHexWEI } from '../../../../util/conversions';
+import FadeAnimationView from '../../../UI/FadeAnimationView';
+import Logger from '../../../../util/Logger';
+import { useTheme } from '../../../../util/theme';
+import { isQRHardwareAccount } from '../../../../util/address';
 
 const POLLING_INTERVAL = 30000;
 const SLIPPAGE_BUCKETS = {

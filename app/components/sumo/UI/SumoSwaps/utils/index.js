@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import BigNumber from 'bignumber.js';
 import { swapsUtils } from '@metamask/swaps-controller';
-import { strings } from '../../../../../locales/i18n';
-import AppConstants from '../../../../core/AppConstants';
+import { strings } from '../../../../../../locales/i18n';
+import AppConstants from '../../../../../core/AppConstants';
 
 const {
   ETH_CHAIN_ID,

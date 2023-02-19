@@ -6,14 +6,14 @@ import Modal from 'react-native-modal';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { swapsUtils } from '@metamask/swaps-controller';
 
-import EditPermission from '../../ApproveTransactionReview/EditPermission';
-import { fromTokenMinimalUnitString, hexToBN } from '../../../../util/number';
+import EditPermission from '../../../../UI/ApproveTransactionReview/EditPermission';
+import { fromTokenMinimalUnitString, hexToBN } from '../../../../../util/number';
 import {
   decodeApproveData,
   generateTxWithNewTokenAllowance,
-} from '../../../../util/transactions';
-import { useTheme } from '../../../../util/theme';
-import Logger from '../../../../util/Logger';
+} from '../../../../../util/transactions';
+import { useTheme } from '../../../../../util/theme';
+import Logger from '../../../../../util/Logger';
 
 const styles = StyleSheet.create({
   keyboardAwareWrapper: {

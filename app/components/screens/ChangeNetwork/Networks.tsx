@@ -85,6 +85,7 @@ const createStyles = (colors: ThemeColors) =>
     networkLabel: {
       fontSize: 14,
       color: colors.text.default,
+      fontWeight: '600',
       ...fontStyles.normal,
     },
     footer: {
