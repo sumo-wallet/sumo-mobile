@@ -1,6 +1,5 @@
 import React, { memo, useMemo, useState } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Colors } from '../../../../styles';
 import { icons } from '../../../../assets';
 import { renderFiat } from '../../../../util/number';
 import Engine from '../../../../core/Engine';
@@ -15,7 +14,7 @@ const createStyles = (colors: any) =>
       borderBottomWidth: 4,
       borderTopLeftRadius: 20,
       borderTopRightRadius: 20,
-      backgroundColor: colors.box.default,
+      backgroundColor: colors.background.walletBody,
     },
     title: {
       fontSize: 14,
@@ -104,7 +103,7 @@ export const BalanceFrame = memo(
                 { fontSize: 12, color: colors.primary.default },
               ]}
             >
-              {'+5.99%'}
+              {'-%'}
             </Text>
           </View>
         </View>

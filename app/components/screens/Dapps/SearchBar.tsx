@@ -45,7 +45,7 @@ export const SearchBar = ({
           direc: 'row',
           items: 'center',
           bor: 8,
-          bg: colors.box.default,
+          bg: colors.search.default,
           minH: 32,
         })}
       >
