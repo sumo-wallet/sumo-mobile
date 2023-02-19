@@ -30,15 +30,17 @@ export const BrowserHeader = ({
   const nav = useNavigator();
   const { colors } = useTheme();
   const dispatch = useDispatch();
-  const { activeTab: activeTabId } = useSelector((state: any) => state?.browser);
+  const { activeTab: activeTabId } = useSelector(
+    (state: any) => state?.browser,
+  );
 
   const handleCloseBrowser = React.useCallback(() => {
-    nav.goBack();
-  }, [nav])
-  const handleCloseTab = React.useCallback(() => {
     dispatch(closeTab(activeTabId));
     nav.goBack();
-  }, [])
+  }, [activeTabId, dispatch, nav]);
+  const handleCloseTab = React.useCallback(() => {
+    nav.goBack();
+  }, [nav]);
   return (
     <View
       style={Style.s({
@@ -52,7 +54,7 @@ export const BrowserHeader = ({
       })}
     >
       <View style={Style.s({ direc: 'row', items: 'center', py: 2 })}>
-        <TouchableOpacity onPress={goBack} >
+        <TouchableOpacity onPress={goBack}>
           <FastImage
             style={Style.s({ size: 20 })}
             source={icons.iconPrevious}
@@ -68,7 +70,7 @@ export const BrowserHeader = ({
         </TouchableOpacity>
       </View>
       <View style={Style.s({ direc: 'row', items: 'center', py: 2 })}>
-        <TouchableOpacity onPress={toggleOptions} >
+        <TouchableOpacity onPress={toggleOptions}>
           <FastImage
             style={Style.s({ size: 24 })}
             source={icons.iconMenu2}
@@ -82,7 +84,10 @@ export const BrowserHeader = ({
             tintColor={colors.icon.default}
           />
         </TouchableOpacity>
-        <TouchableOpacity onPress={handleCloseBrowser} style={Style.s({ ml: 24 })}>
+        <TouchableOpacity
+          onPress={handleCloseBrowser}
+          style={Style.s({ ml: 24 })}
+        >
           <FastImage
             style={Style.s({ size: 24 })}
             source={icons.iconClose2}
