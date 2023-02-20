@@ -124,6 +124,7 @@ export const DappsScreen = React.memo(() => {
         <SearchBar
           placeholder="Search DApp or enter a link"
           value={searchText}
+          showMenu
           onInputSubmit={(value) => {
             setSearchText(value);
           }}

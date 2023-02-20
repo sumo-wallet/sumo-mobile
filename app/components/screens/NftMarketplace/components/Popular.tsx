@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useMemo } from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useTheme } from '../../../../util/theme';
 import { ModelCategoryApp, ModelMarketItemData } from 'app/types';
 import FastImage from 'react-native-fast-image';
@@ -10,10 +10,11 @@ import { useGetHotAuction } from '../../../../components/hooks/Marketplace/useGe
 import { FlatList } from 'react-native-gesture-handler';
 import { icons } from '../../../../assets';
 
+const screenWidth = Dimensions.get('window').width;
+
 const createStyles = (colors: any) =>
   StyleSheet.create({
     screenWrapper: {
-      backgroundColor: colors.background.default,
       marginVertical: 8,
     },
     titleHeader: {
@@ -30,26 +31,35 @@ const createStyles = (colors: any) =>
       marginTop: 4,
     },
     icon: {
+      width: screenWidth * 0.9,
+      marginHorizontal: screenWidth * 0.05,
       height: 150,
       marginBottom: 8,
       borderRadius: 10,
     },
-    containerItem: {
-      minWidth: 200,
-      flexDirection: 'column',
-      marginLeft: 16,
-      borderColor: colors.border.default,
-      borderWidth: 0.5,
+    logo: {
+      width: 50,
+      height: 50,
       borderRadius: 10,
-      padding: 6,
+    },
+    containerItem: {
+      flex: 1,
+      height: 200,
+      width: '100%',
+      flexDirection: 'column',
     },
     containerHeaderTitle: {
       flexDirection: 'row',
       alignItems: 'center',
     },
     containerFlatList: {
+      paddingTop: 10,
+    },
+    containerLogo: {
       flexDirection: 'row',
-      flexWrap: 'wrap',
+      position: 'absolute',
+      top: 135,
+      left: 50,
     },
     nameDapp: {
       fontSize: 14,
@@ -91,12 +101,8 @@ const createStyles = (colors: any) =>
     },
   });
 
-export interface HeaderInterface {
-  title: string;
-  subTitle: string;
-}
 
-export const Auction = function Auction({ title, subTitle }: HeaderInterface) {
+export const Popular = function Popular() {
   const { colors } = useTheme();
   const styles = createStyles(colors);
   // const navigation = useNavigation();
@@ -117,18 +123,14 @@ export const Auction = function Auction({ title, subTitle }: HeaderInterface) {
           resizeMode={FastImage.resizeMode.cover}
         />
 
-        <View style={{ justifyContent: 'center' }}>
-          <Text style={styles.nameDapp}>{item.name}</Text>
-          <Text style={styles.subNameDapp}>{item.description}</Text>
-        </View>
-        <View style={styles.containerBidInfo}>
-          <View style={{ justifyContent: 'space-around', flex: 1 }}>
-            <Text style={styles.bidTitle}>{'Current bid'}</Text>
-            <Text style={styles.bidValue}>{item.price}</Text>
-          </View>
-          <View style={styles.bidTimeContainer}>
-            <Text style={styles.bidTitle}>{'Ends on'}</Text>
-            <Text style={styles.bidTime}>{item.price}</Text>
+        <View style={styles.containerLogo}>
+          <FastImage
+            source={{ uri: item.imageUrl }}
+            style={styles.logo}
+            resizeMode={FastImage.resizeMode.cover}
+          />
+          <View style={{ justifyContent: 'center', marginTop: 10, marginLeft: 8 }}>
+            <Text style={styles.nameDapp}>{item.name}</Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -138,20 +140,19 @@ export const Auction = function Auction({ title, subTitle }: HeaderInterface) {
   return (
     <View style={styles.screenWrapper}>
       <View style={styles.containerHeaderTitle}>
-        <Text style={styles.titleHeader}>{title}</Text>
+        <Text style={styles.titleHeader}>{'Popular'}</Text>
         <Image source={icons.iconHot} style={styles.iconHot} />
       </View>
-      <Text style={styles.title}>{subTitle}</Text>
-      <View style={styles.containerFlatList}>
-        <FlatList
-          data={auctions}
-          renderItem={renderItem}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-        />
-      </View>
+      <FlatList
+        style={styles.containerFlatList}
+        data={auctions}
+        renderItem={renderItem}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+      />
     </View>
   );
 };
 
-export default memo(Auction);
+export default memo(Popular);
