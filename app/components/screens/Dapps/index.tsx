@@ -22,7 +22,7 @@ import { useFetchDappRecent } from './../../../services/dapp/useFetchDappRecent'
 import { AllDappList } from './AllDappList';
 import { showDappWarningAlert } from './../../../actions/dapp';
 import Routes from '../../../constants/navigation/Routes';
-import { useGetDappHome } from '../../../components/hooks/useGetDappHome';
+import { useGetDappHome } from '../../hooks/DApp/useGetDappHome';
 
 export const DappsScreen = React.memo(() => {
   const nav = useNavigator();
@@ -98,7 +98,7 @@ export const DappsScreen = React.memo(() => {
         }
       }
     },
-    [category],
+    [categoryTab],
   );
 
   const onSubmitSearch = (text: string) => {
@@ -124,11 +124,17 @@ export const DappsScreen = React.memo(() => {
         <SearchBar
           placeholder="Search DApp or enter a link"
           value={searchText}
+          showMenu
           onInputSubmit={(value) => {
             setSearchText(value);
           }}
           onPressEnter={() => {
             onSubmitSearch(searchText);
+          }}
+          onOpenBrowser={() => {
+            nav.navigate(Routes.BROWSER_TAB_HOME, {
+              screen: Routes.BROWSER_VIEW,
+            });
           }}
         />
         <CategoryHeader

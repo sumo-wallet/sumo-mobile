@@ -50,7 +50,7 @@ const createStyles = (colors: any) =>
     },
     nameDapp: {
       fontSize: 14,
-      fontWeight: '600',
+      fontWeight: '700',
       paddingRight: 15,
       color: colors.text.default,
     },

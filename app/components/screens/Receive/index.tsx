@@ -131,8 +131,11 @@ export const ReceiveScreen = ({ showAsset, asset }: ReceiveAssetProps) => {
             })}
           >
             <QRCode
-              value={`ethereum:${selectedAddress}@${chainId}`}
+              value={`${selectedAddress}`}
               size={Dimensions.get('window').width / 2}
+              logo={icons.iconLogo}
+              logoSize={40}
+              logoBorderRadius={5}
             />
           </View>
           <Text

@@ -14,6 +14,7 @@ import { ROUTES } from '../../../../navigation/routes';
 export interface InformationFrameInterface {
   address?: string;
   onManage?: () => void;
+  onShowQR?: () => void;
 }
 
 const createStyles = (colors: any) =>
@@ -66,7 +67,7 @@ const createStyles = (colors: any) =>
       marginLeft: 16,
       fontSize: 14,
       fontWeight: '400',
-      color: colors.text.muted,
+      color: colors.text.alternative,
     },
     total: {
       marginHorizontal: 16,
@@ -83,6 +84,7 @@ const createStyles = (colors: any) =>
       bottom: 0,
       right: 0,
       opacity: 0.9,
+      backgroundColor: colors.background.default,
     },
     manageContainer: {
       flexDirection: 'row',
@@ -98,11 +100,18 @@ const createStyles = (colors: any) =>
       fontWeight: '500',
       color: colors.text.default,
     },
+    iconArrow: {
+      width: 14,
+      height: 14,
+      marginHorizontal: 2,
+      tintColor: colors.text.default,
+    },
   });
 
 export const InformationFrame = function ({
   address,
   onManage,
+  onShowQR,
 }: InformationFrameInterface) {
   const navigation = useNavigation();
   const [isHidden, setIsHidden] = useState<boolean>(false);
@@ -136,11 +145,15 @@ export const InformationFrame = function ({
           <TouchableOpacity onPress={onManage}>
             <Image source={icons.iconClipBoard} style={styles.icon} />
           </TouchableOpacity>
+          <TouchableOpacity onPress={onShowQR}>
+            <Image source={icons.iconScanQR} style={styles.icon} />
+          </TouchableOpacity>
         </View>
 
         <View style={styles.containerBalance}>
           <BlurView
-            blurType={'ultraThinMaterialDark'}
+            // blurType={'ultraThinMaterialDark'}
+            blurType={'regular'}
             blurAmount={10}
             style={styles.blurView}
           />
@@ -165,7 +178,7 @@ export const InformationFrame = function ({
             }}
           >
             <Text style={styles.manageTitle}>{'Manage'}</Text>
-            <Image source={icons.iconArrowRight} />
+            <Image source={icons.iconArrowRight} style={styles.iconArrow} />
           </TouchableOpacity>
         </View>
       </View>

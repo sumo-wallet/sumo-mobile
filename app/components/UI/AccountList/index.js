@@ -109,9 +109,12 @@ const createStyles = (colors) =>
     },
     containerMain: {},
     containerBtn: {
-      backgroundColor: Colors.white[3],
+      backgroundColor: colors.background.button,
       marginTop: 20,
       marginHorizontal: 16,
+    },
+    titleButton: {
+      color: colors.text.inverse,
     },
     containerOrder: {
       marginTop: 24,
@@ -647,6 +650,7 @@ class AccountList extends PureComponent {
         </BaseModal>
         <SButton
           style={styles.containerBtn}
+          titleStyle={styles.titleButton}
           type={'primary'}
           title={'Add wallet'}
           onPress={this.addAccount}

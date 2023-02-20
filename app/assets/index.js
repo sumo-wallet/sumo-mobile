@@ -58,6 +58,8 @@ import iconAbout from './icons/iconAbout.png';
 import iconHistory from './icons/iconHistory.png';
 import iconChart from './icons/iconChart.png';
 import iconSlippage from './icons/iconSlippage.png';
+import iconArrowUp from './icons/iconArrowUp.png';
+import iconArrowDown from './icons/iconArrowDown.png';
 import logoFacebook from './icons/logoFacebook.png';
 import logoTwitter from './icons/logoTwitter.png';
 import logoDiscord from './icons/logoDiscord.png';
@@ -70,6 +72,7 @@ import imageNew4 from './images/imageNew4.png';
 import emptyBox from './images/emptyBox.png';
 import imageEmptyView from './images/imageEmptyView.png';
 import imageCryptoAsset from './images/crypto-asset.png';
+import currency_ethereum from './icons/currency_ethereum.png';
 
 
 export const icons = {
@@ -133,9 +136,12 @@ export const icons = {
   iconHistory,
   iconChart,
   iconSlippage,
+  iconArrowUp,
+  iconArrowDown,
   logoFacebook,
   logoTwitter,
-  logoDiscord
+  logoDiscord,
+  currency_ethereum,
 };
 
 export const images = {

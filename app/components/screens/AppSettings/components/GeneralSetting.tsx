@@ -1,12 +1,5 @@
-import React, { memo, useCallback, useEffect, useState } from 'react';
-import {
-  FlatList,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import React, { memo, useEffect, useState } from 'react';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { fontStyles } from '../../../../styles/common';
 import { icons } from '../../../../assets';
 import { useTheme } from '../../../..//util/theme';
@@ -16,7 +9,7 @@ import I18n, {
   getLanguages,
   strings,
 } from '../../../../../locales/i18n';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useNavigator } from '../../../../components/hooks';
 import { AppThemeKey } from '../../../../util/theme/models';
 import { SelectModal } from '../../../../components/UI/SelectModal';
@@ -128,8 +121,6 @@ export const GeneralSetting = function GeneralSetting() {
     I18n.locale.substr(0, 2),
   );
   const [currentLanguageTitle, setCurrentLanguageTitle] = useState('');
-  const [currentCurrencyTitle, setCurrentCurrencyTitle] = useState('');
-
   const currentCurrency: number = useSelector(
     (state) =>
       state.engine.backgroundState.CurrencyRateController.currentCurrency,
@@ -145,8 +136,6 @@ export const GeneralSetting = function GeneralSetting() {
     }));
     setLanguageOptions(vlanguageOptions);
     setCurrentLanguageTitle(languages[currentLanguage]);
-    setCurrentCurrencyTitle(infuraCurrencyOptions.find((item) => item.value === currentCurrency).label);
-
   }, []);
 
   const selectLanguage = (language) => {
@@ -205,7 +194,7 @@ export const GeneralSetting = function GeneralSetting() {
             {strings('app_settings.conversion_title')}
           </Text>
           <View style={styles.containerValue}>
-            <Text style={styles.settingSubTitle}>{currentCurrency}</Text>
+            <Text style={styles.settingSubTitle}>{currentCurrency.toUpperCase()}</Text>
             <Image source={icons.iconArrowRight} style={styles.icon} />
             {languageOptions && (
               <SelectModal
@@ -295,8 +284,8 @@ export const GeneralSetting = function GeneralSetting() {
         <Text style={styles.title}>{'GENERAL'}</Text>
       </View>
       <View style={styles.containerBox}>
-        {renderContact()}
         {renderNetworks()}
+        {renderContact()}
         {renderCurrency()}
         {renderLanguage()}
         {renderTheme()}

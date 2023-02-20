@@ -79,7 +79,7 @@ import { NotificationsScreen } from './../../screens/Notifications';
 import { AddWalletScreen } from './../../screens/AddWallet';
 import { WalletDetailScreen } from './../../screens/WalletDetail';
 import { NewsScreen } from './../../screens/News';
-import SwapsQuotesView from '../../UI/SumoSwaps/QuotesView';
+import SwapsQuotesView from '../../sumo/UI/SumoSwaps/QuotesView';
 import { SwapHistoryScreen } from './../../screens/SwapHistory';
 
 // import { WalletScreen } from './../../screens/Wallet';
@@ -103,7 +103,7 @@ import { useTheme } from '../../../util/theme';
 
 // import ManagerCoinModal from '../../screens/Wallet/modal/ManagerCoinModal';
 
-import SwapMenu from '../../Views/SwapMenu';
+import SwapMenu from '../../sumo/Views/SwapMenu';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -498,7 +498,7 @@ export const BottomTabContainer = () => {
         name={ROUTES.NftScreen}
         component={NFTMarketplaceTabModalFlow}
         options={{
-          title: 'Nft',
+          title: 'Collection',
           tabBarIcon: ({ color }) => {
             return (
               <Image
