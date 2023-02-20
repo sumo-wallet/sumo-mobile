@@ -1,11 +1,12 @@
 import React, { memo, useCallback, useMemo, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useTheme } from '../../../../util/theme';
 import { ModelCategoryApp, ModelCollection } from 'app/types';
 import FastImage from 'react-native-fast-image';
 import { useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import Routes from '../../../../constants/navigation/Routes';
+import { icons } from '../../../../assets';
 
 const createStyles = (colors: any) =>
   StyleSheet.create({
@@ -23,7 +24,8 @@ const createStyles = (colors: any) =>
     },
     containerItem: {
       flexDirection: 'column',
-      marginVertical: 4,
+      paddingVertical: 7,
+      paddingHorizontal: 10,
     },
     containerFlatList: {
       height: 400,
@@ -34,9 +36,8 @@ const createStyles = (colors: any) =>
       alignItems: 'center',
     },
     nameDapp: {
-      fontSize: 14,
-      fontWeight: '600',
-      paddingRight: 15,
+      fontSize: 15,
+      fontWeight: '500',
       color: colors.text.default,
     },
     subNameDapp: {
@@ -63,6 +64,9 @@ const createStyles = (colors: any) =>
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
+      paddingTop: 8,
+      borderTopWidth: 0.5,
+      borderTopColor: colors.text.muted,
     },
     containerStatsItem: {
       flexDirection: 'column',
@@ -72,6 +76,7 @@ const createStyles = (colors: any) =>
     titleStats: {
       fontSize: 12,
       fontWeight: '400',
+      marginTop: 4,
       color: colors.text.muted,
     },
     changeStats: {
@@ -79,11 +84,29 @@ const createStyles = (colors: any) =>
       fontWeight: '400',
       color: 'green',
       marginVertical: 1,
+      justifyContent: 'flex-end',
+      textAlign: 'right',
     },
     valueStats: {
       fontSize: 14,
       fontWeight: '500',
+      marginTop: 4,
       color: colors.text.default,
+    },
+    iconArrow: {
+      width: 12,
+      height: 12,
+    },
+    iconCurrency: {
+      width: 13,
+      height: 13,
+      marginRight: 2,
+      tintColor: colors.text.default,
+    },
+    priceContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-end',
     },
   });
 export interface CollectionItemData {
@@ -108,13 +131,13 @@ export const CollectionItem = function CollectionItem({
   return (
     <TouchableOpacity
       key={item.id}
-      style={styles.containerItem}
+      style={[styles.containerItem, { backgroundColor: isOpen ? colors.background.alternative : colors.background.default }]}
       onPress={() => {
         handleCollectionDetail(item);
       }}
     >
       <View style={styles.containerMain}>
-        <Text style={styles.indexTitle}>{`# ${index}`}</Text>
+        <Text style={styles.indexTitle}>{`# ${index + 1}`}</Text>
         <FastImage
           source={{ uri: item.image_url }}
           style={styles.icon}
@@ -123,15 +146,28 @@ export const CollectionItem = function CollectionItem({
         <View style={styles.containerName}>
           <Text style={styles.nameDapp}>{item.name}</Text>
         </View>
-        <View style={{ justifyContent: 'center' }}>
-          <Text style={styles.nameDapp}>{item.stats?.floor_price}</Text>
-          <Text style={styles.changeStats}>{`${item.stats?.one_hour_sales_change}%`}</Text>
+        <View style={{ justifyContent: 'flex-end', marginRight: 12 }}>
+          <View style={styles.priceContainer}>
+            <Image
+              style={styles.iconCurrency}
+              source={icons.currency_ethereum}
+              resizeMode={FastImage.resizeMode.contain}
+            />
+            <Text style={styles.nameDapp}>{item.stats?.floor_price}</Text>
+          </View>
+          <Text
+            style={styles.changeStats}
+          >{`${item.stats?.one_hour_sales_change}%`}</Text>
         </View>
         <TouchableOpacity
-          style={{ justifyContent: 'center' }}
+          style={{ justifyContent: 'center', paddingHorizontal: 4 }}
           onPress={openHandle}
         >
-          <Text style={styles.nameDapp}>{isOpen ? '^' : '-'}</Text>
+          <Image
+            style={styles.iconArrow}
+            resizeMode={FastImage.resizeMode.contain}
+            source={isOpen ? icons.iconArrowUp : icons.iconArrowDown}
+          />
         </TouchableOpacity>
       </View>
       {isOpen && (

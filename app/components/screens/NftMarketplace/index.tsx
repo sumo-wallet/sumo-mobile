@@ -1,6 +1,6 @@
 import CollectibleContracts from '../../UI/CollectibleContracts';
 import React from 'react';
-import { View, SafeAreaView, Text, StyleSheet } from 'react-native';
+import { View, SafeAreaView, Text, StyleSheet, FlatList } from 'react-native';
 import { strings } from '../../../../locales/i18n';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../../../util/theme';
@@ -8,6 +8,26 @@ import { fontStyles } from '../../../styles/common';
 import { Category } from './components/Category';
 import Auction from './components/Auction';
 import Collection from './components/Collection';
+import Market from './components/Market';
+
+const LAYOUT = [
+  {
+    name: '',
+    type: 'category',
+  },
+  {
+    name: 'Top Market',
+    type: 'top_market',
+  },
+  {
+    name: 'Hot Bids',
+    type: 'hot_bids',
+  },
+  {
+    name: 'Trending collections',
+    type: 'trending_collection',
+  },
+];
 
 const createStyles = (colors: any) =>
   StyleSheet.create({
@@ -59,22 +79,34 @@ const createStyles = (colors: any) =>
       fontSize: 14,
     },
   });
+
+interface LayoutData {
+  name: string;
+  type: string;
+}
 export const NftMarketplaceScreen = React.memo(() => {
   // const navigation = useNavigation();
   const { colors } = useTheme();
   const styles = createStyles(colors);
+
+  const renderItem = ({ item, index }: { item: LayoutData; index: number }) => {
+    if (item.type === 'category') {
+      return <Category />;
+    } else if (item.type === 'top_market') {
+      return <Market />;
+    } else if (item.type === 'hot_bids') {
+      return <Auction title={item.name} />;
+    } else if (item.type === 'trending_collection') {
+      return <Collection />;
+    }
+
+    return null;
+  };
+
   return (
     <SafeAreaView style={styles.wrapper}>
       <View style={styles.wrapper}>
-        <Category />
-        <Auction
-          title='Hot Bids' />
-        <Collection />
-        {/* <CollectibleContracts
-          key={'nfts-tab'}
-          navigation={navigation}
-          style={styles.wrapper}
-        /> */}
+        <FlatList data={LAYOUT} renderItem={renderItem} />
       </View>
     </SafeAreaView>
   );

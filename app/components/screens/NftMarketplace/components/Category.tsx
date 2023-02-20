@@ -24,9 +24,10 @@ const createStyles = (colors: any) =>
       marginTop: 4,
     },
     icon: {
-      width: 30,
-      height: 30,
-      marginRight: 8,
+      width: 24,
+      height: 24,
+      padding: 4,
+      margin: 4,
     },
     containerItem: {
       flexDirection: 'row',
@@ -34,6 +35,7 @@ const createStyles = (colors: any) =>
       justifyContent: 'center',
       alignItems: 'center',
       marginHorizontal: 6,
+      borderRadius: 6,
     },
     containerFlatList: {
       flexDirection: 'row',
@@ -42,6 +44,7 @@ const createStyles = (colors: any) =>
       fontSize: 14,
       fontWeight: '600',
       paddingRight: 15,
+      marginLeft: 4,
       color: colors.text.default,
     },
     subNameDapp: {
@@ -70,7 +73,7 @@ export const Category = function Category() {
         }}
       >
         <FastImage
-          source={{ uri: item?.imageUrl || '' }}
+          source={{ uri: item?.imageUrl || 'https://i.imgur.com/4OpmWHF.png' }}
           style={styles.icon}
           resizeMode={FastImage.resizeMode.contain}
         />
