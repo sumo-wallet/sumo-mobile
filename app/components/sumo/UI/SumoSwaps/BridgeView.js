@@ -16,7 +16,7 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { View as AnimatableView } from 'react-native-animatable';
+// import { View as AnimatableView } from 'react-native-animatable';
 import IonicIcon from 'react-native-vector-icons/Ionicons';
 import Logger from '../../../../util/Logger';
 import {

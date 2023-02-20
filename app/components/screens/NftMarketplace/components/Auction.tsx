@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useMemo } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useTheme } from '../../../../util/theme';
 import { ModelCategoryApp, ModelMarketItemData } from 'app/types';
 import FastImage from 'react-native-fast-image';
@@ -8,12 +8,13 @@ import { useNavigation } from '@react-navigation/native';
 import Routes from '../../../../constants/navigation/Routes';
 import { useGetHotAuction } from '../../../../components/hooks/Marketplace/useGetHotAuction';
 import { FlatList } from 'react-native-gesture-handler';
+import { icons } from '../../../../assets';
 
 const createStyles = (colors: any) =>
   StyleSheet.create({
     screenWrapper: {
       backgroundColor: colors.background.default,
-      marginVertical: 16,
+      marginVertical: 8,
     },
     titleHeader: {
       fontSize: 18,
@@ -30,10 +31,8 @@ const createStyles = (colors: any) =>
     },
     icon: {
       height: 150,
-      marginHorizontal: 8,
       marginBottom: 8,
       borderRadius: 10,
-      backgroundColor: 'red',
     },
     containerItem: {
       minWidth: 200,
@@ -43,6 +42,10 @@ const createStyles = (colors: any) =>
       borderWidth: 0.5,
       borderRadius: 10,
       padding: 6,
+    },
+    containerHeaderTitle: {
+      flexDirection: 'row',
+      alignItems: 'center',
     },
     containerFlatList: {
       flexDirection: 'row',
@@ -80,6 +83,12 @@ const createStyles = (colors: any) =>
       alignItems: 'flex-end',
       flex: 1,
     },
+    iconHot: {
+      width: 16,
+      height: 16,
+      marginLeft: 4,
+      tintColor: colors.text.default,
+    },
   });
 
 export interface HeaderInterface {
@@ -103,9 +112,9 @@ export const Auction = function Auction({ title, subTitle }: HeaderInterface) {
         onPress={handleAuctionDetail}
       >
         <FastImage
-          source={{ uri: item.nftAddress }}
+          source={{ uri: item.imageUrl }}
           style={styles.icon}
-          resizeMode={FastImage.resizeMode.contain}
+          resizeMode={FastImage.resizeMode.cover}
         />
 
         <View style={{ justifyContent: 'center' }}>
@@ -128,10 +137,13 @@ export const Auction = function Auction({ title, subTitle }: HeaderInterface) {
 
   return (
     <View style={styles.screenWrapper}>
-      <Text style={styles.titleHeader}>{title}</Text>
+      <View style={styles.containerHeaderTitle}>
+        <Text style={styles.titleHeader}>{title}</Text>
+        <Image source={icons.iconHot} style={styles.iconHot} />
+      </View>
       <Text style={styles.title}>{subTitle}</Text>
       <View style={styles.containerFlatList}>
-        <FlatList data={auctions} renderItem={renderItem} horizontal />
+        <FlatList data={auctions} renderItem={renderItem} horizontal showsHorizontalScrollIndicator={false} />
       </View>
     </View>
   );

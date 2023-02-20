@@ -11,28 +11,27 @@ const createStyles = (colors: any) =>
     screenWrapper: {
       width: '100%',
       backgroundColor: colors.background.default,
-      padding: 16,
       marginVertical: 16,
     },
     headContainer: {
+      width: '100%',
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
+      padding: 10,
     },
     titleHeader: {
-      fontSize: 12,
-      fontWeight: '400',
+      fontSize: 16,
+      fontWeight: '600',
       color: colors.text.default,
     },
     title: {
       fontSize: 14,
       fontWeight: '700',
       color: colors.text.default,
-      width: 250,
       marginTop: 4,
     },
     containerFlatList: {
-      height: 400,
     },
   });
 
