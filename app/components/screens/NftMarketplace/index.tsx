@@ -9,6 +9,7 @@ import { Category } from './components/Category';
 import Auction from './components/Auction';
 import Collection from './components/Collection';
 import Market from './components/Market';
+import Popular from './components/Popular';
 
 const LAYOUT = [
   {
@@ -26,6 +27,10 @@ const LAYOUT = [
   {
     name: 'Trending collections',
     type: 'trending_collection',
+  },
+  {
+    name: 'Popular',
+    type: 'popular',
   },
 ];
 
@@ -98,7 +103,10 @@ export const NftMarketplaceScreen = React.memo(() => {
       return <Auction title={item.name} />;
     } else if (item.type === 'trending_collection') {
       return <Collection />;
+    } else if (item.type === 'popular') {
+      return <Popular />;
     }
+
 
     return null;
   };

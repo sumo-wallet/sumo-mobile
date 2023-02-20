@@ -15,6 +15,7 @@ export interface SearchBarProps {
   value?: string;
   style?: StyleProp<ViewStyle>;
   placeholder?: string;
+  showMenu?: boolean;
   onInputSubmit: (value: string) => void;
   onPressEnter: (value: string) => void;
   onOpenBrowser: () => void;
@@ -24,6 +25,7 @@ export const SearchBar = ({
   value,
   style,
   placeholder,
+  showMenu,
   onPressEnter,
   onInputSubmit,
   onOpenBrowser,
@@ -82,7 +84,7 @@ export const SearchBar = ({
         )}
       </TouchableOpacity>
 
-      <TouchableOpacity
+      {showMenu && <TouchableOpacity
         onPress={() => {
           onOpenBrowser();
         }}
@@ -95,7 +97,7 @@ export const SearchBar = ({
         })}
       >
         <Image style={Style.s({ size: 20 })} source={icons.iconGallery} />
-      </TouchableOpacity>
+      </TouchableOpacity>}
     </View>
   );
 };
