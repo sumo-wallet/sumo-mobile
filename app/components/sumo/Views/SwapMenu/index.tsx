@@ -110,6 +110,7 @@ const createStyles = (colors: any) =>
 const SwapMenu = ({ navigation }: any) => {
   const { drawerRef } = useContext(DrawerContext);
   const [refreshing, setRefreshing] = useState(false);
+  const [supportSwap, setSupportSwap] = useState(false);
   const accountOverviewRef = useRef(null);
   const dispatch = useDispatch();
   const { colors } = useTheme();
@@ -166,6 +167,10 @@ const SwapMenu = ({ navigation }: any) => {
    * Current onboarding wizard step
    */
   const wizardStep = useSelector((state: any) => state.wizard.step);
+
+  const provider = useSelector(
+    (state: any) => state.engine.backgroundState.NetworkController.provider,
+  );
 
   const { colors: themeColors } = useTheme();
 
@@ -272,6 +277,14 @@ const SwapMenu = ({ navigation }: any) => {
     accountOverviewRef.current = ref;
   }, []);
 
+  useEffect(() => {
+    if (provider?.chainId === '1' || provider?.chainId === '56') {
+      setSupportSwap(true);
+    } else {
+      setSupportSwap(false);
+    }
+  }, [provider]);
+
   const renderContent = useCallback(() => {
     // const account = {
     //   address: selectedAddress,
@@ -309,19 +322,21 @@ const SwapMenu = ({ navigation }: any) => {
           onChangeTab={onChangeTab}
           style={{ flexGrow: 1 }}
         >
-          <SwapsAmountView
-            tabLabel={'Swap'}
-            key={'tokens-tab'}
-            navigation={navigation}
-          // tokens={assets}
-          />
-          {__DEV__ && (
+          {supportSwap && (
+            <SwapsAmountView
+              tabLabel={'Swap'}
+              key={'tokens-tab'}
+              navigation={navigation}
+              tokens={assets}
+            />
+          )}
+          {/* {__DEV__ && (
             <BridgeView
               tabLabel={'Bridge'}
               key={'bridge-tab'}
               navigation={navigation}
             />
-          )}
+          )} */}
           <SumoExchangeView
             tabLabel={'Exchange'}
             key={'exchange-tab'}
@@ -336,18 +351,17 @@ const SwapMenu = ({ navigation }: any) => {
       </View>
     );
   }, [
-    renderTabBar,
+    tokens,
     accounts,
+    selectedAddress,
+    styles.wrapper,
+    renderTabBar,
+    onChangeTab,
+    supportSwap,
+    navigation,
+    ticker,
     conversionRate,
     currentCurrency,
-    identities,
-    navigation,
-    onChangeTab,
-    onRef,
-    selectedAddress,
-    ticker,
-    tokens,
-    styles,
   ]);
 
   const renderLoader = useCallback(
