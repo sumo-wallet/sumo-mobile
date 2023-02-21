@@ -114,8 +114,6 @@ export const NftMarketplaceScreen = React.memo(() => {
       return <Spotlight />;
     }
 
-
-
     return null;
   };
 

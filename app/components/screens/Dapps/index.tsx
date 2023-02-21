@@ -136,6 +136,9 @@ export const DappsScreen = React.memo(() => {
               screen: Routes.BROWSER_VIEW,
             });
           }}
+          onPress={() => {
+            onSubmitSearch('');
+          }}
         />
         <CategoryHeader
           pageIndex={pageIndex}

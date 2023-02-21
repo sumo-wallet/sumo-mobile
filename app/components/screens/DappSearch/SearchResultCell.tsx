@@ -20,7 +20,7 @@ export const SearchResultCell = React.memo(
         onPress={() => onPress(item)}
         style={Style.s({ direc: 'row', items: 'center' })}
       >
-        <FastImage style={Style.s({ size: 40 })} source={{ uri: item?.logo }} />
+        <FastImage style={Style.s({ size: 40, bor: 10 })} source={{ uri: item?.logo }} />
         <View style={Style.s({ ml: 12 })}>
           <Text style={Fonts.t({ s: 14, c: colors.text.default })}>
             {item?.name}

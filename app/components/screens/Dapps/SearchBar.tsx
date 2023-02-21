@@ -19,6 +19,7 @@ export interface SearchBarProps {
   onInputSubmit: (value: string) => void;
   onPressEnter: (value: string) => void;
   onOpenBrowser: () => void;
+  onPress?: () => void;
 }
 
 export const SearchBar = ({
@@ -29,6 +30,7 @@ export const SearchBar = ({
   onPressEnter,
   onInputSubmit,
   onOpenBrowser,
+  onPress,
 }: SearchBarProps) => {
   // const nav = useNavigator();
   const { colors } = useTheme();
@@ -67,8 +69,8 @@ export const SearchBar = ({
           value={value}
           placeholderTextColor={colors.text.muted}
           returnKeyType="search"
-          clearButtonMode="while-editing"
           onSubmitEditing={onPressEnter}
+          onPressIn={onPress}
         />
         {value?.length > 0 && (
           <TouchableOpacity
@@ -84,20 +86,22 @@ export const SearchBar = ({
         )}
       </TouchableOpacity>
 
-      {showMenu && <TouchableOpacity
-        onPress={() => {
-          onOpenBrowser();
-        }}
-        style={Style.s({
-          px: 6,
-          py: 6,
-          direc: 'row',
-          items: 'center',
-          minH: 32,
-        })}
-      >
-        <Image style={Style.s({ size: 20 })} source={icons.iconGallery} />
-      </TouchableOpacity>}
+      {showMenu && (
+        <TouchableOpacity
+          onPress={() => {
+            onOpenBrowser();
+          }}
+          style={Style.s({
+            px: 6,
+            py: 6,
+            direc: 'row',
+            items: 'center',
+            minH: 32,
+          })}
+        >
+          <Image style={Style.s({ size: 20 })} source={icons.iconGallery} />
+        </TouchableOpacity>
+      )}
     </View>
   );
 };

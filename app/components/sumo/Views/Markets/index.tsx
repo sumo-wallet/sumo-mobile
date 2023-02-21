@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, SafeAreaView, Text, StyleSheet } from 'react-native';
-// import { useNavigation } from '@react-navigation/native';
-import { useTheme } from '../../../util/theme';
-import { fontStyles } from '../../../styles/common';
+import { View, SafeAreaView, StyleSheet } from 'react-native';
+import { strings } from '../../../../../locales/i18n';
+import { useNavigation } from '@react-navigation/native';
+import { useTheme } from '../../../../util/theme';
+import { fontStyles } from '../../../../styles/common';
 
 const createStyles = (colors: any) =>
   StyleSheet.create({
@@ -54,14 +55,13 @@ const createStyles = (colors: any) =>
       fontSize: 14,
     },
   });
-export const NftScreen = React.memo(() => {
-  // const navigation = useNavigation();
+export const MarketsScreen = React.memo(() => {
+  const navigation = useNavigation();
   const { colors } = useTheme();
   const styles = createStyles(colors);
   return (
     <SafeAreaView style={styles.wrapper}>
       <View style={styles.wrapper}>
-        <Text>{'Tokens'}</Text>
       </View>
     </SafeAreaView>
   );

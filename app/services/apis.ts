@@ -31,7 +31,7 @@ export const COINGECKO_BASE_URL = 'https://api.coingecko.com/api/v3/';
 export const COINDESK_NEWS_BIZ =
   'https://www.coindesk.com/pf/api/v3/content/fetch/websked-collections?query=%7B%22content_alias%22%3A%22web3content%22%2C%22format%22%3A%22main-navigation-article%22%2C%22from%22%3A%220%22%2C%22size%22%3A%224%22%7D';
 export const COINDESK_NEWS =
-  'https://www.coindesk.com/pf/api/v3/content/fetch/live-wire?query=%7B%22from%22%3A0%2C%22language%22%3A%22en%22%2C%22size%22%3A40%2C%22website%22%3A%22coindesk%22%7D&d=221&_website=coindesk';
+  'https://www.coindesk.com/pf/api/v3/content/fetch/websked-collections?query=%7B%22content_alias%22%3A%22main-nav-podcasts%22%2C%22format%22%3A%22main-navigation-article%22%2C%22from%22%3A%220%22%2C%22size%22%3A%224%22%7D&d=244&_website=coindesk';
 export const COINDESK_TICKER =
   'https://production.api.coindesk.com/v2/tb/price/ticker?assets=';
 
