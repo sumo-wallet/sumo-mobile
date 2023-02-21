@@ -24,13 +24,13 @@ import { ModelDApp, ModelSearchHistory } from './../../../types';
 import { useTheme } from './../../../util/theme';
 import { ROUTES } from './../../../navigation/routes';
 import { createNewTab, openDapp } from './../../../actions/browser';
-import { useFetchDappSearch } from './../../../services/dapp/useFetchDappSearch';
 import { useFetchDappPopularSearch } from './../../../services/dapp/useFetchDappPopularSearch';
 import { SearchResultCell } from './SearchResultCell';
 import { strings } from '../../../../locales/i18n';
 import Routes from '../../../../app/constants/navigation/Routes';
 import onUrlSubmit from '../../../util/browser';
 import { useTrackingDAppUsage } from '../../../components/hooks/useTrackingDAppUsage';
+import { useSearchDapp } from '../../../components/hooks/DApp/useSearchDapp';
 
 const DAPP_SEARCH_HISTORY_KEY = 'DAPP_SEARCH_HISTORY_KEY';
 
@@ -92,12 +92,8 @@ export const DappSearch = React.memo(() => {
 
   const { searchText }: { searchText: string } = useNavigatorParams();
   const [inputValue, setInputValue] = React.useState<string>('');
-  const [textSearch, setTextSearch] = React.useState<string>('');
-  const {
-    dapps: dappsResultSearch,
-    isValidating,
-    isLoading,
-  } = useFetchDappSearch({ text: textSearch });
+
+  const { dapps: dappsResultSearch, isLoading, search } = useSearchDapp();
   const { data: dataPopularSearch = [] } = useFetchDappPopularSearch();
 
   const searchEngine = useSelector((state) => state.settings.searchEngine);
@@ -110,29 +106,31 @@ export const DappSearch = React.memo(() => {
     console.log('history: ', history);
   }, []);
 
-  const isSearching = textSearch?.length > 0 && isValidating && isLoading;
+  const isSearching = inputValue?.length > 0 && isLoading;
 
   useEffect(() => {
     if (searchText) {
       setInputValue(searchText);
-      setTextSearch(searchText);
+      search(searchText);
     }
-  }, [searchText]);
+  }, [search, searchText]);
 
   const handleSearch = React.useCallback((keyword: string) => {
-    setTextSearch(keyword);
     setInputValue(keyword);
-  }, []);
+    search(keyword);
+  },
+    [search],
+  );
 
   const handleSelectPopular = React.useCallback((keyword: string) => {
-    setTextSearch(keyword);
     setInputValue(keyword);
+    search(keyword);
   }, []);
 
   const debounceSearchRequest = useDebounce(handleSearch, 500);
 
   const renderRecommend = React.useCallback(() => {
-    if (textSearch?.length > 0) {
+    if (inputValue?.length > 0) {
       return null;
     }
     return (
@@ -234,12 +232,12 @@ export const DappSearch = React.memo(() => {
     handleClearSearchHistory,
     handleDeleteHistory,
     handleSelectPopular,
-    textSearch?.length,
+    inputValue?.length,
   ]);
 
   const handlePressDapp = React.useCallback(
     (dapp: ModelDApp) => {
-      pushToHistory(textSearch);
+      pushToHistory(inputValue);
       if (dapp.website) {
         dispatch(createNewTab(dapp?.website, dapp));
         dispatch(openDapp({ dapp }));
@@ -247,7 +245,7 @@ export const DappSearch = React.memo(() => {
         trackingUsage(dapp.id || 0, 'dapp-search');
       }
     },
-    [dispatch, nav, textSearch, trackingUsage],
+    [dispatch, nav, inputValue, trackingUsage],
   );
 
   const handleSearchOnWeb = (text: string) => {
@@ -315,11 +313,12 @@ export const DappSearch = React.memo(() => {
   }, [isSearching, colors.text.alternative, colors.text.default]);
 
   const listHeaderComponent = () => {
+    if (!inputValue) return null;
     return (
       <TouchableOpacity
         style={styles.searchOnWebContainer}
         onPress={() => {
-          handleSearchOnWeb(textSearch);
+          handleSearchOnWeb(inputValue);
         }}
       >
         <View style={styles.titleContainer}>
@@ -340,7 +339,7 @@ export const DappSearch = React.memo(() => {
 
   const keyEx = React.useCallback((i: ModelDApp) => `${i}`, []);
   const renderSearchResults = () => {
-    if (textSearch?.length === 0) {
+    if (inputValue?.length === 0) {
       return null;
     }
     return (
