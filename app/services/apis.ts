@@ -53,6 +53,7 @@ class Client {
 
   baseUrl = 'https://prod3-api.bicyclefi.io';
   address = '';
+  icrosschainBaseUrl = 'https://prod3-api.bicyclefi.io';
 
   setHeaders(headers: Record<string, any>) {
     this.headers = { ...this.headers, ...headers };
@@ -263,8 +264,16 @@ class Client {
       },
     );
   }
+  public getiCrosschainChains() {
+    return fetcher<HandlerChainResponse>(
+      `${this.icrosschainBaseUrl}/api/v1/system/chain`,
+      {
+        headers: this.headers,
+      },
+    );
+  }
 }
 
 const client = new Client();
 
-export { client };
+export { client, Client };
