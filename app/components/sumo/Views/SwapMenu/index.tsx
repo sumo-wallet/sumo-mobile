@@ -315,11 +315,13 @@ const SwapMenu = ({ navigation }: any) => {
             navigation={navigation}
             tokens={assets}
           />
-          <BridgeView
-            tabLabel={'Bridge'}
-            key={'bridge-tab'}
-            navigation={navigation}
-          />
+          {__DEV__ && (
+            <BridgeView
+              tabLabel={'Bridge'}
+              key={'bridge-tab'}
+              navigation={navigation}
+            />
+          )}
           <SumoExchangeView
             tabLabel={'Exchange'}
             key={'exchange-tab'}
@@ -399,10 +401,18 @@ const SwapMenu = ({ navigation }: any) => {
         }
       >
         <View style={styles.containerRight}>
-          <TouchableOpacity onPress={() => { navigation.navigate(Routes.QR_SCANNER); }}>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate(Routes.QR_SCANNER);
+            }}
+          >
             <Image source={icons.iconSlippage} style={styles.iconQR} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => { navigation.navigate(Routes.QR_SCANNER); }}>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate(Routes.QR_SCANNER);
+            }}
+          >
             <Image source={icons.iconHistory} style={styles.iconQR} />
           </TouchableOpacity>
         </View>
