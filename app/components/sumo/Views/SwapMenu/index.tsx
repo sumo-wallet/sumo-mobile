@@ -313,7 +313,7 @@ const SwapMenu = ({ navigation }: any) => {
             tabLabel={'Swap'}
             key={'tokens-tab'}
             navigation={navigation}
-            tokens={assets}
+          // tokens={assets}
           />
           {__DEV__ && (
             <BridgeView
