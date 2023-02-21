@@ -749,16 +749,16 @@ function SwapsAmountView({
   const disabledView =
     !destinationTokenHasEnoughOcurrances && !hasDismissedTokenAlert;
 
-  if (!userHasOnboarded) {
-    return (
-      <ScreenView
-        style={styles.container}
-        contentContainerStyle={styles.screen}
-      >
-        <Onboarding setHasOnboarded={setHasOnboarded} />
-      </ScreenView>
-    );
-  }
+  // if (!userHasOnboarded) {
+  //   return (
+  //     <ScreenView
+  //       style={styles.container}
+  //       contentContainerStyle={styles.screen}
+  //     >
+  //       <Onboarding setHasOnboarded={setHasOnboarded} />
+  //     </ScreenView>
+  //   );
+  // }
 
   // const themeAppearance = this.context.themeAppearance || 'light';
 
