@@ -104,3 +104,12 @@ export function checkedAuth(initialScreen) {
     },
   };
 }
+
+export function setAvatarUser(url) {
+  return {
+    type: 'SET_AVATAR',
+    payload: {
+      url,
+    },
+  };
+}

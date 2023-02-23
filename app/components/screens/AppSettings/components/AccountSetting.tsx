@@ -1,5 +1,5 @@
-import React, { memo } from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import React, { memo, useCallback } from 'react';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { fontStyles } from '../../../../styles/common';
 import { icons } from '../../../../assets';
 import { useTheme } from '../../../..//util/theme';
@@ -7,6 +7,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigator } from '../../../../components/hooks';
 import { renderShortAddress } from '../../../../util/address';
 import Identicon from '../../../../components/UI/Identicon';
+import File from '../../../../services/File';
+import { setAvatarUser } from '../../../../actions/user';
 
 const createStyles = (colors: any) =>
   StyleSheet.create({
@@ -77,10 +79,17 @@ export const AccountSetting = function AccountSetting() {
       state.engine.backgroundState.PreferencesController.selectedAddress,
   );
 
+  const onSelectImage = useCallback(async () => {
+    const file = await File.pickImage({ multiple: false });
+    dispatch(setAvatarUser(file[0].path));
+  }, [dispatch]);
+
   return (
     <View style={styles.container}>
       <View style={styles.accountContainer}>
-        <Identicon address={selectedAddress || ''} diameter={36} />
+        <TouchableOpacity onPress={onSelectImage}>
+          <Identicon address={selectedAddress || ''} diameter={36} />
+        </TouchableOpacity>
         <View style={styles.containerHeader}>
           <Text style={styles.title}>{'User'}</Text>
           <Text style={styles.addressTitle}>

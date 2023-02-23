@@ -13,9 +13,11 @@ const initialState = {
   isAuthChecked: false,
   initialScreen: '',
   appTheme: AppThemeKey.os,
+  avatarUrl: '',
 };
 
 const userReducer = (state = initialState, action) => {
+  // @ts-ignore
   switch (action.type) {
     case 'CHECKED_AUTH':
       return {
@@ -104,6 +106,12 @@ const userReducer = (state = initialState, action) => {
         ...state,
         appTheme: action.payload.theme,
       };
+    case 'SET_AVATAR':
+      return {
+        ...state,
+        avatarUrl: action.payload.url,
+      };
+
     default:
       return state;
   }
