@@ -27,6 +27,11 @@ const Identicon = React.memo((props) => {
     return avatarUrl[address.toString()] || uri;
   }, [avatarUrl, address, uri]);
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const url = useMemo(() => {
+    return avatarUrl[address.toString()] || uri;
+  }, [avatarUrl, address, uri]);
+
   const image = useBlockieIcon ? (
     <Image
       source={{ url }}
