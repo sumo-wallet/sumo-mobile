@@ -20,7 +20,10 @@ const Identicon = React.memo((props) => {
   const avatarUrl = useSelector((state) => state.user.avatarUrl);
 
   if (!address) return null;
-  const uri = useBlockieIcon && toDataUrl(address);
+  const uri =
+    avatarUrl !== '' && avatarUrl
+      ? avatarUrl
+      : useBlockieIcon && toDataUrl(address);
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const url = useMemo(() => {
