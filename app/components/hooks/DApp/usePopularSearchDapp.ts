@@ -11,7 +11,7 @@ interface DappHomeConfig {
   searchDApp: () => void;
 }
 
-export function useSearchDapp(): DappHomeConfig {
+export function usePopularSearchDapp(): DappHomeConfig {
   const [isLoading, setLoading] = useState<boolean>(false);
   const [hashMore, setHashMore] = useState<boolean>(false);
   const [dapps, setDapps] = useState<ModelDApp[]>([]);

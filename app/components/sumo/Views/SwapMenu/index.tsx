@@ -21,8 +21,8 @@ import { fontStyles, baseStyles } from '../../../../styles/common';
 // import AccountOverview from '../../../UI/AccountOverview';
 // import Tokens from '../../UI/Tokens';
 import SwapsAmountView from '../../UI/SumoSwaps';
-import SumoExchangeView from '../../../UI/SumoExchange';
-import BridgeView from '../../UI/SumoSwaps/BridgeView';
+import SumoExchangeView from '../SumoExchange';
+// import BridgeView from '../../UI/SumoSwaps/BridgeView';
 
 import { getWalletNavbarOptions } from '../../../UI/Navbar';
 import { strings } from '../../../../../locales/i18n';

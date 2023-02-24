@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useMemo, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Alert,
   Image,
@@ -40,6 +40,7 @@ import { ModelChain, Ticker } from 'app/types';
 import { ROUTES } from '../../../navigation/routes';
 import { useGetWalletHome } from '../../../components/hooks/useGetWalletHome';
 import { useGetChain } from '../../../components/hooks/useGetChain';
+import { useGetChainBalances } from '../../../components/hooks/Transaction/useGetWalletBalance';
 
 const createStyles = (colors: any) =>
   StyleSheet.create({
@@ -132,6 +133,8 @@ export const HomeScreen = memo(() => {
   const { chains } = useGetChain();
   const { news } = useGetNews();
   const { tickers } = useGetTickers(walletHomeConfig.homeConfig?.hotToken);
+
+  const { tokenTxs, setWalletAddress } = useGetChainBalances();
 
   const onScanSuccess = useCallback(
     (data: any, content?: string | undefined) => {
@@ -254,6 +257,10 @@ export const HomeScreen = memo(() => {
       currentCurrency,
     )}`;
   }, [currentCurrency]);
+
+  useEffect(() => {
+    setWalletAddress('0xd6ea62e0c8b29478717bbedeaeb27e2541636359');
+  }, [setWalletAddress]);
 
   const onClipBoard = useCallback(async () => {
     await ClipboardManager.setString(selectedAddress);
