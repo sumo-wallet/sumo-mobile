@@ -177,6 +177,11 @@ const createStyles = (colors) =>
     },
     wrapperBtnEdit: {
       flexDirection: 'row',
+      marginHorizontal: 12,
+    },
+    textWarning: {
+      marginTop: 8,
+      color: colors.warning.default,
     },
   });
 
@@ -253,6 +258,7 @@ class AccountList extends PureComponent {
     isEditVisible: false,
     avatarUrl: this.props.avatarUrl,
     nameWallet: this.props.nameWallet,
+    isEmpty: false,
   };
 
   flatList = React.createRef();
@@ -341,9 +347,18 @@ class AccountList extends PureComponent {
   };
 
   onSelected = (newAddress) => {
+    const selectedAccount = this.state.orderedAccounts.find(
+      (item) => item.isSelected,
+    );
     this.setState({
       isVisible: !this.state.isVisible,
       newAddress,
+      nameWallet: this.state.nameWallet[newAddress]
+        ? { ...this.state.nameWallet }
+        : {
+            ...this.state.nameWallet,
+            [newAddress]: selectedAccount?.name || '',
+          },
     });
   };
 
@@ -484,9 +499,16 @@ class AccountList extends PureComponent {
   };
 
   onChangeWallet = (address) => {
+    if (
+      this.state.nameWallet[address] === '' ||
+      !this.state.nameWallet[address]
+    ) {
+      this.setState({ isEmpty: true });
+      return;
+    }
     this.props.setAvatarUser(this.state.avatarUrl[address], address);
     this.props.setNameWallet(this.state.nameWallet[address], address);
-    this.setState({ isEditVisible: false });
+    this.setState({ isEditVisible: false, isEmpty: false });
   };
 
   renderItem = ({ item }) => {
@@ -632,6 +654,7 @@ class AccountList extends PureComponent {
     const styles = createStyles(colors);
     const selectedAccount = orderedAccounts.find((item) => item.isSelected);
     const uri = this.state.avatarUrl[this.state.newAddress];
+
     return (
       <SafeAreaView style={styles.wrapper} testID={'account-list'}>
         <View style={styles.titleWrapper}>
@@ -759,12 +782,13 @@ class AccountList extends PureComponent {
               onChange={(text) =>
                 this.onChangeName(text, this.state.newAddress)
               }
-              defaultValue={
-                this.state.nameWallet[this.state.newAddress] ||
-                selectedAccount?.name ||
-                ''
-              }
+              defaultValue={this.state.nameWallet[this.state.newAddress]}
             />
+            <View>
+              {this.state.isEmpty && (
+                <Text style={styles.textWarning}>{'Cannot be empty!'}</Text>
+              )}
+            </View>
             <View style={styles.wrapperBtnEdit}>
               <SButton
                 style={styles.containerBtnEdit}
@@ -783,6 +807,7 @@ class AccountList extends PureComponent {
             </View>
           </View>
         </Modal>
+
         <SButton
           style={styles.containerBtn}
           titleStyle={styles.titleButton}
