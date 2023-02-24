@@ -789,6 +789,7 @@ class AccountList extends PureComponent {
                 <Text style={styles.textWarning}>{'Cannot be empty!'}</Text>
               )}
             </View>
+            )
             <View style={styles.wrapperBtnEdit}>
               <SButton
                 style={styles.containerBtnEdit}
@@ -807,7 +808,6 @@ class AccountList extends PureComponent {
             </View>
           </View>
         </Modal>
-
         <SButton
           style={styles.containerBtn}
           titleStyle={styles.titleButton}
