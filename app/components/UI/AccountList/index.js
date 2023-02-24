@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { PureComponent, useCallback } from 'react';
 import { KeyringTypes } from '@metamask/controllers';
 import Engine from '../../../core/Engine';
 import PropTypes from 'prop-types';
@@ -25,14 +25,18 @@ import { doENSReverseLookup } from '../../../util/ENSUtils';
 import AccountElement from './AccountElement';
 import { connect } from 'react-redux';
 import { ThemeContext, mockTheme } from '../../../util/theme';
-import { Colors } from '../../../styles';
+import { Colors, Style } from '../../../styles';
 import { SButton } from '../../common/SButton';
 import { BaseModal } from '../../Base/BaseModal';
 import { icons } from '../../../assets';
 import ClipboardManager from '../../../core/ClipboardManager';
 import { showAlert } from '../../../actions/alert';
 import { toggleAccountsModal } from '../../../actions/modals';
-import { protectWalletModalVisible } from '../../../actions/user';
+import {
+  protectWalletModalVisible,
+  setAvatarUser,
+  setNameWallet,
+} from '../../../actions/user';
 import {
   findBlockExplorerForRpc,
   getBlockExplorerName,
@@ -43,6 +47,10 @@ import {
   getEtherscanTransactionUrl,
 } from '../../../util/etherscan';
 import { NO_RPC_BLOCK_EXPLORER, RPC } from '../../../constants/network';
+import Modal from 'react-native-modal';
+import Identicon from '../Identicon';
+import { SInput } from '../../common';
+import File from '../../../services/File';
 
 const createStyles = (colors) =>
   StyleSheet.create({
@@ -143,6 +151,33 @@ const createStyles = (colors) =>
       fontWeight: '500',
       color: colors.text.default,
     },
+    modalEdit: {
+      zIndex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    containerEdit: {
+      backgroundColor: colors.background.default,
+      width: '80%',
+      borderRadius: 12,
+      padding: 16,
+      paddingTop: 20,
+      alignItems: 'center',
+    },
+    containerBtnEdit: {
+      marginTop: 20,
+      marginHorizontal: 16,
+      paddingHorizontal: 32,
+      minWidth: 120,
+    },
+    imageAvatar: {
+      width: 52,
+      height: 52,
+      borderRadius: 52,
+    },
+    wrapperBtnEdit: {
+      flexDirection: 'row',
+    },
   });
 
 /**
@@ -202,6 +237,10 @@ class AccountList extends PureComponent {
     protectWalletModalVisible: PropTypes.func,
     navigation: PropTypes.object,
     toggleAccountsModal: PropTypes.func,
+    setAvatarUser: PropTypes.func,
+    setNameWallet: PropTypes.func,
+    avatarUrl: PropTypes.object,
+    nameWallet: PropTypes.object,
   };
 
   state = {
@@ -211,6 +250,9 @@ class AccountList extends PureComponent {
     isVisible: false,
     newAddress: '',
     rpcBlockExplorer: '',
+    isEditVisible: false,
+    avatarUrl: this.props.avatarUrl,
+    nameWallet: this.props.nameWallet,
   };
 
   flatList = React.createRef();
@@ -299,7 +341,10 @@ class AccountList extends PureComponent {
   };
 
   onSelected = (newAddress) => {
-    this.setState({ isVisible: !this.state.isVisible, newAddress });
+    this.setState({
+      isVisible: !this.state.isVisible,
+      newAddress,
+    });
   };
 
   importAccount = () => {
@@ -412,17 +457,51 @@ class AccountList extends PureComponent {
     );
   };
 
+  openEditModal = () => {
+    this.setState({ isVisible: false });
+    InteractionManager.runAfterInteractions(() => {
+      this.setState({ isEditVisible: true });
+    });
+  };
+
+  closeEditModal = () => {
+    this.setState({ isEditVisible: false });
+    InteractionManager.runAfterInteractions(() => {
+      this.setState({ isVisible: true });
+    });
+  };
+
+  onSelectImage = async (address) => {
+    const file = await File.pickImage({ multiple: false });
+    this.setState((state) => ({
+      avatarUrl: { ...state.avatarUrl, [address]: file[0].path },
+    }));
+  };
+  onChangeName = (text, address) => {
+    this.setState((state) => ({
+      nameWallet: { ...state.nameWallet, [address]: text },
+    }));
+  };
+
+  onChangeWallet = (address) => {
+    this.props.setAvatarUser(this.state.avatarUrl[address], address);
+    this.props.setNameWallet(this.state.nameWallet[address], address);
+    this.setState({ isEditVisible: false });
+  };
+
   renderItem = ({ item }) => {
     const { ticker } = this.props;
     const { accountsENS } = this.state;
     return (
-      <AccountElement
-        onPress={this.onSelected}
-        onLongPress={this.onLongPress}
-        item={{ ...item, ens: accountsENS[item.address] }}
-        ticker={ticker}
-        disabled={Boolean(item.balanceError)}
-      />
+      <View>
+        <AccountElement
+          onPress={this.onSelected}
+          onLongPress={this.onLongPress}
+          item={{ ...item, ens: accountsENS[item.address] }}
+          ticker={ticker}
+          disabled={Boolean(item.balanceError)}
+        />
+      </View>
     );
   };
 
@@ -547,12 +626,12 @@ class AccountList extends PureComponent {
   };
 
   render() {
-    const { orderedAccounts, accountsENS } = this.state;
+    const { orderedAccounts, accountsENS, isEditVisible } = this.state;
     const { ticker } = this.props;
     const colors = this.context.colors || mockTheme.colors;
     const styles = createStyles(colors);
     const selectedAccount = orderedAccounts.find((item) => item.isSelected);
-
+    const uri = this.state.avatarUrl[this.state.newAddress];
     return (
       <SafeAreaView style={styles.wrapper} testID={'account-list'}>
         <View style={styles.titleWrapper}>
@@ -646,8 +725,64 @@ class AccountList extends PureComponent {
                   strings('transactions.view_on_etherscan')}
               </Text>
             </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.containerIconModal}
+              onPress={() => this.openEditModal()}
+            >
+              <Image source={icons.iconEditSquare} style={styles.iconModal} />
+              <Text style={styles.titleIconModal}>{'Edit Wallet'}</Text>
+            </TouchableOpacity>
           </View>
         </BaseModal>
+        <Modal
+          isVisible={isEditVisible}
+          useNativeDriver
+          animationIn={'zoomIn'}
+          animationOut={'zoomOut'}
+          backdropTransitionOutTiming={0}
+          onBackButtonPress={() => this.closeEditModal()}
+          onBackdropPress={() => this.closeEditModal()}
+          style={styles.modalEdit}
+        >
+          <View style={styles.containerEdit}>
+            <TouchableOpacity
+              onPress={() => this.onSelectImage(this.state.newAddress)}
+            >
+              {this.state.avatarUrl[this.state.newAddress] ? (
+                <Image style={styles.imageAvatar} source={{ uri }} />
+              ) : (
+                <Identicon address={this.state.newAddress} diameter={52} />
+              )}
+            </TouchableOpacity>
+            <SInput
+              style={Style.s({ mt: 16, mx: 32 })}
+              onChange={(text) =>
+                this.onChangeName(text, this.state.newAddress)
+              }
+              defaultValue={
+                this.state.nameWallet[this.state.newAddress] ||
+                selectedAccount?.name ||
+                ''
+              }
+            />
+            <View style={styles.wrapperBtnEdit}>
+              <SButton
+                style={styles.containerBtnEdit}
+                titleStyle={styles.titleButton}
+                type={'border'}
+                title={'cancel'}
+                onPress={this.closeEditModal}
+              />
+              <SButton
+                style={styles.containerBtnEdit}
+                titleStyle={styles.titleButton}
+                type={'primary'}
+                title={'Done'}
+                onPress={() => this.onChangeWallet(this.state.newAddress)}
+              />
+            </View>
+          </View>
+        </Modal>
         <SButton
           style={styles.containerBtn}
           titleStyle={styles.titleButton}
@@ -671,12 +806,16 @@ const mapStateToProps = (state) => ({
   frequentRpcList:
     state.engine.backgroundState.PreferencesController.frequentRpcList,
   provider: state.engine.backgroundState.NetworkController.provider,
+  avatarUrl: state.user.avatarUrl,
+  nameWallet: state.user.nameWallet,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   showAlert: (config) => dispatch(showAlert(config)),
   protectWalletModalVisible: () => dispatch(protectWalletModalVisible()),
   toggleAccountsModal: () => dispatch(toggleAccountsModal()),
+  setAvatarUser: (url, address) => dispatch(setAvatarUser(url, address)),
+  setNameWallet: (name, address) => dispatch(setNameWallet(name, address)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AccountList);

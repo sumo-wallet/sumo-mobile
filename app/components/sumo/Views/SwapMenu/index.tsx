@@ -162,6 +162,9 @@ const SwapMenu = ({ navigation }: any) => {
     (state: any) =>
       state.engine.backgroundState.NetworkController.provider.ticker,
   );
+
+  const nameWallet = useSelector((state: any) => state.user.nameWallet);
+
   /**
    * Current onboarding wizard step
    */
@@ -395,7 +398,9 @@ const SwapMenu = ({ navigation }: any) => {
             style={styles.containerHeader}
             onPress={onAccountsModal}
           >
-            <Text style={styles.title}>{account.name}</Text>
+            <Text style={styles.title}>
+              {nameWallet[selectedAddress] || account.name}
+            </Text>
             <Image source={icons.iconChevronDown} style={styles.iconArrow} />
           </TouchableOpacity>
         }

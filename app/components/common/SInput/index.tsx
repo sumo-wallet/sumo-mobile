@@ -17,6 +17,7 @@ export interface SInputProps {
   placeholder?: string;
   secure?: boolean;
   onChange?: (text: string) => void;
+  defaultValue?: string;
 }
 
 export const SInput = ({
@@ -24,6 +25,7 @@ export const SInput = ({
   placeholder,
   secure = false,
   onChange,
+  defaultValue,
 }: SInputProps) => {
   const hinted = useDisclosure({ defaultIsOpen: secure });
   const focus = useDisclosure();
@@ -42,19 +44,25 @@ export const SInput = ({
     >
       <TextInput
         placeholder={placeholder}
-        style={[Fonts.t({ s: 14, w: '600', c: colors.text.default }), Style.s({ flex: 1 })]}
+        style={[
+          Fonts.t({ s: 14, w: '600', c: colors.text.default }),
+          Style.s({ flex: 1 }),
+        ]}
+        defaultValue={defaultValue}
         placeholderTextColor={colors.text.muted}
         secureTextEntry={hinted.isOpen}
         onChangeText={onChange}
         onFocus={() => focus.onOpen()}
         onBlur={() => focus.onClose()}
       />
-      <TouchableOpacity onPress={hinted.onToggle}>
-        <Image
-          style={Style.s({ size: 20 })}
-          source={hinted.isOpen ? icons.iconEyeClose : icons.iconEyeOpen}
-        />
-      </TouchableOpacity>
+      {secure && (
+        <TouchableOpacity onPress={hinted.onToggle}>
+          <Image
+            style={Style.s({ size: 20 })}
+            source={hinted.isOpen ? icons.iconEyeClose : icons.iconEyeOpen}
+          />
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
