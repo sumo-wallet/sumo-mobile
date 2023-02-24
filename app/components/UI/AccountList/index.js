@@ -350,7 +350,6 @@ class AccountList extends PureComponent {
     const selectedAccount = this.state.orderedAccounts.find(
       (item) => item.address === newAddress,
     );
-    console.log('check =', selectedAccount);
     this.setState({
       isVisible: !this.state.isVisible,
       newAddress,
@@ -655,6 +654,7 @@ class AccountList extends PureComponent {
     const styles = createStyles(colors);
     const selectedAccount = orderedAccounts.find((item) => item.isSelected);
     const uri = this.state.avatarUrl[this.state.newAddress];
+
     return (
       <SafeAreaView style={styles.wrapper} testID={'account-list'}>
         <View style={styles.titleWrapper}>
@@ -808,6 +808,7 @@ class AccountList extends PureComponent {
             </View>
           </View>
         </Modal>
+
         <SButton
           style={styles.containerBtn}
           titleStyle={styles.titleButton}
