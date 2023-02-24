@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { Image, View, ViewPropTypes } from 'react-native';
 import { toDataUrl } from '../../../util/blockies';
@@ -18,15 +18,18 @@ const Identicon = React.memo((props) => {
   const { diameter, address, customStyle, noFadeIn, useBlockieIcon } = props;
   const { colors } = useTheme();
   const avatarUrl = useSelector((state) => state.user.avatarUrl);
+
   if (!address) return null;
-  const uri =
-    avatarUrl !== '' && avatarUrl
-      ? avatarUrl
-      : useBlockieIcon && toDataUrl(address);
+  const uri = useBlockieIcon && toDataUrl(address);
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const url = useMemo(() => {
+    return avatarUrl[address.toString()] || uri;
+  }, [avatarUrl, address, uri]);
 
   const image = useBlockieIcon ? (
     <Image
-      source={{ uri }}
+      source={{ url }}
       style={[
         {
           height: diameter,

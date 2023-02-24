@@ -112,10 +112,12 @@ class AccountElement extends PureComponent {
      */
     disabled: PropTypes.bool,
     item: PropTypes.object,
+    user: PropTypes.object,
     /**
      * Updated balance using stored in state
      */
     updatedBalanceFromStore: PropTypes.string,
+    nameWallet: PropTypes.object,
   };
 
   onPress = () => {
@@ -141,6 +143,7 @@ class AccountElement extends PureComponent {
       balanceError,
       isQRHardware,
     } = this.props.item;
+
     const colors = this.context.colors || mockTheme.colors;
     const styles = createStyles(colors);
 
@@ -173,7 +176,12 @@ class AccountElement extends PureComponent {
           <View style={styles.accountInfo}>
             <View style={styles.accountMain}>
               <Text numberOfLines={1} style={[styles.accountLabel]}>
-                {isDefaultAccountName(name) && ens ? ens : name}-
+                {this.props.nameWallet[address]
+                  ? this.props.nameWallet[address]
+                  : isDefaultAccountName(name) && ens
+                  ? ens
+                  : name}
+                -
                 {address &&
                   address.substring(address.length - 4, address.length - 1)}
               </Text>
@@ -205,6 +213,7 @@ const mapStateToProps = (
     engine: {
       backgroundState: { PreferencesController, AccountTrackerController },
     },
+    user: { nameWallet },
   },
   { item: { balance, address } },
 ) => {
@@ -216,13 +225,14 @@ const mapStateToProps = (
     Object.prototype.hasOwnProperty.call(selectedAccount, BALANCE_KEY);
   const updatedBalanceFromStore =
     balance === EMPTY &&
-      selectedAddress === address &&
-      selectedAccount &&
-      selectedAccountHasBalance
+    selectedAddress === address &&
+    selectedAccount &&
+    selectedAccountHasBalance
       ? selectedAccount[BALANCE_KEY]
       : balance;
   return {
     updatedBalanceFromStore,
+    nameWallet,
   };
 };
 
