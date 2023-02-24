@@ -805,7 +805,6 @@ class AccountList extends PureComponent {
             </View>
           </View>
         </Modal>
-
         <SButton
           style={styles.containerBtn}
           titleStyle={styles.titleButton}
