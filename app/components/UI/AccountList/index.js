@@ -652,7 +652,6 @@ class AccountList extends PureComponent {
     const styles = createStyles(colors);
     const selectedAccount = orderedAccounts.find((item) => item.isSelected);
     const uri = this.state.avatarUrl[this.state.newAddress];
-
     return (
       <SafeAreaView style={styles.wrapper} testID={'account-list'}>
         <View style={styles.titleWrapper}>
