@@ -40,6 +40,9 @@ export const COINDESK_TICKER =
 export const PATHS = {
   coingeckoPing: '/v3/ping',
   coingeckoGlobal: '/v3/global',
+  coingeckoNFTList: '/v3/nfts/list',
+  coingeckoNFTData: '/v3/nfts/{id}',
+  coingeckoTokenSearchTrending: '/v3/search/trending',
 };
 
 class Client {
@@ -104,6 +107,11 @@ class Client {
   }
   getTokenPrice() {
     return fetcher<any>(`${COINGECKO_BASE_URL}${PATHS.coingeckoGlobal}`, {
+      headers: this.headers,
+    });
+  }
+  getCoingeckoNftList() {
+    return fetcher<any>(`${COINGECKO_BASE_URL}${PATHS.coingeckoNFTList}`, {
       headers: this.headers,
     });
   }

@@ -1,27 +1,17 @@
-import React, {
-  useEffect,
-} from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  FlatList,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { connect, useDispatch } from 'react-redux';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { View as AnimatableView } from 'react-native-animatable';
-
-import {
-  setSwapsLiveness,
-} from '../../../reducers/swaps';
-import Text from '../../Base/Text';
-import { useTheme } from '../../../util/theme';
+// import { View as AnimatableView } from 'react-native-animatable';
+// import { setSwapsLiveness } from '../../../reducers/swaps';
+import Text from '../../../Base/Text';
+import { useTheme } from '../../../../util/theme';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import FastImage from 'react-native-fast-image';
-import { images } from '../../../assets';
-import { createNewTab, openDapp } from '../../../actions/browser';
-import { ROUTES } from '../../../navigation/routes';
+import { images } from '../../../../assets';
+import { createNewTab, openDapp } from '../../../../actions/browser';
+import { ROUTES } from '../../../../navigation/routes';
 
 const createStyles = (colors) =>
   StyleSheet.create({
@@ -70,7 +60,7 @@ const createStyles = (colors) =>
     cryptoAsset: {
       width: 200,
       height: 200,
-    }
+    },
   });
 
 const EXCHANGE = [
@@ -141,9 +131,12 @@ function SumoExchangeView({
         }}
         renderItem={({ item }) => {
           return (
-            <TouchableOpacity style={styles.providerContainer} onPress={() => {
-              openDappBrowser(item);
-            }}>
+            <TouchableOpacity
+              style={styles.providerContainer}
+              onPress={() => {
+                openDappBrowser(item);
+              }}
+            >
               <FastImage
                 source={{ uri: item.logo }}
                 style={styles.logo}
@@ -151,13 +144,15 @@ function SumoExchangeView({
               />
               <View style={{ flex: 1, marginLeft: 10 }}>
                 <Text style={styles.swapDetailTitle}>{item.name}</Text>
-                <Text style={styles.swapDetailDescription}>{item.description}</Text>
+                <Text style={styles.swapDetailDescription}>
+                  {item.description}
+                </Text>
               </View>
-              <Icon name="share" size={18} style={styles.caretDown} ></Icon>
+              <Icon name="share" size={18} style={styles.caretDown} />
             </TouchableOpacity>
           );
         }}
-      ></FlatList>
+      />
     </View>
   );
 }
@@ -224,8 +219,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  setLiveness: (liveness, chainId) =>
-    dispatch(setSwapsLiveness(liveness, chainId)),
+  // setLiveness: (liveness, chainId) => dispatch(setSwapsLiveness(liveness, chainId)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SumoExchangeView);
