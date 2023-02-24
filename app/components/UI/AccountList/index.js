@@ -354,10 +354,10 @@ class AccountList extends PureComponent {
     this.setState({
       isVisible: !this.state.isVisible,
       newAddress,
-      nameWallet: this.state.nameWallet[newAddress]
-        ? { ...this.state.nameWallet }
+      nameWallet: this.props.nameWallet[newAddress]
+        ? { ...this.props.nameWallet }
         : {
-            ...this.state.nameWallet,
+            ...this.props.nameWallet,
             [newAddress]: selectedAccount?.name || '',
           },
     });
@@ -481,10 +481,7 @@ class AccountList extends PureComponent {
   };
 
   closeEditModal = () => {
-    this.setState({ isEditVisible: false });
-    InteractionManager.runAfterInteractions(() => {
-      this.setState({ isVisible: true });
-    });
+    this.setState({ isEditVisible: false, isEmpty: false });
   };
 
   onSelectImage = async (address) => {
@@ -789,7 +786,7 @@ class AccountList extends PureComponent {
                 <Text style={styles.textWarning}>{'Cannot be empty!'}</Text>
               )}
             </View>
-            )
+
             <View style={styles.wrapperBtnEdit}>
               <SButton
                 style={styles.containerBtnEdit}
@@ -808,6 +805,7 @@ class AccountList extends PureComponent {
             </View>
           </View>
         </Modal>
+
         <SButton
           style={styles.containerBtn}
           titleStyle={styles.titleButton}
