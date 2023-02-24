@@ -358,7 +358,6 @@ class AccountList extends PureComponent {
         ? { ...this.props.nameWallet }
         : {
             ...this.props.nameWallet,
-
             [newAddress]: selectedAccount?.name || '',
           },
     });
