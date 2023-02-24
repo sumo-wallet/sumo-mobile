@@ -13,7 +13,8 @@ const initialState = {
   isAuthChecked: false,
   initialScreen: '',
   appTheme: AppThemeKey.os,
-  avatarUrl: '',
+  avatarUrl: {},
+  nameWallet: {},
 };
 
 const userReducer = (state = initialState, action) => {
@@ -109,7 +110,19 @@ const userReducer = (state = initialState, action) => {
     case 'SET_AVATAR':
       return {
         ...state,
-        avatarUrl: action.payload.url,
+        avatarUrl: {
+          ...state.avatarUrl,
+          [action.payload.address.toString()]: action.payload.url,
+        },
+      };
+
+    case 'SET_NAME':
+      return {
+        ...state,
+        nameWallet: {
+          ...state.nameWallet,
+          [action.payload.address.toString()]: action.payload.name,
+        },
       };
 
     default:

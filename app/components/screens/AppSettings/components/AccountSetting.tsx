@@ -78,11 +78,10 @@ export const AccountSetting = function AccountSetting() {
     (state) =>
       state.engine.backgroundState.PreferencesController.selectedAddress,
   );
-
   const onSelectImage = useCallback(async () => {
     const file = await File.pickImage({ multiple: false });
-    dispatch(setAvatarUser(file[0].path));
-  }, [dispatch]);
+    dispatch(setAvatarUser(file[0].path, selectedAddress));
+  }, [dispatch, selectedAddress]);
 
   return (
     <View style={styles.container}>
