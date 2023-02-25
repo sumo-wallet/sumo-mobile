@@ -332,10 +332,8 @@ const Wallet = ({ navigation }: any) => {
     accounts,
     conversionRate,
     currentCurrency,
-    identities,
     navigation,
     onChangeTab,
-    onRef,
     selectedAddress,
     ticker,
     tokens,
@@ -394,7 +392,11 @@ const Wallet = ({ navigation }: any) => {
         }
       >
         <View style={styles.containerRight}>
-          <TouchableOpacity onPress={() => { navigation.navigate(Routes.QR_SCANNER); }}>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate(Routes.QR_SCANNER);
+            }}
+          >
             <Image source={icons.iconScanQR} style={styles.iconQR} />
           </TouchableOpacity>
         </View>

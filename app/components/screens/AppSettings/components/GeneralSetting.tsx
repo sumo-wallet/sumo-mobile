@@ -266,7 +266,7 @@ export const GeneralSetting = function GeneralSetting() {
       <TouchableOpacity
         style={[styles.containerItem, { borderBottomWidth: 0.4 }]}
         onPress={() => {
-          navigation.navigate('NetworksSettings');
+          navigation.navigate('ChangeNetwork');
         }}
       >
         <Text style={styles.settingTitle}>

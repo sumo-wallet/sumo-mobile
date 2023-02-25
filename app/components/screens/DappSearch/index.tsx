@@ -239,9 +239,15 @@ export const DappSearch = React.memo(() => {
     (dapp: ModelDApp) => {
       pushToHistory(inputValue);
       if (dapp.website) {
-        dispatch(createNewTab(dapp?.website, dapp));
         dispatch(openDapp({ dapp }));
-        nav.navigate(ROUTES.BrowserTabHome, { dapp });
+        nav.navigate(Routes.BROWSER_TAB_HOME, {
+          screen: Routes.BROWSER_VIEW,
+          params: {
+            newTabUrl: dapp.website,
+            timestamp: Date.now(),
+            dapp,
+          },
+        });
         trackingUsage(dapp.id || 0, 'dapp-search');
       }
     },

@@ -7,6 +7,7 @@ import {
   View,
   AppState,
   Appearance,
+  Text,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -207,14 +208,17 @@ class LockScreen extends PureComponent {
 
     if (!this.state.ready) {
       return (
-        <LottieView
-          // eslint-disable-next-line react/jsx-no-bind
-          ref={(animation) => {
-            this.firstAnimation = animation;
-          }}
-          style={styles.animation}
-          source={require('../../../animations/bounce.json')}
-        />
+        <View>
+          <LottieView
+            // eslint-disable-next-line react/jsx-no-bind
+            ref={(animation) => {
+              this.firstAnimation = animation;
+            }}
+            style={styles.animation}
+            source={require('../../../animations/bounce.json')}
+          />
+          <Text>{'Loading'}</Text>
+        </View>
       );
     }
 
@@ -239,6 +243,7 @@ class LockScreen extends PureComponent {
           loop={false}
           source={wordmark}
         />
+        <Text>{'Loading'}</Text>
       </View>
     );
   }

@@ -795,6 +795,7 @@ export default {
           : CurrencyRateController.conversionRate,
     };
 
+    console.log('Log: get engine state');
     return {
       AccountTrackerController,
       AddressBookController,

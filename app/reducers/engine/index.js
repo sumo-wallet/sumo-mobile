@@ -5,6 +5,7 @@ const initialState = {
 };
 
 const engineReducer = (state = initialState, action) => {
+  console.log('engineReducer:' + action.type);
   switch (action.type) {
     case 'INIT_BG_STATE':
       return { backgroundState: Engine.state };

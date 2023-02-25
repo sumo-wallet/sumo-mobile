@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react';
 import Engine from '../../../core/Engine';
 import PropTypes from 'prop-types';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import {
   ScrollView,
   TouchableOpacity,
@@ -30,7 +29,7 @@ import {
 } from '../../../constants/test-ids';
 import ImageIcon from '../../UI/ImageIcon';
 import { ThemeColors } from '@thanhpn1990/design-tokens/dist/js/themes/types';
-import { Colors, Style } from './../../../styles';
+import { Style } from './../../../styles';
 import FastImage from 'react-native-fast-image';
 import { icons } from './../../../assets';
 
@@ -311,7 +310,7 @@ export class NetworkList extends PureComponent {
         provider.type === network ? (
           <FastImage
             style={Style.s({ size: 20 })}
-            tintColor={Colors.green[1]}
+            tintColor={colors.primary.default}
             source={icons.iconChecked}
           />
         ) : null;
@@ -340,7 +339,7 @@ export class NetworkList extends PureComponent {
           // <Icon name="check" size={20} color={colors.icon.default} />
           <FastImage
             style={Style.s({ size: 20 })}
-            tintColor={Colors.green[1]}
+            tintColor={colors.primary.default}
             source={icons.iconChecked}
           />
         ) : null;
@@ -364,7 +363,7 @@ export class NetworkList extends PureComponent {
       provider.type === MAINNET ? (
         <FastImage
           style={Style.s({ size: 20 })}
-          tintColor={Colors.green[1]}
+          tintColor={colors.primary.default}
           source={icons.iconChecked}
         />
       ) : null;
@@ -381,7 +380,7 @@ export class NetworkList extends PureComponent {
           <View
             style={[
               Style.s({ flex: 1, direc: 'row', items: 'center', py: 16 }),
-              Style.b({ color: Colors.grayscale[80], bbw: 1 }),
+              Style.b({ color: colors.border.default, bbw: 1 }),
             ]}
           >
             <ImageIcon image="ETHEREUM" style={styles.networkIcon} />

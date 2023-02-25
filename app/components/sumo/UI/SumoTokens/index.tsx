@@ -8,34 +8,34 @@ import {
   Image,
   RefreshControl,
 } from 'react-native';
-import TokenImage from '../TokenImage';
-import { fontStyles } from '../../../styles/common';
-import { strings } from '../../../../locales/i18n';
+import TokenImage from '../../../UI/TokenImage';
+import { fontStyles } from '../../../../styles/common';
+import { strings } from '../../../../../locales/i18n';
 import ActionSheet from 'react-native-actionsheet';
 import {
   renderFromTokenMinimalUnit,
   balanceToFiat,
-} from '../../../util/number';
-import Engine from '../../../core/Engine';
-import Logger from '../../../util/Logger';
-import AssetElement from '../AssetElement';
+} from '../../../../util/number';
+import Engine from '../../../../core/Engine';
+import Logger from '../../../../util/Logger';
+import AssetElement from '../../../UI/AssetElement';
 import { connect } from 'react-redux';
-import { safeToChecksumAddress } from '../../../util/address';
-import Analytics from '../../../core/Analytics/Analytics';
-import AnalyticsV2 from '../../../util/analyticsV2';
-import NetworkMainAssetLogo from '../NetworkMainAssetLogo';
-import { getTokenList } from '../../../reducers/tokens';
-import { isZero } from '../../../util/lodash';
-import { ThemeContext, useTheme } from '../../../util/theme';
-import Text from '../../Base/Text';
-import NotificationManager from '../../../core/NotificationManager';
-import { getDecimalChainId, isTestNet } from '../../../util/networks';
-import BalanceFrame from '../../screens/Wallet/components/BalanceFrame';
-import { SearchBar } from '../../screens/Dapps/SearchBar';
-import { icons, images } from '../../../assets';
+import { safeToChecksumAddress } from '../../../../util/address';
+import Analytics from '../../../../core/Analytics/Analytics';
+import AnalyticsV2 from '../../../../util/analyticsV2';
+import NetworkMainAssetLogo from '../../../UI/NetworkMainAssetLogo';
+import { getTokenList } from '../../../../reducers/tokens';
+import { isZero } from '../../../../util/lodash';
+import { ThemeContext, useTheme } from '../../../../util/theme';
+import Text from '../../../Base/Text';
+import NotificationManager from '../../../../core/NotificationManager';
+import { getDecimalChainId, isTestNet } from '../../../../util/networks';
+import BalanceFrame from '../../../screens/Wallet/components/BalanceFrame';
+import { SearchBar } from '../../../screens/Dapps/SearchBar';
+import { icons, images } from '../../../../assets';
 import { FlatList } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
-import { toLowerCaseIncludes } from '../../../util/general';
+import { toLowerCaseIncludes } from '../../../../util/general';
 
 interface ISumoTokenProp {
   /**
@@ -263,7 +263,7 @@ const SumoTokens = ({
   const renderEmpty = () => {
     return (
       <View style={styles.emptyView}>
-        <Image style={styles.emptyImage} source={images.imageEmptyView}></Image>
+        <Image style={styles.emptyImage} source={images.imageEmptyView} />
         <Text style={styles.text}>{strings('wallet.no_tokens')}</Text>
       </View>
     );
@@ -272,7 +272,7 @@ const SumoTokens = ({
   const onItemPress = (token: any) => {
     navigation.navigate('Asset', {
       ...token,
-      transactions: transactions,
+      transactions,
     });
   };
 

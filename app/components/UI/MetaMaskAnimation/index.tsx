@@ -51,7 +51,7 @@ const createStyles = (colors: any) =>
       justifyContent: 'center',
     },
     title: {
-      color: 'white',
+      color: colors.text.default,
     },
   });
 
@@ -91,7 +91,7 @@ const MetaMaskAnimation = ({
               // eslint-disable-next-line
               source={wordmark}
             /> */}
-            <Text style={styles.title}>{'SUMO WALLET'}</Text>
+            <Text style={styles.title}>{'LOADING...'}</Text>
           </View>
         </View>
       </Animated.View>

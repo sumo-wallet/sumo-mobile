@@ -334,9 +334,8 @@ export const HomeScreen = memo(() => {
         title={''}
         isHiddenTitle
         hideGoBack
-        isShowNetwork
         style={styles.containerHeader}
-        isShowAvatar={false}
+        isShowAvatar
         networkName={getNetworkName()}
         address={selectedAddress}
         onPressNetwork={() => {

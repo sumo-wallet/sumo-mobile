@@ -140,29 +140,25 @@ export const EmptyHeader = memo(
         <StatusBarView />
         <View style={styles.container}>
           <View style={styles.leftAction}>
-            {canGoBack() ? (
-              hideGoBack ? (
-                isShowAvatar ? (
-                  <TouchableOpacity
-                    style={styles.headerIconWrapper}
-                    onPress={() => {
-                      navigate('SettingsView');
-                    }}
-                  >
-                    <Identicon address={address || ''} diameter={36} />
-                  </TouchableOpacity>
-                ) : (
-                  <></>
-                )
-              ) : (
-                <TouchableOpacity
-                  style={styles.headerIconWrapper}
-                  onPress={onClose}
-                >
-                  <Image source={icons.iconArrowLeft} style={styles.icon} />
-                </TouchableOpacity>
-              )
-            ) : null}
+            {canGoBack() && !hideGoBack && (
+              <TouchableOpacity
+                style={styles.headerIconWrapper}
+                onPress={onClose}
+              >
+                <Image source={icons.iconArrowLeft} style={styles.icon} />
+              </TouchableOpacity>
+            )}
+
+            {isShowAvatar && (
+              <TouchableOpacity
+                style={styles.headerIconWrapper}
+                onPress={() => {
+                  navigate('SettingsView');
+                }}
+              >
+                <Identicon address={address || ''} diameter={36} />
+              </TouchableOpacity>
+            )}
 
             {isShowNetwork && (
               <View style={styles.networkContainer}>
