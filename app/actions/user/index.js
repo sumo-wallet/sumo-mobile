@@ -104,3 +104,23 @@ export function checkedAuth(initialScreen) {
     },
   };
 }
+
+export function setAvatarUser(url, address) {
+  return {
+    type: 'SET_AVATAR',
+    payload: {
+      url,
+      address,
+    },
+  };
+}
+
+export function setNameWallet(name, address) {
+  return {
+    type: 'SET_NAME',
+    payload: {
+      name,
+      address,
+    },
+  };
+}
