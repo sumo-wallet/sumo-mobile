@@ -823,21 +823,27 @@ export default {
     return instance.datamodel;
   },
   getTotalFiatAccountBalance() {
+    console.log('Log:Engine: getTotalFiatAccountBalance');
     return instance.getTotalFiatAccountBalance();
   },
   hasFunds() {
+    console.log('Log:Engine: hasFunds');
     return instance.hasFunds();
   },
   resetState() {
+    console.log('Log:Engine: resetState');
     return instance.resetState();
   },
   sync(data: any) {
+    console.log('Log:Engine: sync');
     return instance.sync(data);
   },
   refreshTransactionHistory(forceCheck = false) {
+    console.log('Log:Engine: refreshTransactionHistory');
     return instance.refreshTransactionHistory(forceCheck);
   },
   init(state: {} | undefined) {
+    console.log('Log:Engine: init');
     instance = new Engine(state);
     Object.freeze(instance);
     return instance;

@@ -238,6 +238,7 @@ export class TokenListController extends BaseControllerV2<
    * Starts a new polling interval.
    */
   private async startPolling(): Promise<void> {
+    console.log('SUMO_TokenListController startPolling');
     await safelyExecute(() => this.fetchTokenList());
     this.intervalId = setInterval(async () => {
       await safelyExecute(() => this.fetchTokenList());
@@ -248,6 +249,7 @@ export class TokenListController extends BaseControllerV2<
    * Fetching token list from the Token Service API.
    */
   async fetchTokenList(): Promise<void> {
+    console.log('SUMO_TokenListController fetchTokenList');
     const releaseLock = await this.mutex.acquire();
     try {
       const { tokensChainsCache } = this.state;
@@ -258,6 +260,7 @@ export class TokenListController extends BaseControllerV2<
       if (cachedTokens) {
         // Use non-expired cached tokens
         tokenList = { ...cachedTokens };
+        console.log('SUMO_TokenListController cachedTokens:', cachedTokens);
       } else {
         // Fetch fresh token list
         const tokensFromAPI: TokenListToken[] = await safelyExecute(() =>
@@ -267,7 +270,7 @@ export class TokenListController extends BaseControllerV2<
         if (!tokensFromAPI) {
           // Fallback to expired cached tokens
           tokenList = { ...(tokensChainsCache[this.chainId]?.data || {}) };
-
+          console.log('SUMO_TokenListController tokensFromAPI:', tokensFromAPI);
           this.update(() => {
             return {
               ...this.state,

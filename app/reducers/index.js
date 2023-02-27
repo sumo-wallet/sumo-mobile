@@ -20,6 +20,7 @@ import networkOnboardReducer from './networkSelector';
 import securityReducer from './security';
 import dappReducer from './dapp';
 import { combineReducers } from 'redux';
+import sumoEngineReducer from './sumoEngine';
 
 const rootReducer = combineReducers({
   collectibles: collectiblesReducer,
@@ -43,6 +44,7 @@ const rootReducer = combineReducers({
   networkOnboarded: networkOnboardReducer,
   security: securityReducer,
   dapp: dappReducer,
+  sumoEngine: sumoEngineReducer,
 });
 
 export default rootReducer;

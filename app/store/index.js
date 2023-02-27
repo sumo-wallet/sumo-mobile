@@ -13,6 +13,7 @@ import { migrations, version } from './migrations';
 import Logger from '../util/Logger';
 import EngineService from '../core/EngineService';
 import Device from '../util/device';
+import SumoEngineService from '../sumo-core/SumoEngineService';
 
 const TIMEOUT = 40000;
 
@@ -129,6 +130,7 @@ export const store = createStore(pReducer);
  */
 const onPersistComplete = () => {
   EngineService.initalizeEngine(store);
+  SumoEngineService.initalizeEngine(store);
 };
 
 export const persistor = persistStore(store, null, onPersistComplete);

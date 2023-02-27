@@ -4,11 +4,12 @@ const initialState = {
   backgroundState: {},
 };
 
-const engineReducer = (state = initialState, action) => {
+const sumoEngineReducer = (state = initialState, action) => {
+  console.log('sumoEngineReducer:' + action.type);
   switch (action.type) {
-    case 'INIT_BG_STATE':
+    case 'SUMO_INIT_BG_STATE':
       return { backgroundState: Engine.state };
-    case 'UPDATE_BG_STATE': {
+    case 'SUMO_UPDATE_BG_STATE': {
       const newState = { ...state };
       newState.backgroundState[action.key] = Engine.state[action.key];
       return newState;
@@ -18,4 +19,4 @@ const engineReducer = (state = initialState, action) => {
   }
 };
 
-export default engineReducer;
+export default sumoEngineReducer;
