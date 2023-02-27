@@ -22,10 +22,13 @@ const Identicon = React.memo((props) => {
   if (!address) return null;
   const uri = useBlockieIcon && toDataUrl(address);
 
+  const customUrl = avatarUrl[address.toString()];
+
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const url = useMemo(() => {
-    return avatarUrl[address.toString()] || uri;
-  }, [avatarUrl, address, uri]);
+    if (customUrl) return customUrl;
+    return uri;
+  }, [customUrl, uri]);
 
   const image = useBlockieIcon ? (
     <Image
