@@ -122,7 +122,7 @@ const createStyles = (colors) =>
       marginHorizontal: 16,
     },
     titleButton: {
-      color: colors.text.inverse,
+      color: colors.text.muted,
     },
     containerOrder: {
       marginTop: 24,
@@ -169,6 +169,7 @@ const createStyles = (colors) =>
       marginHorizontal: 16,
       paddingHorizontal: 32,
       minWidth: 120,
+      color: colors.text.default,
     },
     imageAvatar: {
       width: 52,
@@ -357,9 +358,9 @@ class AccountList extends PureComponent {
       nameWallet: this.props.nameWallet[newAddress]
         ? { ...this.props.nameWallet }
         : {
-            ...this.props.nameWallet,
-            [newAddress]: selectedAccount?.name || '',
-          },
+          ...this.props.nameWallet,
+          [newAddress]: selectedAccount?.name || '',
+        },
     });
   };
 
