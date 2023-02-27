@@ -63,6 +63,7 @@ import iconArrowDown from './icons/iconArrowDown.png';
 import logoFacebook from './icons/logoFacebook.png';
 import logoTwitter from './icons/logoTwitter.png';
 import logoDiscord from './icons/logoDiscord.png';
+import iconEditSquare from './icons/iconEditSquare.png';
 
 import imageBanner from './images/imageBanner.png';
 import imageNew1 from './images/imageNew1.png';
@@ -142,6 +143,7 @@ export const icons = {
   logoTwitter,
   logoDiscord,
   currency_ethereum,
+  iconEditSquare,
 };
 
 export const images = {
