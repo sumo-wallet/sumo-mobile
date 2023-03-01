@@ -20,6 +20,7 @@ import networkOnboardReducer from './networkSelector';
 import securityReducer from './security';
 import dappReducer from './dapp';
 import { combineReducers } from 'redux';
+import { coinMarketsReducer } from './coinmarkets/slice';
 
 const rootReducer = combineReducers({
   collectibles: collectiblesReducer,
@@ -43,6 +44,7 @@ const rootReducer = combineReducers({
   networkOnboarded: networkOnboardReducer,
   security: securityReducer,
   dapp: dappReducer,
+  coinMarkets: coinMarketsReducer,
 });
 
 export default rootReducer;
