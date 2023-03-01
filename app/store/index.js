@@ -13,6 +13,7 @@ import { migrations, version } from './migrations';
 import Logger from '../util/Logger';
 import EngineService from '../core/EngineService';
 import Device from '../util/device';
+import { setCoinMarketsStore } from '../reducers/coinmarkets/slice';
 
 const TIMEOUT = 40000;
 
@@ -123,7 +124,7 @@ const persistConfig = {
 const pReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = createStore(pReducer);
-
+setCoinMarketsStore(store);
 /**
  * Initialize services after persist is completed
  */

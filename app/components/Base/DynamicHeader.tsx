@@ -54,7 +54,6 @@ const createStyles = (colors: any) =>
     leftAction: {},
     headerIconWrapper: {
       minWidth: 40,
-      height: 40,
       justifyContent: 'center',
       alignItems: 'center',
     },
@@ -133,20 +132,22 @@ export const EmptyHeader = memo(
           {
             backgroundColor: isHiddenBackground
               ? 'transparent'
-              : backgroundColor ? backgroundColor : colors.background.default,
+              : backgroundColor || colors.background.default,
           },
         ]}
       >
         <StatusBarView />
         <View style={styles.container}>
           <View style={styles.leftAction}>
-            {canGoBack() && !hideGoBack && (
+            {canGoBack() && !hideGoBack ? (
               <TouchableOpacity
                 style={styles.headerIconWrapper}
                 onPress={onClose}
               >
                 <Image source={icons.iconArrowLeft} style={styles.icon} />
               </TouchableOpacity>
+            ) : (
+              <View style={styles.headerIconWrapper} />
             )}
 
             {isShowAvatar && (

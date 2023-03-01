@@ -64,6 +64,7 @@ import logoFacebook from './icons/logoFacebook.png';
 import logoTwitter from './icons/logoTwitter.png';
 import logoDiscord from './icons/logoDiscord.png';
 import iconEditSquare from './icons/iconEditSquare.png';
+import iconSelectorArrow from './icons/iconSelectorArrow.png';
 
 import imageBanner from './images/imageBanner.png';
 import imageNew1 from './images/imageNew1.png';
@@ -74,7 +75,6 @@ import emptyBox from './images/emptyBox.png';
 import imageEmptyView from './images/imageEmptyView.png';
 import imageCryptoAsset from './images/crypto-asset.png';
 import currency_ethereum from './icons/currency_ethereum.png';
-
 
 export const icons = {
   iconEyeClose,
@@ -144,6 +144,7 @@ export const icons = {
   logoDiscord,
   currency_ethereum,
   iconEditSquare,
+  iconSelectorArrow,
 };
 
 export const images = {
