@@ -104,6 +104,7 @@ import { useTheme } from '../../../util/theme';
 // import ManagerCoinModal from '../../screens/Wallet/modal/ManagerCoinModal';
 
 import SwapMenu from '../../sumo/Views/SwapMenu';
+import { CoinMarketsScreen } from '../../screens/CoinMarkets/CoinMarketsScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -341,10 +342,12 @@ const NFTMarketplaceTabStackFlow = () => (
 
 export const NFTMarketplaceTabModalFlow = () => (
   <Stack.Navigator mode={'modal'} screenOptions={clearStackNavigatorOptions}>
-    <Stack.Screen name={'NFTMarketplaceTabStackFlow'} component={NFTMarketplaceTabStackFlow} />
+    <Stack.Screen
+      name={'NFTMarketplaceTabStackFlow'}
+      component={NFTMarketplaceTabStackFlow}
+    />
   </Stack.Navigator>
 );
-
 
 const DappFlow = () => (
   <Stack.Navigator
@@ -372,7 +375,6 @@ const DappFlow = () => (
     <Stack.Screen name={ROUTES.ChangeNetwork} component={ChangeNetwork} />
   </Stack.Navigator>
 );
-
 
 const BrowserFlow = () => (
   <Stack.Navigator
@@ -449,6 +451,21 @@ export const BottomTabContainer = () => {
       }}
       screenOptions={{ tabBarVisible: true }}
     >
+      <Tab.Screen
+        name={ROUTES.CoinMarketsScreen}
+        component={CoinMarketsScreen}
+        options={{
+          title: 'Market',
+          tabBarIcon: ({ color }) => {
+            return (
+              <Image
+                style={Style.s({ size: 20, tin: color })}
+                source={icons.iconHome}
+              />
+            );
+          },
+        }}
+      />
       <Tab.Screen
         name={ROUTES.HomeScreen}
         component={HomeScreen}

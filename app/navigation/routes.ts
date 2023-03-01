@@ -20,4 +20,5 @@ export const ROUTES = {
   TransactionsHome: 'TransactionsHome',
 
   BrowserTabHome: 'BrowserTabHome',
+  CoinMarketsScreen: 'CoinMarketsScreen',
 };

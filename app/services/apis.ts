@@ -25,6 +25,11 @@ import {
   V1MarketplaceCollectionTopListParams,
   V1MarketplaceCollectionTrendingListParams,
 } from './../types';
+import { MarketsListParams } from '../types/coingecko/schema';
+import {
+  RawCoinMarketsInterface,
+  RawGlobalMarketInterface,
+} from '../reducers/coinmarkets/types';
 
 /* eslint-disable prefer-destructuring */
 export const COINGECKO_BASE_URL = 'https://api.coingecko.com/api/v3/';
@@ -39,10 +44,11 @@ export const COINDESK_TICKER =
 
 export const PATHS = {
   coingeckoPing: '/v3/ping',
-  coingeckoGlobal: '/v3/global',
+  coingeckoGlobal: 'global',
   coingeckoNFTList: '/v3/nfts/list',
   coingeckoNFTData: '/v3/nfts/{id}',
   coingeckoTokenSearchTrending: '/v3/search/trending',
+  coingeckoCoinsMarkets: 'coins/markets',
 };
 
 class Client {
@@ -101,9 +107,12 @@ class Client {
     );
   }
   getCoingeckoGlobal() {
-    return fetcher<any>(`${COINGECKO_BASE_URL}${PATHS.coingeckoGlobal}`, {
-      headers: this.headers,
-    });
+    return fetcher<RawGlobalMarketInterface>(
+      `${COINGECKO_BASE_URL}${PATHS.coingeckoGlobal}`,
+      {
+        headers: this.headers,
+      },
+    );
   }
   getTokenPrice() {
     return fetcher<any>(`${COINGECKO_BASE_URL}${PATHS.coingeckoGlobal}`, {
@@ -275,6 +284,16 @@ class Client {
   public getiCrosschainChains() {
     return fetcher<HandlerChainResponse>(
       `${this.icrosschainBaseUrl}/api/v1/system/chain`,
+      {
+        headers: this.headers,
+      },
+    );
+  }
+
+  public getCoinsMarket(params: MarketsListParams) {
+    const stringifyParams = qs.stringify(params);
+    return fetcher<RawCoinMarketsInterface[]>(
+      `${COINGECKO_BASE_URL}${PATHS.coingeckoCoinsMarkets}?${stringifyParams}`,
       {
         headers: this.headers,
       },
