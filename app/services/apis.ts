@@ -30,6 +30,7 @@ import {
   RawCoinMarketsInterface,
   RawGlobalMarketInterface,
 } from '../reducers/coinmarkets/types';
+import { RawCategoriesMarketInterface } from '../reducers/categoriesMarket';
 
 /* eslint-disable prefer-destructuring */
 export const COINGECKO_BASE_URL = 'https://api.coingecko.com/api/v3/';
@@ -49,6 +50,7 @@ export const PATHS = {
   coingeckoNFTData: '/v3/nfts/{id}',
   coingeckoTokenSearchTrending: '/v3/search/trending',
   coingeckoCoinsMarkets: 'coins/markets',
+  categoriesMarket: 'coins/categories',
 };
 
 class Client {
@@ -294,6 +296,15 @@ class Client {
     const stringifyParams = qs.stringify(params);
     return fetcher<RawCoinMarketsInterface[]>(
       `${COINGECKO_BASE_URL}${PATHS.coingeckoCoinsMarkets}?${stringifyParams}`,
+      {
+        headers: this.headers,
+      },
+    );
+  }
+
+  public getCategoriesMarket() {
+    return fetcher<RawCategoriesMarketInterface[]>(
+      `${COINGECKO_BASE_URL}${PATHS.categoriesMarket}?order=market_cap_change_24h_desc`,
       {
         headers: this.headers,
       },

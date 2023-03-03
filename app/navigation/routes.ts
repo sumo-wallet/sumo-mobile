@@ -1,3 +1,5 @@
+import { navigateToCategoriesFilterMarketScreen } from '../components/Base/navigation';
+
 export const ROUTES = {
   HomeScreen: 'HomeScreen',
   DappsScreen: 'DappsScreen',
@@ -21,4 +23,5 @@ export const ROUTES = {
 
   BrowserTabHome: 'BrowserTabHome',
   CoinMarketsScreen: 'CoinMarketsScreen',
+  CategoriesFilterMarketScreen: 'CategoriesFilterMarketScreen',
 };
