@@ -85,7 +85,11 @@ export const BottomMenuSelector = memo(
 
     const selectedOption: SelectorOption | undefined = useMemo(() => {
       return options
-        ? options.filter((option) => option.value === selectedValue)[0]
+        ? options.filter(
+            (option) =>
+              option.value === selectedValue ||
+              option.subValue === selectedValue,
+          )[0]
         : undefined;
     }, [options, selectedValue]);
 
@@ -144,6 +148,7 @@ export const BottomMenuSelector = memo(
             <ScrollView style={styles.maxHeightScroll}>
               {options.map((option) => {
                 const selected = option.value === selectedValue;
+                const subSelected = option.subValue === selectedValue;
                 return (
                   <View
                     style={styles.optionContainer}
@@ -154,6 +159,8 @@ export const BottomMenuSelector = memo(
                       renderIcon={renderIcon}
                       selected={selected}
                       onSelect={onSelectOptionCb}
+                      subSelected={subSelected}
+                      isRound={!!option.subValue}
                     />
                   </View>
                 );

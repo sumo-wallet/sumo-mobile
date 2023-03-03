@@ -105,6 +105,7 @@ import { useTheme } from '../../../util/theme';
 
 import SwapMenu from '../../sumo/Views/SwapMenu';
 import { CoinMarketsScreen } from '../../screens/CoinMarkets/CoinMarketsScreen';
+import { CategoriesFilterMarketScreen } from '../../screens/CoinMarkets/CategoriesFilterMarket';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -985,6 +986,10 @@ const MainNavigator = () => (
     <Stack.Screen name={ROUTES.ChangeNetwork} component={ChangeNetwork} />
     <Stack.Screen name={ROUTES.DappDetails} component={DappDetails} />
     <Stack.Screen name={ROUTES.DappSearch} component={DappSearch} />
+    <Stack.Screen
+      name={ROUTES.CategoriesFilterMarketScreen}
+      component={CategoriesFilterMarketScreen}
+    />
     <Stack.Screen name="Webview" component={Webview} />
     <Stack.Screen name="SettingsView" component={SettingsModalStack} />
     <Stack.Screen

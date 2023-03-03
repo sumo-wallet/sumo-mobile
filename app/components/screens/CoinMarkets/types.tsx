@@ -14,3 +14,26 @@ export const Types24hSelector: SelectorOption[] = [
     value: '7d',
   },
 ];
+
+export const TypeSortSelector: SelectorOption[] = [
+  {
+    label: 'Rank',
+    value: 'id_desc',
+    subValue: 'id_asc',
+  },
+  {
+    label: 'Sort By Market Cap',
+    value: 'market_cap_desc',
+    subValue: 'market_cap_asc',
+  },
+  {
+    label: '% Change',
+    value: 'volume_desc',
+    subValue: 'volume_asc',
+  },
+  {
+    label: 'Price',
+    value: 'price_desc',
+    subValue: 'price_asc',
+  },
+];

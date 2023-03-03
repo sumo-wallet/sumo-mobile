@@ -56,6 +56,7 @@ import Toast, {
 } from '../../../component-library/components/Toast';
 import { TurnOffRememberMeModal } from '../../../components/UI/TurnOffRememberMeModal';
 import ManualBackupPhrase from '../../Views/ManualBackupPhrase';
+import { navigationRef } from '../../Base/navigation';
 
 const Stack = createStackNavigator();
 /**
@@ -68,7 +69,7 @@ const OnboardingNav = () => (
       name="Onboarding"
       component={Onboarding}
       options={Onboarding.navigationOptions}
-    // options={{ headerShown: false }}
+      // options={{ headerShown: false }}
     />
     <Stack.Screen
       name="OnboardingCarousel"
@@ -198,8 +199,8 @@ const App = ({ userLoggedIn }) => {
         const isUnlocked = KeyringController.isUnlocked();
         isUnlocked
           ? SharedDeeplinkManager.parse(deeplink, {
-            origin: AppConstants.DEEPLINKS.ORIGIN_DEEPLINK,
-          })
+              origin: AppConstants.DEEPLINKS.ORIGIN_DEEPLINK,
+            })
           : SharedDeeplinkManager.setDeeplink(deeplink);
       }
     } catch (e) {
@@ -323,6 +324,7 @@ const App = ({ userLoggedIn }) => {
     if (!prevNavigator.current) {
       setNavigator(ref);
     }
+    navigationRef.current = ref;
   };
 
   const onAnimationFinished = useCallback(() => {

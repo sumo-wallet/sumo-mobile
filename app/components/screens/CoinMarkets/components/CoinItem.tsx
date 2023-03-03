@@ -41,7 +41,7 @@ const createStyles = (colors: any) =>
     },
     containerSymbol: {
       alignItems: 'center',
-      width: scale(50),
+      width: scale(42),
     },
     subContainerSymbol: {
       alignItems: 'center',
@@ -128,14 +128,14 @@ export const CoinItem = memo(({ id, paramsMarket }: CoinItemInterface) => {
   ]);
 
   const totalMarketCap = useMemo(() => {
-    if (coin) {
+    if (coin?.market_cap) {
       return coin.market_cap.toLocaleString();
     }
     return 0;
   }, [coin]);
 
   const price = useMemo(() => {
-    if (coin) {
+    if (coin?.current_price) {
       return coin.current_price.toLocaleString('en', {
         maximumFractionDigits: 2,
       });
@@ -161,12 +161,24 @@ export const CoinItem = memo(({ id, paramsMarket }: CoinItemInterface) => {
     return { transform: [{ rotate: '180deg' }] };
   }, [coin, paramsMarket.price_change_percentage]);
 
+  const fontSizeRank = useMemo(() => {
+    if (!coin) return 12;
+    if ((coin.market_cap_rank || '').toString().length === 1) return 12;
+    if ((coin.market_cap_rank || '').toString().length === 3) return 10;
+    if ((coin.market_cap_rank || '').toString().length >= 4) return 8;
+  }, [coin]);
+
   if (!coin) return null;
 
   return (
     <View style={styles.wrapper}>
       <View style={styles.wrapView}>
-        <Text style={styles.textRank}>{coin.market_cap_rank}</Text>
+        <Text
+          style={[styles.textRank, { fontSize: fontSizeRank }]}
+          numberOfLines={1}
+        >
+          {coin.market_cap_rank || '-'}
+        </Text>
       </View>
       <View style={styles.containerSymbol}>
         <View style={styles.subContainerSymbol}>

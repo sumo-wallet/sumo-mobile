@@ -1,11 +1,19 @@
-import React, { memo, useCallback, useState } from 'react';
+import React, { memo, useCallback, useMemo, useState } from 'react';
 import { useTheme } from '../../../../util/theme';
-import { ScrollView, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import {
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { icons } from '../../../../assets';
 import { BottomMenuSelector } from '../../../common/BottomMenu';
-import { Types24hSelector } from '../types';
+import { Types24hSelector, TypeSortSelector } from '../types';
 import { MarketsListParams } from '../../../../types/coingecko/schema';
+import { navigateToCategoriesFilterMarketScreen } from '../../../Base/navigation';
+import { useCategoriesMarket } from '../../../../reducers/categoriesMarket';
 
 const createStyles = (colors: any) =>
   StyleSheet.create({
@@ -34,6 +42,7 @@ const createStyles = (colors: any) =>
     image: {
       width: 9,
       height: 5,
+      tintColor: colors.primary.default,
     },
   });
 
@@ -45,16 +54,19 @@ interface ScrollTabCoinInterface {
 export const ScrollTabCoin = memo(
   ({ paramsMarket, onSelect }: ScrollTabCoinInterface) => {
     const { colors } = useTheme();
+    const category = useCategoriesMarket(paramsMarket.category);
     const styles = createStyles(colors);
     const [isCurrency, setIsCurrency] = useState<boolean>(
-      paramsMarket.vs_currency === 'usd',
+      paramsMarket.vs_currency === 'btc',
     );
+
     const onSelectedOption = useCallback(
       (keyName: string, value: string | number) => {
         onSelect?.(
           Object.assign({ ...paramsMarket, [keyName]: value }, { page: 1 }),
         );
       },
+
       [onSelect, paramsMarket],
     );
 
@@ -62,6 +74,23 @@ export const ScrollTabCoin = memo(
       onSelectedOption('vs_currency', isCurrency ? 'usd' : 'btc');
       setIsCurrency(!isCurrency);
     }, [isCurrency, onSelectedOption]);
+
+    const onNavigate = useCallback(() => {
+      navigateToCategoriesFilterMarketScreen({
+        category_id: paramsMarket.category || '',
+        onCallBack: (value) =>
+          onSelect?.(
+            Object.assign({ ...paramsMarket, category: value }, { page: 1 }),
+          ),
+      });
+    }, [onSelect, paramsMarket]);
+
+    const titleCategory = useMemo(() => {
+      if (category) {
+        return category.name;
+      }
+      return 'All coins';
+    }, [category]);
 
     return (
       <ScrollView
@@ -73,8 +102,8 @@ export const ScrollTabCoin = memo(
         <TouchableOpacity style={styles.touch} onPress={onChangeCurrency}>
           <Text style={styles.title}>{isCurrency ? 'BTC/USD' : 'USD/BTC'}</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.touch}>
-          <Text style={styles.title}>{'All Coins'}</Text>
+        <TouchableOpacity style={styles.touch} onPress={onNavigate}>
+          <Text style={styles.title}>{titleCategory}</Text>
           <FastImage
             style={styles.image}
             source={icons.iconArrowDown}
@@ -91,14 +120,22 @@ export const ScrollTabCoin = memo(
           selectedValue={paramsMarket.price_change_percentage}
         />
 
-        <TouchableOpacity style={styles.touch}>
-          <Text style={styles.title}>{'Sort By Market Cap'}</Text>
-          <FastImage
-            style={styles.image}
-            source={icons.iconArrowDown}
-            resizeMode={FastImage.resizeMode.stretch}
-          />
-        </TouchableOpacity>
+        <BottomMenuSelector
+          label={'Sort By'}
+          options={TypeSortSelector}
+          inputName={'order'}
+          placeholder={'Sort By Market Cap'}
+          onSelectOption={onSelectedOption}
+          selectedValue={paramsMarket.order}
+          // @ts-ignore
+          renderIcon={
+            <Image
+              style={styles.image}
+              source={icons.iconArrowDown}
+              resizeMode={FastImage.resizeMode.stretch}
+            />
+          }
+        />
       </ScrollView>
     );
   },
