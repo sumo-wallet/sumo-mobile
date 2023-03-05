@@ -78,7 +78,8 @@ const createStyles = (colors: any) =>
     },
     titleNetworkValue: {
       color: colors.text.default,
-      fontSize: 16,
+      fontSize: 15,
+      maxWidth: 60,
     },
     iconDropdown: {
       width: 15,
@@ -168,7 +169,7 @@ export const EmptyHeader = memo(
                   style={styles.networkTitleContainer}
                   onPress={onPressNetwork}
                 >
-                  <Text style={styles.titleNetworkValue}>{networkName}</Text>
+                  <Text style={styles.titleNetworkValue} numberOfLines={1}>{networkName}</Text>
                   <Image
                     source={icons.iconChevronDown}
                     style={styles.iconDropdown}

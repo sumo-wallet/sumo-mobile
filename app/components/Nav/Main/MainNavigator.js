@@ -452,21 +452,7 @@ export const BottomTabContainer = () => {
       }}
       screenOptions={{ tabBarVisible: true }}
     >
-      <Tab.Screen
-        name={ROUTES.CoinMarketsScreen}
-        component={CoinMarketsScreen}
-        options={{
-          title: 'Market',
-          tabBarIcon: ({ color }) => {
-            return (
-              <Image
-                style={Style.s({ size: 20, tin: color })}
-                source={icons.iconHome}
-              />
-            );
-          },
-        }}
-      />
+
       <Tab.Screen
         name={ROUTES.HomeScreen}
         component={HomeScreen}
@@ -513,10 +499,10 @@ export const BottomTabContainer = () => {
         }}
       />
       <Tab.Screen
-        name={ROUTES.NftScreen}
-        component={NFTMarketplaceTabModalFlow}
+        name={ROUTES.CoinMarketsScreen}
+        component={CoinMarketsScreen}
         options={{
-          title: 'Collection',
+          title: 'Market',
           tabBarIcon: ({ color }) => {
             return (
               <Image
@@ -527,6 +513,21 @@ export const BottomTabContainer = () => {
           },
         }}
       />
+      {/* <Tab.Screen
+        name={ROUTES.NftScreen}
+        component={NFTMarketplaceTabModalFlow}
+        options={{
+          title: 'Market',
+          tabBarIcon: ({ color }) => {
+            return (
+              <Image
+                style={Style.s({ size: 20, tin: color })}
+                source={icons.iconNft}
+              />
+            );
+          },
+        }}
+      /> */}
       <Tab.Screen
         name={ROUTES.WalletScreen}
         component={WalletTabModalFlow}

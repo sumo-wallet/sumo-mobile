@@ -39,6 +39,8 @@ import { DynamicHeader } from '../../Base/DynamicHeader';
 import { icons } from '../../../assets';
 import { toggleAccountsModal } from '../../../actions/modals';
 import SumoTokens from '../../../components/UI/SumoTokens';
+import { ModelChain } from '../../../types';
+import { useGetChain } from '../../../components/hooks/useGetChain';
 // import { isDefaultAccountName } from '../../../util/ENSUtils';
 
 const createStyles = (colors: any) =>
@@ -90,6 +92,7 @@ const createStyles = (colors: any) =>
       marginLeft: 12,
     },
     title: {
+      maxWidth: 100,
       fontSize: 16,
       fontWeight: '600',
       marginLeft: 10,
@@ -113,6 +116,7 @@ const Wallet = ({ navigation }: any) => {
   const dispatch = useDispatch();
   const { colors } = useTheme();
   const styles = createStyles(colors);
+  const { chains } = useGetChain();
   /**
    * Map of accounts to information objects including balances
    */
@@ -169,6 +173,11 @@ const Wallet = ({ navigation }: any) => {
   const wizardStep = useSelector((state: any) => state.wizard.step);
 
   const { colors: themeColors } = useTheme();
+
+  const provider = useSelector(
+    (state) => state.engine.backgroundState.NetworkController.provider,
+  );
+
 
   /**
    * Check to see if we need to show What's New modal
@@ -374,15 +383,29 @@ const Wallet = ({ navigation }: any) => {
   const onAccountsModal = useCallback(() => {
     dispatch(toggleAccountsModal());
   }, [dispatch]);
+
+  const getNetworkName = () => {
+    const currentChain = chains.find(
+      (chain: ModelChain) => chain.id?.toString() === provider.chainId,
+    );
+    if (currentChain) return currentChain.name;
+    return provider.chainId;
+  };
+
+
   return (
     <ErrorBoundary view="Wallet">
       <DynamicHeader
         title={''}
         isHiddenTitle
         hideGoBack
-        isShowAvatar
+        isShowNetwork
         address={selectedAddress}
         backgroundColor={colors.background.walletHeader}
+        networkName={getNetworkName()}
+        onPressNetwork={() => {
+          navigation.navigate('ChangeNetwork');
+        }}
         centerComponent={
           <TouchableOpacity
             style={styles.containerHeader}
