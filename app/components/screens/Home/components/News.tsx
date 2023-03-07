@@ -82,7 +82,7 @@ export const News = function News({ news, onSelect }: RawNewsInterface) {
         <TouchableOpacity
           style={styles.containerViewAll}
           onPress={() => {
-            navigation.navigate(Routes.NEWS);
+            navigation.navigate(Routes.EXPLORER);
           }}
         >
           <Text style={styles.titleViewAll}>{'View all'}</Text>

@@ -3,4 +3,6 @@ export interface DataNewsInterface {
   hours: string;
   thumbnail: string;
   url: string;
+  author?: string;
+  site?: string;
 }

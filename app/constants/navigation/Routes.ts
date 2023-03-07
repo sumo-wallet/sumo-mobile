@@ -45,6 +45,7 @@ const Routes = {
     NFT_DETAIL: 'NFTDetailView',
     NFT_MANAGEMENT: 'NFTManagementView',
   },
+  EXPLORER: 'ExploreScreen',
 };
 
 export default Routes;

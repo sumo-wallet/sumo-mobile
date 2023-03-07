@@ -408,14 +408,12 @@ export const HomeScreen = memo(() => {
           data={walletHomeConfig.homeConfig?.hotDapp || []}
           subTitle={'Fast transaction convenient earning.'}
         />
-        {walletHomeConfig.homeConfig?.showNew && (
-          <News
-            news={news}
-            onSelect={(item: DataNewsInterface) => {
-              openUrl(item.url);
-            }}
-          />
-        )}
+        <News
+          news={news}
+          onSelect={(item: DataNewsInterface) => {
+            openUrl(item.url);
+          }}
+        />
         <View style={styles.footer}>
           <Text style={styles.titleFooter}>{'That’s all for now'}</Text>
         </View>

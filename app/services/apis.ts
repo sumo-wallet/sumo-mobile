@@ -24,6 +24,11 @@ import {
   MarketplaceCollectionResponse,
   V1MarketplaceCollectionTopListParams,
   V1MarketplaceCollectionTrendingListParams,
+  CoingeckoNewsRequest,
+  CoingeckoNewsResponse,
+  // CoingeckoLearnsResponse,
+  CoingeckoLearnRequest,
+  CoingeckoLearns,
 } from './../types';
 import { MarketsListParams } from '../types/coingecko/schema';
 import {
@@ -40,6 +45,10 @@ export const COINDESK_NEWS =
   'https://www.coindesk.com/pf/api/v3/content/fetch/websked-collections?query=%7B%22content_alias%22%3A%22main-nav-podcasts%22%2C%22format%22%3A%22main-navigation-article%22%2C%22from%22%3A%220%22%2C%22size%22%3A%224%22%7D&d=244&_website=coindesk';
 export const COINDESK_TICKER =
   'https://production.api.coindesk.com/v2/tb/price/ticker?assets=';
+
+export const COIN_GECKO_NEWS = 'https://mobile.api.coingecko.com/api/v3/news';
+export const COIN_GECKO_LEARNS =
+  'https://mobile.api.coingecko.com/api/v3/posts/learn';
 
 // export const BASE_URL = Config?.BASE_URL;
 
@@ -125,6 +134,22 @@ class Client {
     return fetcher<any>(`${COINGECKO_BASE_URL}${PATHS.coingeckoNFTList}`, {
       headers: this.headers,
     });
+  }
+  getCoinGeckoNews(request: CoingeckoNewsRequest) {
+    return fetcher<CoingeckoNewsResponse>(
+      `${COIN_GECKO_NEWS}?${qs.stringify(request)}`,
+      {
+        headers: this.headers,
+      },
+    );
+  }
+  getCoinGeckoLearns(request: CoingeckoLearnRequest) {
+    return fetcher<CoingeckoLearns[]>(
+      `${COIN_GECKO_LEARNS}?${qs.stringify(request)}`,
+      {
+        headers: this.headers,
+      },
+    );
   }
   public getDappHome() {
     console.log('****** getDappHome ******');

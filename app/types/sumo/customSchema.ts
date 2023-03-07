@@ -54,3 +54,35 @@ export interface EVMToken {
   logoUrl: string;
   destChains: DestChains;
 }
+
+export interface CoingeckoNewsRequest {
+  locale: string;
+  page: number;
+}
+export interface CoingeckoNews {
+  title: string;
+  description: string;
+  author: string;
+  url: string;
+  updated_at: number;
+  news_site: string;
+  thumb_2x: string;
+}
+export interface CoingeckoNewsResponse {
+  data: CoingeckoNews[];
+  count: number;
+  page: number;
+}
+export interface CoingeckoLearnRequest {
+  page: number;
+}
+export interface CoingeckoLearns {
+  id: number;
+  title: string;
+  author: string;
+  link: string;
+  image: string;
+}
+// export interface CoingeckoLearnsResponse {
+//   data: CoingeckoLearns[];
+// }

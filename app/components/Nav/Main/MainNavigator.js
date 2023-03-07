@@ -98,6 +98,7 @@ import { NftManagementScreen } from './../../screens/NftManagement';
 import { AppSettingsScreen } from './../../screens/AppSettings';
 import { AppDetailScreen } from './../../screens/AppDetail';
 import { TransactionDetailScreen } from './../../screens/TransactionDetail';
+import { ExploreScreen } from '../../sumo/Views/Explore';
 
 import { useTheme } from '../../../util/theme';
 
@@ -1029,6 +1030,7 @@ const MainNavigator = () => (
     />
     <Stack.Screen name="NotificationsView" component={NotificationsScreen} />
     <Stack.Screen name="NewsView" component={NewsScreen} />
+    <Stack.Screen name="ExploreScreen" component={ExploreScreen} />
     <Stack.Screen
       name="AppSettings"
       component={AppSettingsScreen}
