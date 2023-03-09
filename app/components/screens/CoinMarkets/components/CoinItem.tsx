@@ -168,6 +168,12 @@ export const CoinItem = memo(({ id, paramsMarket }: CoinItemInterface) => {
     if ((coin.market_cap_rank || '').toString().length >= 4) return 8;
   }, [coin]);
 
+  const fontCoin = useMemo(() => {
+    if (!coin) return 12;
+    if ((coin.symbol || '').toString().length >= 6) return 8;
+    return 12;
+  }, [coin]);
+
   if (!coin) return null;
 
   return (
@@ -183,11 +189,16 @@ export const CoinItem = memo(({ id, paramsMarket }: CoinItemInterface) => {
       <View style={styles.containerSymbol}>
         <View style={styles.subContainerSymbol}>
           <FastImage source={{ uri: coin.image }} style={styles.icon} />
-          <Text style={styles.title}>{coin.symbol.toUpperCase()}</Text>
+          <Text
+            style={[styles.title, { fontSize: fontCoin }]}
+            numberOfLines={1}
+          >
+            {coin.symbol.toUpperCase()}
+          </Text>
         </View>
       </View>
       <View style={styles.containerContent}>
-        <Text style={styles.title}>
+        <Text style={[styles.title]}>
           {paramsMarket.vs_currency === 'usd' ? '$' : '₿'}
           {price}
         </Text>

@@ -22,6 +22,9 @@ import {
 import { useTheme } from '../../../../util/theme';
 import { scale } from '../../../../util/scale';
 import { icons } from '../../../../assets';
+import { useAsyncFn } from '../../../hooks/useAsyncFn';
+import useInterval from '../../../hooks/useInterval';
+import AppConstants from '../../../../core/AppConstants';
 
 const createStyles = (colors: any) =>
   StyleSheet.create({
@@ -117,10 +120,19 @@ export const CoinMarketList = memo(() => {
     price_change_percentage: '24h',
     order: 'market_cap_desc',
   });
-  const { value, call, error, loading } = useAsyncEffect(async () => {
+  const { call, loading } = useAsyncEffect(async () => {
     await getGlobalMarkets();
     return await getCoinMarkets(params);
   }, [params]);
+
+  const [{ loading: loadingInterval }, callInterval] = useAsyncFn(async () => {
+    await getCoinMarkets(params);
+  }, [params]);
+
+  useInterval(async () => {
+    callInterval();
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+  }, AppConstants.TX_CHECK_BACKGROUND_FREQUENCY);
 
   const onReload = useCallback(async () => {
     setParams((state) => ({ ...state, page: 1 }));
