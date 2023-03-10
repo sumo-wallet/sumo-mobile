@@ -25,4 +25,5 @@ export const ROUTES = {
   CoinMarketsScreen: 'CoinMarketsScreen',
   CategoriesFilterMarketScreen: 'CategoriesFilterMarketScreen',
   MarketsSearch: 'MarketsSearch',
+  DetailCoinScreen: 'DetailCoinScreen',
 };

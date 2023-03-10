@@ -1,11 +1,19 @@
-import React, { memo, useMemo } from 'react';
+import React, { memo, useCallback, useMemo } from 'react';
 import { useCoinMarkets } from '../../../../reducers/coinmarkets/slice';
-import { Image, StyleSheet, Text, View, ViewPropTypes } from 'react-native';
+import {
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  ViewPropTypes,
+} from 'react-native';
 import { useTheme } from '../../../../util/theme';
 import FastImage from 'react-native-fast-image';
 import { scale } from '../../../../util/scale';
 import { icons } from '../../../../assets';
 import { MarketsListParams } from '../../../../types/coingecko/schema';
+import { navigateToDetailCoinScreen } from '../../../Base/navigation';
 
 export interface CoinItemInterface {
   id: string;
@@ -174,10 +182,24 @@ export const CoinItem = memo(({ id, paramsMarket }: CoinItemInterface) => {
     return 12;
   }, [coin]);
 
+  const onNavigate = useCallback(() => {
+    navigateToDetailCoinScreen({
+      id: coin?.id || '0',
+      currency: paramsMarket.vs_currency,
+    });
+  }, [coin?.id, paramsMarket.vs_currency]);
+
+  const urlCoin = useMemo(() => {
+    if (coin) {
+      if (typeof coin.image === 'string') return coin.image;
+    }
+    return '';
+  }, [coin]);
+
   if (!coin) return null;
 
   return (
-    <View style={styles.wrapper}>
+    <TouchableOpacity style={styles.wrapper} onPress={onNavigate}>
       <View style={styles.wrapView}>
         <Text
           style={[styles.textRank, { fontSize: fontSizeRank }]}
@@ -188,7 +210,7 @@ export const CoinItem = memo(({ id, paramsMarket }: CoinItemInterface) => {
       </View>
       <View style={styles.containerSymbol}>
         <View style={styles.subContainerSymbol}>
-          <FastImage source={{ uri: coin.image }} style={styles.icon} />
+          <FastImage source={{ uri: urlCoin }} style={styles.icon} />
           <Text
             style={[styles.title, { fontSize: fontCoin }]}
             numberOfLines={1}
@@ -218,6 +240,6 @@ export const CoinItem = memo(({ id, paramsMarket }: CoinItemInterface) => {
           {totalMarketCap}
         </Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 });

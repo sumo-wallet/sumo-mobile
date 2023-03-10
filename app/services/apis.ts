@@ -33,7 +33,10 @@ import {
   SearchTokenRequest,
   TrendingTokenResponse,
 } from './../types';
-import { MarketsListParams } from '../types/coingecko/schema';
+import {
+  CoinsDetailParams,
+  MarketsListParams,
+} from '../types/coingecko/schema';
 import {
   RawCoinMarketsInterface,
   RawGlobalMarketInterface,
@@ -63,6 +66,7 @@ export const PATHS = {
   coingeckoTokenSearchTrending: '/v3/search/trending',
   coingeckoCoinsMarkets: 'coins/markets',
   categoriesMarket: 'coins/categories',
+  coingeckoCoinsDetails: 'coins',
 };
 
 class Client {
@@ -353,6 +357,16 @@ class Client {
   public getCategoriesMarket() {
     return fetcher<RawCategoriesMarketInterface[]>(
       `${COINGECKO_BASE_URL}${PATHS.categoriesMarket}?order=market_cap_change_24h_desc`,
+      {
+        headers: this.headers,
+      },
+    );
+  }
+
+  public getCoinsDetails(params: Omit<CoinsDetailParams, 'id'>, id: string) {
+    const stringifyParams = qs.stringify(params);
+    return fetcher<RawCoinMarketsInterface>(
+      `${COINGECKO_BASE_URL}${PATHS.coingeckoCoinsDetails}/${id}?${stringifyParams}`,
       {
         headers: this.headers,
       },

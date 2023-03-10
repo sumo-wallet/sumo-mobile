@@ -1,4 +1,7 @@
-import { MarketsListParams } from '../../types/coingecko/schema';
+import {
+  CoinsDetailParams,
+  MarketsListParams,
+} from '../../types/coingecko/schema';
 import { client } from '../../services';
 import { store } from '../../store';
 import { setCoinMarketsQueries, syncCoinMarkets } from './slice';
@@ -25,4 +28,13 @@ export const getGlobalMarkets = async () => {
     //@ts-ignore
     [`global_market`]: res,
   });
+};
+
+export const getCoinDetails = async (
+  params: Omit<CoinsDetailParams, 'id'>,
+  id: string,
+) => {
+  const res = await client.getCoinsDetails(params, id);
+
+  syncCoinMarkets([res]);
 };

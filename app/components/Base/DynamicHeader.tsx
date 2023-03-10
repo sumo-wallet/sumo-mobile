@@ -127,7 +127,6 @@ export const EmptyHeader = memo(
 
     return (
       <View
-        {...props}
         style={[
           styles.wrapper,
           {
@@ -136,6 +135,7 @@ export const EmptyHeader = memo(
               : backgroundColor || colors.background.default,
           },
         ]}
+        {...props}
       >
         <StatusBarView />
         <View style={styles.container}>
@@ -169,7 +169,9 @@ export const EmptyHeader = memo(
                   style={styles.networkTitleContainer}
                   onPress={onPressNetwork}
                 >
-                  <Text style={styles.titleNetworkValue} numberOfLines={1}>{networkName}</Text>
+                  <Text style={styles.titleNetworkValue} numberOfLines={1}>
+                    {networkName}
+                  </Text>
                   <Image
                     source={icons.iconChevronDown}
                     style={styles.iconDropdown}
