@@ -311,8 +311,6 @@ function SwapsAmountView({
   conversionRate,
   tokenExchangeRates,
   currentCurrency,
-  userHasOnboarded,
-  setHasOnboarded,
   setLiveness,
 }) {
   const navigation = useNavigation();
