@@ -351,16 +351,16 @@ class AccountList extends PureComponent {
     const selectedAccount = this.state.orderedAccounts.find(
       (item) => item.address === newAddress,
     );
-    console.log('check =', selectedAccount);
+
     this.setState({
       isVisible: !this.state.isVisible,
       newAddress,
       nameWallet: this.props.nameWallet[newAddress]
         ? { ...this.props.nameWallet }
         : {
-          ...this.props.nameWallet,
-          [newAddress]: selectedAccount?.name || '',
-        },
+            ...this.props.nameWallet,
+            [newAddress]: selectedAccount?.name || '',
+          },
     });
   };
 

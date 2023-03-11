@@ -5,7 +5,7 @@ import { setCoinMarketsQueries, syncCoinMarkets } from './slice';
 
 export const getCoinMarkets = async (params: MarketsListParams) => {
   const res = await client.getCoinsMarket(params);
-  // console.log('check into', res);
+
   const newData = res.map((item: { id: any }) => item.id) || [];
   const newQuery = store.getState().coinMarkets.query.all || [];
   syncCoinMarkets(res);

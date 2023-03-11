@@ -14,6 +14,7 @@ import { useAsyncEffect } from '../../../hooks/useAsyncEffect';
 import { CoinsDetailParams } from '../../../../types/coingecko/schema';
 import { getCoinDetails } from '../../../../reducers/coinmarkets/functions';
 import { useCoinMarkets } from '../../../../reducers/coinmarkets/slice';
+import { HTMLRenderer } from '../../../Base/HTMLRender';
 
 const createStyles = (colors: any) =>
   StyleSheet.create({
@@ -79,6 +80,8 @@ const createStyles = (colors: any) =>
       fontSize: 14,
       color: colors.primary.default,
       textAlign: 'right',
+      maxWidth: scale(160),
+      marginRight: 4,
     },
     titlePercent: {
       fontSize: 14,
@@ -138,6 +141,9 @@ const createStyles = (colors: any) =>
     row: {
       flexDirection: 'row',
     },
+    wrapperHTML: {
+      marginBottom: 32,
+    },
   });
 
 export const InfoCoinTab = memo(({ id, currency }: DetailCoinInterface) => {
@@ -157,36 +163,46 @@ export const InfoCoinTab = memo(({ id, currency }: DetailCoinInterface) => {
   }, [id]);
 
   const coin_details = useCoinMarkets(id);
-  console.log('check = ', coin_details);
 
   const titleHomePage = useMemo(() => {
-    if (!coin_details) return '';
-    return coin_details.links.homepage.filter(Boolean).join('\n');
+    if (!coin_details?.links?.homepage) return [];
+    return coin_details.links.homepage.filter(Boolean);
   }, [coin_details]);
 
   const titleBlockchainSite = useMemo(() => {
-    if (!coin_details) return '';
-    return coin_details.links.blockchain_site.filter(Boolean).join('\n');
+    if (!coin_details?.links?.blockchain_site) return [];
+    return coin_details.links.blockchain_site.filter(Boolean);
   }, [coin_details]);
 
   const titleChatUrl = useMemo(() => {
-    if (!coin_details) return '';
-    return coin_details.links.chat_url.filter(Boolean).join('\n');
+    if (!coin_details?.links?.chat_url) return [];
+    return coin_details.links.chat_url.filter(Boolean);
   }, [coin_details]);
 
   const titleGenesisChat = useMemo(() => {
-    if (!coin_details) return '';
+    if (!coin_details?.genesis_date || coin_details?.genesis_date === '')
+      return '-';
     return coin_details.genesis_date;
   }, [coin_details]);
 
   const titleTwitter = useMemo(() => {
-    if (!coin_details) return '';
+    if (!coin_details?.links?.twitter_screen_name) return '';
     return 'www.twitter.com/' + coin_details.links.twitter_screen_name;
   }, [coin_details]);
 
   const titleOfficialForum = useMemo(() => {
-    if (!coin_details) return '';
-    return coin_details.links.official_forum_url.filter(Boolean).join('\n');
+    if (!coin_details?.links?.official_forum_url) return [];
+    return coin_details.links.official_forum_url.filter(Boolean);
+  }, [coin_details]);
+
+  const desc = useMemo(() => {
+    if (!coin_details?.description) return [];
+    return coin_details.description.en.split('\n').filter(Boolean);
+  }, [coin_details]);
+
+  const announcementUrl = useMemo(() => {
+    if (!coin_details?.links?.announcement_url) return [];
+    return coin_details.links.announcement_url.filter(Boolean);
   }, [coin_details]);
 
   if (!coin_details) return null;
@@ -199,20 +215,68 @@ export const InfoCoinTab = memo(({ id, currency }: DetailCoinInterface) => {
       <View style={styles.wrapTable}>
         <View style={[styles.containerTable, { borderTopWidth: 0 }]}>
           <Text style={styles.titlePrompt}>{'Homepage'}</Text>
-          <Text style={styles.titleValue}>{titleHomePage}</Text>
+          <View>
+            {titleHomePage.map((item, index) => {
+              return (
+                <Text style={styles.titleValue} numberOfLines={1} key={index}>
+                  {item}
+                </Text>
+              );
+            })}
+          </View>
         </View>
+        {announcementUrl.length !== 0 && (
+          <View style={styles.containerTable}>
+            <Text style={styles.titlePrompt}>{'Announcement'}</Text>
+            <View>
+              {announcementUrl.map((item, index) => {
+                return (
+                  <Text style={styles.titleValue} numberOfLines={1} key={index}>
+                    {item}
+                  </Text>
+                );
+              })}
+            </View>
+          </View>
+        )}
         <View style={styles.containerTable}>
           <Text style={styles.titlePrompt}>{'Blockchain/Supply'}</Text>
-          <Text style={styles.titleValue}>{titleBlockchainSite}</Text>
+          <View>
+            {titleBlockchainSite.map((item, index) => {
+              return (
+                <Text style={styles.titleValue} numberOfLines={1} key={index}>
+                  {item}
+                </Text>
+              );
+            })}
+          </View>
         </View>
-        <View style={styles.containerTable}>
-          <Text style={styles.titlePrompt}>{'Discussion Forum'}</Text>
-          <Text style={styles.titleValue}>{titleOfficialForum}</Text>
-        </View>
-        {titleChatUrl !== '' && (
+        {titleOfficialForum.length !== 0 && (
+          <View style={styles.containerTable}>
+            <Text style={styles.titlePrompt}>{'Discussion Forum'}</Text>
+            <View>
+              {titleOfficialForum.map((item, index) => {
+                return (
+                  <Text style={styles.titleValue} numberOfLines={1} key={index}>
+                    {item}
+                  </Text>
+                );
+              })}
+            </View>
+          </View>
+        )}
+        {titleChatUrl.length !== 0 && (
           <View style={styles.containerTable}>
             <Text style={styles.titlePrompt}>{'Chat'}</Text>
-            <Text style={styles.titleValue}>{titleChatUrl}</Text>
+            <View>
+              {titleChatUrl.map((item, index) => {
+                return (
+                  <Text style={styles.titleValue} numberOfLines={1} key={index}>
+                    {item}
+                  </Text>
+                );
+              })}
+            </View>
           </View>
         )}
         <View style={styles.containerTable}>
@@ -229,6 +293,11 @@ export const InfoCoinTab = memo(({ id, currency }: DetailCoinInterface) => {
           <Text style={styles.titlePrompt}>{'Facebook'}</Text>
           <Text style={styles.titleValue}>{titleTwitter}</Text>
         </View>
+      </View>
+      <View style={styles.wrapperHTML}>
+        {desc.map((item, index) => {
+          return <HTMLRenderer htmlContent={item} key={index} />;
+        })}
       </View>
     </ScrollView>
   );

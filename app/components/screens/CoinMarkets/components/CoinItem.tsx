@@ -137,7 +137,9 @@ export const CoinItem = memo(({ id, paramsMarket }: CoinItemInterface) => {
 
   const totalMarketCap = useMemo(() => {
     if (coin?.market_cap) {
-      return coin.market_cap.toLocaleString();
+      return coin.market_cap.toLocaleString('en', {
+        maximumFractionDigits: 0,
+      });
     }
     return 0;
   }, [coin]);
@@ -192,6 +194,7 @@ export const CoinItem = memo(({ id, paramsMarket }: CoinItemInterface) => {
   const urlCoin = useMemo(() => {
     if (coin) {
       if (typeof coin.image === 'string') return coin.image;
+      if (typeof coin.image === 'object') return coin.image.thumb;
     }
     return '';
   }, [coin]);

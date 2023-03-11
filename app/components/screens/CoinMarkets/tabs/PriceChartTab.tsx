@@ -82,17 +82,17 @@ const createStyles = (colors: any) =>
       fontSize: 14,
       color: colors.text.default,
       fontWeight: '600',
+      textAlign: 'right',
     },
     titlePercent: {
-      fontSize: 14,
+      fontSize: 12,
       color: colors.error.default,
       fontWeight: '600',
     },
     titleTime: {
-      fontSize: 14,
+      fontSize: 12,
       color: colors.text.default,
       fontWeight: '600',
-      marginRight: 40,
     },
     iconArrow: {
       width: 20,
@@ -142,9 +142,20 @@ const createStyles = (colors: any) =>
     },
     wrapView: {
       flexDirection: 'row',
-      padding: 10,
+      paddingVertical: 10,
+      marginHorizontal: 12,
+      justifyContent: 'space-around',
     },
   });
+
+const PriceChangePercentage = [
+  'price_change_percentage_24h_in_currency',
+  'price_change_percentage_7d_in_currency',
+  'price_change_percentage_14d_in_currency',
+  'price_change_percentage_30d_in_currency',
+  'price_change_percentage_60d_in_currency',
+  'price_change_percentage_1y_in_currency',
+];
 
 export const PriceChartTab = memo(({ id, currency }: DetailCoinInterface) => {
   const { colors } = useTheme();
@@ -173,108 +184,116 @@ export const PriceChartTab = memo(({ id, currency }: DetailCoinInterface) => {
   }, [coin_details]);
 
   const totalValuation = useMemo(() => {
-    if (
-      !coin_details ||
-      !coin_details?.market_data?.fully_diluted_valuation?.usd
-    )
+    if (!coin_details || !coin_details?.market_data?.fully_diluted_valuation)
       return 0;
-    return coin_details?.market_data.fully_diluted_valuation.usd.toLocaleString();
-  }, [coin_details]);
+    return coin_details?.market_data.fully_diluted_valuation[
+      currency
+    ].toLocaleString('en', {
+      maximumFractionDigits: 0,
+    });
+  }, [coin_details, currency]);
 
   const totalMarketCap = useMemo(() => {
-    if (!coin_details || !coin_details?.market_data?.market_cap?.usd) return 0;
-    return coin_details?.market_data.market_cap.usd.toLocaleString();
-  }, [coin_details]);
+    if (!coin_details || !coin_details?.market_data?.market_cap) return 0;
+    return coin_details?.market_data.market_cap[currency].toLocaleString('en', {
+      maximumFractionDigits: 0,
+    });
+  }, [coin_details, currency]);
 
   const totalVolume = useMemo(() => {
-    if (!coin_details || !coin_details?.market_data?.total_volume?.usd)
-      return 0;
-    return coin_details?.market_data.total_volume.usd.toLocaleString();
-  }, [coin_details]);
+    if (!coin_details || !coin_details?.market_data?.total_volume) return 0;
+    return coin_details?.market_data.total_volume[currency].toLocaleString(
+      'en',
+      {
+        maximumFractionDigits: 0,
+      },
+    );
+  }, [coin_details, currency]);
 
   const totalHigh = useMemo(() => {
-    if (!coin_details || !coin_details?.market_data?.high_24h?.usd) return 0;
-    return coin_details?.market_data.high_24h.usd.toLocaleString('en', {
+    if (!coin_details || !coin_details?.market_data?.high_24h) return 0;
+    return coin_details?.market_data.high_24h[currency].toLocaleString('en', {
       minimumFractionDigits: 2,
     });
-  }, [coin_details]);
+  }, [coin_details, currency]);
 
   const totalLow = useMemo(() => {
-    if (!coin_details || !coin_details?.market_data?.low_24h?.usd) return 0;
-    return coin_details?.market_data.low_24h.usd.toLocaleString('en', {
+    if (!coin_details || !coin_details?.market_data?.low_24h) return 0;
+    return coin_details?.market_data.low_24h[currency].toLocaleString('en', {
       minimumFractionDigits: 2,
     });
-  }, [coin_details]);
+  }, [coin_details, currency]);
 
   const availableSupply = useMemo(() => {
     if (!coin_details || !coin_details?.market_data?.circulating_supply)
       return 0;
-    return coin_details?.market_data.circulating_supply.toLocaleString();
+    return coin_details?.market_data.circulating_supply / 1000000;
   }, [coin_details]);
 
   const totalSupply = useMemo(() => {
     if (!coin_details || !coin_details?.market_data?.total_supply) return 0;
-    return coin_details?.market_data.total_supply.toLocaleString();
+    return coin_details?.market_data.total_supply / 1000000;
   }, [coin_details]);
 
   const maxSupply = useMemo(() => {
-    if (coin_details) {
-      return coin_details?.market_data?.max_supply?.toLocaleString('en', {
-        maximumFractionDigits: 2,
-      });
-    }
-    return null;
+    if (!coin_details || !coin_details?.market_data?.total_supply) return 0;
+    return coin_details?.market_data.max_supply / 1000000;
   }, [coin_details]);
 
   const AllTimeHigh = useMemo(() => {
     if (coin_details) {
-      return coin_details?.market_data.ath_date.usd;
+      return coin_details?.market_data?.ath_date[currency];
     }
     return '';
-  }, [coin_details]);
+  }, [coin_details, currency]);
 
   const AllTimeLow = useMemo(() => {
     if (coin_details) {
-      return coin_details?.market_data.atl_date.usd;
+      return coin_details?.market_data?.atl_date[currency];
     }
     return '';
-  }, [coin_details]);
+  }, [coin_details, currency]);
 
   const AllTimeHighPrice = useMemo(() => {
     if (coin_details) {
-      return coin_details?.market_data.ath.usd.toLocaleString();
+      return coin_details?.market_data?.ath?.usd.toLocaleString();
     }
     return 0;
   }, [coin_details]);
 
   const AllTimeLowPrice = useMemo(() => {
     if (coin_details) {
-      return coin_details?.market_data.atl.usd.toLocaleString();
+      return coin_details?.market_data?.atl?.usd.toLocaleString();
     }
     return 0;
   }, [coin_details]);
 
   const AllTimeHighPercent = useMemo(() => {
     if (coin_details) {
-      return coin_details?.market_data.ath_change_percentage.usd.toLocaleString();
+      return (
+        coin_details?.market_data?.ath_change_percentage?.usd.toLocaleString() ||
+        '0'
+      );
     }
     return '0';
   }, [coin_details]);
 
   const AllTimeLowPercent = useMemo(() => {
     if (coin_details) {
-      return coin_details?.market_data.atl_change_percentage.usd.toLocaleString(
-        'en',
-        {
-          maximumFractionDigits: 0,
-        },
+      return (
+        coin_details?.market_data?.atl_change_percentage?.usd.toLocaleString(
+          'en',
+          {
+            maximumFractionDigits: 0,
+          },
+        ) || '0'
       );
     }
     return 0;
   }, [coin_details]);
 
   const colorPercentHigh = useMemo(() => {
-    if (!coin_details || !coin_details?.market_data.ath_change_percentage.usd)
+    if (!coin_details || !coin_details?.market_data?.ath_change_percentage.usd)
       return colors.error.default;
     if (coin_details?.market_data.ath_change_percentage.usd < 0) {
       return colors.error.default;
@@ -283,7 +302,7 @@ export const PriceChartTab = memo(({ id, currency }: DetailCoinInterface) => {
   }, [coin_details, colors.error.default, colors.primary.default]);
 
   const colorPercentLow = useMemo(() => {
-    if (!coin_details || !coin_details?.market_data.atl_change_percentage.usd)
+    if (!coin_details || !coin_details?.market_data?.atl_change_percentage.usd)
       return colors.error.default;
     if (coin_details?.market_data.atl_change_percentage.usd < 0) {
       return colors.error.default;
@@ -292,7 +311,7 @@ export const PriceChartTab = memo(({ id, currency }: DetailCoinInterface) => {
   }, [coin_details, colors.error.default, colors.primary.default]);
 
   const rotateHigh = useMemo((): ViewPropTypes => {
-    if (!coin_details || !coin_details?.market_data.ath_change_percentage.usd)
+    if (!coin_details || !coin_details?.market_data?.ath_change_percentage.usd)
       return {};
     if (coin_details?.market_data.ath_change_percentage.usd < 0) {
       return {};
@@ -302,7 +321,7 @@ export const PriceChartTab = memo(({ id, currency }: DetailCoinInterface) => {
   }, [coin_details]);
 
   const rotateLow = useMemo((): ViewPropTypes => {
-    if (!coin_details || !coin_details?.market_data.atl_change_percentage.usd)
+    if (!coin_details || !coin_details?.market_data?.atl_change_percentage.usd)
       return {};
     if (coin_details?.market_data.atl_change_percentage.usd < 0) {
       return {};
@@ -314,25 +333,28 @@ export const PriceChartTab = memo(({ id, currency }: DetailCoinInterface) => {
   const globalPercent = useMemo(() => {
     if (
       !coin_details ||
-      !coin_details?.market_data?.price_change_percentage_24h_in_currency?.usd
+      !coin_details?.market_data?.price_change_percentage_24h_in_currency
     )
       return 0;
     if (
-      coin_details.market_data.price_change_percentage_24h_in_currency.usd < 0
+      coin_details.market_data.price_change_percentage_24h_in_currency[
+        currency
+      ] < 0
     ) {
-      return coin_details.market_data.price_change_percentage_24h_in_currency.usd
+      return coin_details.market_data.price_change_percentage_24h_in_currency[
+        currency
+      ]
         .toLocaleString(undefined, {
-          maximumFractionDigits: 1,
+          minimumFractionDigits: 1,
         })
         .substring(1);
     }
-    return coin_details.market_data.price_change_percentage_24h_in_currency.usd.toLocaleString(
-      undefined,
-      {
-        maximumFractionDigits: 1,
-      },
-    );
-  }, [coin_details]);
+    return coin_details.market_data.price_change_percentage_24h_in_currency[
+      currency
+    ].toLocaleString(undefined, {
+      minimumFractionDigits: 1,
+    });
+  }, [currency, coin_details]);
 
   const colorPercent = useMemo(() => {
     if (
@@ -348,7 +370,7 @@ export const PriceChartTab = memo(({ id, currency }: DetailCoinInterface) => {
 
     return colors.primary.default;
   }, [coin_details, colors.error.default, colors.primary.default]);
-  //
+
   const rotate = useMemo((): ViewPropTypes => {
     if (
       !coin_details ||
@@ -386,14 +408,7 @@ export const PriceChartTab = memo(({ id, currency }: DetailCoinInterface) => {
       </TouchableOpacity>
 
       <View style={styles.wrapTable}>
-        <View
-          style={[
-            styles.wrapView,
-            {
-              marginHorizontal: 12,
-            },
-          ]}
-        >
+        <View style={[styles.wrapView]}>
           <Text style={styles.titleTime}>{'24H'}</Text>
           <Text style={styles.titleTime}>{'7D'}</Text>
           <Text style={styles.titleTime}>{'14D'}</Text>
@@ -403,25 +418,67 @@ export const PriceChartTab = memo(({ id, currency }: DetailCoinInterface) => {
         </View>
         <View style={styles.line} />
         <View style={styles.wrapView}>
-          <View style={styles.containerContent}>
-            <Image
-              source={icons.iconSelectorArrow}
-              style={[styles.iconArrow, { tintColor: colorPercent }, rotate]}
-            />
-            <Text style={[styles.title, { color: colorPercent }]}>
-              {globalPercent + '%'}
-            </Text>
-          </View>
-
-          <View style={styles.containerContent}>
-            <Image
-              source={icons.iconSelectorArrow}
-              style={[styles.iconArrow, { tintColor: colorPercent }, rotate]}
-            />
-            <Text style={[styles.title, { color: colorPercent }]}>
-              {globalPercent + '%'}
-            </Text>
-          </View>
+          {PriceChangePercentage.map((item, index) => {
+            return (
+              <View style={styles.containerContent} key={index}>
+                <Image
+                  source={icons.iconSelectorArrow}
+                  style={[
+                    styles.iconArrow,
+                    {
+                      tintColor:
+                        !coin_details || !coin_details?.market_data
+                          ? colors.error.default
+                          : coin_details.market_data[item][currency] < 0
+                          ? colors.error.default
+                          : colors.primary.default,
+                    },
+                    {
+                      transform: [
+                        {
+                          rotate:
+                            !coin_details || !coin_details?.market_data
+                              ? '0deg'
+                              : coin_details.market_data[item][currency] < 0
+                              ? '0deg'
+                              : '180deg',
+                        },
+                      ],
+                    },
+                  ]}
+                />
+                <Text
+                  style={[
+                    styles.title,
+                    {
+                      color:
+                        !coin_details || !coin_details?.market_data
+                          ? colors.error.default
+                          : coin_details.market_data[item][currency] < 0
+                          ? colors.error.default
+                          : colors.primary.default,
+                    },
+                  ]}
+                >
+                  {!coin_details || !coin_details?.market_data
+                    ? 0
+                    : coin_details.market_data[item][currency] < 0
+                    ? coin_details.market_data[item][currency]
+                        .toLocaleString(undefined, {
+                          maximumFractionDigits: 1,
+                        })
+                        .substring(1)
+                    : coin_details.market_data[item][currency].toLocaleString(
+                        'en',
+                        {
+                          maximumFractionDigits: 1,
+                        },
+                      )}
+                  %
+                </Text>
+              </View>
+            );
+          })}
         </View>
       </View>
 
@@ -435,27 +492,42 @@ export const PriceChartTab = memo(({ id, currency }: DetailCoinInterface) => {
         <View style={styles.line} />
         <View style={styles.containerTable}>
           <Text style={styles.titlePrompt}>{'Market Cap'}</Text>
-          <Text style={styles.titleValue}>${totalMarketCap}</Text>
+          <Text style={styles.titleValue}>
+            {currency === 'usd' ? '$' : '₿'}
+            {totalMarketCap}
+          </Text>
         </View>
         <View style={styles.line} />
         <View style={styles.containerTable}>
           <Text style={styles.titlePrompt}>{'Fully Diluted Valuation'}</Text>
-          <Text style={styles.titleValue}>${totalValuation}</Text>
+          <Text style={styles.titleValue}>
+            {currency === 'usd' ? '$' : '₿'}
+            {totalValuation}
+          </Text>
         </View>
         <View style={styles.line} />
         <View style={styles.containerTable}>
           <Text style={styles.titlePrompt}>{'Trading Volume'}</Text>
-          <Text style={styles.titleValue}>${totalVolume}</Text>
+          <Text style={styles.titleValue}>
+            {currency === 'usd' ? '$' : '₿'}
+            {totalVolume}
+          </Text>
         </View>
         <View style={styles.line} />
         <View style={styles.containerTable}>
           <Text style={styles.titlePrompt}>{'24H High'}</Text>
-          <Text style={styles.titleValue}>${totalHigh}</Text>
+          <Text style={styles.titleValue}>
+            {currency === 'usd' ? '$' : '₿'}
+            {totalHigh}
+          </Text>
         </View>
         <View style={styles.line} />
         <View style={styles.containerTable}>
           <Text style={styles.titlePrompt}>{'24H Low'}</Text>
-          <Text style={styles.titleValue}>${totalLow}</Text>
+          <Text style={styles.titleValue}>
+            {currency === 'usd' ? '$' : '₿'}
+            {totalLow}
+          </Text>
         </View>
         <View style={styles.line} />
         <View style={styles.containerTable}>
@@ -499,7 +571,7 @@ export const PriceChartTab = memo(({ id, currency }: DetailCoinInterface) => {
         </View>
         <View style={styles.line} />
         <View style={styles.containerTable}>
-          <Text style={styles.title}>{'All - Time Low'}</Text>
+          <Text style={styles.titlePrompt}>{'All - Time Low'}</Text>
           <View>
             <View style={styles.row}>
               <Text style={styles.titleValue}>${AllTimeLowPrice}</Text>
