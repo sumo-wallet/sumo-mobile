@@ -29,6 +29,8 @@ import {
   // CoingeckoLearnsResponse,
   CoingeckoLearnRequest,
   CoingeckoLearns,
+  SearchTokenResponse,
+  SearchTokenRequest,
 } from './../types';
 import { MarketsListParams } from '../types/coingecko/schema';
 import {
@@ -117,6 +119,8 @@ class Client {
       },
     );
   }
+
+  // =========================== Coingecko API ==========================
   getCoingeckoGlobal() {
     return fetcher<RawGlobalMarketInterface>(
       `${COINGECKO_BASE_URL}${PATHS.coingeckoGlobal}`,
@@ -151,6 +155,24 @@ class Client {
       },
     );
   }
+  public getSearchCoingeckoToken(request: SearchTokenRequest) {
+    return fetcher<SearchTokenResponse>(
+      `${COINGECKO_BASE_URL}/search?${qs.stringify(request)}`,
+      {
+        headers: this.headers,
+        method: 'GET',
+      },
+    );
+  }
+  public getSearchTokenTrending() {
+    return fetcher<DappPopularSearchResponse>(
+      `${COINGECKO_BASE_URL}/search/trending`,
+      {
+        headers: this.headers,
+      },
+    );
+  }
+  //======================= DApp API ==========================
   public getDappHome() {
     console.log('****** getDappHome ******');
     return fetcher<DappDappHomeResponse>(`${this.baseUrl}/api/v1/dapp/home`, {

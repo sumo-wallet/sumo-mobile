@@ -11,7 +11,7 @@ import { useTheme } from './../../../util/theme';
 import { SearchResultCell } from './../DappSearch/SearchResultCell';
 import { openDapp } from './../../../actions/browser';
 import { images } from './../../../assets';
-import { useTrackingDAppUsage } from '../../../components/hooks/useTrackingDAppUsage';
+import { useTrackingDAppUsage } from '../../hooks/DApp/useTrackingDAppUsage';
 import Routes from '../../../constants/navigation/Routes';
 
 export interface DappListByCategoryProps {

@@ -15,7 +15,7 @@ import { openDapp } from './../../../actions/browser';
 import { useNavigator } from './../../hooks';
 import { useTheme } from './../../..//util/theme';
 import Routes from '../../../constants/navigation/Routes';
-import { useTrackingDAppUsage } from '../../../components/hooks/useTrackingDAppUsage';
+import { useTrackingDAppUsage } from '../../hooks/DApp/useTrackingDAppUsage';
 import { icons } from './../../../assets';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('screen');

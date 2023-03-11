@@ -12,7 +12,7 @@ import { ROUTES } from './../../../navigation/routes';
 import { createNewTab, openDapp } from './../../../actions/browser';
 import { useTheme } from './../../../util/theme';
 import { addFavoriteDApp, removeFavoriteDApp } from '../../../actions/dapp';
-import { useTrackingDAppUsage } from '../../../components/hooks/useTrackingDAppUsage';
+import { useTrackingDAppUsage } from '../../hooks/DApp/useTrackingDAppUsage';
 import { useGetChain } from '../../../components/hooks/useGetChain';
 
 export const InfoRow = ({
