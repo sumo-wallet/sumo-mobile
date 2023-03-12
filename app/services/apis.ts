@@ -31,6 +31,7 @@ import {
   CoingeckoLearns,
   SearchTokenResponse,
   SearchTokenRequest,
+  TrendingTokenResponse,
 } from './../types';
 import { MarketsListParams } from '../types/coingecko/schema';
 import {
@@ -165,7 +166,7 @@ class Client {
     );
   }
   public getSearchTokenTrending() {
-    return fetcher<DappPopularSearchResponse>(
+    return fetcher<TrendingTokenResponse>(
       `${COINGECKO_BASE_URL}/search/trending`,
       {
         headers: this.headers,

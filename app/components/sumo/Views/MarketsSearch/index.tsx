@@ -23,13 +23,13 @@ import {
   useNavigator,
   useDebounce,
 } from './../../../hooks';
-import { SearchToken, ModelSearchHistory } from './../../../../types';
+import { SearchToken } from './../../../../types';
 import { useTheme } from './../../../../util/theme';
-import { useFetchDappPopularSearch } from './../../../../services/dapp/useFetchDappPopularSearch';
 import { SearchResultCell } from './SearchResultCell';
 import { strings } from '../../../../../locales/i18n';
 import { useTrackingDAppUsage } from '../../../hooks/DApp/useTrackingDAppUsage';
 import { useSearchToken } from '../../../../components/hooks/Markets/useSearchToken';
+import { useGetTrendingToken } from '../../../../components/hooks/Markets/useGetTrendingToken';
 
 const DAPP_SEARCH_HISTORY_KEY = 'DAPP_SEARCH_HISTORY_KEY';
 
@@ -94,7 +94,7 @@ export const MarketsSearch = React.memo(() => {
   const [inputValue, setInputValue] = React.useState<string>('');
 
   const { tokens: searchedTokens, isLoading, search } = useSearchToken();
-  const { data: dataPopularSearch = [] } = useFetchDappPopularSearch();
+  const { tokens: dataPopularSearch = [] } = useGetTrendingToken();
 
   const handleClearSearchHistory = React.useCallback(() => {
     console.log('handleClearSearchHistory: ');
@@ -115,6 +115,7 @@ export const MarketsSearch = React.memo(() => {
 
   const handleSearch = React.useCallback(
     (keyword: string) => {
+      console.log('handle search', keyword);
       setInputValue(keyword);
       search(keyword);
     },
@@ -139,14 +140,14 @@ export const MarketsSearch = React.memo(() => {
             {'Popular search'}
           </Text>
           <View style={Style.s({ direc: 'row', wrap: 'wrap', mt: 12 })}>
-            {dataPopularSearch.map((searchHistory: ModelSearchHistory) => {
-              const { search_text } = searchHistory;
-              if (!search_text) {
+            {dataPopularSearch.map((searchHistory: SearchToken) => {
+              const { symbol } = searchHistory;
+              if (!symbol) {
                 return null;
               }
               return (
                 <TouchableOpacity
-                  onPress={() => handleSelectPopular(search_text)}
+                  onPress={() => handleSelectPopular(symbol)}
                   key={`renderRecommend.TouchableOpacity.${searchHistory?.id}`}
                   style={[
                     Style.s({ px: 16, py: 6, cen: true, mb: 12, mr: 12 }),
@@ -158,7 +159,7 @@ export const MarketsSearch = React.memo(() => {
                   ]}
                 >
                   <Text style={Fonts.t({ s: 14, c: colors.text.default })}>
-                    {search_text}
+                    {symbol}
                   </Text>
                 </TouchableOpacity>
               );
@@ -236,10 +237,7 @@ export const MarketsSearch = React.memo(() => {
 
   const handlePressToken = React.useCallback(
     (dapp: SearchToken) => {
-      pushToHistory(inputValue);
-      if (dapp.website) {
-        trackingUsage(dapp.id || 0, 'dapp-search');
-      }
+
     },
     [dispatch, nav, inputValue, trackingUsage],
   );
@@ -296,30 +294,6 @@ export const MarketsSearch = React.memo(() => {
     );
   }, [isSearching, colors.text.alternative, colors.text.default]);
 
-  const listHeaderComponent = () => {
-    if (!inputValue) return null;
-    return (
-      <TouchableOpacity
-        style={styles.searchOnWebContainer}
-        onPress={() => {
-        }}
-      >
-        <View style={styles.titleContainer}>
-          <FastImage style={Style.s({ size: 16 })} source={icons.iconSearch} />
-          <Text style={styles.title}>
-            {'Search '}
-            <Text style={styles.searchValue}>{inputValue}</Text>
-            {' on web'}
-          </Text>
-        </View>
-        <FastImage
-          style={Style.s({ size: 16 })}
-          source={icons.iconArrowRight}
-        />
-      </TouchableOpacity>
-    );
-  };
-
   const keyEx = React.useCallback((i: SearchToken) => `${i}`, []);
   const renderSearchResults = () => {
     if (inputValue?.length === 0) {
@@ -333,7 +307,7 @@ export const MarketsSearch = React.memo(() => {
         ItemSeparatorComponent={renderItemSeparator}
         keyExtractor={keyEx}
         ListEmptyComponent={renderEmptyComponent}
-        ListHeaderComponent={listHeaderComponent}
+        // ListHeaderComponent={listHeaderComponent}
         refreshing={isSearching}
         refreshControl={
           <RefreshControl

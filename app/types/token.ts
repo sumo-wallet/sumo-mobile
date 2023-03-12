@@ -23,3 +23,10 @@ export interface SearchToken {
 export interface SearchTokenResponse {
   coins: SearchToken[];
 }
+
+export interface TrendingItemToken {
+  item: SearchToken;
+}
+export interface TrendingTokenResponse {
+  coins: TrendingItemToken[];
+}
