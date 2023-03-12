@@ -107,6 +107,7 @@ import { useTheme } from '../../../util/theme';
 import SwapMenu from '../../sumo/Views/SwapMenu';
 import { CoinMarketsScreen } from '../../screens/CoinMarkets/CoinMarketsScreen';
 import { CategoriesFilterMarketScreen } from '../../screens/CoinMarkets/CategoriesFilterMarket';
+import { MarketsSearch } from './../../sumo/Views/MarketsSearch';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -453,7 +454,6 @@ export const BottomTabContainer = () => {
       }}
       screenOptions={{ tabBarVisible: true }}
     >
-
       <Tab.Screen
         name={ROUTES.HomeScreen}
         component={HomeScreen}
@@ -992,6 +992,7 @@ const MainNavigator = () => (
       name={ROUTES.CategoriesFilterMarketScreen}
       component={CategoriesFilterMarketScreen}
     />
+    <Stack.Screen name={ROUTES.MarketsSearch} component={MarketsSearch} />
     <Stack.Screen name="Webview" component={Webview} />
     <Stack.Screen name="SettingsView" component={SettingsModalStack} />
     <Stack.Screen

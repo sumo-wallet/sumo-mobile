@@ -1,19 +1,19 @@
 import { HandlerTrackingUsageRequest } from 'app/types';
 import { useCallback } from 'react';
-import { client } from '../../services/apis';
-import useErrorHandler from './useErrorHandler.hook';
+import { client } from '../../../services/apis';
+import useErrorHandler from '../useErrorHandler.hook';
 
-interface SystemNotification {
+interface TrackingData {
   trackingUsage: (dappId: number, from: string) => void;
 }
 
-export function useTrackingDAppUsage(): SystemNotification {
+export function useTrackingTokenUsage(): TrackingData {
   const errorHandler = useErrorHandler();
   const trackingUsage = useCallback(
-    async (dappId, from) => {
+    async (token, from) => {
       try {
         const body: Required<HandlerTrackingUsageRequest> = {
-          dapp_id: dappId,
+          token,
           from,
         };
         await client.trackingDAppUsage(body);

@@ -7,3 +7,26 @@ export interface UserToken {
   aggregators: any[];
   balanceError: any;
 }
+
+export interface SearchTokenRequest {
+  query?: string;
+}
+export interface SearchToken {
+  id: string;
+  name: string;
+  market_cap_rank: number;
+  symbol: string;
+  thumb: string;
+  large: string;
+}
+
+export interface SearchTokenResponse {
+  coins: SearchToken[];
+}
+
+export interface TrendingItemToken {
+  item: SearchToken;
+}
+export interface TrendingTokenResponse {
+  coins: TrendingItemToken[];
+}

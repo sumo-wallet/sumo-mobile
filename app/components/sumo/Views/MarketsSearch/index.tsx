@@ -17,20 +17,19 @@ import FastImage from 'react-native-fast-image';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { Style, Fonts } from './../../../styles';
-import { icons, images } from './../../../assets';
-import { useNavigator, useDebounce, useNavigatorParams } from './../../hooks';
-import { ModelDApp, ModelSearchHistory } from './../../../types';
-import { useTheme } from './../../../util/theme';
-import { ROUTES } from './../../../navigation/routes';
-import { createNewTab, openDapp } from './../../../actions/browser';
-import { useFetchDappPopularSearch } from './../../../services/dapp/useFetchDappPopularSearch';
+import { Style, Fonts } from './../../../../styles';
+import { icons, images } from './../../../../assets';
+import {
+  useNavigator,
+  useDebounce,
+} from './../../../hooks';
+import { SearchToken } from './../../../../types';
+import { useTheme } from './../../../../util/theme';
 import { SearchResultCell } from './SearchResultCell';
-import { strings } from '../../../../locales/i18n';
-import Routes from '../../../../app/constants/navigation/Routes';
-import onUrlSubmit from '../../../util/browser';
-import { useTrackingDAppUsage } from '../../hooks/DApp/useTrackingDAppUsage';
-import { useSearchDapp } from '../../../components/hooks/DApp/useSearchDapp';
+import { strings } from '../../../../../locales/i18n';
+import { useTrackingDAppUsage } from '../../../hooks/DApp/useTrackingDAppUsage';
+import { useSearchToken } from '../../../../components/hooks/Markets/useSearchToken';
+import { useGetTrendingToken } from '../../../../components/hooks/Markets/useGetTrendingToken';
 
 const DAPP_SEARCH_HISTORY_KEY = 'DAPP_SEARCH_HISTORY_KEY';
 
@@ -82,21 +81,20 @@ const createStyles = (colors: any) =>
     },
   });
 
-export const DappSearch = React.memo(() => {
+export const MarketsSearch = React.memo(() => {
   const nav = useNavigator();
   const dispatch = useDispatch();
   const { colors } = useTheme();
   const styles = createStyles(colors);
   const inputRef = React.useRef<TextInput>();
   const { trackingUsage } = useTrackingDAppUsage();
+  const [searchText, setSearchText] = useState('');
 
-  const { searchText }: { searchText: string } = useNavigatorParams();
+  // const { searchText }: { searchText: string } = useNavigatorParams();
   const [inputValue, setInputValue] = React.useState<string>('');
 
-  const { dapps: dappsResultSearch, isLoading, search } = useSearchDapp();
-  const { data: dataPopularSearch = [] } = useFetchDappPopularSearch();
-
-  const searchEngine = useSelector((state) => state.settings.searchEngine);
+  const { tokens: searchedTokens, isLoading, search } = useSearchToken();
+  const { tokens: dataPopularSearch = [] } = useGetTrendingToken();
 
   const handleClearSearchHistory = React.useCallback(() => {
     console.log('handleClearSearchHistory: ');
@@ -115,10 +113,12 @@ export const DappSearch = React.memo(() => {
     }
   }, [search, searchText]);
 
-  const handleSearch = React.useCallback((keyword: string) => {
-    setInputValue(keyword);
-    search(keyword);
-  },
+  const handleSearch = React.useCallback(
+    (keyword: string) => {
+      console.log('handle search', keyword);
+      setInputValue(keyword);
+      search(keyword);
+    },
     [search],
   );
 
@@ -140,14 +140,14 @@ export const DappSearch = React.memo(() => {
             {'Popular search'}
           </Text>
           <View style={Style.s({ direc: 'row', wrap: 'wrap', mt: 12 })}>
-            {dataPopularSearch.map((searchHistory: ModelSearchHistory) => {
-              const { search_text } = searchHistory;
-              if (!search_text) {
+            {dataPopularSearch.map((searchHistory: SearchToken) => {
+              const { symbol } = searchHistory;
+              if (!symbol) {
                 return null;
               }
               return (
                 <TouchableOpacity
-                  onPress={() => handleSelectPopular(search_text)}
+                  onPress={() => handleSelectPopular(symbol)}
                   key={`renderRecommend.TouchableOpacity.${searchHistory?.id}`}
                   style={[
                     Style.s({ px: 16, py: 6, cen: true, mb: 12, mr: 12 }),
@@ -159,7 +159,7 @@ export const DappSearch = React.memo(() => {
                   ]}
                 >
                   <Text style={Fonts.t({ s: 14, c: colors.text.default })}>
-                    {search_text}
+                    {symbol}
                   </Text>
                 </TouchableOpacity>
               );
@@ -235,48 +235,24 @@ export const DappSearch = React.memo(() => {
     inputValue?.length,
   ]);
 
-  const handlePressDapp = React.useCallback(
-    (dapp: ModelDApp) => {
-      pushToHistory(inputValue);
-      if (dapp.website) {
-        dispatch(openDapp({ dapp }));
-        nav.navigate(Routes.BROWSER_TAB_HOME, {
-          screen: Routes.BROWSER_VIEW,
-          params: {
-            newTabUrl: dapp.website,
-            timestamp: Date.now(),
-            dapp,
-          },
-        });
-        trackingUsage(dapp.id || 0, 'dapp-search');
-      }
+  const handlePressToken = React.useCallback(
+    (dapp: SearchToken) => {
+
     },
     [dispatch, nav, inputValue, trackingUsage],
   );
 
-  const handleSearchOnWeb = (text: string) => {
-    const sanitizedInput = onUrlSubmit(text, searchEngine, 'https://');
-
-    nav.navigate(Routes.BROWSER_TAB_HOME, {
-      screen: Routes.BROWSER_VIEW,
-      params: {
-        newTabUrl: sanitizedInput,
-        timestamp: Date.now(),
-      },
-    });
-  };
-
   const renderItemResult = React.useCallback(
-    ({ item }: { item: ModelDApp }) => {
-      return <SearchResultCell item={item} onPress={handlePressDapp} />;
+    ({ item }: { item: SearchToken }) => {
+      return <SearchResultCell item={item} onPress={handlePressToken} />;
     },
-    [handlePressDapp],
+    [handlePressToken],
   );
 
   const renderItemSeparator = React.useCallback(() => {
     return (
       <View
-        style={Style.s({ my: 13, ml: 52, h: 1, bg: colors.border.default })}
+        style={Style.s({ my: 13, ml: 4, h: 1, bg: colors.border.default })}
       />
     );
   }, [colors.border.default]);
@@ -318,32 +294,7 @@ export const DappSearch = React.memo(() => {
     );
   }, [isSearching, colors.text.alternative, colors.text.default]);
 
-  const listHeaderComponent = () => {
-    if (!inputValue) return null;
-    return (
-      <TouchableOpacity
-        style={styles.searchOnWebContainer}
-        onPress={() => {
-          handleSearchOnWeb(inputValue);
-        }}
-      >
-        <View style={styles.titleContainer}>
-          <FastImage style={Style.s({ size: 16 })} source={icons.iconSearch} />
-          <Text style={styles.title}>
-            {'Search '}
-            <Text style={styles.searchValue}>{inputValue}</Text>
-            {' on web'}
-          </Text>
-        </View>
-        <FastImage
-          style={Style.s({ size: 16 })}
-          source={icons.iconArrowRight}
-        />
-      </TouchableOpacity>
-    );
-  };
-
-  const keyEx = React.useCallback((i: ModelDApp) => `${i}`, []);
+  const keyEx = React.useCallback((i: SearchToken) => `${i}`, []);
   const renderSearchResults = () => {
     if (inputValue?.length === 0) {
       return null;
@@ -351,12 +302,12 @@ export const DappSearch = React.memo(() => {
     return (
       <FlatList
         contentContainerStyle={Style.s({ px: 16, py: 24 })}
-        data={dappsResultSearch}
+        data={searchedTokens}
         renderItem={renderItemResult}
         ItemSeparatorComponent={renderItemSeparator}
         keyExtractor={keyEx}
         ListEmptyComponent={renderEmptyComponent}
-        ListHeaderComponent={listHeaderComponent}
+        // ListHeaderComponent={listHeaderComponent}
         refreshing={isSearching}
         refreshControl={
           <RefreshControl
