@@ -20,9 +20,9 @@ import DefaultTabBar from 'react-native-scrollable-tab-view/DefaultTabBar';
 import { fontStyles, baseStyles } from '../../../../styles/common';
 // import AccountOverview from '../../../UI/AccountOverview';
 // import Tokens from '../../UI/Tokens';
-import SwapsAmountView from '../../UI/SumoSwaps';
+import SwapsAmountView from '../../UI/Swaps';
 import SumoExchangeView from '../SumoExchange';
-// import BridgeView from '../../UI/SumoSwaps/BridgeView';
+import BridgeView from '../../UI/Swaps/BridgeView';
 
 import { getWalletNavbarOptions } from '../../../UI/Navbar';
 import { strings } from '../../../../../locales/i18n';
@@ -330,13 +330,11 @@ const SwapMenu = ({ navigation }: any) => {
               tokens={assets}
             />
           )}
-          {/* {__DEV__ && (
-            <BridgeView
-              tabLabel={'Bridge'}
-              key={'bridge-tab'}
-              navigation={navigation}
-            />
-          )} */}
+          <BridgeView
+            tabLabel={'Bridge'}
+            key={'bridge-tab'}
+            navigation={navigation}
+          />
           <SumoExchangeView
             tabLabel={'Exchange'}
             key={'exchange-tab'}

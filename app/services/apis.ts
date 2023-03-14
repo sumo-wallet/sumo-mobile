@@ -32,6 +32,10 @@ import {
   SearchTokenResponse,
   SearchTokenRequest,
   TrendingTokenResponse,
+  V1SwapDexListParams,
+  SwapSwapDexResponse,
+  V1SwapRouteListParams,
+  SwapSwapPathResponse,
 } from './../types';
 import { MarketsListParams } from '../types/coingecko/schema';
 import {
@@ -353,6 +357,24 @@ class Client {
   public getCategoriesMarket() {
     return fetcher<RawCategoriesMarketInterface[]>(
       `${COINGECKO_BASE_URL}${PATHS.categoriesMarket}?order=market_cap_change_24h_desc`,
+      {
+        headers: this.headers,
+      },
+    );
+  }
+  public getSwapDexByChain(params: V1SwapDexListParams) {
+    const stringifyParams = qs.stringify(params);
+    return fetcher<SwapSwapDexResponse>(
+      `${this.baseUrl}/api/v1/swap/dex?${stringifyParams}`,
+      {
+        headers: this.headers,
+      },
+    );
+  }
+  public getSwapRoutes(params: V1SwapRouteListParams) {
+    const stringifyParams = qs.stringify(params);
+    return fetcher<SwapSwapPathResponse>(
+      `${this.baseUrl}/api/v1/swap/path?${stringifyParams}`,
       {
         headers: this.headers,
       },

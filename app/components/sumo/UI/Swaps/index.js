@@ -30,7 +30,7 @@ import {
 import { safeToChecksumAddress } from '../../../../util/address';
 import { swapsUtils } from '@metamask/swaps-controller';
 import { ANALYTICS_EVENT_OPTS } from '../../../../util/analytics';
-
+import { ModelDexRouter } from '../../../../types';
 import {
   setSwapsHasOnboarded,
   setSwapsLiveness,
@@ -70,6 +70,8 @@ import { isZero, gte } from '../../../../util/lodash';
 import { useTheme } from '../../../../util/theme';
 import TokenIcon from './components/TokenIcon';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import DexSelectModal from './components/DexSelectModal';
+import { useSwapContext } from '../../../../components/hooks/Swap/useSwapContext';
 
 const createStyles = (colors) =>
   StyleSheet.create({
@@ -319,10 +321,24 @@ function SwapsAmountView({
 
   const explorer = useBlockExplorer(provider, frequentRpcList);
   const initialSource = route.params?.sourceToken ?? SWAPS_NATIVE_ADDRESS;
-  const [amount, setAmount] = useState('0');
   const [slippage, setSlippage] = useState(AppConstants.SWAPS.DEFAULT_SLIPPAGE);
   const [isInitialLoadingTokens, setInitialLoadingTokens] = useState(false);
   const [, setLoadingTokens] = useState(false);
+  const {
+    dexes,
+    fromDex,
+    fromToken,
+    destinationToken,
+    fromAmount,
+    toAmount,
+    priceImpact,
+    routes,
+    setFromDex,
+    setChainId,
+    setFromToken,
+    setFromAmount,
+    setDestinationToken,
+  } = useSwapContext();
   const [isSourceSet, setIsSourceSet] = useState(() =>
     Boolean(
       swapsTokens?.find((token) =>
@@ -331,12 +347,14 @@ function SwapsAmountView({
     ),
   );
 
-  const [sourceToken, setSourceToken] = useState(() =>
-    swapsTokens?.find((token) =>
-      toLowerCaseEquals(token?.address, initialSource),
-    ),
-  );
-  const [destinationToken, setDestinationToken] = useState(null);
+  useEffect(() => {
+    setFromToken(
+      swapsTokens?.find((token) =>
+        toLowerCaseEquals(token?.address, initialSource),
+      ),
+    );
+  }, [initialSource, setFromToken, swapsTokens]);
+
   const [hasDismissedTokenAlert, setHasDismissedTokenAlert] = useState(true);
   const [contractBalance, setContractBalance] = useState(null);
   const [contractBalanceAsUnits, setContractBalanceAsUnits] = useState(
@@ -354,10 +372,14 @@ function SwapsAmountView({
     ,
     hideTokenVerificationModal,
   ] = useModalHandler(false);
-
+  const [isDexModalVisible, toggleDexModal] = useModalHandler(false);
   useEffect(() => {
     navigation.setOptions(getSwapsAmountNavbar(navigation, route, colors));
   }, [navigation, route, colors]);
+
+  useEffect(() => {
+    setChainId(chainId);
+  }, [chainId, setChainId]);
 
   useEffect(() => {
     (async () => {
@@ -403,8 +425,6 @@ function SwapsAmountView({
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialSource, chainId, navigation, setLiveness]);
-
-  const keypadViewRef = useRef(null);
 
   useEffect(() => {
     (async () => {
@@ -454,93 +474,83 @@ function SwapsAmountView({
       initialSource &&
       swapsControllerTokens &&
       swapsTokens?.length > 0 &&
-      !sourceToken
+      !fromToken
     ) {
       setIsSourceSet(true);
-      setSourceToken(
+      setFromToken(
         swapsTokens.find((token) =>
           toLowerCaseEquals(token.address, initialSource),
         ),
       );
     }
-  }, [
-    initialSource,
-    isSourceSet,
-    sourceToken,
-    swapsControllerTokens,
-    swapsTokens,
-  ]);
+  }, [initialSource, isSourceSet, fromToken, swapsControllerTokens, swapsTokens, setFromToken]);
 
   useEffect(() => {
     setHasDismissedTokenAlert(false);
   }, [destinationToken]);
 
   const isTokenInBalances =
-    sourceToken && !isSwapsNativeAsset(sourceToken)
-      ? safeToChecksumAddress(sourceToken.address) in balances
+    fromToken && !isSwapsNativeAsset(fromToken)
+      ? safeToChecksumAddress(fromToken.address) in balances
       : false;
 
   useEffect(() => {
     (async () => {
-      if (
-        sourceToken &&
-        !isSwapsNativeAsset(sourceToken) &&
-        !isTokenInBalances
-      ) {
+      if (fromToken && !isSwapsNativeAsset(fromToken) && !isTokenInBalances) {
         setContractBalance(null);
         setContractBalanceAsUnits(safeNumberToBN(0));
         const { AssetsContractController } = Engine.context;
         try {
           const balance = await AssetsContractController.getERC20BalanceOf(
-            sourceToken.address,
+            fromToken.address,
             selectedAddress,
           );
           setContractBalanceAsUnits(balance);
           setContractBalance(
-            renderFromTokenMinimalUnit(balance, sourceToken.decimals),
+            renderFromTokenMinimalUnit(balance, fromToken.decimals),
           );
         } catch (e) {
           // Don't validate balance if error
         }
       }
     })();
-  }, [isTokenInBalances, selectedAddress, sourceToken]);
+  }, [isTokenInBalances, selectedAddress, fromToken]);
 
   const hasInvalidDecimals = useMemo(() => {
-    if (sourceToken) {
-      return amount?.split('.')[1]?.length > sourceToken.decimals;
+    if (fromToken) {
+      return fromAmount?.split('.')[1]?.length > fromToken.decimals;
     }
     return false;
-  }, [amount, sourceToken]);
+  }, [fromAmount, fromToken]);
 
   const amountAsUnits = useMemo(
     () =>
       toTokenMinimalUnit(
-        hasInvalidDecimals ? '0' : amount,
-        sourceToken?.decimals,
+        hasInvalidDecimals ? '0' : fromAmount,
+        fromToken?.decimals,
       ),
-    [amount, hasInvalidDecimals, sourceToken],
+    [fromAmount, hasInvalidDecimals, fromToken],
   );
   const controllerBalance = useBalance(
     accounts,
     balances,
     selectedAddress,
-    sourceToken,
+    fromToken,
   );
   const controllerBalanceAsUnits = useBalance(
     accounts,
     balances,
     selectedAddress,
-    sourceToken,
+    fromToken,
     { asUnits: true },
   );
 
   const balance =
-    isSwapsNativeAsset(sourceToken) || isTokenInBalances
+    isSwapsNativeAsset(fromToken) || isTokenInBalances
       ? controllerBalance
       : contractBalance;
   const balanceAsUnits =
-    isSwapsNativeAsset(sourceToken) || isTokenInBalances
+    isSwapsNativeAsset(fromToken) || isTokenInBalances
       ? controllerBalanceAsUnits
       : contractBalanceAsUnits;
 
@@ -548,12 +558,12 @@ function SwapsAmountView({
   const isAmountZero = isZero(amountAsUnits);
 
   const hasBalance = useMemo(() => {
-    if (!balanceAsUnits || !sourceToken) {
+    if (!balanceAsUnits || !fromToken) {
       return false;
     }
 
     return !(isBalanceZero ?? true);
-  }, [balanceAsUnits, sourceToken, isBalanceZero]);
+  }, [balanceAsUnits, fromToken, isBalanceZero]);
 
   const hasEnoughBalance = useMemo(() => {
     if (hasInvalidDecimals || !hasBalance || !balanceAsUnits) {
@@ -565,24 +575,24 @@ function SwapsAmountView({
   }, [amountAsUnits, balanceAsUnits, hasBalance, hasInvalidDecimals]);
 
   const currencyAmount = useMemo(() => {
-    if (!sourceToken || hasInvalidDecimals) {
+    if (!fromToken || hasInvalidDecimals) {
       return undefined;
     }
     let balanceFiat;
-    if (isSwapsNativeAsset(sourceToken)) {
+    if (isSwapsNativeAsset(fromToken)) {
       balanceFiat = weiToFiat(
-        toTokenMinimalUnit(amount, sourceToken?.decimals),
+        toTokenMinimalUnit(fromAmount, fromToken?.decimals),
         conversionRate,
         currentCurrency,
       );
     } else {
-      const sourceAddress = safeToChecksumAddress(sourceToken.address);
+      const sourceAddress = safeToChecksumAddress(fromToken.address);
       const exchangeRate =
         sourceAddress in tokenExchangeRates
           ? tokenExchangeRates[sourceAddress]
           : undefined;
       balanceFiat = balanceToFiat(
-        amount,
+        fromAmount,
         conversionRate,
         exchangeRate,
         currentCurrency,
@@ -590,11 +600,11 @@ function SwapsAmountView({
     }
     return balanceFiat;
   }, [
-    amount,
+    fromAmount,
     conversionRate,
     currentCurrency,
     hasInvalidDecimals,
-    sourceToken,
+    fromToken,
     tokenExchangeRates,
   ]);
 
@@ -611,46 +621,34 @@ function SwapsAmountView({
       return;
     }
     if (
-      !isSwapsNativeAsset(sourceToken) &&
+      !isSwapsNativeAsset(fromToken) &&
       !isTokenInBalances &&
       !isBalanceZero
     ) {
       const { TokensController } = Engine.context;
-      const { address, symbol, decimals } = sourceToken;
+      const { address, symbol, decimals } = fromToken;
       await TokensController.addToken(address, symbol, decimals);
     }
     return navigation.navigate(
       'SwapsQuotesView',
       setQuotesNavigationsParams(
-        sourceToken?.address,
+        fromToken?.address,
         destinationToken?.address,
-        toTokenMinimalUnit(amount, sourceToken?.decimals).toString(10),
+        toTokenMinimalUnit(fromAmount, fromToken?.decimals).toString(10),
         slippage,
-        [sourceToken, destinationToken],
+        [fromToken, destinationToken],
       ),
     );
   }, [
-    amount,
+    fromAmount,
     destinationToken,
     hasInvalidDecimals,
     isTokenInBalances,
     navigation,
     slippage,
-    sourceToken,
+    fromToken,
     isBalanceZero,
   ]);
-
-  /* Keypad Handlers */
-  const handleKeypadChange = useCallback(
-    ({ value }) => {
-      if (value === amount) {
-        return;
-      }
-
-      setAmount(value);
-    },
-    [amount],
-  );
 
   const setSlippageAfterTokenPress = useCallback(
     (sourceTokenAddress, destinationTokenAddress) => {
@@ -673,7 +671,7 @@ function SwapsAmountView({
   const handleSourceTokenPress = useCallback(
     (item) => {
       toggleSourceModal();
-      setSourceToken(item);
+      setFromToken(item);
       setSlippageAfterTokenPress(item.address, destinationToken?.address);
     },
     [toggleSourceModal, setSlippageAfterTokenPress, destinationToken],
@@ -683,33 +681,38 @@ function SwapsAmountView({
     (item) => {
       toggleDestinationModal();
       setDestinationToken(item);
-      setSlippageAfterTokenPress(sourceToken?.address, item.address);
+      setSlippageAfterTokenPress(fromToken?.address, item.address);
     },
-    [toggleDestinationModal, setSlippageAfterTokenPress, sourceToken],
+    [
+      toggleDestinationModal,
+      setDestinationToken,
+      setSlippageAfterTokenPress,
+      fromToken?.address,
+    ],
   );
 
   const handleUseMax = useCallback(() => {
-    if (!sourceToken || !balanceAsUnits) {
+    if (!fromToken || !balanceAsUnits) {
       return;
     }
-    setAmount(
+    setFromAmount(
       fromTokenMinimalUnitString(
         balanceAsUnits.toString(10),
-        sourceToken.decimals,
+        fromToken.decimals,
       ),
     );
-  }, [balanceAsUnits, sourceToken]);
+  }, [balanceAsUnits, fromToken, setFromAmount]);
   const handleUse50Max = useCallback(() => {
-    if (!sourceToken || !balanceAsUnits) {
+    if (!fromToken || !balanceAsUnits) {
       return;
     }
-    setAmount(
+    setFromAmount(
       fromTokenMinimalUnitString(
         Math.floor(balanceAsUnits / 2).toString(10),
-        sourceToken.decimals,
+        fromToken.decimals,
       ),
     );
-  }, [balanceAsUnits, sourceToken]);
+  }, [balanceAsUnits, fromToken, setFromAmount]);
 
   const handleSlippageChange = useCallback((value) => {
     setSlippage(value);
@@ -733,31 +736,21 @@ function SwapsAmountView({
     });
   }, [explorer, destinationToken, hideTokenVerificationModal, navigation]);
 
-  const handleAmountPress = useCallback(
-    () => keypadViewRef?.current?.shake?.(),
-    [],
-  );
-
   const handleFlipTokens = useCallback(() => {
-    setSourceToken(destinationToken);
-    setDestinationToken(sourceToken);
-  }, [destinationToken, sourceToken]);
+    setFromToken(destinationToken);
+    setDestinationToken(fromToken);
+  }, [destinationToken, fromToken]);
 
   const disabledView =
     !destinationTokenHasEnoughOcurrances && !hasDismissedTokenAlert;
 
-  // if (!userHasOnboarded) {
-  //   return (
-  //     <ScreenView
-  //       style={styles.container}
-  //       contentContainerStyle={styles.screen}
-  //     >
-  //       <Onboarding setHasOnboarded={setHasOnboarded} />
-  //     </ScreenView>
-  //   );
-  // }
-
-  // const themeAppearance = this.context.themeAppearance || 'light';
+  const handleDexPress = useCallback(
+    (item) => {
+      toggleDexModal();
+      setFromDex(item);
+    },
+    [setFromDex, toggleDexModal],
+  );
 
   return (
     <View style={{ flex: 1 }}>
@@ -805,12 +798,12 @@ function SwapsAmountView({
                   >
                     <View style={styles.icon}>
                       <TokenIcon
-                        icon={sourceToken?.iconUrl}
-                        symbol={sourceToken?.symbol}
+                        icon={fromToken?.iconUrl}
+                        symbol={fromToken?.symbol}
                       />
                     </View>
                     <Text primary>
-                      {sourceToken?.symbol || strings('swaps.select_a_token')}
+                      {fromToken?.symbol || strings('swaps.select_a_token')}
                     </Text>
                     <Icon
                       name="caret-down"
@@ -826,16 +819,16 @@ function SwapsAmountView({
                   adjustsFontSizeToFit
                   allowFontScaling
                   // ref={this.amountInput}
-                  value={amount}
+                  value={fromAmount}
                   onChangeText={(value) => {
                     if (value.length > 0) {
                       if (value.includes(',')) {
-                        setAmount(value.replace(',', '.'));
+                        setFromAmount(value.replace(',', '.'));
                       } else {
-                        setAmount(value);
+                        setFromAmount(value);
                       }
                     } else {
-                      setAmount('0');
+                      setFromAmount('0');
                     }
                   }}
                   keyboardType={'decimal-pad'}
@@ -846,28 +839,28 @@ function SwapsAmountView({
                 />
               </View>
               <TouchableOpacity style={styles.balanceContainer}>
-                {!!sourceToken &&
+                {!!fromToken &&
                   (hasInvalidDecimals ||
                     (!isAmountZero && !hasEnoughBalance) ? (
                     <Text style={styles.amountInvalid}>
                       {hasInvalidDecimals
                         ? strings('swaps.allows_up_to_decimals', {
-                          symbol: sourceToken.symbol,
-                          decimals: sourceToken.decimals,
+                          symbol: fromToken.symbol,
+                          decimals: fromToken.decimals,
                           // eslint-disable-next-line no-mixed-spaces-and-tabs
                         })
                         : strings('swaps.not_enough', {
-                          symbol: sourceToken.symbol,
+                          symbol: fromToken.symbol,
                         })}
                     </Text>
                   ) : isAmountZero ? (
                     <Text>
-                      {!!sourceToken &&
+                      {!!fromToken &&
                         balance !== null &&
                         strings('swaps.available_to_swap', {
-                          asset: `${balance} ${sourceToken.symbol}`,
+                          asset: `${balance} ${fromToken.symbol}`,
                         })}
-                      {!isSwapsNativeAsset(sourceToken) && hasBalance && (
+                      {!isSwapsNativeAsset(fromToken) && hasBalance && (
                         <Text style={styles.linkText} onPress={handleUseMax}>
                           {' '}
                           {strings('swaps.use_max')}
@@ -896,7 +889,7 @@ function SwapsAmountView({
             style={[styles.amountContainer, disabledView && styles.disabled]}
             pointerEvents={disabledView ? 'none' : 'auto'}
           >
-            {!sourceToken && <Text> </Text>}
+            {!fromToken && <Text> </Text>}
           </View>
           <View style={styles.sendTokenContainer}>
             <View style={styles.sendOptionContainer}>
@@ -931,7 +924,7 @@ function SwapsAmountView({
                 adjustsFontSizeToFit
                 allowFontScaling
                 // ref={this.amountInput}
-                // value={amount}
+                value={toAmount}
                 // onChangeText={this.onInputChange}
                 keyboardType={'numeric'}
                 placeholder={'0'}
@@ -946,12 +939,12 @@ function SwapsAmountView({
                   <Text style={styles.amountInvalid}>
                     {hasInvalidDecimals
                       ? strings('swaps.allows_up_to_decimals', {
-                        symbol: sourceToken.symbol,
-                        decimals: sourceToken.decimals,
+                        symbol: fromToken.symbol,
+                        decimals: fromToken.decimals,
                         // eslint-disable-next-line no-mixed-spaces-and-tabs
                       })
                       : strings('swaps.not_enough', {
-                        symbol: sourceToken.symbol,
+                        symbol: fromToken.symbol,
                       })}
                   </Text>
                 ) : isAmountZero ? (
@@ -993,7 +986,7 @@ function SwapsAmountView({
                   ),
               ]}
               onItemPress={handleDestinationTokenPress}
-              excludeAddresses={[sourceToken?.address]}
+              excludeAddresses={[fromToken?.address]}
             />
           </View>
           <View>
@@ -1115,7 +1108,7 @@ function SwapsAmountView({
               containerStyle={styles.cta}
               disabled={
                 isInitialLoadingTokens ||
-                !sourceToken ||
+                !fromToken ||
                 !destinationToken ||
                 hasInvalidDecimals ||
                 isAmountZero
@@ -1124,10 +1117,22 @@ function SwapsAmountView({
               {strings('swaps.get_quotes')}
             </StyledButton>
           </View>
-          <View style={styles.providerContainer}>
+          <TouchableOpacity
+            style={styles.providerContainer}
+            onPress={toggleDexModal}
+          >
             <Text style={styles.swapDetailTitle}>{'Provider'}</Text>
-            <Icon name="arrow-right" size={18} style={styles.caretDown} />
-          </View>
+            <Text style={styles.swapDetailTitle}>{`${fromDex?.name || ''
+              }`}</Text>
+            <DexSelectModal
+              isVisible={isDexModalVisible}
+              dismiss={toggleDexModal}
+              title={strings('swaps.convert_from')}
+              initialDexes={dexes}
+              onItemPress={handleDexPress}
+              excludeChains={[]}
+            />
+          </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.providerContainer}
@@ -1136,21 +1141,22 @@ function SwapsAmountView({
             disabled={isDirectWrapping}
           >
             <Text style={styles.swapDetailTitle}>{'Slippage'}</Text>
-            <Text style={styles.swapDetailTitle}>{`${slippage}%`}</Text>
+            <Text style={styles.swapDetailTitle}>{`${slippage || ''}%`}</Text>
           </TouchableOpacity>
 
           <View style={styles.swapDetailContainer}>
             <View style={styles.swapDetailItemContainer}>
               <Text style={styles.swapDetailTitle}>{'Provider Fee'}</Text>
-              <Text style={styles.swapDetailTitle}>{'0.1'}</Text>
+              <Text style={styles.swapDetailTitle}>{`${fromDex?.fee || '0'
+                }%`}</Text>
             </View>
             <View style={styles.swapDetailItemContainer}>
               <Text style={styles.swapDetailTitle}>{'Price Impact'}</Text>
-              <Text style={styles.swapDetailTitle}>{'0.1%'}</Text>
+              <Text style={styles.swapDetailTitle}>{`${priceImpact} %`}</Text>
             </View>
             <View style={styles.swapDetailItemContainer}>
               <Text style={styles.swapDetailTitle}>{'Routing'}</Text>
-              <Text style={styles.swapDetailTitle}>{''}</Text>
+              <Text style={styles.swapDetailTitle}>{routes}</Text>
             </View>
           </View>
           {/* <AnimatableView ref={keypadViewRef}>

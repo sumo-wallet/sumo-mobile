@@ -184,10 +184,18 @@ export interface MarketplaceCollectionCategory {
   color?: string;
   imageUrl?: string;
   name?: string;
+  text_color?: string;
 }
 
 export interface MarketplaceCollectionCategoryResponse {
   data?: MarketplaceCollectionCategory[];
+}
+
+export interface MarketplaceCollectionDetailResponse {
+  data?: ModelNft[];
+  pageNumber?: number;
+  pageSize?: number;
+  totalPage?: number;
 }
 
 export interface MarketplaceCollectionResponse {
@@ -365,6 +373,40 @@ export interface ModelDApps {
   category?: ModelCategory;
 }
 
+export interface ModelDex {
+  chain_id?: number;
+  created_at?: string;
+  id?: number;
+  logo?: string;
+  name?: string;
+  order?: number;
+  updated_at?: string;
+}
+
+export interface ModelDexRouter {
+  bridge_tokens?: string;
+  chain_id?: number;
+  created_at?: string;
+  default_slippage?: number;
+  dex?: ModelDex;
+  dex_id?: number;
+  factory_address?: string;
+  fee?: number;
+  id?: number;
+  logo?: string;
+  max_hop?: number;
+  min_swap?: number;
+  name?: string;
+  router_address?: string;
+  status?: string;
+  swap_in_eth?: string;
+  swap_in_token?: string;
+  swap_out_eth?: string;
+  swap_out_token?: string;
+  swap_ver?: string;
+  updated_at?: string;
+}
+
 export interface ModelMarketItemData {
   chainId?: number;
   description?: string;
@@ -397,6 +439,21 @@ export interface ModelMarketplace {
   token_id?: string;
   type?: number;
   updatedAt?: string;
+}
+
+export interface ModelNft {
+  attributes?: string;
+  background_color?: string;
+  collection_address?: number;
+  created_at?: string;
+  description?: string;
+  external_link?: string;
+  id?: number;
+  image_url?: string;
+  name?: string;
+  owner?: string;
+  slug?: string;
+  token_id?: string;
 }
 
 export interface ModelNotification {
@@ -485,6 +542,31 @@ export interface ModelWallet {
   user_id?: number;
 }
 
+export interface SwapSwapDexPath {
+  bridgeTokenAddress?: string;
+  defaultSlippage?: number;
+  dex?: string;
+  factoryAddress?: string;
+  fee?: number;
+  maxHop?: number;
+  minSwap?: number;
+  path?: string[];
+  routerAddress?: string;
+  swapInToken?: string;
+  swapInTth?: string;
+  swapOutEth?: string;
+  swapOutToken?: string;
+  swapVer?: string;
+}
+
+export interface SwapSwapDexResponse {
+  data?: ModelDexRouter[];
+}
+
+export interface SwapSwapPathResponse {
+  data?: SwapSwapDexPath[];
+}
+
 export interface V1AuthChallengeListParams {
   /** wallet address */
   address: string;
@@ -536,6 +618,16 @@ export interface V1CollectionSearchListParams {
   pageNumber?: string;
   /** pageSize */
   pageSize?: string;
+}
+
+export interface V1CollectionCollectionIdListParams {
+  /** address */
+  address: string;
+  /** pageNumber */
+  pageNumber?: string;
+  /** pageSize */
+  pageSize?: string;
+  collectionId: string;
 }
 
 export interface V1DappCategoryIdListParams {
@@ -605,4 +697,22 @@ export interface V1MarketplaceCollectionTrendingListParams {
 export interface V1MarketplaceHotAuctionListParams {
   /** query value */
   language?: string;
+}
+
+export interface V1SwapDexListParams {
+  /** chain id */
+  chainId: number;
+}
+
+export interface V1SwapRouteListParams {
+  /** chain id */
+  chainId: number;
+  /** from token */
+  fromToken: string;
+  /** to token */
+  toToken: string;
+  /** amount in float */
+  amountIn: number;
+  /** slippage in float */
+  slippage: number;
 }
