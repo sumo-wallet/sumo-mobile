@@ -85,7 +85,7 @@ export const CoinFavouriteList = memo(
       },
       [params],
     );
-    console.log('check item = ', coinIds);
+
     return (
       <View>
         <FlatList

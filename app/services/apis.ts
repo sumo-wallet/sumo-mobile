@@ -35,11 +35,13 @@ import {
 } from './../types';
 import {
   CoinsDetailParams,
+  MarketChartDetailParams,
   MarketsListParams,
 } from '../types/coingecko/schema';
 import {
   RawCoinMarketsInterface,
   RawGlobalMarketInterface,
+  RawMarketChartInterface,
 } from '../reducers/coinmarkets/types';
 import { RawCategoriesMarketInterface } from '../reducers/categoriesMarket';
 
@@ -67,6 +69,7 @@ export const PATHS = {
   coingeckoCoinsMarkets: 'coins/markets',
   categoriesMarket: 'coins/categories',
   coingeckoCoinsDetails: 'coins',
+  coingeckoMarketChart: 'market_chart',
 };
 
 class Client {
@@ -367,6 +370,28 @@ class Client {
     const stringifyParams = qs.stringify(params);
     return fetcher<RawCoinMarketsInterface>(
       `${COINGECKO_BASE_URL}${PATHS.coingeckoCoinsDetails}/${id}?${stringifyParams}`,
+      {
+        headers: this.headers,
+      },
+    );
+  }
+
+  public getMarketChart(params: MarketChartDetailParams) {
+    const stringifyParams = qs.stringify(params);
+
+    return fetcher<RawMarketChartInterface>(
+      `${COINGECKO_BASE_URL}${PATHS.coingeckoCoinsDetails}/${params.id}/${PATHS.coingeckoMarketChart}?${stringifyParams}`,
+      {
+        headers: this.headers,
+      },
+    );
+  }
+
+  public getCandlestickChart(params: MarketChartDetailParams) {
+    const stringifyParams = qs.stringify(params);
+
+    return fetcher<any>(
+      `${COINGECKO_BASE_URL}${PATHS.coingeckoCoinsDetails}/${params.id}/ohlc?${stringifyParams}`,
       {
         headers: this.headers,
       },

@@ -302,3 +302,9 @@ export interface RawGlobalMarketInterface {
     updated_at: number;
   };
 }
+
+export interface RawMarketChartInterface {
+  prices: number[][];
+  market_caps: number[][];
+  total_volumes: number[][];
+}

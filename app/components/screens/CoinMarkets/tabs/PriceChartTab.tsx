@@ -1,5 +1,6 @@
-import React, { memo, useCallback, useMemo } from 'react';
+import React, { memo, useCallback, useMemo, useState } from 'react';
 import {
+  Dimensions,
   Image,
   RefreshControl,
   ScrollView,
@@ -15,10 +16,18 @@ import { useCoinMarkets } from '../../../../reducers/coinmarkets/slice';
 import { DetailCoinInterface } from '../DetailCoinScreen';
 import { icons } from '../../../../assets';
 import { useAsyncEffect } from '../../../hooks/useAsyncEffect';
-import { CoinsDetailParams } from '../../../../types/coingecko/schema';
-import { getCoinDetails } from '../../../../reducers/coinmarkets/functions';
+import {
+  CoinsDetailParams,
+  MarketChartDetailParams,
+} from '../../../../types/coingecko/schema';
+import {
+  getCoinDetails,
+  getMarketChart,
+} from '../../../../reducers/coinmarkets/functions';
 import { requestSetTokenToFavourite } from '../../../../reducers/favouritemarkets/functions';
 import { useFavouriteMarketsByQuery } from '../../../../reducers/favouritemarkets/slice';
+import { LineChart, TLineChartDataProp } from 'react-native-wagmi-charts';
+import { ChartOption } from '../components/ChartOption';
 
 const createStyles = (colors: any) =>
   StyleSheet.create({
@@ -173,7 +182,7 @@ export const PriceChartTab = memo(({ id, currency }: DetailCoinInterface) => {
   const { colors } = useTheme();
   const styles = createStyles(colors);
 
-  const { call, error, loading } = useAsyncEffect(async () => {
+  const { call, error, value, loading } = useAsyncEffect(async () => {
     const params: Omit<CoinsDetailParams, 'id'> = {
       localization: 'false',
       tickers: false,
@@ -187,7 +196,6 @@ export const PriceChartTab = memo(({ id, currency }: DetailCoinInterface) => {
 
   const coin_details = useCoinMarkets(id);
   const favouriteIds = useFavouriteMarketsByQuery('all');
-  console.log('check  =', favouriteIds);
 
   const price = useMemo(() => {
     if (coin_details) {
@@ -438,6 +446,9 @@ export const PriceChartTab = memo(({ id, currency }: DetailCoinInterface) => {
           <Image source={iconFavourite} style={styles.iconFavourite} />
         </TouchableOpacity>
       </View>
+
+      <ChartOption id={id} currency={currency} />
+
       <View style={styles.wrapTable}>
         <View style={[styles.wrapView]}>
           <Text style={styles.titleTime}>{'24H'}</Text>

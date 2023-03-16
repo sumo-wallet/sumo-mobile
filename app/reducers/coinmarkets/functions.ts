@@ -1,5 +1,6 @@
 import {
   CoinsDetailParams,
+  MarketChartDetailParams,
   MarketsListParams,
 } from '../../types/coingecko/schema';
 import { client } from '../../services';
@@ -8,7 +9,6 @@ import { setCoinMarketsQueries, syncCoinMarkets } from './slice';
 
 export const getCoinMarkets = async (params: MarketsListParams) => {
   const res = await client.getCoinsMarket(params);
-  // console.log('check into', res);
   const newData = res.map((item: { id: any }) => item.id) || [];
   const newQuery = store.getState().coinMarkets.query.all || [];
   syncCoinMarkets(res);
@@ -37,4 +37,12 @@ export const getCoinDetails = async (
   const res = await client.getCoinsDetails(params, id);
 
   syncCoinMarkets([res]);
+};
+
+export const getMarketChart = async (params: MarketChartDetailParams) => {
+  return await client.getMarketChart(params);
+};
+
+export const getCandlestickChart = async (params: MarketChartDetailParams) => {
+  return await client.getCandlestickChart(params);
 };

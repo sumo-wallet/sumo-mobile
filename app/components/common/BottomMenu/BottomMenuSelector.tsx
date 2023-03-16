@@ -127,8 +127,11 @@ export const BottomMenuSelector = memo(
     }, []);
 
     return (
-      <View style={containerStyle}>
-        <TouchableOpacity onPress={showMenu} style={styles.touch}>
+      <View>
+        <TouchableOpacity
+          onPress={showMenu}
+          style={[styles.touch, containerStyle]}
+        >
           <Text
             style={[textStyle, styles.title]}
             numberOfLines={1}
