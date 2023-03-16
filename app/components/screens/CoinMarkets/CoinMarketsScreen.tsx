@@ -1,4 +1,4 @@
-import React, { memo, useCallback } from 'react';
+import React, { memo, useCallback, useState } from 'react';
 import { Image, StyleSheet, View, TouchableOpacity } from 'react-native';
 import { DynamicHeader } from '../../Base/DynamicHeader';
 import { useTheme } from '../../../util/theme';
@@ -10,6 +10,12 @@ import { CoinMarketHeader } from './components/CoinMarketHeader';
 import { icons } from '../../../assets';
 import { useNavigation } from '@react-navigation/native';
 import Routes from '../../../constants/navigation/Routes';
+import { MarketsListParams } from '../../../types/coingecko/schema';
+import { useAsyncEffect } from '../../hooks/useAsyncEffect';
+import {
+  getCoinMarkets,
+  getGlobalMarkets,
+} from '../../../reducers/coinmarkets/functions';
 
 const createStyles = (colors: any) =>
   StyleSheet.create({
@@ -32,6 +38,18 @@ export const CoinMarketsScreen = memo(() => {
   const { colors } = useTheme();
   const styles = createStyles(colors);
   const navigation = useNavigation();
+  const [params, setParams] = useState<MarketsListParams>({
+    page: 1,
+    per_page: 20,
+    vs_currency: 'btc',
+    price_change_percentage: '24h',
+    order: 'market_cap_desc',
+  });
+
+  const { call, loading } = useAsyncEffect(async () => {
+    await getGlobalMarkets();
+    return await getCoinMarkets(params);
+  }, [params]);
 
   const pagerViewRef = React.useRef<PagerView>();
   const [pageIndex, setPageIndex] = React.useState(0);
@@ -64,8 +82,13 @@ export const CoinMarketsScreen = memo(() => {
         }}
         style={Style.s({ flex: 1 })}
       >
-        <CoinMarketList />
-        <CoinFavouriteList />
+        <CoinMarketList
+          params={params}
+          onUpdateParams={setParams}
+          loading={loading}
+          call={call}
+        />
+        <CoinFavouriteList params={params} />
       </PagerView>
     </View>
   );

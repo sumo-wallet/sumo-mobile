@@ -22,6 +22,7 @@ import dappReducer from './dapp';
 import { combineReducers } from 'redux';
 import { coinMarketsReducer } from './coinmarkets/slice';
 import { categoriesMarketReducer } from './categoriesMarket';
+import { favouriteMarketsReducer } from './favouritemarkets/slice';
 
 const rootReducer = combineReducers({
   collectibles: collectiblesReducer,
@@ -47,6 +48,7 @@ const rootReducer = combineReducers({
   dapp: dappReducer,
   coinMarkets: coinMarketsReducer,
   categoriesMarket: categoriesMarketReducer,
+  favouriteMarkets: favouriteMarketsReducer,
 });
 
 export default rootReducer;

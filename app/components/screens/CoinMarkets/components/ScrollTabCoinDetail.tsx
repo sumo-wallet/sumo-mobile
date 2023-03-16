@@ -16,7 +16,7 @@ const createStyles = (colors: any) =>
   StyleSheet.create({
     container: {
       flexDirection: 'row',
-      paddingVertical: 12,
+      paddingBottom: 12,
       paddingLeft: 16,
       width: '100%',
       backgroundColor: colors.border.default + '30',

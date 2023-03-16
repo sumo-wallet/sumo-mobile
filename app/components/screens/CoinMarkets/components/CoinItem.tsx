@@ -14,6 +14,7 @@ import { scale } from '../../../../util/scale';
 import { icons } from '../../../../assets';
 import { MarketsListParams } from '../../../../types/coingecko/schema';
 import { navigateToDetailCoinScreen } from '../../../Base/navigation';
+import { useFavouriteMarketsByQuery } from '../../../../reducers/favouritemarkets/slice';
 
 export interface CoinItemInterface {
   id: string;
@@ -75,12 +76,25 @@ const createStyles = (colors: any) =>
       width: 14,
       height: 14,
     },
+    iconFavourite: {
+      width: 14,
+      height: 14,
+      position: 'absolute',
+      top: -5,
+      left: -20,
+      zIndex: 1,
+    },
   });
 
 export const CoinItem = memo(({ id, paramsMarket }: CoinItemInterface) => {
   const { colors } = useTheme();
   const styles = createStyles(colors);
   const coin = useCoinMarkets(id);
+  const favouriteIds = useFavouriteMarketsByQuery('all');
+
+  const isFavouriteIds = useMemo(() => {
+    return favouriteIds.includes(id);
+  }, [favouriteIds, id]);
 
   const globalPercent = useMemo(() => {
     if (
@@ -213,6 +227,12 @@ export const CoinItem = memo(({ id, paramsMarket }: CoinItemInterface) => {
       </View>
       <View style={styles.containerSymbol}>
         <View style={styles.subContainerSymbol}>
+          {isFavouriteIds && (
+            <Image
+              source={icons.iconFavouritedFill}
+              style={styles.iconFavourite}
+            />
+          )}
           <FastImage source={{ uri: urlCoin }} style={styles.icon} />
           <Text
             style={[styles.title, { fontSize: fontCoin }]}

@@ -1,28 +1,21 @@
-import { MarketsListParams } from '../../types/coingecko/schema';
-import { client } from '../../services';
+import { RawCoinMarketsInterface } from '../coinmarkets/types';
+import { setFavouriteMarketsQueries, syncFavouriteMarkets } from './slice';
 import { store } from '../../store';
-import { setCoinMarketsQueries, syncCoinMarkets } from './slice';
 
-export const getCoinMarkets = async (params: MarketsListParams) => {
-  const res = await client.getCoinsMarket(params);
-
-  const newData = res.map((item: { id: any }) => item.id) || [];
-  const newQuery = store.getState().coinMarkets.query.all || [];
-  syncCoinMarkets(res);
-  setCoinMarketsQueries({
-    [`all`]:
-      params.page && params.page > 1
-        ? [...new Set([...newQuery, ...newData])]
-        : newData,
+export const requestSetTokenToFavourite = async (
+  token: RawCoinMarketsInterface,
+) => {
+  const newQuery = store.getState().favouriteMarkets.query.all || [];
+  if (newQuery.includes(token.id)) {
+    const result = newQuery.filter((item: string) => item !== token.id) || [];
+    setFavouriteMarketsQueries({
+      [`all`]: [...new Set([...result])],
+    });
+    return;
+  }
+  syncFavouriteMarkets([token]);
+  setFavouriteMarketsQueries({
+    [`all`]: [...new Set([...newQuery, ...[token.id]])],
   });
-  return res;
-};
-
-export const getGlobalMarkets = async () => {
-  const res = await client.getCoingeckoGlobal();
-  setCoinMarketsQueries({
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //@ts-ignore
-    [`global_market`]: res,
-  });
+  return;
 };

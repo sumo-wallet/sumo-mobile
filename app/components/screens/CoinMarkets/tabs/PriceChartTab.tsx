@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from 'react';
+import React, { memo, useCallback, useMemo } from 'react';
 import {
   Image,
   RefreshControl,
@@ -17,6 +17,8 @@ import { icons } from '../../../../assets';
 import { useAsyncEffect } from '../../../hooks/useAsyncEffect';
 import { CoinsDetailParams } from '../../../../types/coingecko/schema';
 import { getCoinDetails } from '../../../../reducers/coinmarkets/functions';
+import { requestSetTokenToFavourite } from '../../../../reducers/favouritemarkets/functions';
+import { useFavouriteMarketsByQuery } from '../../../../reducers/favouritemarkets/slice';
 
 const createStyles = (colors: any) =>
   StyleSheet.create({
@@ -146,6 +148,16 @@ const createStyles = (colors: any) =>
       marginHorizontal: 12,
       justifyContent: 'space-around',
     },
+    wrapHeaderTab: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    iconFavourite: {
+      width: 24,
+      height: 24,
+      marginRight: 24,
+    },
   });
 
 const PriceChangePercentage = [
@@ -174,11 +186,13 @@ export const PriceChartTab = memo(({ id, currency }: DetailCoinInterface) => {
   }, [id]);
 
   const coin_details = useCoinMarkets(id);
+  const favouriteIds = useFavouriteMarketsByQuery('all');
+  console.log('check  =', favouriteIds);
 
   const price = useMemo(() => {
     if (coin_details) {
       return coin_details?.current_price.toLocaleString('en', {
-        minimumFractionDigits: 2,
+        minimumFractionDigits: 8,
       });
     }
   }, [coin_details]);
@@ -344,15 +358,15 @@ export const PriceChartTab = memo(({ id, currency }: DetailCoinInterface) => {
       return coin_details.market_data.price_change_percentage_24h_in_currency[
         currency
       ]
-        .toLocaleString(undefined, {
-          minimumFractionDigits: 1,
+        .toLocaleString('en', {
+          maximumFractionDigits: 1,
         })
         .substring(1);
     }
     return coin_details.market_data.price_change_percentage_24h_in_currency[
       currency
     ].toLocaleString(undefined, {
-      minimumFractionDigits: 1,
+      maximumFractionDigits: 1,
     });
   }, [currency, coin_details]);
 
@@ -386,27 +400,44 @@ export const PriceChartTab = memo(({ id, currency }: DetailCoinInterface) => {
     return { transform: [{ rotate: '180deg' }] };
   }, [coin_details]);
 
+  const onChangeFavourite = useCallback(async () => {
+    if (coin_details) {
+      await requestSetTokenToFavourite(coin_details);
+      return;
+    }
+  }, [coin_details]);
+
+  const iconFavourite = useMemo(() => {
+    if (coin_details && favouriteIds.includes(coin_details.id))
+      return icons.iconFavouritedFill;
+    return icons.iconFavorite;
+  }, [coin_details, favouriteIds]);
+
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
       refreshControl={<RefreshControl refreshing={loading} onRefresh={call} />}
     >
-      <TouchableOpacity style={styles.row}>
-        <Text style={styles.titlePrice}>
-          {currency === 'usd' ? '$' : '₿'}
-          {price}
-        </Text>
-        <View style={styles.containerContent}>
-          <Image
-            source={icons.iconSelectorArrow}
-            style={[styles.iconArrow, { tintColor: colorPercent }, rotate]}
-          />
-          <Text style={[styles.title, { color: colorPercent }]}>
-            {globalPercent + '%'}
+      <View style={styles.wrapHeaderTab}>
+        <TouchableOpacity style={styles.row}>
+          <Text style={styles.titlePrice}>
+            {currency === 'usd' ? '$' : '₿'}
+            {price}
           </Text>
-        </View>
-      </TouchableOpacity>
-
+          <View style={styles.containerContent}>
+            <Image
+              source={icons.iconSelectorArrow}
+              style={[styles.iconArrow, { tintColor: colorPercent }, rotate]}
+            />
+            <Text style={[styles.title, { color: colorPercent }]}>
+              {globalPercent + '%'}
+            </Text>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={onChangeFavourite}>
+          <Image source={iconFavourite} style={styles.iconFavourite} />
+        </TouchableOpacity>
+      </View>
       <View style={styles.wrapTable}>
         <View style={[styles.wrapView]}>
           <Text style={styles.titleTime}>{'24H'}</Text>
