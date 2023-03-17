@@ -1,10 +1,14 @@
 import React, { memo, useCallback } from 'react';
 import { useTheme } from '../../../../util/theme';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
-import { getFavouriteMarketsByQuery } from '../../../../reducers/favouritemarkets/slice';
+import {
+  getFavouriteMarketsByQuery,
+  useFavouriteMarketsByQuery,
+} from '../../../../reducers/favouritemarkets/slice';
 import { scale } from '../../../../util/scale';
 import { MarketsListParams } from '../../../../types/coingecko/schema';
 import { CoinItem } from '../components/CoinItem';
+import { EmptyView } from '../../../Base/EmptyView';
 
 const createStyles = (colors: any) =>
   StyleSheet.create({
@@ -67,6 +71,10 @@ const createStyles = (colors: any) =>
       alignItems: 'center',
       width: scale(50),
     },
+    emptyView: {
+      flex: 1,
+      alignSelf: 'center',
+    },
   });
 
 export interface CoinFavouriteListInterface {
@@ -77,17 +85,17 @@ export const CoinFavouriteList = memo(
   ({ params }: CoinFavouriteListInterface) => {
     const { colors } = useTheme();
     const styles = createStyles(colors);
-    const coinIds = getFavouriteMarketsByQuery('all');
+    const coinIds = useFavouriteMarketsByQuery('all');
 
     const renderItem = useCallback(
       ({ item }: { item: string }) => {
-        return <CoinItem id={item} paramsMarket={params} />;
+        return <CoinItem id={item} paramsMarket={params} isFavourite />;
       },
       [params],
     );
 
     return (
-      <View>
+      <View style={styles.wrapper}>
         <FlatList
           ListHeaderComponent={
             <View style={styles.wrapperHeader}>
@@ -117,6 +125,12 @@ export const CoinFavouriteList = memo(
           renderItem={renderItem}
           showsVerticalScrollIndicator={false}
           onEndReachedThreshold={0.4}
+          contentContainerStyle={styles.wrapper}
+          ListEmptyComponent={
+            <View style={styles.emptyView}>
+              <EmptyView />
+            </View>
+          }
         />
       </View>
     );

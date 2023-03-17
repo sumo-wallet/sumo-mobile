@@ -1,5 +1,6 @@
 import React, { memo, useCallback, useMemo, useState } from 'react';
 import {
+  ActivityIndicator,
   InteractionManager,
   StyleSheet,
   Text,
@@ -114,6 +115,7 @@ export const ChartOption = memo(({ id, currency }: ChartOptionInterface) => {
 
   const dataCandlestickChart = useMemo(() => {
     InteractionManager.runAfterInteractions(() => {
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
       setTimeout(() => {}, 500);
     });
     if (paramsType === 'candlestick_chart' && !value?.prices) {
@@ -140,35 +142,52 @@ export const ChartOption = memo(({ id, currency }: ChartOptionInterface) => {
   );
   return (
     <View>
-      {dataCharts.length === 0 && dataCandlestickChart.length === 0 && (
-        <View style={styles.containerEmpty}>
-          <EmptyView />
-        </View>
-      )}
+      {dataCharts.length === 0 &&
+        dataCandlestickChart.length === 0 &&
+        !loading && (
+          <View style={styles.containerEmpty}>
+            <EmptyView />
+          </View>
+        )}
       {paramsType !== 'candlestick_chart' && dataCharts.length > 0 && (
-        <LineChart.Provider data={dataCharts}>
-          <LineChart height={scale(210)}>
-            <LineChart.Path width={2} color={colors.info.default}>
-              <LineChart.Gradient />
-            </LineChart.Path>
-            <LineChart.CursorCrosshair />
-          </LineChart>
-          <LineChart.PriceText />
-          <LineChart.DatetimeText />
-        </LineChart.Provider>
+        <>
+          {loading ? (
+            <ActivityIndicator
+              style={{ height: scale(210) }}
+              color={colors.primary.default}
+            />
+          ) : (
+            <LineChart.Provider data={dataCharts}>
+              <LineChart height={scale(210)}>
+                <LineChart.Path width={2} color={colors.info.default}>
+                  <LineChart.Gradient />
+                </LineChart.Path>
+                <LineChart.CursorCrosshair />
+              </LineChart>
+              <LineChart.PriceText />
+              <LineChart.DatetimeText />
+            </LineChart.Provider>
+          )}
+        </>
       )}
       {dataCandlestickChart.length > 0 && paramsType === 'candlestick_chart' && (
-        <CandlestickChart.Provider data={dataCandlestickChart}>
-          <CandlestickChart height={scale(210)}>
-            <CandlestickChart.Candles
-              positiveColor={colors.primary.default}
-              negativeColor={colors.overlay.default}
-            />
-            <CandlestickChart.Crosshair color="hotpink" />
-          </CandlestickChart>
-          <CandlestickChart.PriceText />
-          <CandlestickChart.DatetimeText />
-        </CandlestickChart.Provider>
+        <>
+          {loading ? (
+            <ActivityIndicator />
+          ) : (
+            <CandlestickChart.Provider data={dataCandlestickChart}>
+              <CandlestickChart height={scale(210)}>
+                <CandlestickChart.Candles
+                  positiveColor={colors.primary.default}
+                  negativeColor={colors.error.default}
+                />
+                <CandlestickChart.Crosshair color="hotpink" />
+              </CandlestickChart>
+              <CandlestickChart.PriceText />
+              <CandlestickChart.DatetimeText />
+            </CandlestickChart.Provider>
+          )}
+        </>
       )}
       <View style={styles.wrapTabChart}>
         <TouchableOpacity

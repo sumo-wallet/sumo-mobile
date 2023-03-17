@@ -235,31 +235,38 @@ export const PriceChartTab = memo(({ id, currency }: DetailCoinInterface) => {
   const totalHigh = useMemo(() => {
     if (!coin_details || !coin_details?.market_data?.high_24h) return 0;
     return coin_details?.market_data.high_24h[currency].toLocaleString('en', {
-      minimumFractionDigits: 2,
+      minimumFractionDigits: 8,
     });
   }, [coin_details, currency]);
 
   const totalLow = useMemo(() => {
     if (!coin_details || !coin_details?.market_data?.low_24h) return 0;
     return coin_details?.market_data.low_24h[currency].toLocaleString('en', {
-      minimumFractionDigits: 2,
+      minimumFractionDigits: 8,
     });
   }, [coin_details, currency]);
 
   const availableSupply = useMemo(() => {
     if (!coin_details || !coin_details?.market_data?.circulating_supply)
       return 0;
-    return coin_details?.market_data.circulating_supply / 1000000;
+    return (
+      coin_details?.market_data.circulating_supply / 1000000000
+    ).toLocaleString('en', {
+      maximumFractionDigits: 1,
+    });
   }, [coin_details]);
 
   const totalSupply = useMemo(() => {
     if (!coin_details || !coin_details?.market_data?.total_supply) return 0;
-    return coin_details?.market_data.total_supply / 1000000;
+    return (coin_details?.market_data.total_supply / 1000000000).toLocaleString(
+      'en',
+      { maximumFractionDigits: 1 },
+    );
   }, [coin_details]);
 
   const maxSupply = useMemo(() => {
     if (!coin_details || !coin_details?.market_data?.total_supply) return 0;
-    return coin_details?.market_data.max_supply / 1000000;
+    return coin_details?.market_data.max_supply / 1000000000;
   }, [coin_details]);
 
   const AllTimeHigh = useMemo(() => {
@@ -506,14 +513,16 @@ export const PriceChartTab = memo(({ id, currency }: DetailCoinInterface) => {
                     ? 0
                     : coin_details.market_data[item][currency] < 0
                     ? coin_details.market_data[item][currency]
-                        .toLocaleString(undefined, {
+                        .toLocaleString('en', {
                           maximumFractionDigits: 1,
+                          minimumFractionDigits: 1,
                         })
                         .substring(1)
                     : coin_details.market_data[item][currency].toLocaleString(
                         'en',
                         {
                           maximumFractionDigits: 1,
+                          minimumFractionDigits: 1,
                         },
                       )}
                   %
