@@ -1,15 +1,25 @@
-import React, { memo, useMemo } from 'react';
+import React, { memo, useCallback, useMemo } from 'react';
 import { useCoinMarkets } from '../../../../reducers/coinmarkets/slice';
-import { Image, StyleSheet, Text, View, ViewPropTypes } from 'react-native';
+import {
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  ViewPropTypes,
+} from 'react-native';
 import { useTheme } from '../../../../util/theme';
 import FastImage from 'react-native-fast-image';
 import { scale } from '../../../../util/scale';
 import { icons } from '../../../../assets';
 import { MarketsListParams } from '../../../../types/coingecko/schema';
+import { navigateToDetailCoinScreen } from '../../../Base/navigation';
+import { useFavouriteMarketsByQuery } from '../../../../reducers/favouritemarkets/slice';
 
 export interface CoinItemInterface {
   id: string;
   paramsMarket: MarketsListParams;
+  isFavourite?: boolean;
 }
 
 const createStyles = (colors: any) =>
@@ -67,146 +77,199 @@ const createStyles = (colors: any) =>
       width: 14,
       height: 14,
     },
+    iconFavourite: {
+      width: 14,
+      height: 14,
+      position: 'absolute',
+      top: -5,
+      left: -20,
+      zIndex: 1,
+    },
   });
 
-export const CoinItem = memo(({ id, paramsMarket }: CoinItemInterface) => {
-  const { colors } = useTheme();
-  const styles = createStyles(colors);
-  const coin = useCoinMarkets(id);
+export const CoinItem = memo(
+  ({ id, paramsMarket, isFavourite }: CoinItemInterface) => {
+    const { colors } = useTheme();
+    const styles = createStyles(colors);
+    const coin = useCoinMarkets(id);
+    const favouriteIds = useFavouriteMarketsByQuery('all');
 
-  const globalPercent = useMemo(() => {
-    if (
-      !coin ||
-      !coin[
-        `price_change_percentage_${paramsMarket.price_change_percentage}_in_currency`
-      ]
-    )
-      return 0;
-    if (
-      coin[
-        `price_change_percentage_${paramsMarket.price_change_percentage}_in_currency`
-      ] < 0
-    ) {
+    const isFavouriteIds = useMemo(() => {
+      return favouriteIds.includes(id);
+    }, [favouriteIds, id]);
+
+    const globalPercent = useMemo(() => {
+      if (
+        !coin ||
+        !coin[
+          `price_change_percentage_${paramsMarket.price_change_percentage}_in_currency`
+        ]
+      )
+        return '0.0';
+      if (
+        coin[
+          `price_change_percentage_${paramsMarket.price_change_percentage}_in_currency`
+        ] < 0
+      ) {
+        return coin[
+          `price_change_percentage_${paramsMarket.price_change_percentage}_in_currency`
+        ]
+          .toLocaleString(undefined, {
+            maximumFractionDigits: 1,
+            minimumFractionDigits: 1,
+          })
+          .substring(1);
+      }
+
       return coin[
         `price_change_percentage_${paramsMarket.price_change_percentage}_in_currency`
-      ]
-        .toLocaleString(undefined, {
-          maximumFractionDigits: 1,
-        })
-        .substring(1);
-    }
-
-    return coin[
-      `price_change_percentage_${paramsMarket.price_change_percentage}_in_currency`
-    ].toLocaleString(undefined, {
-      maximumFractionDigits: 1,
-    });
-  }, [coin, paramsMarket.price_change_percentage]);
-
-  const colorPercent = useMemo(() => {
-    if (
-      !coin ||
-      !coin[
-        `price_change_percentage_${paramsMarket.price_change_percentage}_in_currency`
-      ]
-    )
-      return colors.error.default;
-    if (
-      coin[
-        `price_change_percentage_${paramsMarket.price_change_percentage}_in_currency`
-      ] < 0
-    ) {
-      return colors.error.default;
-    }
-
-    return colors.primary.default;
-  }, [
-    coin,
-    colors.error.default,
-    colors.primary.default,
-    paramsMarket.price_change_percentage,
-  ]);
-
-  const totalMarketCap = useMemo(() => {
-    if (coin?.market_cap) {
-      return coin.market_cap.toLocaleString();
-    }
-    return 0;
-  }, [coin]);
-
-  const price = useMemo(() => {
-    if (coin?.current_price) {
-      return coin.current_price.toLocaleString('en', {
-        maximumFractionDigits: 2,
+      ].toLocaleString(undefined, {
+        maximumFractionDigits: 1,
+        minimumFractionDigits: 1,
       });
-    }
-  }, [coin]);
+    }, [coin, paramsMarket.price_change_percentage]);
 
-  const rotate = useMemo((): ViewPropTypes => {
-    if (
-      !coin ||
-      !coin[
-        `price_change_percentage_${paramsMarket.price_change_percentage}_in_currency`
-      ]
-    )
-      return {};
-    if (
-      coin[
-        `price_change_percentage_${paramsMarket.price_change_percentage}_in_currency`
-      ] < 0
-    ) {
-      return {};
-    }
+    const colorPercent = useMemo(() => {
+      if (
+        !coin ||
+        !coin[
+          `price_change_percentage_${paramsMarket.price_change_percentage}_in_currency`
+        ]
+      )
+        return colors.error.default;
+      if (
+        coin[
+          `price_change_percentage_${paramsMarket.price_change_percentage}_in_currency`
+        ] < 0
+      ) {
+        return colors.error.default;
+      }
 
-    return { transform: [{ rotate: '180deg' }] };
-  }, [coin, paramsMarket.price_change_percentage]);
+      return colors.primary.default;
+    }, [
+      coin,
+      colors.error.default,
+      colors.primary.default,
+      paramsMarket.price_change_percentage,
+    ]);
 
-  const fontSizeRank = useMemo(() => {
-    if (!coin) return 12;
-    if ((coin.market_cap_rank || '').toString().length === 1) return 12;
-    if ((coin.market_cap_rank || '').toString().length === 3) return 10;
-    if ((coin.market_cap_rank || '').toString().length >= 4) return 8;
-  }, [coin]);
+    const totalMarketCap = useMemo(() => {
+      if (coin?.market_cap) {
+        return coin.market_cap.toLocaleString('en', {
+          maximumFractionDigits: 8,
+          minimumFractionDigits: 0,
+        });
+      }
+      return 0;
+    }, [coin]);
 
-  if (!coin) return null;
+    const price = useMemo(() => {
+      if (coin?.current_price) {
+        return coin.current_price.toLocaleString('en', {
+          minimumFractionDigits: 6,
+          maximumFractionDigits: 8,
+        });
+      }
+    }, [coin]);
 
-  return (
-    <View style={styles.wrapper}>
-      <View style={styles.wrapView}>
-        <Text
-          style={[styles.textRank, { fontSize: fontSizeRank }]}
-          numberOfLines={1}
-        >
-          {coin.market_cap_rank || '-'}
-        </Text>
-      </View>
-      <View style={styles.containerSymbol}>
-        <View style={styles.subContainerSymbol}>
-          <FastImage source={{ uri: coin.image }} style={styles.icon} />
-          <Text style={styles.title}>{coin.symbol.toUpperCase()}</Text>
+    const rotate = useMemo((): ViewPropTypes => {
+      if (
+        !coin ||
+        !coin[
+          `price_change_percentage_${paramsMarket.price_change_percentage}_in_currency`
+        ]
+      )
+        return {};
+      if (
+        coin[
+          `price_change_percentage_${paramsMarket.price_change_percentage}_in_currency`
+        ] < 0
+      ) {
+        return {};
+      }
+
+      return { transform: [{ rotate: '180deg' }] };
+    }, [coin, paramsMarket.price_change_percentage]);
+
+    const fontSizeRank = useMemo(() => {
+      if (!coin) return 12;
+      if ((coin.market_cap_rank || '').toString().length === 1) return 12;
+      if ((coin.market_cap_rank || '').toString().length === 3) return 10;
+      if ((coin.market_cap_rank || '').toString().length >= 4) return 8;
+    }, [coin]);
+
+    const fontCoin = useMemo(() => {
+      if (!coin) return 12;
+      if ((coin.symbol || '').toString().length >= 6) return 8;
+      return 12;
+    }, [coin]);
+
+    const onNavigate = useCallback(() => {
+      navigateToDetailCoinScreen({
+        id: coin?.id || '0',
+        currency: paramsMarket.vs_currency,
+      });
+    }, [coin?.id, paramsMarket.vs_currency]);
+
+    const urlCoin = useMemo(() => {
+      if (coin) {
+        if (typeof coin.image === 'string') return coin.image;
+        if (typeof coin.image === 'object') return coin.image.thumb;
+      }
+      return '';
+    }, [coin]);
+
+    if (!coin) return null;
+
+    return (
+      <TouchableOpacity style={styles.wrapper} onPress={onNavigate}>
+        <View style={styles.wrapView}>
+          <Text
+            style={[styles.textRank, { fontSize: fontSizeRank }]}
+            numberOfLines={1}
+          >
+            {coin.market_cap_rank || '-'}
+          </Text>
         </View>
-      </View>
-      <View style={styles.containerContent}>
-        <Text style={styles.title}>
-          {paramsMarket.vs_currency === 'usd' ? '$' : '₿'}
-          {price}
-        </Text>
-      </View>
-      <View style={styles.containerContent}>
-        <Image
-          source={icons.iconSelectorArrow}
-          style={[styles.iconArrow, { tintColor: colorPercent }, rotate]}
-        />
-        <Text style={[styles.title, { color: colorPercent }]}>
-          {globalPercent + '%'}
-        </Text>
-      </View>
-      <View style={styles.containerMarket}>
-        <Text style={styles.title}>
-          {paramsMarket.vs_currency === 'usd' ? '$' : '₿'}
-          {totalMarketCap}
-        </Text>
-      </View>
-    </View>
-  );
-});
+        <View style={styles.containerSymbol}>
+          <View style={styles.subContainerSymbol}>
+            {!isFavourite && isFavouriteIds && (
+              <Image
+                source={icons.iconFavouritedFill}
+                style={styles.iconFavourite}
+              />
+            )}
+            <FastImage source={{ uri: urlCoin }} style={styles.icon} />
+            <Text
+              style={[styles.title, { fontSize: fontCoin }]}
+              numberOfLines={1}
+            >
+              {coin.symbol.toUpperCase()}
+            </Text>
+          </View>
+        </View>
+        <View style={styles.containerContent}>
+          <Text style={[styles.title]}>
+            {paramsMarket.vs_currency === 'usd' ? '$' : '₿'}
+            {price}
+          </Text>
+        </View>
+        <View style={styles.containerContent}>
+          <Image
+            source={icons.iconSelectorArrow}
+            style={[styles.iconArrow, { tintColor: colorPercent }, rotate]}
+          />
+          <Text style={[styles.title, { color: colorPercent }]}>
+            {globalPercent + '%'}
+          </Text>
+        </View>
+        <View style={styles.containerMarket}>
+          <Text style={styles.title}>
+            {paramsMarket.vs_currency === 'usd' ? '$' : '₿'}
+            {totalMarketCap}
+          </Text>
+        </View>
+      </TouchableOpacity>
+    );
+  },
+);

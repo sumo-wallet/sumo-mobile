@@ -3,6 +3,8 @@ import { NavigationContainerRef, StackActions } from '@react-navigation/native';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { DrawerActions } from '@react-navigation/core';
 import { CategoriesFilterMarketInterface } from '../screens/CoinMarkets/CategoriesFilterMarket';
+import { ROUTES } from '../../navigation/routes';
+import { DetailCoinInterface } from '../screens/CoinMarkets/DetailCoinScreen';
 
 export const navigationRef = React.createRef<NavigationContainerRef>();
 
@@ -37,3 +39,7 @@ export const navigateToCategoriesFilterMarketScreen =
   createNavigate<CategoriesFilterMarketInterface>(
     'CategoriesFilterMarketScreen',
   );
+
+export const navigateToDetailCoinScreen = createNavigate<DetailCoinInterface>(
+  ROUTES.DetailCoinScreen,
+);

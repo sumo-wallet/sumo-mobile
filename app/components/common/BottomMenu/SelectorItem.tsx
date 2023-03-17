@@ -47,8 +47,8 @@ const createStyles = (colors: any) =>
       tintColor: colors.primary.default,
     },
     icon: {
-      width: 24,
-      height: 24,
+      width: 12,
+      height: 12,
       marginRight: 16,
     },
     title: {
@@ -87,7 +87,7 @@ export const SelectorItem = memo(
     const { colors } = useTheme();
     const styles = createStyles(colors);
     const onPress = useCallback(() => {
-      if (selected) {
+      if (selected && option.subValue) {
         onSelect?.(option.subValue);
         return;
       }
@@ -110,7 +110,10 @@ export const SelectorItem = memo(
             (typeof renderIcon === 'function' ? (
               renderIcon(option.icon)
             ) : (
-              <Image source={option.icon} style={styles.icon} />
+              <Image
+                source={option.icon}
+                style={[styles.icon, { tintColor: colorTitle }]}
+              />
             ))}
           {isRound && (
             <View>

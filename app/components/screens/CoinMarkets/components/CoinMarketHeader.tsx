@@ -40,7 +40,7 @@ export const CoinMarketHeader = memo(
             {
               borderBottomWidth: page === 0 ? 8 : 1,
               borderBottomColor:
-                page === 0 ? colors.primary.alternative : colors.border.default,
+                page === 0 ? colors.primary.default : colors.border.default,
             },
           ]}
         >
@@ -60,7 +60,7 @@ export const CoinMarketHeader = memo(
             {
               borderBottomWidth: page === 1 ? 8 : 1,
               borderBottomColor:
-                page === 1 ? colors.primary.alternative : colors.border.default,
+                page === 1 ? colors.primary.default : colors.border.default,
             },
           ]}
         >

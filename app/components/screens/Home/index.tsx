@@ -59,13 +59,7 @@ const createStyles = (colors: any) =>
       height: 24,
       tintColor: colors.text.default,
     },
-    containerHeader: {
-      flex: 1,
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-around',
-      backgroundColor: 'red',
-    },
+
     containerRight: {
       flexDirection: 'row',
     },
@@ -334,7 +328,6 @@ export const HomeScreen = memo(() => {
         title={''}
         isHiddenTitle
         hideGoBack
-        style={styles.containerHeader}
         isShowAvatar
         networkName={getNetworkName()}
         address={selectedAddress}

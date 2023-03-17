@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 17,
     lineHeight: 20,
-    color: colors.gray5,
+    color: colors.gray4,
     paddingTop: 16,
   },
 });

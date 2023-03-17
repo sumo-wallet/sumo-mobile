@@ -65,6 +65,9 @@ import logoTwitter from './icons/logoTwitter.png';
 import logoDiscord from './icons/logoDiscord.png';
 import iconEditSquare from './icons/iconEditSquare.png';
 import iconSelectorArrow from './icons/iconSelectorArrow.png';
+import iconFavouritedFill from './icons/iconFavouritedFill.png';
+import iconLineChart from './icons/iconLineChart.png';
+import iconCandlestickChart from './icons/iconCandlestickChart.png';
 
 import imageBanner from './images/imageBanner.png';
 import imageNew1 from './images/imageNew1.png';
@@ -145,6 +148,9 @@ export const icons = {
   currency_ethereum,
   iconEditSquare,
   iconSelectorArrow,
+  iconFavouritedFill,
+  iconLineChart,
+  iconCandlestickChart,
 };
 
 export const images = {

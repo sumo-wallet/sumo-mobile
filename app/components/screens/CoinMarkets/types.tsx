@@ -1,4 +1,5 @@
 import { SelectorOption } from '../../common/BottomMenu';
+import { icons } from '../../../assets';
 
 export const Types24hSelector: SelectorOption[] = [
   {
@@ -35,5 +36,22 @@ export const TypeSortSelector: SelectorOption[] = [
     label: 'Price',
     value: 'price_desc',
     subValue: 'price_asc',
+  },
+];
+
+export const TypeChart: SelectorOption[] = [
+  {
+    label: 'Price',
+    value: 'line_chart',
+    icon: icons.iconLineChart,
+  },
+  {
+    label: 'Price',
+    value: 'candlestick_chart',
+    icon: icons.iconCandlestickChart,
+  },
+  {
+    label: 'MCap',
+    value: 'market_cap',
   },
 ];
