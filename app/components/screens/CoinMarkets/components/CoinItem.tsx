@@ -35,8 +35,8 @@ const createStyles = (colors: any) =>
       alignItems: 'center',
     },
     icon: {
-      width: 24,
-      height: 24,
+      width: 23,
+      height: 23,
       marginBottom: 2,
     },
     textRank: {
@@ -60,6 +60,12 @@ const createStyles = (colors: any) =>
       flex: 1,
     },
     containerContent: {
+      justifyContent: 'flex-end',
+      width: scale(90),
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    containerChange: {
       justifyContent: 'flex-end',
       width: scale(80),
       flexDirection: 'row',
@@ -102,13 +108,13 @@ export const CoinItem = memo(
       if (
         !coin ||
         !coin[
-          `price_change_percentage_${paramsMarket.price_change_percentage}_in_currency`
+        `price_change_percentage_${paramsMarket.price_change_percentage}_in_currency`
         ]
       )
         return '0.0';
       if (
         coin[
-          `price_change_percentage_${paramsMarket.price_change_percentage}_in_currency`
+        `price_change_percentage_${paramsMarket.price_change_percentage}_in_currency`
         ] < 0
       ) {
         return coin[
@@ -133,13 +139,13 @@ export const CoinItem = memo(
       if (
         !coin ||
         !coin[
-          `price_change_percentage_${paramsMarket.price_change_percentage}_in_currency`
+        `price_change_percentage_${paramsMarket.price_change_percentage}_in_currency`
         ]
       )
         return colors.error.default;
       if (
         coin[
-          `price_change_percentage_${paramsMarket.price_change_percentage}_in_currency`
+        `price_change_percentage_${paramsMarket.price_change_percentage}_in_currency`
         ] < 0
       ) {
         return colors.error.default;
@@ -165,10 +171,15 @@ export const CoinItem = memo(
 
     const price = useMemo(() => {
       if (coin?.current_price) {
-        return coin.current_price.toLocaleString('en', {
-          minimumFractionDigits: 6,
-          maximumFractionDigits: 8,
-        });
+        return paramsMarket.vs_currency === 'usd'
+          ? coin.current_price.toLocaleString('en', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 8,
+          })
+          : coin.current_price.toLocaleString('en', {
+            minimumFractionDigits: 6,
+            maximumFractionDigits: 8,
+          });
       }
     }, [coin]);
 
@@ -176,13 +187,13 @@ export const CoinItem = memo(
       if (
         !coin ||
         !coin[
-          `price_change_percentage_${paramsMarket.price_change_percentage}_in_currency`
+        `price_change_percentage_${paramsMarket.price_change_percentage}_in_currency`
         ]
       )
         return {};
       if (
         coin[
-          `price_change_percentage_${paramsMarket.price_change_percentage}_in_currency`
+        `price_change_percentage_${paramsMarket.price_change_percentage}_in_currency`
         ] < 0
       ) {
         return {};
@@ -254,7 +265,7 @@ export const CoinItem = memo(
             {price}
           </Text>
         </View>
-        <View style={styles.containerContent}>
+        <View style={styles.containerChange}>
           <Image
             source={icons.iconSelectorArrow}
             style={[styles.iconArrow, { tintColor: colorPercent }, rotate]}

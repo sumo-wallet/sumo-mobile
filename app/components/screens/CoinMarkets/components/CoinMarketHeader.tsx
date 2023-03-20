@@ -38,7 +38,7 @@ export const CoinMarketHeader = memo(
           style={[
             styles.touch,
             {
-              borderBottomWidth: page === 0 ? 8 : 1,
+              borderBottomWidth: page === 0 ? 3 : 1,
               borderBottomColor:
                 page === 0 ? colors.primary.default : colors.border.default,
             },
@@ -58,7 +58,7 @@ export const CoinMarketHeader = memo(
           style={[
             styles.touch,
             {
-              borderBottomWidth: page === 1 ? 8 : 1,
+              borderBottomWidth: page === 1 ? 3 : 1,
               borderBottomColor:
                 page === 1 ? colors.primary.default : colors.border.default,
             },
