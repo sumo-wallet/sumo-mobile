@@ -57,7 +57,8 @@ const createStyles = (colors: any) =>
       alignItems: 'center',
     },
     wrapView: {
-      flex: 1,
+      width: 20,
+      justifyContent: 'center',
     },
     containerContent: {
       justifyContent: 'flex-end',

@@ -41,7 +41,7 @@ export const CoinMarketsScreen = memo(() => {
   const [params, setParams] = useState<MarketsListParams>({
     page: 1,
     per_page: 20,
-    vs_currency: 'btc',
+    vs_currency: 'usd',
     price_change_percentage: '24h',
     order: 'market_cap_desc',
   });

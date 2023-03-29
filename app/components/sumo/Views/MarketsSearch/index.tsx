@@ -19,10 +19,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { Style, Fonts } from './../../../../styles';
 import { icons, images } from './../../../../assets';
-import {
-  useNavigator,
-  useDebounce,
-} from './../../../hooks';
+import { useNavigator, useDebounce } from './../../../hooks';
 import { SearchToken } from './../../../../types';
 import { useTheme } from './../../../../util/theme';
 import { SearchResultCell } from './SearchResultCell';
@@ -30,6 +27,8 @@ import { strings } from '../../../../../locales/i18n';
 import { useTrackingDAppUsage } from '../../../hooks/DApp/useTrackingDAppUsage';
 import { useSearchToken } from '../../../../components/hooks/Markets/useSearchToken';
 import { useGetTrendingToken } from '../../../../components/hooks/Markets/useGetTrendingToken';
+import { navigateToDetailCoinScreen } from '../../../../components/Base/navigation';
+import { ROUTES } from '../../../../navigation/routes';
 
 const DAPP_SEARCH_HISTORY_KEY = 'DAPP_SEARCH_HISTORY_KEY';
 
@@ -235,12 +234,14 @@ export const MarketsSearch = React.memo(() => {
     inputValue?.length,
   ]);
 
-  const handlePressToken = React.useCallback(
-    (dapp: SearchToken) => {
+  const handlePressToken = React.useCallback((coin: SearchToken) => {
+    // navigateToDetailCoinScreen({
+    //   id: coin?.id || '0',
+    //   currency: 'usd',
+    // });
 
-    },
-    [dispatch, nav, inputValue, trackingUsage],
-  );
+    nav.navigate(ROUTES.DetailCoinScreen, { id: coin?.name, currency: 'usd' });
+  }, []);
 
   const renderItemResult = React.useCallback(
     ({ item }: { item: SearchToken }) => {

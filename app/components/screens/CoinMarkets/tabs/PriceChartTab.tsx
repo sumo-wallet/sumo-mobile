@@ -367,7 +367,7 @@ export const PriceChartTab = memo(({ id, currency }: DetailCoinInterface) => {
       return 0;
     if (
       coin_details.market_data.price_change_percentage_24h_in_currency[
-        currency
+      currency
       ] < 0
     ) {
       return coin_details.market_data.price_change_percentage_24h_in_currency[
@@ -479,8 +479,8 @@ export const PriceChartTab = memo(({ id, currency }: DetailCoinInterface) => {
                         !coin_details || !coin_details?.market_data
                           ? colors.error.default
                           : coin_details.market_data[item][currency] < 0
-                          ? colors.error.default
-                          : colors.primary.default,
+                            ? colors.error.default
+                            : colors.primary.default,
                     },
                     {
                       transform: [
@@ -489,8 +489,8 @@ export const PriceChartTab = memo(({ id, currency }: DetailCoinInterface) => {
                             !coin_details || !coin_details?.market_data
                               ? '0deg'
                               : coin_details.market_data[item][currency] < 0
-                              ? '0deg'
-                              : '180deg',
+                                ? '0deg'
+                                : '180deg',
                         },
                       ],
                     },
@@ -504,21 +504,21 @@ export const PriceChartTab = memo(({ id, currency }: DetailCoinInterface) => {
                         !coin_details || !coin_details?.market_data
                           ? colors.error.default
                           : coin_details.market_data[item][currency] < 0
-                          ? colors.error.default
-                          : colors.primary.default,
+                            ? colors.error.default
+                            : colors.primary.default,
                     },
                   ]}
                 >
                   {!coin_details || !coin_details?.market_data
                     ? 0
                     : coin_details.market_data[item][currency] < 0
-                    ? coin_details.market_data[item][currency]
+                      ? coin_details.market_data[item][currency]
                         .toLocaleString('en', {
                           maximumFractionDigits: 1,
                           minimumFractionDigits: 1,
                         })
                         .substring(1)
-                    : coin_details.market_data[item][currency].toLocaleString(
+                      : coin_details.market_data[item][currency].toLocaleString(
                         'en',
                         {
                           maximumFractionDigits: 1,
