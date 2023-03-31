@@ -2,32 +2,28 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import React, { useEffect, useState } from 'react';
 import {
-  View,
+  ActivityIndicator,
+  FlatList,
+  RefreshControl,
   SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
   TextInput,
   TouchableOpacity,
-  Text,
-  ScrollView,
-  FlatList,
-  ActivityIndicator,
-  StyleSheet,
-  RefreshControl,
+  View,
 } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useDispatch, useSelector } from 'react-redux';
-
-import { Style, Fonts } from './../../../../styles';
+import { Fonts, Style } from './../../../../styles';
 import { icons, images } from './../../../../assets';
-import { useNavigator, useDebounce } from './../../../hooks';
+import { useDebounce, useNavigator } from './../../../hooks';
 import { SearchToken } from './../../../../types';
 import { useTheme } from './../../../../util/theme';
 import { SearchResultCell } from './SearchResultCell';
 import { strings } from '../../../../../locales/i18n';
-import { useTrackingDAppUsage } from '../../../hooks/DApp/useTrackingDAppUsage';
 import { useSearchToken } from '../../../../components/hooks/Markets/useSearchToken';
 import { useGetTrendingToken } from '../../../../components/hooks/Markets/useGetTrendingToken';
-import { navigateToDetailCoinScreen } from '../../../../components/Base/navigation';
 import { ROUTES } from '../../../../navigation/routes';
 
 const DAPP_SEARCH_HISTORY_KEY = 'DAPP_SEARCH_HISTORY_KEY';
@@ -82,14 +78,9 @@ const createStyles = (colors: any) =>
 
 export const MarketsSearch = React.memo(() => {
   const nav = useNavigator();
-  const dispatch = useDispatch();
   const { colors } = useTheme();
-  const styles = createStyles(colors);
   const inputRef = React.useRef<TextInput>();
-  const { trackingUsage } = useTrackingDAppUsage();
   const [searchText, setSearchText] = useState('');
-
-  // const { searchText }: { searchText: string } = useNavigatorParams();
   const [inputValue, setInputValue] = React.useState<string>('');
 
   const { tokens: searchedTokens, isLoading, search } = useSearchToken();
@@ -114,17 +105,19 @@ export const MarketsSearch = React.memo(() => {
 
   const handleSearch = React.useCallback(
     (keyword: string) => {
-      console.log('handle search', keyword);
       setInputValue(keyword);
       search(keyword);
     },
     [search],
   );
 
-  const handleSelectPopular = React.useCallback((keyword: string) => {
-    setInputValue(keyword);
-    search(keyword);
-  }, []);
+  const handleSelectPopular = React.useCallback(
+    (keyword: string) => {
+      setInputValue(keyword);
+      search(keyword);
+    },
+    [search],
+  );
 
   const debounceSearchRequest = useDebounce(handleSearch, 500);
 
@@ -234,14 +227,19 @@ export const MarketsSearch = React.memo(() => {
     inputValue?.length,
   ]);
 
-  const handlePressToken = React.useCallback((coin: SearchToken) => {
-    // navigateToDetailCoinScreen({
-    //   id: coin?.id || '0',
-    //   currency: 'usd',
-    // });
-
-    nav.navigate(ROUTES.DetailCoinScreen, { id: coin?.name, currency: 'usd' });
-  }, []);
+  const handlePressToken = React.useCallback(
+    (coin: SearchToken) => {
+      // navigateToDetailCoinScreen({
+      //   id: coin?.id || '0',
+      //   currency: 'usd',
+      // });
+      nav.navigate(ROUTES.DetailCoinScreen, {
+        id: coin?.id || '',
+        currency: 'usd',
+      });
+    },
+    [nav],
+  );
 
   const renderItemResult = React.useCallback(
     ({ item }: { item: SearchToken }) => {

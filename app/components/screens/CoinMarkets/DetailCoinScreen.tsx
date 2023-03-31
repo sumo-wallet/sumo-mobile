@@ -45,8 +45,6 @@ export const DetailCoinScreen = memo(() => {
     return;
   }, []);
 
-  if (!coin_details) return null;
-
   return (
     <View style={styles.wrapper}>
       <DynamicHeader
