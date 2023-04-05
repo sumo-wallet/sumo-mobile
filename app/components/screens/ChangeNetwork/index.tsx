@@ -11,10 +11,10 @@ import { useTheme } from '../../../util/theme';
 
 export const ChangeNetwork = React.memo(() => {
   const nav = useNavigation();
-  const onNetworksModalClose = () => { };
-  const onNetworkSelected = () => { };
-  const showInvalidCustomNetworkAlert = () => { };
-  const switchModalContent = () => { };
+  const onNetworksModalClose = () => {};
+  const onNetworkSelected = () => {};
+  const showInvalidCustomNetworkAlert = () => {};
+  const switchModalContent = () => {};
   const { colors } = useTheme();
 
   return (

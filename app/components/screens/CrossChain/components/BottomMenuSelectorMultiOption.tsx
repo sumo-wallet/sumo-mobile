@@ -1,4 +1,10 @@
-import React, { memo, useCallback, useMemo, useState } from 'react';
+import React, {
+  memo,
+  useCallback,
+  useLayoutEffect,
+  useMemo,
+  useState,
+} from 'react';
 import {
   ImageSourcePropType,
   Keyboard,
@@ -10,17 +16,21 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import { SelectorItem, SelectorOption, UNIQUE_STRING } from './SelectorItem';
-
-import { BottomMenuModal } from './BottomMenuModal';
-import { BottomMenuContainer } from './BottomMenuContainer';
-import { BottomMenuHeader } from './BottomMenuHeader';
-import { useTheme } from '../../../util/theme';
-import { icons } from '../../../assets';
 import FastImage from 'react-native-fast-image';
+import {
+  BottomMenuContainer,
+  BottomMenuHeader,
+  BottomMenuModal,
+  SelectorOption,
+  UNIQUE_STRING,
+} from '../../../common/BottomMenu';
+import { icons } from '../../../../assets';
+import { useTheme } from '../../../../util/theme';
+import { scale } from '../../../../util/scale';
 
 interface Props {
   label: string;
+  visibleModal?: boolean;
   options: SelectorOption[];
   selectedValue?: string | number;
   placeholder?: string;
@@ -36,7 +46,14 @@ interface Props {
 const createStyles = (colors: any) =>
   StyleSheet.create({
     wrapper: {},
-    optionContainer: {},
+    optionContainer: {
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+      borderTopColor: colors.border.default,
+      borderTopWidth: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
     cancel: {
       padding: 12,
       paddingRight: 0,
@@ -65,11 +82,23 @@ const createStyles = (colors: any) =>
       fontSize: 14,
       color: colors.text.default,
       fontWeight: '600',
-      marginRight: 4,
+      width: scale(86),
+    },
+    label: {
+      fontSize: 14,
+      color: colors.text.default,
+      fontWeight: '600',
+    },
+    logoUrl: {
+      width: 32,
+      height: 32,
+      borderRadius: 32,
+      borderWidth: 1,
+      borderColor: colors.border.default,
     },
   });
 
-export const BottomMenuSelector = memo(
+export const BottomMenuSelectorMultiOption = memo(
   ({
     inputName,
     label,
@@ -81,8 +110,14 @@ export const BottomMenuSelector = memo(
     textStyle,
     containerStyle,
     containerTouch,
+    visibleModal,
   }: Props) => {
-    const [visible, setVisible] = useState(false);
+    const [visible, setVisible] = useState(visibleModal);
+
+    useLayoutEffect(() => {
+      setVisible(visibleModal);
+    }, [visibleModal]);
+
     const { colors } = useTheme();
     const styles = createStyles(colors);
 
@@ -116,6 +151,11 @@ export const BottomMenuSelector = memo(
       setVisible(false);
     }, []);
 
+    const showMenu = useCallback(() => {
+      setVisible(true);
+      Keyboard.dismiss();
+    }, []);
+
     const onSelectOptionCb = useCallback(
       (value: string | number) => {
         hideMenu();
@@ -124,20 +164,19 @@ export const BottomMenuSelector = memo(
       [inputName, onSelectOption, hideMenu],
     );
 
-    const showMenu = useCallback(() => {
-      setVisible(true);
-      Keyboard.dismiss();
-    }, []);
-
     return (
       <View style={containerStyle}>
         <TouchableOpacity
           onPress={showMenu}
           style={[styles.touch, containerTouch]}
         >
+          <FastImage
+            source={{ uri: selectedOption?.icon || '' }}
+            style={styles.logoUrl}
+          />
           <Text
             style={[textStyle, styles.title]}
-            numberOfLines={1}
+            numberOfLines={2}
             ellipsizeMode="tail"
           >
             {text === '' ? placeholder : text}
@@ -156,19 +195,17 @@ export const BottomMenuSelector = memo(
                 const selected = option.value === selectedValue;
                 const subSelected = option.subValue === selectedValue;
                 return (
-                  <View
+                  <TouchableOpacity
                     style={styles.optionContainer}
                     key={option.value || UNIQUE_STRING}
+                    onPress={() => onSelectOptionCb(option.value || '')}
                   >
-                    <SelectorItem
-                      option={option}
-                      renderIcon={renderIcon}
-                      selected={selected}
-                      onSelect={onSelectOptionCb}
-                      subSelected={subSelected}
-                      isRound={!!option.subValue}
+                    <FastImage
+                      source={{ uri: option.icon || '' }}
+                      style={[styles.logoUrl, { marginRight: 12 }]}
                     />
-                  </View>
+                    <Text style={styles.label}>{option.label}</Text>
+                  </TouchableOpacity>
                 );
               })}
             </ScrollView>

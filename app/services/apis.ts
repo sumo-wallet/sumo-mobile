@@ -44,6 +44,8 @@ import {
   RawMarketChartInterface,
 } from '../reducers/coinmarkets/types';
 import { RawCategoriesMarketInterface } from '../reducers/categoriesMarket';
+import { RawCrossChainInterface } from '../reducers/crossChain/types';
+import { RawTokenByChainInterface } from '../reducers/tokenByChain/types';
 
 /* eslint-disable prefer-destructuring */
 export const COINGECKO_BASE_URL = 'https://api.coingecko.com/api/v3/';
@@ -58,6 +60,8 @@ export const COIN_GECKO_NEWS = 'https://mobile.api.coingecko.com/api/v3/news';
 export const COIN_GECKO_LEARNS =
   'https://mobile.api.coingecko.com/api/v3/posts/learn';
 
+export const MULTICHAIN_BASE_URL = 'https://bridgeapi.anyswap.exchange/';
+
 // export const BASE_URL = Config?.BASE_URL;
 
 export const PATHS = {
@@ -70,6 +74,8 @@ export const PATHS = {
   categoriesMarket: 'coins/categories',
   coingeckoCoinsDetails: 'coins',
   coingeckoMarketChart: 'market_chart',
+  multiChain: 'data/bridgeChainInfo',
+  tokenByChain: 'v4/tokenlistv4',
 };
 
 class Client {
@@ -392,6 +398,24 @@ class Client {
 
     return fetcher<any>(
       `${COINGECKO_BASE_URL}${PATHS.coingeckoCoinsDetails}/${params.id}/ohlc?${stringifyParams}`,
+      {
+        headers: this.headers,
+      },
+    );
+  }
+
+  public getMultiChain() {
+    return fetcher<RawCrossChainInterface>(
+      `${MULTICHAIN_BASE_URL}${PATHS.multiChain}`,
+      {
+        headers: this.headers,
+      },
+    );
+  }
+
+  public getTokenByChain(chainId: string) {
+    return fetcher<RawTokenByChainInterface>(
+      `${MULTICHAIN_BASE_URL}${PATHS.tokenByChain}/${chainId}`,
       {
         headers: this.headers,
       },

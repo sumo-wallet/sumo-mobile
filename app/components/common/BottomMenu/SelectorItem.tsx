@@ -19,6 +19,7 @@ export interface SelectorOption {
   label: string;
   noTranslate?: boolean;
   icon?: ImageSourcePropType;
+  symbol?: string;
 }
 
 export interface SelectorItemProps {

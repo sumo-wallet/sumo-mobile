@@ -20,7 +20,11 @@ type Props = OwnProps & PropsWithChildren<any>;
 
 const createStyles = (colors: any) =>
   StyleSheet.create({
-    wrapper: { width: '100%', alignItems: 'center', marginVertical: 16 },
+    wrapper: {
+      width: '100%',
+      alignItems: 'center',
+      marginVertical: 16,
+    },
     title: {
       fontSize: 14,
       color: colors.text.muted,
@@ -43,6 +47,7 @@ export const BottomMenuHeader = memo(
             <Text>{'Done'}</Text>
           </TouchableOpacity>
         )}
+
         {children}
       </View>
     );

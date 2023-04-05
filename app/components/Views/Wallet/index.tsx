@@ -178,7 +178,6 @@ const Wallet = ({ navigation }: any) => {
     (state) => state.engine.backgroundState.NetworkController.provider,
   );
 
-
   /**
    * Check to see if we need to show What's New modal
    */
@@ -310,6 +309,7 @@ const Wallet = ({ navigation }: any) => {
     } else {
       assets = tokens;
     }
+    console.log('check token = ', tokens);
 
     return (
       <View style={styles.wrapper}>
@@ -391,7 +391,6 @@ const Wallet = ({ navigation }: any) => {
     if (currentChain) return currentChain.name;
     return provider.chainId;
   };
-
 
   return (
     <ErrorBoundary view="Wallet">

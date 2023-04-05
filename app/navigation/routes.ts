@@ -26,4 +26,5 @@ export const ROUTES = {
   CategoriesFilterMarketScreen: 'CategoriesFilterMarketScreen',
   MarketsSearch: 'MarketsSearch',
   DetailCoinScreen: 'DetailCoinScreen',
+  CrossChainScreen: 'CrossChainScreen',
 };
