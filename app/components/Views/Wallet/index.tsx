@@ -309,7 +309,6 @@ const Wallet = ({ navigation }: any) => {
     } else {
       assets = tokens;
     }
-    console.log('check token = ', tokens);
 
     return (
       <View style={styles.wrapper}>

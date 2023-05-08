@@ -21,23 +21,34 @@ const allCrossChainByIds = (state: RootState) =>
 
 const allCrossChainByKey = (state: RootState) => state.crossChain.byKey;
 
-const crossChainSelectorFactory = createSelector(
-  allCrossChainByIds,
-  allCrossChainByKey,
-  (byIds, byKey) => {
+const crossChainSelectorFactory = (desChain: string[]) =>
+  createSelector(allCrossChainByIds, allCrossChainByKey, (byIds, byKey) => {
+    if (desChain.length > 0) {
+      return desChain.map((item: string) => {
+        return {
+          value: byKey[item]?.id || '',
+          label: byKey[item]?.name || '',
+          icon: byKey[item]?.logoUrl || '',
+        };
+      });
+    }
     return byIds
       .map((item: string | number) => {
         return {
-          value: byKey[item].id,
-          label: byKey[item].name + ' mainnet',
-          icon: byKey[item].logoUrl,
+          value: byKey[item]?.id || '',
+          label: byKey[item]?.name || '' + ' mainnet',
+          icon: byKey[item]?.logoUrl || '',
         };
       })
       .filter(Boolean);
-  },
-);
+  });
 
 export const getAllCrossChain = () => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  return useSelector(crossChainSelectorFactory) || [];
+  return useSelector(crossChainSelectorFactory([])) || [];
+};
+
+export const getDestChainsByToken = (desChain: string[]) => {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  return useSelector(crossChainSelectorFactory(desChain));
 };

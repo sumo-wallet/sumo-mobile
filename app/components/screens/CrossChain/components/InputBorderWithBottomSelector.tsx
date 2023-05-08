@@ -35,6 +35,8 @@ interface Props {
   onSelectOptionRight: (inputName: string, value: string | number) => void;
   onSelectOptionLeft: (inputName: string, value: string | number) => void;
   keyName: string;
+  keyNameBottomLeft: string;
+  keyNameBottomRight: string;
   placeHolder: string;
   multiline?: boolean;
   onTextChange: (keyName: string, value: string) => void;
@@ -74,7 +76,7 @@ const createStyles = (colors: any) =>
     },
     textInputLabel: {
       paddingLeft: 0,
-      paddingTop: Platform.OS === 'android' ? 8 : 2,
+      paddingTop: Platform.OS === 'android' ? 8 : 4,
       fontSize: 15,
       lineHeight: 18,
       textAlignVertical: 'top',
@@ -123,6 +125,8 @@ export const InputBorderWithBottomSelector = memo((props: Props) => {
     optionsBottomRight,
     optionsBottomLeft,
     valueBottomLeft,
+    keyNameBottomLeft,
+    keyNameBottomRight,
   } = props;
   const { colors } = useTheme();
   const styles = createStyles(colors);
@@ -212,7 +216,7 @@ export const InputBorderWithBottomSelector = memo((props: Props) => {
               left: 10,
               top: focusedAnim.interpolate({
                 inputRange: [0, 1],
-                outputRange: [18, -8],
+                outputRange: [10, -20],
               }),
             }}
           >
@@ -266,7 +270,7 @@ export const InputBorderWithBottomSelector = memo((props: Props) => {
         <BottomMenuSelectorMultiOption
           label={'Select a token'}
           options={optionsBottomLeft}
-          inputName={'source_token'}
+          inputName={keyNameBottomLeft}
           placeholder={'Select token'}
           onSelectOption={onSelectOptionLeft}
           selectedValue={valueBottomLeft}
@@ -276,7 +280,7 @@ export const InputBorderWithBottomSelector = memo((props: Props) => {
         <BottomMenuSelectorMultiOption
           label={'Select network'}
           options={optionsBottomRight}
-          inputName={'price_change_percentage'}
+          inputName={keyNameBottomRight}
           placeholder={'Select network'}
           onSelectOption={onBottomRight}
           selectedValue={valueBottomRight}

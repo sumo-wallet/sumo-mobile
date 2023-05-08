@@ -96,6 +96,10 @@ const createStyles = (colors: any) =>
       borderWidth: 1,
       borderColor: colors.border.default,
     },
+    touchSeeMore: {
+      alignItems: 'center',
+      marginTop: 12,
+    },
   });
 
 export const BottomMenuSelectorMultiOption = memo(
@@ -113,6 +117,7 @@ export const BottomMenuSelectorMultiOption = memo(
     visibleModal,
   }: Props) => {
     const [visible, setVisible] = useState(visibleModal);
+    const [isSeeMore, setSeeMore] = useState(false);
 
     useLayoutEffect(() => {
       setVisible(visibleModal);
@@ -149,6 +154,7 @@ export const BottomMenuSelectorMultiOption = memo(
 
     const hideMenu = useCallback(() => {
       setVisible(false);
+      setSeeMore(false);
     }, []);
 
     const showMenu = useCallback(() => {
@@ -191,23 +197,33 @@ export const BottomMenuSelectorMultiOption = memo(
           <BottomMenuContainer>
             <BottomMenuHeader title={label} onClose={hideMenu} />
             <ScrollView style={styles.maxHeightScroll}>
-              {options.map((option) => {
-                const selected = option.value === selectedValue;
-                const subSelected = option.subValue === selectedValue;
-                return (
-                  <TouchableOpacity
-                    style={styles.optionContainer}
-                    key={option.value || UNIQUE_STRING}
-                    onPress={() => onSelectOptionCb(option.value || '')}
-                  >
-                    <FastImage
-                      source={{ uri: option.icon || '' }}
-                      style={[styles.logoUrl, { marginRight: 12 }]}
-                    />
-                    <Text style={styles.label}>{option.label}</Text>
-                  </TouchableOpacity>
-                );
-              })}
+              {options
+                .slice(0, isSeeMore ? options.length : 20)
+                .map((option) => {
+                  const selected = option.value === selectedValue;
+                  const subSelected = option.subValue === selectedValue;
+                  return (
+                    <TouchableOpacity
+                      style={styles.optionContainer}
+                      key={option.value || UNIQUE_STRING}
+                      onPress={() => onSelectOptionCb(option.value || '')}
+                    >
+                      <FastImage
+                        source={{ uri: option.icon || '' }}
+                        style={[styles.logoUrl, { marginRight: 12 }]}
+                      />
+                      <Text style={styles.label}>{option.label}</Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              {options.length > 20 && !isSeeMore && (
+                <TouchableOpacity
+                  onPress={() => setSeeMore(true)}
+                  style={styles.touchSeeMore}
+                >
+                  <Text style={styles.title}>{'See more...'}</Text>
+                </TouchableOpacity>
+              )}
             </ScrollView>
           </BottomMenuContainer>
         </BottomMenuModal>

@@ -113,7 +113,7 @@ export const Hot24hComponent = function Hot24hComponent({
                 },
               ]}
             >{`${item.changePercent.toFixed(2)}%`}</Text>
-            <Text style={styles.titleAmount}>{`$${Intl.NumberFormat().format(item.priceC)}`}</Text>
+            {/* <Text style={styles.titleAmount}>{`$${Intl.NumberFormat().format(item.priceC)}`}</Text> */}
           </View>
         </TouchableOpacity>
       );

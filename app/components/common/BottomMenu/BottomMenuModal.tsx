@@ -43,9 +43,11 @@ export const BottomMenuModal = memo(
         style={styles.modal}
         onBackButtonPress={onClose}
         onBackdropPress={onClose}
+        onSwipeComplete={onClose}
         backdropTransitionOutTiming={0}
+        swipeDirection={'down'}
+        swipeThreshold={50}
         backdropOpacity={0.4}
-        propagateSwipe
         {...rest}
       >
         {children}

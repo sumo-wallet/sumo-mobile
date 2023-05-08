@@ -61,10 +61,10 @@ LogBox.ignoreLogs([
   'Module RCTSearchApiManager requires main queue setup',
   'PushNotificationIOS has been extracted', // RNC PushNotification iOS issue - https://github.com/react-native-push-notification/ios/issues/43
 ]);
-
-if (__DEV__) {
-  import('./ReactotronConfig').then(() => { });
-}
+//
+// if (__DEV__) {
+//   import('./ReactotronConfig').then(() => { });
+// }
 
 /* Uncomment and comment regular registration below */
 // import Storybook from './storybook';
