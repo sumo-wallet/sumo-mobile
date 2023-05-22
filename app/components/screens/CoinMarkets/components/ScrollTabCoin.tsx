@@ -127,14 +127,6 @@ export const ScrollTabCoin = memo(
           placeholder={'Sort By Market Cap'}
           onSelectOption={onSelectedOption}
           selectedValue={paramsMarket.order}
-          // @ts-ignore
-          renderIcon={
-            <Image
-              style={styles.image}
-              source={icons.iconArrowDown}
-              resizeMode={FastImage.resizeMode.stretch}
-            />
-          }
         />
       </ScrollView>
     );

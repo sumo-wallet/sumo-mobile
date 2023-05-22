@@ -109,6 +109,7 @@ import { CoinMarketsScreen } from '../../screens/CoinMarkets/CoinMarketsScreen';
 import { CategoriesFilterMarketScreen } from '../../screens/CoinMarkets/CategoriesFilterMarket';
 import { MarketsSearch } from './../../sumo/Views/MarketsSearch';
 import { DetailCoinScreen } from '../../screens/CoinMarkets/DetailCoinScreen';
+import { CrossChainScreen } from '../../screens/CrossChain/CrossChainScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -501,6 +502,21 @@ export const BottomTabContainer = () => {
         }}
       />
       <Tab.Screen
+        name={ROUTES.CrossChainScreen}
+        component={CrossChainScreen}
+        options={{
+          title: 'CrossChain',
+          tabBarIcon: ({ color }) => {
+            return (
+              <Image
+                style={Style.s({ size: 20, tin: color })}
+                source={icons.iconNft}
+              />
+            );
+          },
+        }}
+      />
+      <Tab.Screen
         name={ROUTES.CoinMarketsScreen}
         component={CoinMarketsScreen}
         options={{
@@ -515,6 +531,7 @@ export const BottomTabContainer = () => {
           },
         }}
       />
+
       {/* <Tab.Screen
         name={ROUTES.NftScreen}
         component={NFTMarketplaceTabModalFlow}

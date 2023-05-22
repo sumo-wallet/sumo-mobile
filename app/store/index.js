@@ -16,6 +16,8 @@ import Device from '../util/device';
 import { setCoinMarketsStore } from '../reducers/coinmarkets/slice';
 import { setCategoriesMarketStore } from '../reducers/categoriesMarket';
 import { setFavouriteMarketsStore } from '../reducers/favouritemarkets/slice';
+import { setCrossChainStore } from '../reducers/crossChain/slice';
+import { setTokenByChainStore } from '../reducers/tokenByChain/slice';
 
 const TIMEOUT = 40000;
 
@@ -129,6 +131,8 @@ export const store = createStore(pReducer);
 setCoinMarketsStore(store);
 setCategoriesMarketStore(store);
 setFavouriteMarketsStore(store);
+setCrossChainStore(store);
+setTokenByChainStore(store);
 /**
  * Initialize services after persist is completed
  */

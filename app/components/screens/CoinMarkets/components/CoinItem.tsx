@@ -109,13 +109,13 @@ export const CoinItem = memo(
       if (
         !coin ||
         !coin[
-        `price_change_percentage_${paramsMarket.price_change_percentage}_in_currency`
+          `price_change_percentage_${paramsMarket.price_change_percentage}_in_currency`
         ]
       )
         return '0.0';
       if (
         coin[
-        `price_change_percentage_${paramsMarket.price_change_percentage}_in_currency`
+          `price_change_percentage_${paramsMarket.price_change_percentage}_in_currency`
         ] < 0
       ) {
         return coin[
@@ -140,13 +140,13 @@ export const CoinItem = memo(
       if (
         !coin ||
         !coin[
-        `price_change_percentage_${paramsMarket.price_change_percentage}_in_currency`
+          `price_change_percentage_${paramsMarket.price_change_percentage}_in_currency`
         ]
       )
         return colors.error.default;
       if (
         coin[
-        `price_change_percentage_${paramsMarket.price_change_percentage}_in_currency`
+          `price_change_percentage_${paramsMarket.price_change_percentage}_in_currency`
         ] < 0
       ) {
         return colors.error.default;
@@ -174,13 +174,13 @@ export const CoinItem = memo(
       if (coin?.current_price) {
         return paramsMarket.vs_currency === 'usd'
           ? coin.current_price.toLocaleString('en', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 8,
-          })
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 8,
+            })
           : coin.current_price.toLocaleString('en', {
-            minimumFractionDigits: 6,
-            maximumFractionDigits: 8,
-          });
+              minimumFractionDigits: 6,
+              maximumFractionDigits: 8,
+            });
       }
     }, [coin]);
 
@@ -188,13 +188,13 @@ export const CoinItem = memo(
       if (
         !coin ||
         !coin[
-        `price_change_percentage_${paramsMarket.price_change_percentage}_in_currency`
+          `price_change_percentage_${paramsMarket.price_change_percentage}_in_currency`
         ]
       )
         return {};
       if (
         coin[
-        `price_change_percentage_${paramsMarket.price_change_percentage}_in_currency`
+          `price_change_percentage_${paramsMarket.price_change_percentage}_in_currency`
         ] < 0
       ) {
         return {};

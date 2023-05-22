@@ -23,6 +23,8 @@ import { combineReducers } from 'redux';
 import { coinMarketsReducer } from './coinmarkets/slice';
 import { categoriesMarketReducer } from './categoriesMarket';
 import { favouriteMarketsReducer } from './favouritemarkets/slice';
+import { crossChainReducer } from './crossChain/slice';
+import { tokenByChainReducer } from './tokenByChain/slice';
 
 const rootReducer = combineReducers({
   collectibles: collectiblesReducer,
@@ -49,6 +51,8 @@ const rootReducer = combineReducers({
   coinMarkets: coinMarketsReducer,
   categoriesMarket: categoriesMarketReducer,
   favouriteMarkets: favouriteMarketsReducer,
+  crossChain: crossChainReducer,
+  tokenByChain: tokenByChainReducer,
 });
 
 export default rootReducer;

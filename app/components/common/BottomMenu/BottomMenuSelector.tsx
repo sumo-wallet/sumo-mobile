@@ -30,6 +30,7 @@ interface Props {
   containerStyle?: ViewStyle;
   filtered?: boolean | undefined;
   textStyle?: TextStyle;
+  containerTouch?: ViewStyle;
 }
 
 const createStyles = (colors: any) =>
@@ -58,6 +59,7 @@ const createStyles = (colors: any) =>
       marginRight: 16,
       flexDirection: 'row',
       alignItems: 'center',
+      justifyContent: 'space-between',
     },
     title: {
       fontSize: 14,
@@ -78,6 +80,7 @@ export const BottomMenuSelector = memo(
     renderIcon,
     textStyle,
     containerStyle,
+    containerTouch,
   }: Props) => {
     const [visible, setVisible] = useState(false);
     const { colors } = useTheme();
@@ -127,10 +130,10 @@ export const BottomMenuSelector = memo(
     }, []);
 
     return (
-      <View>
+      <View style={containerStyle}>
         <TouchableOpacity
           onPress={showMenu}
-          style={[styles.touch, containerStyle]}
+          style={[styles.touch, containerTouch]}
         >
           <Text
             style={[textStyle, styles.title]}
