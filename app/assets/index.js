@@ -68,6 +68,7 @@ import iconSelectorArrow from './icons/iconSelectorArrow.png';
 import iconFavouritedFill from './icons/iconFavouritedFill.png';
 import iconLineChart from './icons/iconLineChart.png';
 import iconCandlestickChart from './icons/iconCandlestickChart.png';
+import iconSettingv2 from './icons/iconSettingv2.png';
 
 import imageBanner from './images/imageBanner.png';
 import imageNew1 from './images/imageNew1.png';
@@ -151,6 +152,7 @@ export const icons = {
   iconFavouritedFill,
   iconLineChart,
   iconCandlestickChart,
+  iconSettingv2,
 };
 
 export const images = {

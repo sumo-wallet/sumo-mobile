@@ -29,6 +29,7 @@ const crossChainSelectorFactory = (desChain: string[]) =>
           value: byKey[item]?.id || '',
           label: byKey[item]?.name || '',
           icon: byKey[item]?.logoUrl || '',
+          subValue: byKey[item]?.rpc || '',
         };
       });
     }
@@ -38,6 +39,7 @@ const crossChainSelectorFactory = (desChain: string[]) =>
           value: byKey[item]?.id || '',
           label: byKey[item]?.name || '' + ' mainnet',
           icon: byKey[item]?.logoUrl || '',
+          subValue: byKey[item]?.rpc || '',
         };
       })
       .filter(Boolean);

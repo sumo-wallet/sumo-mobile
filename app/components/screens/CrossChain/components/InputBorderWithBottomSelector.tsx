@@ -2,6 +2,7 @@ import React, {
   memo,
   ReactElement,
   useCallback,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -26,6 +27,7 @@ import { useSelector } from 'react-redux';
 import useBoolean from '../../../Base/useBoolean';
 import { fontStyles } from '../../../../styles/common';
 import { CustomChainModal } from './CustomChainModal';
+import { SearchBar } from '../../Dapps/SearchBar';
 
 interface Props {
   containerStyle?: ViewStyle;
@@ -133,9 +135,9 @@ export const InputBorderWithBottomSelector = memo((props: Props) => {
   const inputRef = useRef<TextInput>(null);
   const focusedAnim = useRef(new Animated.Value(value ? 1 : 0)).current;
   const [isVisible, show, hide] = useBoolean(false);
+  const [isFocus, setFocus, setNoFocus] = useBoolean(false);
   const [chainId, setChainId] = useState<string>('');
   const [isVisibleModal, showModal, hideModal] = useBoolean(false);
-
   const toggle = useCallback(
     (isActive: boolean) => {
       Animated.timing(focusedAnim, {
@@ -161,12 +163,20 @@ export const InputBorderWithBottomSelector = memo((props: Props) => {
     if (disabled) {
       return;
     }
+    setFocus();
     toggle(true);
   }, [disabled, toggle]);
 
   const onBlur = useCallback(() => {
     toggle(false);
+    setNoFocus();
   }, [toggle]);
+
+  useEffect(() => {
+    if (!isFocus) {
+      toggle(!!value);
+    }
+  }, [value, toggle, isFocus]);
 
   const setRequired = useMemo(() => {
     return required ? ' *' : '';
@@ -276,6 +286,7 @@ export const InputBorderWithBottomSelector = memo((props: Props) => {
           selectedValue={valueBottomLeft}
           containerStyle={styles.containerParticularBottom}
           containerTouch={{ height: scale(48) }}
+          isToken
         />
         <BottomMenuSelectorMultiOption
           label={'Select network'}

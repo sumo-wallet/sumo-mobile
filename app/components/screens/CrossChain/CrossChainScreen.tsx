@@ -1,9 +1,9 @@
 import { Web3Provider } from '@ethersproject/providers';
 import { Contract, Signer, ethers, utils } from 'ethers';
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
-import { Image, StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, Text, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { icons } from '../../../assets';
 import { MAINNET } from '../../../constants/network';
 import Engine from '../../../core/Engine';
@@ -28,8 +28,14 @@ import { useGetChain } from '../../hooks/useGetChain';
 import Abi from '../CrossChain/ERC20.json';
 import { InputBorderWithBottomSelector } from './components/InputBorderWithBottomSelector';
 import Approve from '../../../components/Views/ApproveView/Approve';
-import { parse } from 'eth-url-parser';
-import { getNormalizedTxState } from '../../../util/transactions';
+import {
+  generateApproveData,
+  getNormalizedTxState,
+} from '../../../util/transactions';
+import { UINT256_BN_MAX_VALUE } from '../../../constants/transaction';
+import { WalletDevice } from '@metamask/controllers';
+import { setTransactionObject } from '../../../actions/transaction';
+import { scale } from '../../../util/scale';
 
 const createStyles = (colors: any) =>
   StyleSheet.create({
@@ -51,6 +57,20 @@ const createStyles = (colors: any) =>
     warningContainer: {
       marginTop: 32,
     },
+    titleApprove: {
+      fontWeight: 'bold',
+      fontSize: 14,
+      color: colors.text.default,
+    },
+    approve: {
+      marginTop: scale(12),
+    },
+    titleBalance: {
+      alignSelf: 'flex-end',
+      fontWeight: 'bold',
+      color: colors.text.default,
+      marginBottom: 12,
+    },
   });
 
 export interface ParamsTokenInterface {
@@ -58,10 +78,12 @@ export interface ParamsTokenInterface {
   destination_chain?: string;
   source_amount: string;
   destination_amount: string;
+  balance_default?: string;
 }
 
 export const CrossChainScreen = memo(() => {
   const { colors } = useTheme();
+  const dispatch = useDispatch();
   const styles = createStyles(colors);
   const allCrossChain = getAllCrossChain();
   const allTokenByChain = getAllTokenByChain();
@@ -69,7 +91,9 @@ export const CrossChainScreen = memo(() => {
     token: allTokenByChain[0]?.value || '',
     source_amount: '',
     destination_amount: '0',
+    destination_chain: allTokenByChain[0]?.value || '',
   });
+
   const [warning, setWarning] = useState<string>('');
 
   const sourceToken = useTokenByChain(paramsToken.token);
@@ -77,6 +101,15 @@ export const CrossChainScreen = memo(() => {
   const desChain = useMemo(() => {
     return Object.keys(sourceToken?.destChains || {}).map((item) => item) || [];
   }, [sourceToken?.destChains]);
+
+  const destChainsByToken = getDestChainsByToken(desChain);
+
+  useEffect(() => {
+    setParamsToken((state) => ({
+      ...state,
+      destination_chain: desChain[0] || '',
+    }));
+  }, [desChain]);
 
   const optionDestToken = useMemo(() => {
     return (
@@ -86,9 +119,6 @@ export const CrossChainScreen = memo(() => {
     );
   }, [allTokenByChain, paramsToken.token]);
 
-  const destChainsByToken = getDestChainsByToken(desChain);
-  const transaction = useSelector((state) => getNormalizedTxState(state));
-  console.log('check transaction = ', transaction);
   const { chains } = useGetChain();
   const { NetworkController, CurrencyRateController, TransactionController } =
     Engine.context;
@@ -100,46 +130,25 @@ export const CrossChainScreen = memo(() => {
   const web3Provider = useMemo(() => {
     return new Web3Provider(NetworkController.provider);
   }, [NetworkController.provider]);
-
-  const signer = useMemo((): Signer => {
-    return web3Provider.getSigner();
-  }, [web3Provider]);
-
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const contract = new Contract(
-    '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56',
-    Abi,
-    signer,
-  );
-
-  useEffect(() => {
-    // console.log('check into');
-    TransactionController.hub.on(
-      'unapprovedTransaction',
-      (transactionMeta: any) => {
-        console.log('check into');
-        console.log('check transaction = ', transactionMeta);
-      },
-    );
-    return () => {
-      TransactionController.hub.removeListener(
-        'unapprovedTransaction',
-        (transactionMeta: any) => {
-          console.log('check transaction = ', transactionMeta);
-        },
-      );
-    };
-  }, []);
 
   const { call, value, error } = useAsyncEffect(async () => {
-    // const data = await contract?.approve(
-    //   '0x6b7a87899490ece95443e979ca9485cbe7e71522',
-    //   utils.parseEther(`${5}`),
-    // );
-    // console.log('cehck dta =', data.toString());
-  }, []);
-
-  console.log('check approval =', TransactionController);
+    const contract = new Contract(
+      sourceToken?.address || '',
+      Abi,
+      web3Provider,
+    );
+    const data = await contract?.balanceOf(
+      '0x6b7a87899490ece95443e979ca9485cbe7e71522',
+    );
+    setParamsToken((state) => ({
+      ...state,
+      balance_default: parseFloat(data.toString()).toLocaleString('en', {
+        maximumFractionDigits: 3,
+        minimumFractionDigits: 2,
+      }),
+    }));
+  }, [sourceToken]);
 
   const frequentRpcList = useSelector(
     (state: any) =>
@@ -166,27 +175,62 @@ export const CrossChainScreen = memo(() => {
   }, [provider.chainId]);
 
   const onApprove = useCallback(async () => {
-    console.log('check into');
-    const amount = ethers.utils.parseUnits('5', 18); // Convert 100 DAI to wei
+    const approvalData = generateApproveData({
+      spender: '0xf9736ec3926703e85c843fc972bd89a7f8e827c0',
+      value: UINT256_BN_MAX_VALUE.toString(16),
+    });
 
-    const uint256Number = Number(amount);
+    const txParams = {
+      to: '0xe9e7cea3dedca5984780bafc599bd69add087d56',
+      from: '0x70dd37802c647b8df0c2fef3f405effb14386f04',
+      gas: '0xbece',
+      data: approvalData,
+    };
 
-    if (Number.isNaN(uint256Number))
-      throw new Error('The parameter uint256 should be a number');
-    if (!Number.isInteger(uint256Number))
-      throw new Error('The parameter uint256 should be an integer');
+    // await TransactionController.addTransaction(
+    //   {
+    //     chainId: '56',
+    //     deviceConfirmedOn: 'metamask_mobile',
+    //     networkID: '56',
+    //     status: 'unapproved',
+    //     transaction: {
+    //       data: '0x095ea7b3000000000000000000000000f9736ec3926703e85c843fc972bd89a7f8e827c0ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
+    //       from: '0x70dd37802c647b8df0c2fef3f405effb14386f04',
+    //       gas: '0xbece',
+    //       to: '0xe9e7cea3dedca5984780bafc599bd69add087d56',
+    //     },
+    //     verifiedOnBlockchain: false,
+    //   },
+    //   'app.multichain.org',
+    //   WalletDevice.MM_MOBILE,
+    // );
 
-    const value = uint256Number.toString(16);
-    const url = parse('https://app.multichain.org');
-    console.log('check url = ', url);
-    // const txParams = {
-    //   to: target_address.toString(),
-    //   from: PreferencesController.state.selectedAddress.toString(),
-    //   value: '0x0',
-    //   data: generateApproveData({ spender: address, value }),
-    // };
-  }, [sourceToken?.address]);
+    dispatch(
+      setTransactionObject({
+        chainId: '56',
+        deviceConfirmedOn: 'metamask_mobile',
+        networkID: '56',
+        origin: 'app.multichain.org',
+        status: 'unapproved',
+        transaction: {
+          data: '0x095ea7b3000000000000000000000000f9736ec3926703e85c843fc972bd89a7f8e827c0ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
+          from: '0x70dd37802c647b8df0c2fef3f405effb14386f04',
+          gas: '0xbece',
+          to: '0xe9e7cea3dedca5984780bafc599bd69add087d56',
+        },
+        verifiedOnBlockchain: false,
+      }),
+    );
 
+    // const hash = await (
+    //   await TransactionController.addTransaction(
+    //     payload.params[0],
+    //     payload.origin,
+    //     WalletDevice.MM_MOBILE,
+    //   )
+    // ).result;
+  }, [TransactionController]);
+  //
   const onChangeMainNet = useCallback(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async (inputName: string, value: string | number) => {
@@ -262,13 +306,21 @@ export const CrossChainScreen = memo(() => {
             }));
             return;
           }
-          setWarning('');
+          if (
+            parseFloat(paramsToken.balance_default || '0') <
+            parseFloat(value.toString())
+          ) {
+            setWarning('Insufficient liquidity.');
+          } else {
+            setWarning('');
+          }
           setParamsToken((State) => ({
             ...State,
             source_amount: value.toString(),
-            destination_amount: (
-              parseInt(value.toString()) - fee
-            ).toLocaleString('en'),
+            destination_amount:
+              value === ''
+                ? '0'
+                : (parseInt(value.toString()) - fee).toLocaleString('en'),
           }));
           return;
         }
@@ -284,6 +336,9 @@ export const CrossChainScreen = memo(() => {
     <View style={styles.wrapper}>
       <DynamicHeader title={'CrossChain'} hideGoBack />
       <KeyboardAwareScrollView style={{ flex: 1, paddingVertical: 12 }}>
+        <Text style={styles.titleBalance}>{`Balance: ${
+          paramsToken.balance_default || '--'
+        }`}</Text>
         <InputBorderWithBottomSelector
           value={paramsToken.source_amount}
           valueBottomRight={getNetworkId}
@@ -315,13 +370,17 @@ export const CrossChainScreen = memo(() => {
           onSelectOptionRight={onChangeParams}
           onSelectOptionLeft={onChangeParams}
         />
-        <Button onPress={onApprove} />
-        {warning !== '' && (
+        {warning !== '' ? (
           <WarningMessage
             style={styles.warningContainer}
             warningMessage={warning}
           />
+        ) : (
+          <View style={{ marginTop: 12 }} />
         )}
+        <Button onPress={onApprove} style={styles.approve}>
+          <Text style={styles.titleApprove}>{'Swap'}</Text>
+        </Button>
       </KeyboardAwareScrollView>
       <Approve modalVisible toggleApproveModal={() => {}} />
     </View>
